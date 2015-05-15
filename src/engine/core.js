@@ -15,7 +15,7 @@ var game = {
         Current engine version.
         @property {String} version
     **/
-    version: '1.13.1',
+    version: '1.13.2',
     config: typeof pandaConfig !== 'undefined' ? pandaConfig : {},
     coreModules: [
         'engine.analytics',
@@ -173,7 +173,7 @@ var game = {
         for (i in obj) {
             keys.push(i);
         }
-        
+
         keys.sort(compare);
         for (i = 0; i < keys.length; i++) {
             result[keys[i]] = obj[keys[i]];
@@ -296,7 +296,7 @@ var game = {
         if (this.modules[name] && this.modules[name].body) throw 'module ' + name + ' is already defined';
 
         this.current = { name: name, requires: [], loaded: false };
-        
+
         if (name.indexOf('game.') === 0) this.current.requires.push('engine.core');
         if (this.moduleQueue.length === 1 && this.DOMLoaded) this.loadModules();
 
@@ -591,7 +591,7 @@ var game = {
         this.device.android2 = /android 2/i.test(navigator.userAgent);
         var androidVer = navigator.userAgent.match(/Android.*AppleWebKit\/([\d.]+)/);
         this.device.androidStock = !!(androidVer && androidVer[1] < 537);
-        
+
         // Internet Explorer
         this.device.ie9 = /MSIE 9/i.test(navigator.userAgent);
         this.device.ie10 = /MSIE 10/i.test(navigator.userAgent);
@@ -628,7 +628,7 @@ var game = {
         else {
             this.device.flash = !!navigator.plugins['Shockwave Flash'];
         }
-    
+
         // Load device specific config
         for (var i in this.device) {
             if (this.device[i] && this.config[i]) {
