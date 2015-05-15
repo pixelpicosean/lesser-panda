@@ -323,7 +323,7 @@ game.createClass('Scene', {
         @private
     **/
     _updateTweens: function() {
-        if (game.tween) game.tween._update();
+        if (game.tweenEngine) game.tweenEngine.update();
     },
 
     /**
@@ -331,7 +331,7 @@ game.createClass('Scene', {
         @private
     **/
     _updatePhysics: function() {
-        if (this.world) this.world._update();
+        if (this.world) this.world.update();
     },
 
     /**
@@ -354,7 +354,7 @@ game.createClass('Scene', {
     **/
     _updateEmitters: function() {
         for (var i = this.emitters.length - 1; i >= 0; i--) {
-            this.emitters[i]._update();
+            this.emitters[i].update();
             if (this.emitters[i]._remove) this.emitters.splice(i, 1);
         }
     },
@@ -375,12 +375,12 @@ game.createClass('Scene', {
         @private
     **/
     _updateRenderer: function() {
+        if (game.debugDraw) game.debugDraw.update();
         game.renderer.render(this.stage);
     },
 
     run: function() {
         this._update();
-        if (game.debugDraw) game.debugDraw.update();
     }
 });
 
