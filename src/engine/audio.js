@@ -67,9 +67,6 @@ game.createClass('Audio', {
         // Disable audio on Android 2
         if (game.device.android2) game.Audio.enabled = false;
 
-        // Disable audio on mobile, when offline and not CocoonJS
-        if (!game.device.cocoonJS && !navigator.onLine && game.device.mobile) game.Audio.enabled = false;
-
         // Disable Web Audio if audio disabled
         if (!game.Audio.enabled) game.Audio.webAudio = false;
 
@@ -107,19 +104,14 @@ game.createClass('Audio', {
         this.context.decodeAudioData(
             request.response,
             this._loaded.bind(this, path, callback),
-            errorCallback
+            errorCallback.bind(this, path)
         );
     },
-    
-    _load: function(path, callback, errorCallback) {
-        if (!game.Audio.enabled) {
-            if (typeof callback === 'function') callback();
-            return;
-        }
 
+    _load: function(path, callback, errorCallback) {
         var ext = path.split('.').pop();
         if (this.formats.indexOf(ext) === -1) ext = this.formats[0];
-        
+
         var realPath = path.replace(/[^\.]+$/, ext + game.nocache);
 
         // Web Audio
@@ -185,6 +177,33 @@ game.createClass('Audio', {
         if (typeof audio.callback === 'function') audio.callback();
 
         delete this.audioObjects[id];
+    },
+
+    /**
+        @method _fade
+        @private
+    **/
+    _fade: function(id, time, to) {
+        var audio = this.audioObjects[id];
+        if (!audio) return false;
+
+        time = time || 1000;
+        time = time / 1000;
+
+        // Web Audio
+        if (this.context) {
+            var currTime = this.context.currentTime;
+            if (to === 1) audio.gainNode.gain.value = 0;
+            var from = audio.gainNode.gain.value;
+            audio.gainNode.gain.linearRampToValueAtTime(from, currTime);
+            audio.gainNode.gain.linearRampToValueAtTime(to, currTime + time);
+        }
+        // HTML5 Audio
+        else {
+            return false;
+        }
+
+        return true;
     },
 
     _play: function(name, loop, volume, callback, rate, time, audioId) {
@@ -340,6 +359,28 @@ game.createClass('Audio', {
     },
 
     /**
+        Fade in sound.
+        @method fadeIn
+        @param {Number} id
+        @param {Number} time
+        @return {Boolean}
+    **/
+    fadeIn: function(id, time) {
+        return this._fade(id, time, 1);
+    },
+
+    /**
+        Fade out sound.
+        @method fadeOut
+        @param {Number} id
+        @param {Number} time
+        @return {Boolean}
+    **/
+    fadeOut: function(id, time) {
+        return this._fade(id, time, 0);
+    },
+
+    /**
         Play sound.
         @method playSound
         @param {String} name Name of sound
@@ -414,7 +455,7 @@ game.createClass('Audio', {
         this._resume(id);
         this.playingSounds.push(id);
         this.pausedSounds.splice(index, 1);
-        
+
         return true;
     },
 
@@ -473,14 +514,14 @@ game.createClass('Audio', {
     **/
     playMusic: function(name, loop) {
         var volume = this.musicMuted ? 0 : this.musicVolume;
-        
+
         if (typeof loop === 'undefined') loop = true;
 
         if (this.currentMusic) this._stop(this.currentMusic);
-        
+
         this.currentMusic = this._play(name, !!loop, volume);
         this.currentMusicName = name;
-        
+
         return !!this.currentMusic;
     },
 
