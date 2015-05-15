@@ -748,7 +748,7 @@ game.Core = game;
 game.initializing = false;
 game.fnTest = /xyz/.test(function() {
     var xyz; return xyz;
-}) ? /\b_super\b/ : /[\D|\d]*/;
+}) ? /\bsuper\b/ : /[\D|\d]*/;
 
 /**
     @class Class
@@ -769,10 +769,10 @@ game.Class.extend = function(prop) {
 
     var makeFn = function(name, fn) {
         return function() {
-            var tmp = this._super;
-            this._super = parent[name];
+            var tmp = this.super;
+            this.super = parent[name];
             var ret = fn.apply(this, arguments);
-            this._super = tmp;
+            this.super = tmp;
             return ret;
         };
     };
@@ -834,10 +834,10 @@ game.Class.extend = function(prop) {
 
         var makeFn = function(name, fn) {
             return function() {
-                var tmp = this._super;
-                this._super = parent[name];
+                var tmp = this.super;
+                this.super = parent[name];
                 var ret = fn.apply(this, arguments);
-                this._super = tmp;
+                this.super = tmp;
                 return ret;
             };
         };

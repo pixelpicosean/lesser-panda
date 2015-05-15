@@ -297,14 +297,14 @@ game.addAttributes('DebugDraw', {
 
 game.World.inject({
     addBody: function(body) {
-        this._super(body);
+        this.super(body);
         if (game.debugDraw && body.shape) game.debugDraw.addBody(body);
     }
 });
 
 game.Camera.inject({
     init: function(x, y) {
-        this._super(x, y);
+        this.super(x, y);
 
         if (game.debugDraw && game.Camera.debug) {
             this.debugBox = new game.Graphics();
@@ -316,7 +316,7 @@ game.Camera.inject({
     },
 
     setSensor: function(width, height) {
-        this._super(width, height);
+        this.super(width, height);
 
         if (this.debugBox) {
             this.debugBox.clear();
@@ -326,12 +326,12 @@ game.Camera.inject({
     },
 
     moveCamera: function() {
-        this._super();
+        this.super();
         if (this.debugBox) this.debugBox.alpha = game.Camera.debugAlpha * ((this.speed.x === 0 && this.speed.y === 0) ? 1 : 2);
     },
 
     update: function() {
-        this._super();
+        this.super();
         if (this.debugBox) this.debugBox.position.set(this.sensorPosition.x - this.position.x, this.sensorPosition.y - this.position.y);
     }
 });
