@@ -17,6 +17,54 @@ game.PIXI.RETINA_PREFIX = false;
 game.autoDetectRenderer = game.PIXI.autoDetectRenderer;
 
 /**
+    @class AnimationData
+    @constructor
+    @param {Array} frames
+    @param {Object} [props]
+**/
+game.createClass('AnimationData', {
+    /**
+        Is animation looping.
+        @property {Boolean} loop
+        @default true
+    **/
+    loop: true,
+    /**
+        Function that is called, when animation is completed.
+        @property {Function} onComplete
+    **/
+    onComplete: null,
+    /**
+        Play animation in random order.
+        @property {Boolean} random
+        @default false
+    **/
+    random: false,
+    /**
+        Play animation in reverse.
+        @property {Boolean} reverse
+        @default false
+    **/
+    reverse: false,
+    /**
+        Speed of animation (frames per second).
+        @property {Number} speed
+        @default 10
+    **/
+    speed: 10,
+    /**
+        Animation frame order.
+        @property {Array} frames
+    **/
+    frames: null,
+
+    staticInit: function(frames, props) {
+        this.frames = frames;
+        game.merge(this, props);
+    }
+});
+
+/**
     http://www.goodboydigital.com/pixijs/docs/classes/MovieClip.html
     @class Animation
     @extends game.DisplayObject
@@ -24,73 +72,179 @@ game.autoDetectRenderer = game.PIXI.autoDetectRenderer;
     @param {Array} textures Textures this animation made up of
 **/
 game.Animation = function(textures) {
-    /**
-        Play animation in reverse.
-        @property {Boolean} reverse
-        @default false
-    **/
-    this.reverse = false;
+    this.anims = {};
+    this.currentAnim = 'default';
+    this.currentFrame = 0;
+    this.playing = false;
+    this._frameTime = 0;
 
-    if (typeof textures === 'string') {
-        var frames = Array.prototype.slice.call(arguments);
+    this.textures = textures;
 
-        var textures = [];
-        for (var i = 0; i < frames.length; i++) {
-            textures.push(game.Texture.fromImage(frames[i]));
+    if (typeof this.textures === 'string' && this.textures.indexOf('json') !== -1) {
+        var json = game.getJSON(this.textures);
+        this.textures = [];
+        for (var name in json.frames) {
+            this.textures.push(name);
         }
     }
 
-    game.PIXI.MovieClip.call(this, textures);
+    var newTextures = [];
+    for (var i = 0; i < this.textures.length; i++) {
+        var texture = this.textures[i];
+        if (!(texture instanceof game.Texture)) {
+            texture = game.Texture.fromAsset(texture);
+        }
+
+        newTextures.push(texture);
+    }
+    this.textures = newTextures;
+
+    this.addAnim('default');
+
+    game.PIXI.Sprite.call(this, this.textures[0]);
 };
 
-game.Animation.prototype = Object.create(game.PIXI.MovieClip.prototype);
+game.Animation.prototype = Object.create(game.PIXI.Sprite.prototype);
 game.Animation.prototype.constructor = game.Animation;
+
+/**
+    Add new animation.
+    @method addAnim
+    @param {String} name
+    @param {Array} [frames]
+    @param {Object} [props]
+    @chainable
+**/
+game.Animation.prototype.addAnim = function(name, frames, props) {
+    if (!frames) {
+        var frames = [];
+        for (var i = 0; i < this.textures.length; i++) {
+            frames.push(i);
+        }
+    }
+    var anim = new game.AnimationData(frames, props);
+    this.anims[name] = anim;
+    return this;
+};
 
 /**
     Play animation.
     @method play
-    @param {Boolean} loop
+    @param {String} name Name of animation
+    @param {Number} [frame] Frame index
+    @chainable
 **/
-game.Animation.prototype.play = function(loop) {
-    if (typeof loop === 'boolean') this.loop = loop;
+game.Animation.prototype.play = function(name, frame) {
+    name = name || this.currentAnim;
+    var anim = this.anims[name];
+    if (!anim) return;
     this.playing = true;
-};
-
-game.Animation.prototype.updateTransform = function() {
-    if (this.playing) {
-        this.currentFrame -= this.animationSpeed;
-        this.currentFrame += this.animationSpeed * (this.reverse ? -1 : 1) * 60 * game.system.delta;
-        
-        if (this.currentFrame < 0 && this.reverse) {
-            if (!this.loop) {
-                if (this.onComplete) this.onComplete();
-                this.currentFrame = 0;
-                this.playing = false;
-            }
-            else this.currentFrame = this.totalFrames - 1 + this.currentFrame;
-        }
+    this.currentAnim = name;
+    if (typeof frame !== 'number' && anim.reverse) {
+        frame = anim.frames.length - 1;
     }
-    game.PIXI.MovieClip.prototype.updateTransform.call(this);
+    this.gotoFrame(frame || 0);
+    return this;
 };
 
 /**
+    Stop animation.
+    @method stop
+    @param {Number} [frame] Frame index
+    @chainable
+**/
+game.Animation.prototype.stop = function(frame) {
+    this.playing = false;
+    if (typeof frame === 'number') this.gotoFrame(frame);
+    return this;
+};
+
+/**
+    Jump to specific frame.
+    @method gotoFrame
+    @param {Number} frame
+    @chainable
+**/
+game.Animation.prototype.gotoFrame = function(frame) {
+    var anim = this.anims[this.currentAnim];
+    if (!anim) return;
+    this.currentFrame = frame;
+    this._frameTime = 0;
+    this.setTexture(this.textures[anim.frames[frame]]);
+    return this;
+};
+
+/**
+    @method updateAnimation
+**/
+game.Animation.prototype.updateAnimation = function() {
+    var anim = this.anims[this.currentAnim];
+
+    if (this.playing) this._frameTime += anim.speed * game.system.delta;
+
+    if (this._frameTime >= 1) {
+        this._frameTime = 0;
+
+        if (anim.random && anim.frames.length > 1) {
+            var nextFrame = this.currentFrame;
+            while (nextFrame === this.currentFrame) {
+                var nextFrame = Math.round(Math.random(0, anim.frames.length - 1));
+            }
+
+            this.currentFrame = nextFrame;
+            this.setTexture(this.textures[anim.frames[nextFrame]]);
+            return;
+        }
+
+        var nextFrame = this.currentFrame + (anim.reverse ? -1 : 1);
+
+        if (nextFrame >= anim.frames.length) {
+            if (anim.loop) {
+                this.currentFrame = 0;
+                this.setTexture(this.textures[anim.frames[0]]);
+            }
+            else {
+                this.playing = false;
+                if (anim.onComplete) anim.onComplete();
+            }
+        }
+        else if (nextFrame < 0) {
+            if (anim.loop) {
+                this.currentFrame = anim.frames.length - 1;
+                this.setTexture(this.textures[anim.frames.last()]);
+            }
+            else {
+                this.playing = false;
+                if (anim.onComplete) anim.onComplete();
+            }
+        }
+        else {
+            this.currentFrame = nextFrame;
+            this.setTexture(this.textures[anim.frames[nextFrame]]);
+        }
+    }
+};
+
+game.Animation.prototype.updateTransform = function() {
+    if (this.currentAnim) this.updateAnimation();
+    game.PIXI.Sprite.prototype.updateTransform.call(this);
+};
+
+/**
+    Create animation from frames starting with name.
     @method fromFrames
     @static
     @param {String} name
-    @param {Boolean} reverse
+    @return {Animation}
 **/
-game.Animation.fromFrames = function(name, reverse) {
+game.Animation.fromFrames = function(name) {
     var textures = [];
-
-    for (var key in game.TextureCache) {
-        if (key.indexOf(name) !== -1) {
-            if (reverse) textures.unshift(game.TextureCache[key]);
-            else textures.push(game.TextureCache[key]);
-        }
+    for (var i in game.Texture.cache) {
+        if (i.indexOf(name) === 0) textures.push(game.Texture.cache[i]);
     }
-
-    return new game.Animation(textures);
+    if (textures.length > 0) return new game.Animation(textures);
 };
+
 
 game.AssetLoader = game.PIXI.AssetLoader;
 game.blendModes = game.PIXI.blendModes;
@@ -286,6 +440,16 @@ game.Text = game.PIXI.Text;
     @class Texture
 **/
 game.Texture = game.PIXI.Texture;
+game.Texture.fromAsset = function(id) {
+    var path = game.paths[id] || id;
+    var texture = game.PIXI.TextureCache[path];
+
+    if (!texture) {
+        texture = game.Texture.fromFrame(path);
+    }
+
+    return texture;
+};
 
 /**
     @property {Object} TextureCache
@@ -337,14 +501,40 @@ game.TilingSprite.prototype.update = function() {
 **/
 game.createClass('SpriteSheet', {
     /**
-        @propety {Array} textures
+        List of textures.
+        @property {Array} textures
     **/
     textures: [],
     /**
-        Number of frames
+        Number of frames.
         @property {Number} frames
     **/
     frames: 0,
+    /**
+        Width of frame.
+        @property {Number} width
+    **/
+    width: 0,
+    /**
+        Height of frame.
+        @property {Number} height
+    **/
+    height: 0,
+    /**
+        Asset id of texture to use as spritesheet.
+        @property {String} texture
+    **/
+    texture: null,
+    /**
+        @property {Number} _sx
+        @private
+    **/
+    _sx: 0,
+    /**
+        @property {Number} _sy
+        @private
+    **/
+    _sy: 0,
 
     init: function(id, width, height) {
         this.width = width;
