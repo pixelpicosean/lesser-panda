@@ -25,6 +25,7 @@ var game = {
         'engine.keyboard',
         'engine.loader',
         'engine.particle',
+        'engine.geometry',
         'engine.physics',
         'engine.pixi',
         'engine.pool',

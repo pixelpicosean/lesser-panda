@@ -6,7 +6,8 @@ game.module(
     'engine.renderer'
 )
 .require(
-    'engine.pixi'
+    'engine.pixi',
+    'engine.geometry'
 )
 .body(function() {
 'use strict';
@@ -303,11 +304,8 @@ game.HitCircle = game.PIXI.Circle;
 game.HitEllipse = game.PIXI.Ellipse;
 game.HitPolygon = game.PIXI.Polygon;
 game.HitRectangle = game.PIXI.Rectangle;
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/Point.html
-    @class Point
-**/
-game.Point = game.PIXI.Point;
+
+game.Point = game.PIXI.Point = game.Vector;
 
 /**
     http://www.goodboydigital.com/pixijs/docs/classes/RenderTexture.html
