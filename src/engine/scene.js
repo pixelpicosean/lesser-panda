@@ -78,10 +78,10 @@ game.createClass('Scene', {
 
         game.system.stage.interactive = true;
         game.system.stage.mousemove = game.system.stage.touchmove = this._mousemove.bind(this);
-        game.system.stage.click = game.system.stage.tap = this.click.bind(this);
+        game.system.stage.click = game.system.stage.tap = this._click.bind(this);
         game.system.stage.mousedown = game.system.stage.touchstart = this._mousedown.bind(this);
-        game.system.stage.mouseup = game.system.stage.mouseupoutside = game.system.stage.touchend = game.system.stage.touchendoutside = this.mouseup.bind(this);
-        game.system.stage.mouseout = this.mouseout.bind(this);
+        game.system.stage.mouseup = game.system.stage.mouseupoutside = game.system.stage.touchend = game.system.stage.touchendoutside = this._mouseup.bind(this);
+        game.system.stage.mouseout = this._mouseout.bind(this);
 
         this.stage = new game.Container();
         if (game.system.webGL && game.device.cocoonJS) {
@@ -210,47 +210,59 @@ game.createClass('Scene', {
     /**
         Callback for mouse click and touch tap on the scene stage.
         @method click
-        @param {InteractionData} InteractionData
+        @param {Number} x
+        @param {Number} y
+        @param {MouseEvent|TouchEvent} event
     **/
     click: function() {},
 
     /**
         Callback for mousedown and touchstart on the scene stage.
         @method mousedown
-        @param {InteractionData} InteractionData
+        @param {Number} x
+        @param {Number} y
+        @param {MouseEvent|TouchEvent} event
     **/
     mousedown: function() {},
 
     /**
         Callback for mouseup and touchend on the scene stage.
         @method mouseup
-        @param {InteractionData} InteractionData
+        @param {Number} x
+        @param {Number} y
+        @param {MouseEvent|TouchEvent} event
     **/
     mouseup: function() {},
 
     /**
         Callback for mousemove and touchmove on the scene stage.
         @method mousemove
-        @param {InteractionData} InteractionData
+        @param {Number} x
+        @param {Number} y
+        @param {MouseEvent|TouchEvent} event
     **/
     mousemove: function() {},
 
     /**
         Callback for mouseout on the scene stage.
         @method mouseout
-        @param {InteractionData} InteractionData
+        @param {Number} x
+        @param {Number} y
+        @param {MouseEvent|TouchEvent} event
     **/
     mouseout: function() {},
 
     /**
         Callback for keydown.
         @method keydown
+        @param {String} key
     **/
     keydown: function() {},
 
     /**
         Callback for keyup.
         @method keyup
+        @param {String} key
     **/
     keyup: function() {},
 
@@ -259,8 +271,7 @@ game.createClass('Scene', {
         @method swipe
         @param {String} direction
     **/
-    swipe: function() {
-    },
+    swipe: function() {},
 
     pause: function() {
         if (game.audio) game.audio.systemPause();
@@ -274,8 +285,7 @@ game.createClass('Scene', {
         Called, when scene is changed.
         @method exit
     **/
-    exit: function() {
-    },
+    exit: function() {},
 
     /**
         This is called every frame.
@@ -287,11 +297,19 @@ game.createClass('Scene', {
         event.startTime = Date.now();
         event.swipeX = event.global.x;
         event.swipeY = event.global.y;
-        this.mousedown(event);
+        this.mousedown(event.global.x, event.global.y, event.originalEvent);
+    },
+
+    _mouseup: function(event) {
+        this.mouseup(event.global.x, event.global.y, event.originalEvent);
+    },
+
+    _click: function(event) {
+        this.click(event.global.x, event.global.y, event.originalEvent);
     },
 
     _mousemove: function(event) {
-        this.mousemove(event);
+        this.mousemove(event.global.x, event.global.y, event.originalEvent);
 
         if (!event.startTime) return;
 
@@ -305,6 +323,10 @@ game.createClass('Scene', {
         var time = Date.now() - event.startTime;
         event.startTime = null;
         if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(dir);
+    },
+
+    _mouseout: function(event) {
+        this.mouseout(event.global.x, event.global.y, event.originalEvent);
     },
 
     /**
