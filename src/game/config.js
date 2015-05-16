@@ -7,7 +7,7 @@ pandaConfig = {
         height: 768,
         center: true,
         scale: true,
-        resize: false
+        scaleToFit: true
     },
 
     renderer: {
