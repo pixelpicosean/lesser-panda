@@ -5,12 +5,11 @@ pandaConfig = {
     system: {
         width: 1024,
         height: 768,
+
         center: true,
         scale: true,
-        scaleToFit: true
-    },
+        scaleToFit: true,
 
-    renderer: {
         webGL: false
     },
 
