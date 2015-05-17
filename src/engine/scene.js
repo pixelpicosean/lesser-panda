@@ -398,7 +398,7 @@ game.createClass('Scene', {
     **/
     _updateRenderer: function() {
         if (game.debugDraw) game.debugDraw.update();
-        game.renderer.render(this.stage);
+        game.renderer.render(game.system.stage);
     },
 
     run: function() {
