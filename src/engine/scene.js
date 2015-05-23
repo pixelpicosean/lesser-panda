@@ -23,17 +23,17 @@ game.createClass('Scene', {
         List of objects in scene.
         @property {Array} objects
     **/
-    objects: [],
+    objects: null,
     /**
         List of timers in scene.
         @property {Array} timers
     **/
-    timers: [],
+    timers: null,
     /**
         List of particle emitters in scene.
         @property {Array} emitters
     **/
-    emitters: [],
+    emitters: null,
     /**
         Main container for scene.
         @property {game.Container} stage
@@ -55,9 +55,13 @@ game.createClass('Scene', {
         @property {Array} _updateOrder
         @private
     **/
-    _updateOrder: [],
+    _updateOrder: null,
 
     staticInit: function() {
+        this.objects = [];
+        this.timers = [];
+        this.emitters = [];
+
         if (game.audio && game.Audio.stopOnSceneChange && game.scene) {
             game.audio.stopMusic();
             game.audio.stopSound(false, true);
@@ -67,6 +71,7 @@ game.createClass('Scene', {
 
         game.scene = this;
 
+        this._updateOrder = [];
         for (var i = 0; i < game.Scene.updateOrder.length; i++) {
             this._updateOrder.push(game.Scene.updateOrder[i].ucfirst());
         }
@@ -330,17 +335,6 @@ game.createClass('Scene', {
     },
 
     /**
-        @method _update
-        @private
-    **/
-    _update: function() {
-        this.update();
-        for (var i = 0; i < this._updateOrder.length; i++) {
-            this['_update' + this._updateOrder[i]]();
-        }
-    },
-
-    /**
         @method _updateTweens
         @private
     **/
@@ -402,7 +396,10 @@ game.createClass('Scene', {
     },
 
     run: function() {
-        this._update();
+        this.update();
+        for (var i = 0; i < this._updateOrder.length; i++) {
+            this['_update' + this._updateOrder[i]]();
+        }
     }
 });
 
