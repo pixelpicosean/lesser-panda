@@ -63,7 +63,7 @@ game.createClass('Vector', {
     **/
     add: function(x, y) {
         this.x += x instanceof game.Vector ? x.x : x;
-        this.y += x instanceof game.Vector ? x.y : (y || ((y !== 0) ? this.x : 0));
+        this.y += x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
         return this;
     },
 
@@ -76,7 +76,7 @@ game.createClass('Vector', {
     **/
     subtract: function(x, y) {
         this.x -= x instanceof game.Vector ? x.x : x;
-        this.y -= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? this.x : 0));
+        this.y -= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
         return this;
     },
 
@@ -89,7 +89,7 @@ game.createClass('Vector', {
     **/
     multiply: function(x, y) {
         this.x *= x instanceof game.Vector ? x.x : x;
-        this.y *= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? this.x : 0));
+        this.y *= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
         return this;
     },
 
@@ -115,7 +115,7 @@ game.createClass('Vector', {
     **/
     divide: function(x, y) {
         this.x /= x instanceof game.Vector ? x.x : x;
-        this.y /= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? this.x : 0));
+        this.y /= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
         return this;
     },
 
