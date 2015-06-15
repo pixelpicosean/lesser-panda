@@ -1,6 +1,6 @@
 ![Panda.js Logo](http://www.pandajs.net/img/panda_178x120.png)
 
-## Panda.js HTML5 game engine
+## Panda.js HTML5 game engine (v1 stable)
 
 Free HTML5 game engine for mobile and desktop with Canvas and WebGL rendering.
 
