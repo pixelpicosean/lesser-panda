@@ -279,11 +279,11 @@ game.createClass('Scene', {
     swipe: function() {},
 
     pause: function() {
-        if (game.audio) game.audio.systemPause();
+        if (game.audio) game.audio._systemPause();
     },
 
     resume: function() {
-        if (game.audio) game.audio.systemResume();
+        if (game.audio) game.audio._systemResume();
     },
 
     /**

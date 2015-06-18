@@ -117,8 +117,9 @@ game.Animation.prototype.constructor = game.Animation;
     @chainable
 **/
 game.Animation.prototype.addAnim = function(name, frames, props) {
+    if (!name) return;
     if (!frames) {
-        var frames = [];
+        frames = [];
         for (var i = 0; i < this.textures.length; i++) {
             frames.push(i);
         }
