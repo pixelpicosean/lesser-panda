@@ -1,6 +1,5 @@
 /**
     @module storage
-    @namespace game
 **/
 game.module(
     'engine.storage'
@@ -11,24 +10,23 @@ game.module(
 /**
     Local storage.
     @class Storage
-    @extends game.Class
+    @constructor
+    @param {String} id
 **/
 game.createClass('Storage', {
+    /**
+        @property {String} id
+    **/
+    id: null,
+    /**
+        Is local storage supported.
+        @property {Boolean} supported
+    **/
+    supported: null,
+
     init: function(id) {
         this.id = id || game.Storage.id;
-        this.supported = this.isSupported();
-    },
-
-    isSupported: function() {
-        if (typeof localStorage !== 'object') return false;
-        try {
-            localStorage.setItem('localStorage', 1);
-            localStorage.removeItem('localStorage');
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
+        this.supported = this._isSupported();
     },
 
     /**
@@ -39,7 +37,7 @@ game.createClass('Storage', {
     **/
     set: function(key, value) {
         if (!this.supported) return false;
-        localStorage.setItem(this.id + '.' + key, this.encode(value));
+        localStorage.setItem(this.id + '.' + key, this._encode(value));
     },
 
     /**
@@ -53,7 +51,7 @@ game.createClass('Storage', {
         var raw = localStorage.getItem(this.id + '.' + key);
         if (raw === null) return defaultValue;
         try {
-            return this.decode(raw);
+            return this._decode(raw);
         }
         catch (e) {
             return raw;
@@ -90,12 +88,36 @@ game.createClass('Storage', {
         }
     },
 
-    encode: function(val) {
+    /**
+        @method _encode
+        @private
+    **/
+    _encode: function(val) {
         return JSON.stringify(val);
     },
 
-    decode: function(str) {
+    /**
+        @method _decode
+        @private
+    **/
+    _decode: function(str) {
         return JSON.parse(str);
+    },
+
+    /**
+        @method _isSupported
+        @private
+    **/
+    _isSupported: function() {
+        if (typeof localStorage !== 'object') return false;
+        try {
+            localStorage.setItem('localStorage', 1);
+            localStorage.removeItem('localStorage');
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
     }
 });
 
