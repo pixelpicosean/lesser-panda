@@ -11,6 +11,19 @@ http://www.pandajs.net
 Since this is not official repo, you'd better **clone** or **download** this repo
 instead of using `pandatool`.
 
+### ChangeLog
+
+#### v1.13.4
+
+- Scene classes are no longer prefixed with "Scene" (breaking change, same as v2)
+- Improved core module (based on develop branch, much cleaner and with documents)
+- Private functions in `game` namespace now begin with `_`
+- `fullscreen` and `fullscreenSupport` functions moved to `system` module
+
+#### v1.13.3
+
+- Fix audio module
+
 ### Support
 
 Join the discussion at official [Panda.js forum](http://www.html5gamedevs.com/forum/19-pandajs/).
@@ -18,7 +31,3 @@ Join the discussion at official [Panda.js forum](http://www.html5gamedevs.com/fo
 ### License
 
 Panda.js is released under the [MIT License](http://opensource.org/licenses/MIT).
-
-Financed by [Yle](http://en.wikipedia.org/wiki/Yle).
-
-[![Analytics](https://ga-beacon.appspot.com/UA-42024756-3/panda.js/index?pixel)](https://github.com/igrigorik/ga-beacon)

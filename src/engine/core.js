@@ -104,7 +104,7 @@ var game = {
         Engine version.
         @property {String} version
     **/
-    version: '1.13.3',
+    version: '1.13.4',
     /**
         Width of game.
         @property {Number} width

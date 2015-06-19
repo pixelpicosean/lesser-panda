@@ -1,20 +1,16 @@
-pandaConfig = {
-    name: 'panda.js-engine',
-    version: '1.13.2',
-
+game.config = {
     system: {
         width: 1024,
         height: 768,
 
+        /* Scale and center to fit window on desktop */
         center: true,
         scale: true,
         scaleToFit: true,
 
-        webGL: false
-    },
+        /* Resize on mobile */
+        resizeToFill: true,
 
-    debug: {
-        enabled: false,
-        color: 'pink'
+        webGL: false
     }
 };
