@@ -1,6 +1,5 @@
 /**
     @module loader
-    @namespace game
 **/
 game.module(
     'engine.loader'
@@ -11,9 +10,8 @@ game.module(
 /**
     Dynamic loader for assets and audio files.
     @class Loader
-    @extends game.Class
     @constructor
-    @param {Function|String} callback
+    @param {Function|String} callback Callback function or scene name
 **/
 game.createClass('Loader', {
     /**
@@ -44,7 +42,7 @@ game.createClass('Loader', {
     started: false,
     dynamic: true,
     callback: null,
-    
+
     init: function(callback) {
         this.onComplete(callback);
         this.stage = game.system.stage;
@@ -118,12 +116,12 @@ game.createClass('Loader', {
             }
             this.stage.interactive = false;
             if (game.tweenEngine) game.tweenEngine.removeAll();
-        
+
             this.stage.setBackgroundColor(game.Loader.bgColor);
 
             this.initStage();
 
-            if (!game.scene) this.loopId = game.setGameLoop(this.run.bind(this), game.system.canvas);
+            if (!game.scene) this.loopId = game._setGameLoop(this.run.bind(this), game.system.canvas);
             else game.scene = this;
         }
 
@@ -178,7 +176,7 @@ game.createClass('Loader', {
     setScene: function() {
         game.system.timer.last = 0;
         game.Timer.time = Number.MIN_VALUE;
-        if (this.loopId) game.clearGameLoop(this.loopId);
+        if (this.loopId) game._clearGameLoop(this.loopId);
         if (game.System.startScene) {
             var startScene = game.System.startScene;
             game.System.startScene = null;
@@ -231,29 +229,23 @@ game.createClass('Loader', {
 
 game.addAttributes('Loader', {
     /**
-        Loader background color.
-        @attribute {Number} bgColor
-        @default 0x000000
-    **/
-    bgColor: 0x000000,
-    /**
-        Minimum time to show loader (ms).
+        Minimum time to show loader (ms). Not used in dynamic mode.
         @attribute {Number} time
         @default 200
     **/
     time: 200,
     /**
-        Loading bar background color.
-        @attribute {Number} barBg
-        @default 0x231f20
-    **/
-    barBgColor: 0x515e73,
-    /**
         Loading bar color.
-        @attribute {Number} barColor
-        @default 0xe6e7e8
+        @attribute {String} barColor
+        @default #e6e7e8
     **/
-    barColor: 0xb9bec7,
+    barColor: '#e6e7e8',
+    /**
+        Loading bar background color.
+        @attribute {String} barBg
+        @default #515e73
+    **/
+    barBgColor: '#515e73',
     /**
         Width of the loading bar.
         @attribute {Number} barWidth
@@ -271,7 +263,13 @@ game.addAttributes('Loader', {
         @attribute {Boolean} crossorigin
         @default true
     **/
-    crossorigin: true
+    crossorigin: true,
+    /**
+        Default loader class name.
+        @attribute {String} className
+        @default Loader
+    **/
+    className: 'Loader'
 });
 
 });
