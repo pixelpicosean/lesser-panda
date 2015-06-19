@@ -10,49 +10,70 @@ game.module(
 
 /**
     @class Keyboard
-    @extends game.Class
 **/
 game.createClass('Keyboard', {
-    keysDown: [],
+    /**
+        @property {Array} _keysDown
+        @private
+    **/
+    _keysDown: [],
 
     init: function() {
-        window.addEventListener('keydown', this.keydown.bind(this));
-        window.addEventListener('keyup', this.keyup.bind(this));
-        window.addEventListener('blur', this.resetKeys.bind(this));
-    },
-
-    resetKeys: function() {
-        for (var key in this.keysDown) {
-            this.keysDown[key] = false;
-        }
-    },
-
-    keydown: function(event) {
-        if (!game.scene) return;
-        if (!game.Keyboard.keys[event.keyCode]) {
-            // Unknown key
-            game.Keyboard.keys[event.keyCode] = event.keyCode;
-        }
-        if (this.keysDown[game.Keyboard.keys[event.keyCode]]) return; // Key already down
-
-        this.keysDown[game.Keyboard.keys[event.keyCode]] = true;
-        var prevent = game.scene.keydown(game.Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
-        if (prevent) event.preventDefault();
-    },
-
-    keyup: function(event) {
-        if (!game.scene) return;
-        this.keysDown[game.Keyboard.keys[event.keyCode]] = false;
-        game.scene.keyup(game.Keyboard.keys[event.keyCode]);
+        window.addEventListener('keydown', this._keydown.bind(this));
+        window.addEventListener('keyup', this._keyup.bind(this));
+        window.addEventListener('blur', this._resetKeys.bind(this));
     },
 
     /**
         Check if key is pressed down.
         @method down
+        @param {String} key
         @return {Boolean}
     **/
     down: function(key) {
-        return !!this.keysDown[key];
+        return !!this._keysDown[key];
+    },
+
+    /**
+        @method _keydown
+        @param {KeyboardEvent} event
+        @private
+    **/
+    _keydown: function(event) {
+        if (!game.Keyboard.keys[event.keyCode]) {
+            // Unknown key
+            game.Keyboard.keys[event.keyCode] = event.keyCode;
+        }
+
+        if (this._keysDown[game.Keyboard.keys[event.keyCode]]) return;
+
+        this._keysDown[game.Keyboard.keys[event.keyCode]] = true;
+        if (game.scene && game.scene.keydown) {
+            var prevent = game.scene.keydown(game.Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
+            if (prevent) event.preventDefault();
+        }
+    },
+
+    /**
+        @method _keyup
+        @param {KeyboardEvent} event
+        @private
+    **/
+    _keyup: function(event) {
+        this._keysDown[game.Keyboard.keys[event.keyCode]] = false;
+        if (game.scene && game.scene.keyup) {
+            game.scene.keyup(game.Keyboard.keys[event.keyCode]);
+        }
+    },
+
+    /**
+        @method _resetKeys
+        @private
+    **/
+    _resetKeys: function() {
+        for (var key in this._keysDown) {
+            this._keysDown[key] = false;
+        }
     }
 });
 
@@ -153,7 +174,5 @@ game.addAttributes('Keyboard', {
         222: 'SINGLE_QUOTE'
     }
 });
-
-game.keyboard = new game.Keyboard();
 
 });
