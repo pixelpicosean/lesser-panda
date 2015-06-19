@@ -18,25 +18,20 @@ game.createClass('Scene', {
         Background color of scene.
         @property {Number} backgroundColor
     **/
-    backgroundColor: 0x000000,
+    backgroundColor: null,
+    /**
+        List of emitters in scene.
+        @property {Array} emitters
+    **/
+    emitters: [],
     /**
         List of objects in scene.
         @property {Array} objects
     **/
-    objects: null,
-    /**
-        List of timers in scene.
-        @property {Array} timers
-    **/
-    timers: null,
-    /**
-        List of particle emitters in scene.
-        @property {Array} emitters
-    **/
-    emitters: null,
+    objects: [],
     /**
         Main container for scene.
-        @property {game.Container} stage
+        @property {Container} stage
     **/
     stage: null,
     /**
@@ -52,15 +47,31 @@ game.createClass('Scene', {
     **/
     swipeTime: 500,
     /**
+        List of timers in scene.
+        @property {Array} timers
+    **/
+    timers: [],
+    /**
+        List of tweens in scene.
+        @property {Array} tweens
+    **/
+    tweens: [],
+    /**
         @property {Array} _updateOrder
         @private
     **/
     _updateOrder: null,
 
     staticInit: function() {
+        this.emitters = [];
         this.objects = [];
         this.timers = [];
-        this.emitters = [];
+        this.tweens = [];
+
+        this.backgroundColor = this.backgroundColor || game.Scene.backgroundColor;
+        if (!this.backgroundColor && game.device.cocoonCanvasPlus) {
+            this.backgroundColor = 0x000000;
+        }
 
         if (game.audio && game.Audio.stopOnSceneChange && game.scene) {
             game.audio.stopMusic();
@@ -109,12 +120,13 @@ game.createClass('Scene', {
     },
 
     /**
-        Clear stage.
-        @method clear
+        Add particle emitter to scene.
+        @method addEmitter
+        @param {Emitter} emitter
     **/
-    clear: function() {
-        for (var i = this.stage.children.length - 1; i >= 0; i--) {
-            this.stage.removeChild(this.stage.children[i]);
+    addEmitter: function(emitter) {
+        if (this.emitters.indexOf(emitter) === -1) {
+            this.emitters.push(emitter);
         }
     },
 
@@ -124,35 +136,10 @@ game.createClass('Scene', {
         @param {Object} object
     **/
     addObject: function(object) {
-        if (object._remove) object._remove = false;
-        this.objects.push(object);
-    },
-
-    /**
-        Remove object from scene.
-        @method removeObject
-        @param {Object} object
-    **/
-    removeObject: function(object) {
-        object._remove = true;
-    },
-
-    /**
-        Add particle emitter to scene.
-        @method addEmitter
-        @param {game.Emitter} emitter
-    **/
-    addEmitter: function(emitter) {
-        this.emitters.push(emitter);
-    },
-
-    /**
-        Remove emitter from scene.
-        @method removeEmitter
-        @param {game.Emitter} emitter
-    **/
-    removeEmitter: function(emitter) {
-        emitter.remove();
+        if (this.objects.indexOf(object) === -1) {
+            object._remove = false;
+            this.objects.push(object);
+        }
     },
 
     /**
@@ -161,7 +148,7 @@ game.createClass('Scene', {
         @param {Number} time Time in milliseconds
         @param {Function} callback Callback function to run, when timer ends.
         @param {Boolean} repeat
-        @return {game.Timer}
+        @return {Timer}
     **/
     addTimer: function(time, callback, repeat) {
         var timer = new game.Timer(time);
@@ -169,30 +156,6 @@ game.createClass('Scene', {
         timer.callback = callback;
         this.timers.push(timer);
         return timer;
-    },
-
-    /**
-        Remove timer from scene.
-        @method removeTimer
-        @param {game.Timer} timer
-        @param {Boolean} doCallback
-    **/
-    removeTimer: function(timer, doCallback) {
-        if (!timer) return;
-        if (!doCallback) timer.callback = null;
-        timer.repeat = false;
-        timer.set(0);
-    },
-
-    /**
-        Remove all timers from scene.
-        @method removeTimers
-        @param {Boolean} [doCallback]
-    **/
-    removeTimers: function(doCallback) {
-        for (var i = this.timers.length - 1; i >= 0; i--) {
-            this.removeTimer(this.timers[i], doCallback);
-        }
     },
 
     /**
@@ -211,6 +174,26 @@ game.createClass('Scene', {
         }
         return tween;
     },
+
+    /**
+        Called, when scene is changed.
+        @method exit
+    **/
+    exit: function() {},
+
+    /**
+        Callback for keydown.
+        @method keydown
+        @param {String} key
+    **/
+    keydown: function() {},
+
+    /**
+        Callback for keyup.
+        @method keyup
+        @param {String} key
+    **/
+    keyup: function() {},
 
     /**
         Callback for mouse click and touch tap on the scene stage.
@@ -258,18 +241,56 @@ game.createClass('Scene', {
     mouseout: function() {},
 
     /**
-        Callback for keydown.
-        @method keydown
-        @param {String} key
+        Remove emitter from scene.
+        @method removeEmitter
+        @param {game.Emitter} emitter
     **/
-    keydown: function() {},
+    removeEmitter: function(emitter) {
+        emitter && emitter.remove();
+    },
 
     /**
-        Callback for keyup.
-        @method keyup
-        @param {String} key
+        Remove object from scene.
+        @method removeObject
+        @param {Object} object
     **/
-    keyup: function() {},
+    removeObject: function(object) {
+        object._remove = true;
+    },
+
+    /**
+        Remove timer from scene.
+        @method removeTimer
+        @param {Timer} timer
+        @param {Boolean} doCallback
+    **/
+    removeTimer: function(timer, doCallback) {
+        if (!timer) return;
+        if (!doCallback) timer.callback = null;
+        timer.repeat = false;
+        timer.set(0);
+    },
+
+    /**
+        Remove all timers from scene.
+        @method removeTimers
+        @param {Boolean} [doCallback]
+    **/
+    removeTimers: function(doCallback) {
+        for (var i = this.timers.length - 1; i >= 0; i--) {
+            this.removeTimer(this.timers[i], doCallback);
+        }
+    },
+
+    /**
+        Remove all tweens from scene.
+        @method removeTweens
+    **/
+    removeTweens: function() {
+        for (var i = 0; i < this.tweens.length; i++) {
+            this.tweens[i]._shouldRemove = true;
+        }
+    },
 
     /**
         Callback for swipe.
@@ -278,6 +299,16 @@ game.createClass('Scene', {
     **/
     swipe: function() {},
 
+    /**
+        Clear stage.
+        @method clear
+    **/
+    clear: function() {
+        for (var i = this.stage.children.length - 1; i >= 0; i--) {
+            this.stage.removeChild(this.stage.children[i]);
+        }
+    },
+
     pause: function() {
         if (game.audio) game.audio._systemPause();
     },
@@ -285,12 +316,6 @@ game.createClass('Scene', {
     resume: function() {
         if (game.audio) game.audio._systemResume();
     },
-
-    /**
-        Called, when scene is changed.
-        @method exit
-    **/
-    exit: function() {},
 
     /**
         This is called every frame.
@@ -324,22 +349,43 @@ game.createClass('Scene', {
         else if (event.global.y - event.swipeY <= -this.swipeDist) this._swipe(event, 'up');
     },
 
+    _mouseout: function(event) {
+        this.mouseout(event.global.x, event.global.y, event.originalEvent);
+    },
+
     _swipe: function(event, dir) {
         var time = Date.now() - event.startTime;
         event.startTime = null;
         if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(dir);
     },
 
-    _mouseout: function(event) {
-        this.mouseout(event.global.x, event.global.y, event.originalEvent);
+    run: function() {
+        this.update();
+        for (var i = 0; i < this._updateOrder.length; i++) {
+            this['_update' + this._updateOrder[i]]();
+        }
     },
 
     /**
-        @method _updateTweens
+        @method _updateEmitters
         @private
     **/
-    _updateTweens: function() {
-        if (game.tweenEngine) game.tweenEngine.update();
+    _updateEmitters: function() {
+        for (var i = this.emitters.length - 1; i >= 0; i--) {
+            this.emitters[i]._update();
+            if (this.emitters[i]._remove) this.emitters.splice(i, 1);
+        }
+    },
+
+    /**
+        @method _updateObjects
+        @private
+    **/
+    _updateObjects: function() {
+        for (var i = this.objects.length - 1; i >= 0; i--) {
+            if (typeof this.objects[i].update === 'function' && !this.objects[i]._remove) this.objects[i].update();
+            if (this.objects[i]._remove) this.objects.splice(i, 1);
+        }
     },
 
     /**
@@ -347,7 +393,16 @@ game.createClass('Scene', {
         @private
     **/
     _updatePhysics: function() {
-        if (this.world) this.world.update();
+        if (this.world) this.world._update();
+    },
+
+    /**
+        @method _updateRenderer
+        @private
+    **/
+    _updateRenderer: function() {
+        if (game.debugDraw) game.debugDraw.update();
+        game.renderer.render(game.system.stage);
     },
 
     /**
@@ -365,40 +420,12 @@ game.createClass('Scene', {
     },
 
     /**
-        @method _updateEmitters
+        @method _updateTweens
         @private
     **/
-    _updateEmitters: function() {
-        for (var i = this.emitters.length - 1; i >= 0; i--) {
-            this.emitters[i].update();
-            if (this.emitters[i]._remove) this.emitters.splice(i, 1);
-        }
-    },
-
-    /**
-        @method _updateObjects
-        @private
-    **/
-    _updateObjects: function() {
-        for (var i = this.objects.length - 1; i >= 0; i--) {
-            if (typeof this.objects[i].update === 'function' && !this.objects[i]._remove) this.objects[i].update();
-            if (this.objects[i]._remove) this.objects.splice(i, 1);
-        }
-    },
-
-    /**
-        @method _updateRenderer
-        @private
-    **/
-    _updateRenderer: function() {
-        if (game.debugDraw) game.debugDraw.update();
-        game.renderer.render(game.system.stage);
-    },
-
-    run: function() {
-        this.update();
-        for (var i = 0; i < this._updateOrder.length; i++) {
-            this['_update' + this._updateOrder[i]]();
+    _updateTweens: function() {
+        for (var i = this.tweens.length - 1; i >= 0; i--) {
+            if (!this.tweens[i]._update()) this.tweens.splice(i, 1);
         }
     }
 });
@@ -407,7 +434,7 @@ game.addAttributes('Scene', {
     /**
         Update order for scene.
         @attribute {Array} updateOrder
-        @default tweens,physics,timers,emitters,objects
+        @default tweens,physics,timers,emitters,objects,renderer
     **/
     updateOrder: [
         'tweens',
@@ -416,7 +443,13 @@ game.addAttributes('Scene', {
         'emitters',
         'objects',
         'renderer'
-    ]
+    ],
+    /**
+        Default background color.
+        @attribute {Number} backgroundColor
+        @default null
+    **/
+    backgroundColor: null
 });
 
 });
