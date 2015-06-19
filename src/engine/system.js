@@ -121,9 +121,9 @@ game.createClass('System', {
 
         this.initRenderer(width, height);
 
-        game.normalizeVendorAttribute(this.canvas, 'requestFullscreen');
-        game.normalizeVendorAttribute(this.canvas, 'requestFullScreen');
-        game.normalizeVendorAttribute(navigator, 'vibrate');
+        game._normalizeVendorAttribute(this.canvas, 'requestFullscreen');
+        game._normalizeVendorAttribute(this.canvas, 'requestFullScreen');
+        game._normalizeVendorAttribute(navigator, 'vibrate');
 
         document.body.style.margin = 0;
 
@@ -135,10 +135,6 @@ game.createClass('System', {
             this.canvas.style.width = width + 'px';
             this.canvas.style.height = height + 'px';
         }
-
-        window.addEventListener('devicemotion', function(event) {
-            game.accelerometer = game.accel = event.accelerationIncludingGravity;
-        }, false);
 
         game.renderer = this.renderer;
 
@@ -159,7 +155,7 @@ game.createClass('System', {
 
             document.addEventListener(visibilityChange, function() {
                 if (game.System.pauseOnHide) {
-                    var hidden = !!game.getVendorAttribute(document, 'hidden');
+                    var hidden = !!game._getVendorAttribute(document, 'hidden');
                     if (hidden) game.system.pause(true);
                     else game.system.resume(true);
                 }
@@ -192,7 +188,7 @@ game.createClass('System', {
             canvas.id = this.canvasId;
             document.body.appendChild(canvas);
         }
-        
+
         game.PIXI.scaleModes.DEFAULT = game.PIXI.scaleModes[game.System.scaleMode.toUpperCase()] || 0;
 
         if (game.System.webGL && game.device.cocoonJS) {
@@ -241,6 +237,24 @@ game.createClass('System', {
     },
 
     /**
+        Request fullscreen mode.
+        @method fullscreen
+    **/
+    fullscreen: function() {
+        if (this.canvas.requestFullscreen) this.canvas.requestFullscreen();
+        else if (this.canvas.requestFullScreen) this.canvas.requestFullScreen();
+    },
+
+    /**
+        Test fullscreen support.
+        @method fullscreenSupport
+        @return {Boolean} Return true, if browser supports fullscreen mode.
+    **/
+    fullscreenSupport: function() {
+        return !!(this.canvas.requestFullscreen || this.canvas.requestFullScreen);
+    },
+
+    /**
         Vibrate device.
         @method vibrate
         @param {Number} time Time to vibrate.
@@ -284,7 +298,7 @@ game.createClass('System', {
     **/
     setScene: function(sceneClass, removeAssets) {
         this.currentSceneName = sceneClass;
-        sceneClass = game['Scene' + sceneClass];
+        sceneClass = game[sceneClass];
         if (this.running && !this.paused) {
             this.newSceneClass = sceneClass;
             this.removeAssets = removeAssets;
@@ -295,7 +309,6 @@ game.createClass('System', {
     setSceneNow: function(sceneClass, removeAssets) {
         if (this.paused) this.paused = false;
         if (game.scene) game.scene.exit();
-        if (game.tweenEngine) game.tweenEngine.tweens.length = 0;
         if (removeAssets) game.removeAssets();
         game.scene = new (sceneClass)();
         if (game.Debug && game.Debug.enabled && !game.device.cocoonJS && !this.debug) this.debug = new game.Debug();
@@ -305,12 +318,12 @@ game.createClass('System', {
 
     startRunLoop: function() {
         if (this.gameLoopId) this.stopRunLoop();
-        this.gameLoopId = game.setGameLoop(this.run.bind(this), this.canvas);
+        this.gameLoopId = game._setGameLoop(this.run.bind(this), this.canvas);
         this.running = true;
     },
 
     stopRunLoop: function() {
-        game.clearGameLoop(this.gameLoopId);
+        game._clearGameLoop(this.gameLoopId);
         this.running = false;
     },
 
@@ -432,7 +445,7 @@ game.createClass('System', {
             // Android 2.3 portrait fix
             this.orientation = 'portrait';
         }
-        
+
         if (this.width > this.height && this.orientation !== 'landscape') this.rotateScreenVisible = true;
         else if (this.width < this.height && this.orientation !== 'portrait') this.rotateScreenVisible = true;
         else this.rotateScreenVisible = false;

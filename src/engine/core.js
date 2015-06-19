@@ -609,25 +609,6 @@ var game = {
         return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
     },
 
-
-    /**
-        Request fullscreen mode.
-        @method fullscreen
-    **/
-    fullscreen: function() {
-        if (this.system.canvas.requestFullscreen) this.system.canvas.requestFullscreen();
-        else if (this.system.canvas.requestFullScreen) this.system.canvas.requestFullScreen();
-    },
-
-    /**
-        Test fullscreen support.
-        @method fullscreenSupport
-        @return {Boolean} Return true, if browser supports fullscreen mode.
-    **/
-    fullscreenSupport: function() {
-        return !!(this.system.canvas.requestFullscreen || this.system.canvas.requestFullScreen);
-    },
-
     /**
         Remove asset from memory.
         @method removeAsset
