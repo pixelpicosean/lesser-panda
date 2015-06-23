@@ -13,6 +13,10 @@ instead of using `pandatool`.
 
 ### ChangeLog
 
+#### v1.13.5
+
+- Change `World.update` to `World._update` to fix physics update issue
+
 #### v1.13.4
 
 - Scene classes are no longer prefixed with "Scene" (breaking change, same as v2)

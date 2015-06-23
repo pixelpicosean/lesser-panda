@@ -130,7 +130,7 @@ game.createClass('World', {
         Update physics world.
         @method update
     **/
-    update: function() {
+    _update: function() {
         var i, j;
         for (i = this.bodies.length - 1; i >= 0; i--) {
             if (this.bodies[i]._remove) {
