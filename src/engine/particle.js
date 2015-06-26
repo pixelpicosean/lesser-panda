@@ -380,7 +380,7 @@ game.createClass('Emitter', {
 
         particle.velocity.x += particle.accel.x * game.system.delta;
         particle.velocity.y += particle.accel.y * game.system.delta;
-        
+
         if (this.velocityLimit.x > 0 || this.velocityLimit.y > 0) {
             particle.velocity.x = particle.velocity.x.limit(-this.velocityLimit.x, this.velocityLimit.x);
             particle.velocity.y = particle.velocity.y.limit(-this.velocityLimit.y, this.velocityLimit.y);
@@ -389,13 +389,13 @@ game.createClass('Emitter', {
         if (particle.velRotate) {
             var c = Math.cos(particle.velRotate * game.system.delta);
             var s = Math.sin(particle.velRotate * game.system.delta);
-            
+
             var x = particle.velocity.x * c - particle.velocity.y * s;
             var y = particle.velocity.y * c + particle.velocity.x * s;
-            
+
             particle.velocity.set(x, y);
         }
-        
+
         particle.position.x += particle.velocity.x * game.scale * game.system.delta;
         particle.position.y += particle.velocity.y * game.scale * game.system.delta;
 
@@ -430,9 +430,9 @@ game.createClass('Emitter', {
 
     /**
         Update particles.
-        @method update
+        @method _update
     **/
-    update: function() {
+    _update: function() {
         if (this._remove) {
             for (var i = this.particles.length - 1; i >= 0; i--) {
                 this.removeParticle(this.particles[i]);
