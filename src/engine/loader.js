@@ -239,13 +239,13 @@ game.addAttributes('Loader', {
         @attribute {String} barColor
         @default #e6e7e8
     **/
-    barColor: '#e6e7e8',
+    barColor: 0xe6e7e8,
     /**
         Loading bar background color.
         @attribute {String} barBg
         @default #515e73
     **/
-    barBgColor: '#515e73',
+    barBgColor: 0x515e73,
     /**
         Width of the loading bar.
         @attribute {Number} barWidth
