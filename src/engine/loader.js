@@ -75,19 +75,19 @@ game.createClass('Loader', {
         @method initStage
     **/
     initStage: function() {
-        var barWidth = game.Loader.barWidth * game.scale;
-        var barHeight = game.Loader.barHeight * game.scale;
+        var barWidth = game.Loader.barWidth;
+        var barHeight = game.Loader.barHeight;
 
         this.barBg = new game.Graphics();
         this.barBg.beginFill(game.Loader.barBgColor);
         this.barBg.drawRect(0, 0, barWidth, barHeight);
-        this.barBg.position.set(Math.round(game.renderer.width / 2 - (barWidth / 2)), Math.round(game.renderer.height / 2 - (barHeight / 2)));
+        this.barBg.position.set(Math.round(game.system.width / 2 - (barWidth / 2)), Math.round(game.system.height / 2 - (barHeight / 2)));
         this.stage.addChild(this.barBg);
 
         this.barFg = new game.Graphics();
         this.barFg.beginFill(game.Loader.barColor);
         this.barFg.drawRect(0, 0, barWidth, barHeight);
-        this.barFg.position.set(Math.round(game.renderer.width / 2 - (barWidth / 2)), Math.round(game.renderer.height / 2 - (barHeight / 2)));
+        this.barFg.position.set(Math.round(game.system.width / 2 - (barWidth / 2)), Math.round(game.system.height / 2 - (barHeight / 2)));
         this.barFg.scale.x = this.percent / 100;
         this.stage.addChild(this.barFg);
     },
