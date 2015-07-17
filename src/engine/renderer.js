@@ -11,8 +11,33 @@ game.module(
 )
 .body(function() { 'use strict';
 
+// Disable pixi log
 PIXI.utils._saidHello = true;
+
+// Replace Point with better alternative "Vector"
+game.PIXI.Point = game.Point = game.Vector;
+
+game.blendModes = game.PIXI.BLEND_MODES;
+
 game.autoDetectRenderer = game.PIXI.autoDetectRenderer;
+game.CanvasRenderer = game.PIXI.CanvasRenderer;
+
+game.TextureCache = game.PIXI.utils.TextureCache;
+game.BaseTexture = game.PIXI.BaseTexture;
+game.Texture = game.PIXI.Texture;
+game.RenderTexture = game.PIXI.RenderTexture;
+
+game.DisplayObject = game.PIXI.DisplayObject;
+game.Graphics = game.PIXI.Graphics;
+game.Container = game.PIXI.Container;
+game.ParticleContainer = game.PIXI.ParticleContainer;
+game.Text = game.PIXI.Text;
+game.BitmapText = game.PIXI.extras.BitmapText;
+
+game.HitCircle = game.PIXI.Circle;
+game.HitEllipse = game.PIXI.Ellipse;
+game.HitPolygon = game.PIXI.Polygon;
+game.HitRectangle = game.PIXI.Rectangle;
 
 /**
     @class AnimationData
@@ -244,17 +269,6 @@ game.Animation.fromFrames = function(name) {
     if (textures.length > 0) return new game.Animation(textures);
 };
 
-
-game.AssetLoader = game.PIXI.AssetLoader;
-game.blendModes = game.PIXI.BLEND_MODES;
-
-game.BaseTexture = game.PIXI.BaseTexture;
-game.BitmapText = game.PIXI.extras.BitmapText;
-game.CanvasRenderer = game.PIXI.CanvasRenderer;
-game.Container = game.PIXI.Container;
-
-game.DisplayObject = game.PIXI.DisplayObject;
-
 /**
     Remove from it's parent.
     @method remove
@@ -272,25 +286,6 @@ game.DisplayObject.prototype.addTo = function(container) {
     container.addChild(this);
     return this;
 };
-
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/Graphics.html
-    @class Graphics
-    @extends game.DisplayObject
-**/
-game.Graphics = game.PIXI.Graphics;
-game.HitCircle = game.PIXI.Circle;
-game.HitEllipse = game.PIXI.Ellipse;
-game.HitPolygon = game.PIXI.Polygon;
-game.HitRectangle = game.PIXI.Rectangle;
-
-game.Point = game.PIXI.Point = game.Vector;
-
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/RenderTexture.html
-    @class RenderTexture
-**/
-game.RenderTexture = game.PIXI.RenderTexture;
 
 /**
     http://www.goodboydigital.com/pixijs/docs/classes/Sprite.html
@@ -365,17 +360,6 @@ game.Sprite.prototype.center = function(offsetX, offsetY) {
 game.Sprite.fromFrame = game.PIXI.Sprite.fromFrame;
 game.Sprite.fromImage = game.PIXI.Sprite.fromImage;
 
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/Text.html
-    @class Text
-**/
-game.Text = game.PIXI.Text;
-
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/Texture.html
-    @class Texture
-**/
-game.Texture = game.PIXI.Texture;
 game.Texture.fromAsset = function(id) {
     var path = game.paths[id] || id;
     var texture = game.PIXI.utils.TextureCache[path];
@@ -386,12 +370,6 @@ game.Texture.fromAsset = function(id) {
 
     return texture;
 };
-
-/**
-    @property {Object} TextureCache
-    @for game.Core
-**/
-game.TextureCache = game.PIXI.utils.TextureCache;
 
 /**
     http://www.goodboydigital.com/pixijs/docs/classes/TilingSprite.html
