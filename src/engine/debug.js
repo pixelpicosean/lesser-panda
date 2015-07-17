@@ -342,15 +342,15 @@ game.addAttributes('Camera', {
     debugAlpha: 0.2
 });
 
-game.PIXI.DisplayObjectContainer.prototype._addChild = game.PIXI.DisplayObjectContainer.prototype.addChild;
-game.PIXI.DisplayObjectContainer.prototype.addChild = function(child) {
+game.PIXI.Container.prototype._addChild = game.PIXI.Container.prototype.addChild;
+game.PIXI.Container.prototype.addChild = function(child) {
     if (game.debugDraw && child.interactive) game.debugDraw.addSprite(child);
     this._addChild(child);
 };
 
 game.onStart = function() {
     if (game.Debug && game.Debug.enabled) {
-        console.log('Panda.js ' + game.version);
+        console.log('LesserPanda ' + game.version);
         console.log('Pixi.js ' + game.PIXI.VERSION.replace('v', ''));
         console.log((this.system.renderer.gl ? 'WebGL' : 'Canvas') + ' renderer ' + this.system.width + 'x' + this.system.height);
         if (this.Audio && this.Audio.enabled) console.log((this.audio.context ? 'Web Audio' : 'HTML5 Audio') + ' engine');

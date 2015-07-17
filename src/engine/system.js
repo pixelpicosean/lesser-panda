@@ -5,8 +5,7 @@
 game.module(
     'engine.system'
 )
-.body(function() {
-'use strict';
+.body(function() { 'use strict';
 
 /**
     @class System
@@ -100,16 +99,10 @@ game.createClass('System', {
                 game.scale = i;
             }
         }
-        if (this.hires) {
-            width *= game.scale;
-            height *= game.scale;
-        }
         if (game.System.retina && game.device.pixelRatio === 2) {
             // Check if we are already using highest textures
             if (game.scale < game.System.hires) {
                 this.retina = true;
-                width *= 2;
-                height *= 2;
                 game.scale *= 2;
             }
         }
@@ -127,14 +120,8 @@ game.createClass('System', {
 
         document.body.style.margin = 0;
 
-        if (this.retina) {
-            this.canvas.style.width = width / 2 + 'px';
-            this.canvas.style.height = height / 2 + 'px';
-        }
-        else {
-            this.canvas.style.width = width + 'px';
-            this.canvas.style.height = height + 'px';
-        }
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
 
         game.renderer = this.renderer;
 
@@ -189,7 +176,7 @@ game.createClass('System', {
             document.body.appendChild(canvas);
         }
 
-        game.PIXI.scaleModes.DEFAULT = game.PIXI.scaleModes[game.System.scaleMode.toUpperCase()] || 0;
+        game.PIXI.SCALE_MODES.DEFAULT = game.PIXI.SCALE_MODES[game.System.scaleMode.toUpperCase()] || 0;
 
         if (game.System.webGL && game.device.cocoonJS) {
             width = window.innerWidth * game.device.pixelRatio;
@@ -199,16 +186,18 @@ game.createClass('System', {
         if (game.System.webGL) this.renderer = game.autoDetectRenderer(width, height, {
             view: document.getElementById(this.canvasId),
             transparent: game.System.transparent,
-            antialias: game.System.antialias
+            antialias: game.System.antialias,
+            resolution: game.device.pixelRatio
         });
         else this.renderer = new game.CanvasRenderer(width, height, {
             view: document.getElementById(this.canvasId),
-            transparent: game.System.transparent
+            transparent: game.System.transparent,
+            resolution: game.device.pixelRatio
         });
 
         this.webGL = !!this.renderer.gl;
         this.canvas = this.renderer.view;
-        this.stage = new game.Stage();
+        this.stage = new game.Container();
     },
 
     resizeToFill: function() {

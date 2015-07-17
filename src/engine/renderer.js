@@ -9,12 +9,9 @@ game.module(
     'engine.pixi',
     'engine.geometry'
 )
-.body(function() {
-'use strict';
+.body(function() { 'use strict';
 
-game.PIXI.dontSayHello = true;
-game.PIXI.RETINA_PREFIX = false;
-
+PIXI.utils._saidHello = true;
 game.autoDetectRenderer = game.PIXI.autoDetectRenderer;
 
 /**
@@ -249,32 +246,13 @@ game.Animation.fromFrames = function(name) {
 
 
 game.AssetLoader = game.PIXI.AssetLoader;
-game.blendModes = game.PIXI.blendModes;
+game.blendModes = game.PIXI.BLEND_MODES;
 
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/BaseTexture.html
-    @class BaseTexture
-**/
 game.BaseTexture = game.PIXI.BaseTexture;
-
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/BitmapText.html
-    @class BitmapText
-**/
-game.BitmapText = game.PIXI.BitmapText;
+game.BitmapText = game.PIXI.extras.BitmapText;
 game.CanvasRenderer = game.PIXI.CanvasRenderer;
+game.Container = game.PIXI.Container;
 
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/DisplayObjectContainer.html
-    @class Container
-    @extends game.DisplayObject
-**/
-game.Container = game.PIXI.DisplayObjectContainer;
-
-/**
-    http://www.goodboydigital.com/pixijs/docs/classes/DisplayObject.html
-    @class DisplayObject
-**/
 game.DisplayObject = game.PIXI.DisplayObject;
 
 /**
@@ -315,45 +293,6 @@ game.Point = game.PIXI.Point = game.Vector;
 game.RenderTexture = game.PIXI.RenderTexture;
 
 /**
-    http://www.goodboydigital.com/pixijs/docs/classes/Spine.html
-    @class Spine
-    @extends game.DisplayObject
-    @constructor
-    @param {String} id Asset ID
-    @param {Object} [properties] Properties to merge to this animation
-**/
-game.Spine = function(id, properties) {
-    game.PIXI.Spine.call(this, game.paths[id] || id);
-    game.merge(this, properties);
-};
-
-game.Spine.prototype = Object.create(game.PIXI.Spine.prototype);
-game.Spine.prototype.constructor = game.Spine;
-
-/**
-    Play animation.
-    @method play
-    @param {String} anim Name of animation.
-    @param {Boolean} loop Animation looping.
-    @param {Boolean} after Start after current animation.
-**/
-game.Spine.prototype.play = function(anim, loop, after) {
-    if (after) this.state.addAnimationByName(anim, !!loop);
-    else this.state.setAnimationByName(anim, !!loop);
-};
-
-/**
-    Mix two animations for smooth transition.
-    @method mix
-    @param {String} from Animation name to mix from.
-    @param {String} to Animation name to mix to.
-    @param {Number} value Percent of mix.
-**/
-game.Spine.prototype.mix = function(from, to, value) {
-    this.stateData.setMixByName(from, to, value / 100);
-};
-
-/**
     http://www.goodboydigital.com/pixijs/docs/classes/Sprite.html
     @class Sprite
     @extends game.DisplayObject
@@ -372,7 +311,7 @@ game.Sprite = function(texture, x, y, properties) {
 
     game.merge(this, properties);
 
-    this.position.set(x * game.scale, y * game.scale);
+    this.position.set(x, y);
 
     // Auto bind touch events for mobile
     if (game.device.mobile && !this.tap && this.click) this.tap = this.click;
@@ -426,8 +365,6 @@ game.Sprite.prototype.center = function(offsetX, offsetY) {
 game.Sprite.fromFrame = game.PIXI.Sprite.fromFrame;
 game.Sprite.fromImage = game.PIXI.Sprite.fromImage;
 
-game.Stage = game.PIXI.Stage;
-
 /**
     http://www.goodboydigital.com/pixijs/docs/classes/Text.html
     @class Text
@@ -441,7 +378,7 @@ game.Text = game.PIXI.Text;
 game.Texture = game.PIXI.Texture;
 game.Texture.fromAsset = function(id) {
     var path = game.paths[id] || id;
-    var texture = game.PIXI.TextureCache[path];
+    var texture = game.PIXI.utils.TextureCache[path];
 
     if (!texture) {
         texture = game.Texture.fromFrame(path);
@@ -454,7 +391,7 @@ game.Texture.fromAsset = function(id) {
     @property {Object} TextureCache
     @for game.Core
 **/
-game.TextureCache = game.PIXI.TextureCache;
+game.TextureCache = game.PIXI.utils.TextureCache;
 
 /**
     http://www.goodboydigital.com/pixijs/docs/classes/TilingSprite.html
@@ -478,7 +415,7 @@ game.TilingSprite = function(path, width, height, properties) {
     game.merge(this, properties);
 };
 
-game.TilingSprite.prototype = Object.create(game.PIXI.TilingSprite.prototype);
+game.TilingSprite.prototype = Object.create(game.PIXI.extras.TilingSprite.prototype);
 game.TilingSprite.prototype.constructor = game.TilingSprite;
 
 /**

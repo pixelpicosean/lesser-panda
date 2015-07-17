@@ -90,7 +90,7 @@ game.createClass('Scene', {
         for (var i = game.system.stage.children.length - 1; i >= 0; i--) {
             game.system.stage.removeChild(game.system.stage.children[i]);
         }
-        game.system.stage.setBackgroundColor(this.backgroundColor);
+        game.system.renderer.backgroundColor = this.backgroundColor;
 
         game.system.stage.interactive = true;
         game.system.stage.mousemove = game.system.stage.touchmove = this._mousemove.bind(this);

@@ -61,10 +61,10 @@ game.createClass('Loader', {
         }
 
         if (this.assetQueue.length > 0) {
-            this.loader = new game.AssetLoader(this.assetQueue, game.Loader.crossorigin);
-            this.loader.onProgress = this.progress.bind(this);
-            this.loader.onComplete = this.loadAudio.bind(this);
-            this.loader.onError = this.error.bind(this);
+            this.loader = game.PIXI.loader.add(this.assetQueue);
+            this.loader.on('progress', this.progress, this);
+            this.loader.on('complete', this.loadAudio, this);
+            this.loader.on('error', this.error, this);
         }
 
         if (this.assetQueue.length + this.audioQueue.length === 0) this.percent = 100;
@@ -117,7 +117,7 @@ game.createClass('Loader', {
             this.stage.interactive = false;
             if (game.tweenEngine) game.tweenEngine.removeAll();
 
-            this.stage.setBackgroundColor(game.Loader.bgColor);
+            game.system.renderer.backgroundColor = game.Loader.bgColor;
 
             this.initStage();
 
@@ -236,14 +236,20 @@ game.addAttributes('Loader', {
     time: 200,
     /**
         Loading bar color.
-        @attribute {String} barColor
-        @default #e6e7e8
+        @attribute {Number} bgColor
+        @default 0x000000
+    **/
+    bgColor: 0x000000,
+    /**
+        Loading bar color.
+        @attribute {Number} barColor
+        @default 0xe6e7e8
     **/
     barColor: 0xe6e7e8,
     /**
         Loading bar background color.
-        @attribute {String} barBg
-        @default #515e73
+        @attribute {Number} barBgColor
+        @default 0x515e73
     **/
     barBgColor: 0x515e73,
     /**

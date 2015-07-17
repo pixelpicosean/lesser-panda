@@ -104,7 +104,7 @@ var game = {
         Engine version.
         @property {String} version
     **/
-    version: '1.13.5',
+    version: '0.1.0',
     /**
         Width of game.
         @property {Number} width
@@ -692,7 +692,7 @@ var game = {
         this.device.wp = this.device.wp7 || this.device.wp8;
 
         // Windows Tablet
-        this.device.wt = (this.device.ie && /Tablet/i.test(navigator.userAgent));
+        this.device.wt = ((/Windows NT/i.test(navigator.userAgent)) && /Touch/i.test(navigator.userAgent));
 
         // Others
         this.device.opera = /Opera/i.test(navigator.userAgent) || /OPR/i.test(navigator.userAgent);
@@ -1052,9 +1052,6 @@ game.Class.extend = function(prop) {
             @param {Array} arguments
         **/
         if (this.init && !skipInit) this.init.apply(this, arguments);
-        if (game.scene && typeof this.update === 'function' && this !== game.scene) {
-            game.scene.addObject(this);
-        }
         return this;
     }
 
