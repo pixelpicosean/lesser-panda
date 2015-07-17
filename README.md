@@ -1,37 +1,20 @@
-![Panda.js Logo](http://www.pandajs.net/img/panda_178x120.png)
+# LesserPanda HTML5 game engine
 
-## Panda.js HTML5 game engine (v1 stable)
+A fork of [Panda.js engine](http://www.pandajs.net) version 1.x.
 
-Free HTML5 game engine for mobile and desktop with Canvas and WebGL rendering.
+## Why
 
-http://www.pandajs.net
+I am using panda.js-engine for all of my recent projects, but its
+v2 version currently does not support WebGL which is very important
+for me to guarantee the performance on mobile devices.
 
-### Install
+So I decide to keep using Pixi.js(and switch to the latest v3) for rendering.
 
-Since this is not official repo, you'd better **clone** or **download** this repo
-instead of using `pandatool`.
+## License
 
-### ChangeLog
+LesserPanda is released under the [MIT License](http://opensource.org/licenses/MIT), the same
+as [Panda.js engine](http://www.pandajs.net).
 
-#### v1.13.5
+### Special Thanks
 
-- Change `World.update` to `World._update` to fix physics update issue
-
-#### v1.13.4
-
-- Scene classes are no longer prefixed with "Scene" (breaking change, same as v2)
-- Improved core module (based on develop branch, much cleaner and with documents)
-- Private functions in `game` namespace now begin with `_`
-- `fullscreen` and `fullscreenSupport` functions moved to `system` module
-
-#### v1.13.3
-
-- Fix audio module
-
-### Support
-
-Join the discussion at official [Panda.js forum](http://www.html5gamedevs.com/forum/19-pandajs/).
-
-### License
-
-Panda.js is released under the [MIT License](http://opensource.org/licenses/MIT).
+[@ekelokorpi](https://github.com/ekelokorpi) for creating the awesome panda.js-engine
