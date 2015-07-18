@@ -324,38 +324,38 @@ game.createClass('Scene', {
     update: function() {},
 
     _mousedown: function(event) {
-        event.startTime = Date.now();
-        event.swipeX = event.global.x;
-        event.swipeY = event.global.y;
-        this.mousedown(event.global.x, event.global.y, event.originalEvent);
+        event.data.startTime = Date.now();
+        event.data.swipeX = event.data.global.x;
+        event.data.swipeY = event.data.global.y;
+        this.mousedown(event.data.global.x, event.data.global.y, event.data.originalEvent);
     },
 
     _mouseup: function(event) {
-        this.mouseup(event.global.x, event.global.y, event.originalEvent);
+        this.mouseup(event.data.global.x, event.data.global.y, event.data.originalEvent);
     },
 
     _click: function(event) {
-        this.click(event.global.x, event.global.y, event.originalEvent);
+        this.click(event.data.global.x, event.data.global.y, event.data.originalEvent);
     },
 
     _mousemove: function(event) {
-        this.mousemove(event.global.x, event.global.y, event.originalEvent);
+        this.mousemove(event.data.global.x, event.data.global.y, event.data.originalEvent);
 
-        if (!event.startTime) return;
+        if (!event.data.startTime) return;
 
-        if (event.global.x - event.swipeX >= this.swipeDist) this._swipe(event, 'right');
-        else if (event.global.x - event.swipeX <= -this.swipeDist) this._swipe(event, 'left');
-        else if (event.global.y - event.swipeY >= this.swipeDist) this._swipe(event, 'down');
-        else if (event.global.y - event.swipeY <= -this.swipeDist) this._swipe(event, 'up');
+        if (event.data.global.x - event.data.swipeX >= this.swipeDist) this._swipe(event, 'right');
+        else if (event.data.global.x - event.data.swipeX <= -this.swipeDist) this._swipe(event, 'left');
+        else if (event.data.global.y - event.data.swipeY >= this.swipeDist) this._swipe(event, 'down');
+        else if (event.data.global.y - event.data.swipeY <= -this.swipeDist) this._swipe(event, 'up');
     },
 
     _mouseout: function(event) {
-        this.mouseout(event.global.x, event.global.y, event.originalEvent);
+        this.mouseout(event.data.global.x, event.data.global.y, event.data.originalEvent);
     },
 
     _swipe: function(event, dir) {
-        var time = Date.now() - event.startTime;
-        event.startTime = null;
+        var time = Date.now() - event.data.startTime;
+        event.data.startTime = null;
         if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(dir);
     },
 
