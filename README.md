@@ -10,6 +10,10 @@ for me to guarantee the performance on mobile devices.
 
 So I decide to keep using Pixi.js(and switch to the latest v3) for rendering.
 
+## Note
+
+It uses a customed version of Pixi.js without "mesh" and "filters".
+
 ## License
 
 LesserPanda is released under the [MIT License](http://opensource.org/licenses/MIT), the same

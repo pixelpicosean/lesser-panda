@@ -187,12 +187,12 @@ game.module(
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
         antialias: game.System.antialias,
-        resolution: game.device.pixelRatio
+        resolution: game.scale
       });
       else this.renderer = new game.CanvasRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
-        resolution: game.device.pixelRatio
+        resolution: game.scale
       });
 
       this.webGL = !!this.renderer.gl;
@@ -297,7 +297,7 @@ game.module(
 
     setSceneNow: function(sceneClass, removeAssets) {
       if (this.paused) this.paused = false;
-      if (game.scene) game.scene.exit();
+      if (game.scene) game.scene._exit();
       if (removeAssets) game.removeAssets();
       game.scene = new (sceneClass)();
       if (game.Debug && game.Debug.enabled && !game.device.cocoonJS && !this.debug) this.debug = new game.Debug();
@@ -350,10 +350,6 @@ game.module(
           this.canvas.style.left = game.System.left + 'px';
           this.canvas.style.top = game.System.top + 'px';
         }
-
-        document.addEventListener('touchstart', function(e) {
-          e.preventDefault();
-        }, false);
 
         if (game.System.rotateScreen) {
           var div = document.createElement('div');
