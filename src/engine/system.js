@@ -187,12 +187,12 @@ game.module(
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
         antialias: game.System.antialias,
-        resolution: game.device.pixelRatio
+        resolution: game.scale
       });
       else this.renderer = new game.CanvasRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
-        resolution: game.device.pixelRatio
+        resolution: game.scale
       });
 
       this.webGL = !!this.renderer.gl;
