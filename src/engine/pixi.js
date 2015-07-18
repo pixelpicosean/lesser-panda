@@ -3772,6 +3772,7 @@ EventEmitter.prefixed = prefix;
 // Expose the module.
 //
 module.exports = EventEmitter;
+game.EventEmitter = EventEmitter;
 
 },{}],12:[function(require,module,exports){
 'use strict';
