@@ -12,7 +12,7 @@ game.module(
 .body(function() { 'use strict';
 
   // Disable pixi log
-  PIXI.utils._saidHello = true;
+  game.PIXI.utils._saidHello = true;
 
   // Replace Point with better alternative "Vector"
   game.PIXI.Point = game.Point = game.Vector;

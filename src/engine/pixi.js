@@ -4,38 +4,6 @@ game.module(
 .body(function() { 'use strict';
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof game!=="undefined"){g=game}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.PIXI = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
-// run the polyfills
-require('./polyfill');
-
-var core = module.exports = require('./core');
-
-// add core plugins.
-core.extras         = require('./extras');
-core.filters        = require('./filters');
-core.interaction    = require('./interaction');
-core.loaders        = require('./loaders');
-core.mesh           = require('./mesh');
-
-// export a premade loader instance
-/**
- * A premade instance of the loader that can be used to loader resources.
- *
- * @name loader
- * @memberof PIXI
- * @property {PIXI.loaders.Loader}
- */
-core.loader = new core.loaders.Loader();
-
-// mixin the deprecation features.
-Object.assign(core, require('./deprecation'));
-
-// Always export pixi globally.
-global.PIXI = core;
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{"./core":29,"./deprecation":78,"./extras":85,"./filters":102,"./interaction":117,"./loaders":120,"./mesh":126,"./polyfill":130}],2:[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -81,9 +49,6 @@ global.PIXI = core;
     };
 
     var _each = function (arr, iterator) {
-        if (arr.forEach) {
-            return arr.forEach(iterator);
-        }
         for (var i = 0; i < arr.length; i += 1) {
             iterator(arr[i], i, arr);
         }
@@ -860,12 +825,15 @@ global.PIXI = core;
             pause: function () {
                 if (q.paused === true) { return; }
                 q.paused = true;
-                q.process();
             },
             resume: function () {
                 if (q.paused === false) { return; }
                 q.paused = false;
-                q.process();
+                // Need to call q.process once per concurrent
+                // worker to preserve full concurrency after pause
+                for (var w = 1; w <= q.concurrency; w++) {
+                    async.setImmediate(q.process);
+                }
             }
         };
         return q;
@@ -1163,7 +1131,9 @@ global.PIXI = core;
 
 }).call(this,require('_process'))
 
-},{"_process":4}],3:[function(require,module,exports){
+},{"_process":4}],2:[function(require,module,exports){
+
+},{}],3:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1398,32 +1368,64 @@ var substr = 'ab'.substr(-1) === 'b'
 var process = module.exports = {};
 var queue = [];
 var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
 
 function drainQueue() {
     if (draining) {
         return;
     }
+    var timeout = setTimeout(cleanUpNextTick);
     draining = true;
-    var currentQueue;
+
     var len = queue.length;
     while(len) {
         currentQueue = queue;
         queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
         }
+        queueIndex = -1;
         len = queue.length;
     }
+    currentQueue = null;
     draining = false;
+    clearTimeout(timeout);
 }
+
 process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
         setTimeout(drainQueue, 0);
     }
 };
 
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
 process.title = 'browser';
 process.browser = true;
 process.env = {};
@@ -1454,15 +1456,20 @@ process.umask = function() { return 0; };
 
 },{}],5:[function(require,module,exports){
 (function (global){
-/*! http://mths.be/punycode v1.2.4 by @mathias */
+/*! https://mths.be/punycode v1.3.2 by @mathias */
 ;(function(root) {
 
     /** Detect free variables */
-    var freeExports = typeof exports == 'object' && exports;
+    var freeExports = typeof exports == 'object' && exports &&
+        !exports.nodeType && exports;
     var freeModule = typeof module == 'object' && module &&
-        module.exports == freeExports && module;
+        !module.nodeType && module;
     var freeGlobal = typeof global == 'object' && global;
-    if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+    if (
+        freeGlobal.global === freeGlobal ||
+        freeGlobal.window === freeGlobal ||
+        freeGlobal.self === freeGlobal
+    ) {
         root = freeGlobal;
     }
 
@@ -1488,8 +1495,8 @@ process.umask = function() { return 0; };
 
     /** Regular expressions */
     regexPunycode = /^xn--/,
-    regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
-    regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+    regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+    regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
 
     /** Error messages */
     errors = {
@@ -1528,23 +1535,37 @@ process.umask = function() { return 0; };
      */
     function map(array, fn) {
         var length = array.length;
+        var result = [];
         while (length--) {
-            array[length] = fn(array[length]);
+            result[length] = fn(array[length]);
         }
-        return array;
+        return result;
     }
 
     /**
-     * A simple `Array#map`-like wrapper to work with domain name strings.
+     * A simple `Array#map`-like wrapper to work with domain name strings or email
+     * addresses.
      * @private
-     * @param {String} domain The domain name.
+     * @param {String} domain The domain name or email address.
      * @param {Function} callback The function that gets called for every
      * character.
      * @returns {Array} A new string of characters returned by the callback
      * function.
      */
     function mapDomain(string, fn) {
-        return map(string.split(regexSeparators), fn).join('.');
+        var parts = string.split('@');
+        var result = '';
+        if (parts.length > 1) {
+            // In email addresses, only the domain name should be punycoded. Leave
+            // the local part (i.e. everything up to `@`) intact.
+            result = parts[0] + '@';
+            string = parts[1];
+        }
+        // Avoid `split(regex)` for IE8 compatibility. See #17.
+        string = string.replace(regexSeparators, '\x2E');
+        var labels = string.split('.');
+        var encoded = map(labels, fn).join('.');
+        return result + encoded;
     }
 
     /**
@@ -1554,7 +1575,7 @@ process.umask = function() { return 0; };
      * UCS-2 exposes as separate characters) into a single code point,
      * matching UTF-16.
      * @see `punycode.ucs2.encode`
-     * @see <http://mathiasbynens.be/notes/javascript-encoding>
+     * @see <https://mathiasbynens.be/notes/javascript-encoding>
      * @memberOf punycode.ucs2
      * @name decode
      * @param {String} string The Unicode input string (UCS-2).
@@ -1763,8 +1784,8 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Converts a string of Unicode symbols to a Punycode string of ASCII-only
-     * symbols.
+     * Converts a string of Unicode symbols (e.g. a domain name label) to a
+     * Punycode string of ASCII-only symbols.
      * @memberOf punycode
      * @param {String} input The string of Unicode symbols.
      * @returns {String} The resulting Punycode string of ASCII-only symbols.
@@ -1877,17 +1898,18 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Converts a Punycode string representing a domain name to Unicode. Only the
-     * Punycoded parts of the domain name will be converted, i.e. it doesn't
-     * matter if you call it on a string that has already been converted to
-     * Unicode.
+     * Converts a Punycode string representing a domain name or an email address
+     * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+     * it doesn't matter if you call it on a string that has already been
+     * converted to Unicode.
      * @memberOf punycode
-     * @param {String} domain The Punycode domain name to convert to Unicode.
+     * @param {String} input The Punycoded domain name or email address to
+     * convert to Unicode.
      * @returns {String} The Unicode representation of the given Punycode
      * string.
      */
-    function toUnicode(domain) {
-        return mapDomain(domain, function(string) {
+    function toUnicode(input) {
+        return mapDomain(input, function(string) {
             return regexPunycode.test(string)
                 ? decode(string.slice(4).toLowerCase())
                 : string;
@@ -1895,15 +1917,18 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Converts a Unicode string representing a domain name to Punycode. Only the
-     * non-ASCII parts of the domain name will be converted, i.e. it doesn't
-     * matter if you call it with a domain that's already in ASCII.
+     * Converts a Unicode string representing a domain name or an email address to
+     * Punycode. Only the non-ASCII parts of the domain name will be converted,
+     * i.e. it doesn't matter if you call it with a domain that's already in
+     * ASCII.
      * @memberOf punycode
-     * @param {String} domain The domain name to convert, as a Unicode string.
-     * @returns {String} The Punycode representation of the given domain name.
+     * @param {String} input The domain name or email address to convert, as a
+     * Unicode string.
+     * @returns {String} The Punycode representation of the given domain name or
+     * email address.
      */
-    function toASCII(domain) {
-        return mapDomain(domain, function(string) {
+    function toASCII(input) {
+        return mapDomain(input, function(string) {
             return regexNonASCII.test(string)
                 ? 'xn--' + encode(string)
                 : string;
@@ -1919,11 +1944,11 @@ process.umask = function() { return 0; };
          * @memberOf punycode
          * @type String
          */
-        'version': '1.2.4',
+        'version': '1.3.2',
         /**
          * An object of methods to convert from JavaScript's internal character
          * representation (UCS-2) to Unicode code points, and back.
-         * @see <http://mathiasbynens.be/notes/javascript-encoding>
+         * @see <https://mathiasbynens.be/notes/javascript-encoding>
          * @memberOf punycode
          * @type Object
          */
@@ -1948,8 +1973,8 @@ process.umask = function() { return 0; };
         define('punycode', function() {
             return punycode;
         });
-    } else if (freeExports && !freeExports.nodeType) {
-        if (freeModule) { // in Node.js or RingoJS v0.8.0+
+    } else if (freeExports && freeModule) {
+        if (module.exports == freeExports) { // in Node.js or RingoJS v0.8.0+
             freeModule.exports = punycode;
         } else { // in Narwhal or RingoJS v0.7.0-
             for (key in punycode) {
@@ -2925,7 +2950,7 @@ function filterPoints(data, start, end) {
     do {
         again = false;
 
-        if (equals(data, node.i, node.next.i) || orient(data, node.prev.i, node.i, node.next.i) === 0) {
+        if (!node.steiner && (equals(data, node.i, node.next.i) || orient(data, node.prev.i, node.i, node.next.i) === 0)) {
 
             // remove node
             node.prev.next = node.next;
@@ -3179,7 +3204,9 @@ function eliminateHoles(data, holeIndices, outerNode, dim) {
     for (i = 0, len = holeIndices.length; i < len; i++) {
         start = holeIndices[i] * dim;
         end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
-        list = filterPoints(data, linkedList(data, start, end, dim, false));
+        list = linkedList(data, start, end, dim, false);
+        if (list === list.next) list.steiner = true;
+        list = filterPoints(data, list);
         if (list) queue.push(getLeftmost(data, list));
     }
 
@@ -3390,7 +3417,8 @@ function getLeftmost(data, start) {
 
 // check if a diagonal between two polygon nodes is valid (lies in polygon interior)
 function isValidDiagonal(data, a, b) {
-    return !intersectsPolygon(data, a, a.i, b.i) &&
+    return a.next.i !== b.i && a.prev.i !== b.i &&
+           !intersectsPolygon(data, a, a.i, b.i) &&
            locallyInside(data, a, b) && locallyInside(data, b, a) &&
            middleInside(data, a, a.i, b.i);
 }
@@ -3509,6 +3537,9 @@ function Node(i) {
     // previous and next nodes in z-order
     this.prevZ = null;
     this.nextZ = null;
+
+    // indicates whether this is a steiner point
+    this.steiner = false;
 }
 
 },{}],11:[function(require,module,exports){
@@ -3569,10 +3600,10 @@ EventEmitter.prototype.listeners = function listeners(event, exists) {
 
   if (exists) return !!available;
   if (!available) return [];
-  if (this._events[evt].fn) return [this._events[evt].fn];
+  if (available.fn) return [available.fn];
 
-  for (var i = 0, l = this._events[evt].length, ee = new Array(l); i < l; i++) {
-    ee[i] = this._events[evt][i].fn;
+  for (var i = 0, l = available.length, ee = new Array(l); i < l; i++) {
+    ee[i] = available[i].fn;
   }
 
   return ee;
@@ -3771,8 +3802,9 @@ EventEmitter.prefixed = prefix;
 //
 // Expose the module.
 //
-module.exports = EventEmitter;
-game.EventEmitter = EventEmitter;
+if ('undefined' !== typeof module) {
+  module.exports = EventEmitter;
+}
 
 },{}],12:[function(require,module,exports){
 'use strict';
@@ -3803,1136 +3835,6 @@ module.exports = Object.assign || function (target, source) {
 };
 
 },{}],13:[function(require,module,exports){
-(function (process){
-/*!
- * async
- * https://github.com/caolan/async
- *
- * Copyright 2010-2014 Caolan McMahon
- * Released under the MIT license
- */
-/*jshint onevar: false, indent:4 */
-/*global setImmediate: false, setTimeout: false, console: false */
-(function () {
-
-    var async = {};
-
-    // global on the server, window in the browser
-    var root, previous_async;
-
-    root = this;
-    if (root != null) {
-      previous_async = root.async;
-    }
-
-    async.noConflict = function () {
-        root.async = previous_async;
-        return async;
-    };
-
-    function only_once(fn) {
-        var called = false;
-        return function() {
-            if (called) throw new Error("Callback was already called.");
-            called = true;
-            fn.apply(root, arguments);
-        }
-    }
-
-    //// cross-browser compatiblity functions ////
-
-    var _toString = Object.prototype.toString;
-
-    var _isArray = Array.isArray || function (obj) {
-        return _toString.call(obj) === '[object Array]';
-    };
-
-    var _each = function (arr, iterator) {
-        if (arr.forEach) {
-            return arr.forEach(iterator);
-        }
-        for (var i = 0; i < arr.length; i += 1) {
-            iterator(arr[i], i, arr);
-        }
-    };
-
-    var _map = function (arr, iterator) {
-        if (arr.map) {
-            return arr.map(iterator);
-        }
-        var results = [];
-        _each(arr, function (x, i, a) {
-            results.push(iterator(x, i, a));
-        });
-        return results;
-    };
-
-    var _reduce = function (arr, iterator, memo) {
-        if (arr.reduce) {
-            return arr.reduce(iterator, memo);
-        }
-        _each(arr, function (x, i, a) {
-            memo = iterator(memo, x, i, a);
-        });
-        return memo;
-    };
-
-    var _keys = function (obj) {
-        if (Object.keys) {
-            return Object.keys(obj);
-        }
-        var keys = [];
-        for (var k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                keys.push(k);
-            }
-        }
-        return keys;
-    };
-
-    //// exported async module functions ////
-
-    //// nextTick implementation with browser-compatible fallback ////
-    if (typeof process === 'undefined' || !(process.nextTick)) {
-        if (typeof setImmediate === 'function') {
-            async.nextTick = function (fn) {
-                // not a direct alias for IE10 compatibility
-                setImmediate(fn);
-            };
-            async.setImmediate = async.nextTick;
-        }
-        else {
-            async.nextTick = function (fn) {
-                setTimeout(fn, 0);
-            };
-            async.setImmediate = async.nextTick;
-        }
-    }
-    else {
-        async.nextTick = process.nextTick;
-        if (typeof setImmediate !== 'undefined') {
-            async.setImmediate = function (fn) {
-              // not a direct alias for IE10 compatibility
-              setImmediate(fn);
-            };
-        }
-        else {
-            async.setImmediate = async.nextTick;
-        }
-    }
-
-    async.each = function (arr, iterator, callback) {
-        callback = callback || function () {};
-        if (!arr.length) {
-            return callback();
-        }
-        var completed = 0;
-        _each(arr, function (x) {
-            iterator(x, only_once(done) );
-        });
-        function done(err) {
-          if (err) {
-              callback(err);
-              callback = function () {};
-          }
-          else {
-              completed += 1;
-              if (completed >= arr.length) {
-                  callback();
-              }
-          }
-        }
-    };
-    async.forEach = async.each;
-
-    async.eachSeries = function (arr, iterator, callback) {
-        callback = callback || function () {};
-        if (!arr.length) {
-            return callback();
-        }
-        var completed = 0;
-        var iterate = function () {
-            iterator(arr[completed], function (err) {
-                if (err) {
-                    callback(err);
-                    callback = function () {};
-                }
-                else {
-                    completed += 1;
-                    if (completed >= arr.length) {
-                        callback();
-                    }
-                    else {
-                        iterate();
-                    }
-                }
-            });
-        };
-        iterate();
-    };
-    async.forEachSeries = async.eachSeries;
-
-    async.eachLimit = function (arr, limit, iterator, callback) {
-        var fn = _eachLimit(limit);
-        fn.apply(null, [arr, iterator, callback]);
-    };
-    async.forEachLimit = async.eachLimit;
-
-    var _eachLimit = function (limit) {
-
-        return function (arr, iterator, callback) {
-            callback = callback || function () {};
-            if (!arr.length || limit <= 0) {
-                return callback();
-            }
-            var completed = 0;
-            var started = 0;
-            var running = 0;
-
-            (function replenish () {
-                if (completed >= arr.length) {
-                    return callback();
-                }
-
-                while (running < limit && started < arr.length) {
-                    started += 1;
-                    running += 1;
-                    iterator(arr[started - 1], function (err) {
-                        if (err) {
-                            callback(err);
-                            callback = function () {};
-                        }
-                        else {
-                            completed += 1;
-                            running -= 1;
-                            if (completed >= arr.length) {
-                                callback();
-                            }
-                            else {
-                                replenish();
-                            }
-                        }
-                    });
-                }
-            })();
-        };
-    };
-
-
-    var doParallel = function (fn) {
-        return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return fn.apply(null, [async.each].concat(args));
-        };
-    };
-    var doParallelLimit = function(limit, fn) {
-        return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return fn.apply(null, [_eachLimit(limit)].concat(args));
-        };
-    };
-    var doSeries = function (fn) {
-        return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return fn.apply(null, [async.eachSeries].concat(args));
-        };
-    };
-
-
-    var _asyncMap = function (eachfn, arr, iterator, callback) {
-        arr = _map(arr, function (x, i) {
-            return {index: i, value: x};
-        });
-        if (!callback) {
-            eachfn(arr, function (x, callback) {
-                iterator(x.value, function (err) {
-                    callback(err);
-                });
-            });
-        } else {
-            var results = [];
-            eachfn(arr, function (x, callback) {
-                iterator(x.value, function (err, v) {
-                    results[x.index] = v;
-                    callback(err);
-                });
-            }, function (err) {
-                callback(err, results);
-            });
-        }
-    };
-    async.map = doParallel(_asyncMap);
-    async.mapSeries = doSeries(_asyncMap);
-    async.mapLimit = function (arr, limit, iterator, callback) {
-        return _mapLimit(limit)(arr, iterator, callback);
-    };
-
-    var _mapLimit = function(limit) {
-        return doParallelLimit(limit, _asyncMap);
-    };
-
-    // reduce only has a series version, as doing reduce in parallel won't
-    // work in many situations.
-    async.reduce = function (arr, memo, iterator, callback) {
-        async.eachSeries(arr, function (x, callback) {
-            iterator(memo, x, function (err, v) {
-                memo = v;
-                callback(err);
-            });
-        }, function (err) {
-            callback(err, memo);
-        });
-    };
-    // inject alias
-    async.inject = async.reduce;
-    // foldl alias
-    async.foldl = async.reduce;
-
-    async.reduceRight = function (arr, memo, iterator, callback) {
-        var reversed = _map(arr, function (x) {
-            return x;
-        }).reverse();
-        async.reduce(reversed, memo, iterator, callback);
-    };
-    // foldr alias
-    async.foldr = async.reduceRight;
-
-    var _filter = function (eachfn, arr, iterator, callback) {
-        var results = [];
-        arr = _map(arr, function (x, i) {
-            return {index: i, value: x};
-        });
-        eachfn(arr, function (x, callback) {
-            iterator(x.value, function (v) {
-                if (v) {
-                    results.push(x);
-                }
-                callback();
-            });
-        }, function (err) {
-            callback(_map(results.sort(function (a, b) {
-                return a.index - b.index;
-            }), function (x) {
-                return x.value;
-            }));
-        });
-    };
-    async.filter = doParallel(_filter);
-    async.filterSeries = doSeries(_filter);
-    // select alias
-    async.select = async.filter;
-    async.selectSeries = async.filterSeries;
-
-    var _reject = function (eachfn, arr, iterator, callback) {
-        var results = [];
-        arr = _map(arr, function (x, i) {
-            return {index: i, value: x};
-        });
-        eachfn(arr, function (x, callback) {
-            iterator(x.value, function (v) {
-                if (!v) {
-                    results.push(x);
-                }
-                callback();
-            });
-        }, function (err) {
-            callback(_map(results.sort(function (a, b) {
-                return a.index - b.index;
-            }), function (x) {
-                return x.value;
-            }));
-        });
-    };
-    async.reject = doParallel(_reject);
-    async.rejectSeries = doSeries(_reject);
-
-    var _detect = function (eachfn, arr, iterator, main_callback) {
-        eachfn(arr, function (x, callback) {
-            iterator(x, function (result) {
-                if (result) {
-                    main_callback(x);
-                    main_callback = function () {};
-                }
-                else {
-                    callback();
-                }
-            });
-        }, function (err) {
-            main_callback();
-        });
-    };
-    async.detect = doParallel(_detect);
-    async.detectSeries = doSeries(_detect);
-
-    async.some = function (arr, iterator, main_callback) {
-        async.each(arr, function (x, callback) {
-            iterator(x, function (v) {
-                if (v) {
-                    main_callback(true);
-                    main_callback = function () {};
-                }
-                callback();
-            });
-        }, function (err) {
-            main_callback(false);
-        });
-    };
-    // any alias
-    async.any = async.some;
-
-    async.every = function (arr, iterator, main_callback) {
-        async.each(arr, function (x, callback) {
-            iterator(x, function (v) {
-                if (!v) {
-                    main_callback(false);
-                    main_callback = function () {};
-                }
-                callback();
-            });
-        }, function (err) {
-            main_callback(true);
-        });
-    };
-    // all alias
-    async.all = async.every;
-
-    async.sortBy = function (arr, iterator, callback) {
-        async.map(arr, function (x, callback) {
-            iterator(x, function (err, criteria) {
-                if (err) {
-                    callback(err);
-                }
-                else {
-                    callback(null, {value: x, criteria: criteria});
-                }
-            });
-        }, function (err, results) {
-            if (err) {
-                return callback(err);
-            }
-            else {
-                var fn = function (left, right) {
-                    var a = left.criteria, b = right.criteria;
-                    return a < b ? -1 : a > b ? 1 : 0;
-                };
-                callback(null, _map(results.sort(fn), function (x) {
-                    return x.value;
-                }));
-            }
-        });
-    };
-
-    async.auto = function (tasks, callback) {
-        callback = callback || function () {};
-        var keys = _keys(tasks);
-        var remainingTasks = keys.length
-        if (!remainingTasks) {
-            return callback();
-        }
-
-        var results = {};
-
-        var listeners = [];
-        var addListener = function (fn) {
-            listeners.unshift(fn);
-        };
-        var removeListener = function (fn) {
-            for (var i = 0; i < listeners.length; i += 1) {
-                if (listeners[i] === fn) {
-                    listeners.splice(i, 1);
-                    return;
-                }
-            }
-        };
-        var taskComplete = function () {
-            remainingTasks--
-            _each(listeners.slice(0), function (fn) {
-                fn();
-            });
-        };
-
-        addListener(function () {
-            if (!remainingTasks) {
-                var theCallback = callback;
-                // prevent final callback from calling itself if it errors
-                callback = function () {};
-
-                theCallback(null, results);
-            }
-        });
-
-        _each(keys, function (k) {
-            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
-            var taskCallback = function (err) {
-                var args = Array.prototype.slice.call(arguments, 1);
-                if (args.length <= 1) {
-                    args = args[0];
-                }
-                if (err) {
-                    var safeResults = {};
-                    _each(_keys(results), function(rkey) {
-                        safeResults[rkey] = results[rkey];
-                    });
-                    safeResults[k] = args;
-                    callback(err, safeResults);
-                    // stop subsequent errors hitting callback multiple times
-                    callback = function () {};
-                }
-                else {
-                    results[k] = args;
-                    async.setImmediate(taskComplete);
-                }
-            };
-            var requires = task.slice(0, Math.abs(task.length - 1)) || [];
-            var ready = function () {
-                return _reduce(requires, function (a, x) {
-                    return (a && results.hasOwnProperty(x));
-                }, true) && !results.hasOwnProperty(k);
-            };
-            if (ready()) {
-                task[task.length - 1](taskCallback, results);
-            }
-            else {
-                var listener = function () {
-                    if (ready()) {
-                        removeListener(listener);
-                        task[task.length - 1](taskCallback, results);
-                    }
-                };
-                addListener(listener);
-            }
-        });
-    };
-
-    async.retry = function(times, task, callback) {
-        var DEFAULT_TIMES = 5;
-        var attempts = [];
-        // Use defaults if times not passed
-        if (typeof times === 'function') {
-            callback = task;
-            task = times;
-            times = DEFAULT_TIMES;
-        }
-        // Make sure times is a number
-        times = parseInt(times, 10) || DEFAULT_TIMES;
-        var wrappedTask = function(wrappedCallback, wrappedResults) {
-            var retryAttempt = function(task, finalAttempt) {
-                return function(seriesCallback) {
-                    task(function(err, result){
-                        seriesCallback(!err || finalAttempt, {err: err, result: result});
-                    }, wrappedResults);
-                };
-            };
-            while (times) {
-                attempts.push(retryAttempt(task, !(times-=1)));
-            }
-            async.series(attempts, function(done, data){
-                data = data[data.length - 1];
-                (wrappedCallback || callback)(data.err, data.result);
-            });
-        }
-        // If a callback is passed, run this as a controll flow
-        return callback ? wrappedTask() : wrappedTask
-    };
-
-    async.waterfall = function (tasks, callback) {
-        callback = callback || function () {};
-        if (!_isArray(tasks)) {
-          var err = new Error('First argument to waterfall must be an array of functions');
-          return callback(err);
-        }
-        if (!tasks.length) {
-            return callback();
-        }
-        var wrapIterator = function (iterator) {
-            return function (err) {
-                if (err) {
-                    callback.apply(null, arguments);
-                    callback = function () {};
-                }
-                else {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    var next = iterator.next();
-                    if (next) {
-                        args.push(wrapIterator(next));
-                    }
-                    else {
-                        args.push(callback);
-                    }
-                    async.setImmediate(function () {
-                        iterator.apply(null, args);
-                    });
-                }
-            };
-        };
-        wrapIterator(async.iterator(tasks))();
-    };
-
-    var _parallel = function(eachfn, tasks, callback) {
-        callback = callback || function () {};
-        if (_isArray(tasks)) {
-            eachfn.map(tasks, function (fn, callback) {
-                if (fn) {
-                    fn(function (err) {
-                        var args = Array.prototype.slice.call(arguments, 1);
-                        if (args.length <= 1) {
-                            args = args[0];
-                        }
-                        callback.call(null, err, args);
-                    });
-                }
-            }, callback);
-        }
-        else {
-            var results = {};
-            eachfn.each(_keys(tasks), function (k, callback) {
-                tasks[k](function (err) {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    if (args.length <= 1) {
-                        args = args[0];
-                    }
-                    results[k] = args;
-                    callback(err);
-                });
-            }, function (err) {
-                callback(err, results);
-            });
-        }
-    };
-
-    async.parallel = function (tasks, callback) {
-        _parallel({ map: async.map, each: async.each }, tasks, callback);
-    };
-
-    async.parallelLimit = function(tasks, limit, callback) {
-        _parallel({ map: _mapLimit(limit), each: _eachLimit(limit) }, tasks, callback);
-    };
-
-    async.series = function (tasks, callback) {
-        callback = callback || function () {};
-        if (_isArray(tasks)) {
-            async.mapSeries(tasks, function (fn, callback) {
-                if (fn) {
-                    fn(function (err) {
-                        var args = Array.prototype.slice.call(arguments, 1);
-                        if (args.length <= 1) {
-                            args = args[0];
-                        }
-                        callback.call(null, err, args);
-                    });
-                }
-            }, callback);
-        }
-        else {
-            var results = {};
-            async.eachSeries(_keys(tasks), function (k, callback) {
-                tasks[k](function (err) {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    if (args.length <= 1) {
-                        args = args[0];
-                    }
-                    results[k] = args;
-                    callback(err);
-                });
-            }, function (err) {
-                callback(err, results);
-            });
-        }
-    };
-
-    async.iterator = function (tasks) {
-        var makeCallback = function (index) {
-            var fn = function () {
-                if (tasks.length) {
-                    tasks[index].apply(null, arguments);
-                }
-                return fn.next();
-            };
-            fn.next = function () {
-                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
-            };
-            return fn;
-        };
-        return makeCallback(0);
-    };
-
-    async.apply = function (fn) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        return function () {
-            return fn.apply(
-                null, args.concat(Array.prototype.slice.call(arguments))
-            );
-        };
-    };
-
-    var _concat = function (eachfn, arr, fn, callback) {
-        var r = [];
-        eachfn(arr, function (x, cb) {
-            fn(x, function (err, y) {
-                r = r.concat(y || []);
-                cb(err);
-            });
-        }, function (err) {
-            callback(err, r);
-        });
-    };
-    async.concat = doParallel(_concat);
-    async.concatSeries = doSeries(_concat);
-
-    async.whilst = function (test, iterator, callback) {
-        if (test()) {
-            iterator(function (err) {
-                if (err) {
-                    return callback(err);
-                }
-                async.whilst(test, iterator, callback);
-            });
-        }
-        else {
-            callback();
-        }
-    };
-
-    async.doWhilst = function (iterator, test, callback) {
-        iterator(function (err) {
-            if (err) {
-                return callback(err);
-            }
-            var args = Array.prototype.slice.call(arguments, 1);
-            if (test.apply(null, args)) {
-                async.doWhilst(iterator, test, callback);
-            }
-            else {
-                callback();
-            }
-        });
-    };
-
-    async.until = function (test, iterator, callback) {
-        if (!test()) {
-            iterator(function (err) {
-                if (err) {
-                    return callback(err);
-                }
-                async.until(test, iterator, callback);
-            });
-        }
-        else {
-            callback();
-        }
-    };
-
-    async.doUntil = function (iterator, test, callback) {
-        iterator(function (err) {
-            if (err) {
-                return callback(err);
-            }
-            var args = Array.prototype.slice.call(arguments, 1);
-            if (!test.apply(null, args)) {
-                async.doUntil(iterator, test, callback);
-            }
-            else {
-                callback();
-            }
-        });
-    };
-
-    async.queue = function (worker, concurrency) {
-        if (concurrency === undefined) {
-            concurrency = 1;
-        }
-        function _insert(q, data, pos, callback) {
-          if (!q.started){
-            q.started = true;
-          }
-          if (!_isArray(data)) {
-              data = [data];
-          }
-          if(data.length == 0) {
-             // call drain immediately if there are no tasks
-             return async.setImmediate(function() {
-                 if (q.drain) {
-                     q.drain();
-                 }
-             });
-          }
-          _each(data, function(task) {
-              var item = {
-                  data: task,
-                  callback: typeof callback === 'function' ? callback : null
-              };
-
-              if (pos) {
-                q.tasks.unshift(item);
-              } else {
-                q.tasks.push(item);
-              }
-
-              if (q.saturated && q.tasks.length === q.concurrency) {
-                  q.saturated();
-              }
-              async.setImmediate(q.process);
-          });
-        }
-
-        var workers = 0;
-        var q = {
-            tasks: [],
-            concurrency: concurrency,
-            saturated: null,
-            empty: null,
-            drain: null,
-            started: false,
-            paused: false,
-            push: function (data, callback) {
-              _insert(q, data, false, callback);
-            },
-            kill: function () {
-              q.drain = null;
-              q.tasks = [];
-            },
-            unshift: function (data, callback) {
-              _insert(q, data, true, callback);
-            },
-            process: function () {
-                if (!q.paused && workers < q.concurrency && q.tasks.length) {
-                    var task = q.tasks.shift();
-                    if (q.empty && q.tasks.length === 0) {
-                        q.empty();
-                    }
-                    workers += 1;
-                    var next = function () {
-                        workers -= 1;
-                        if (task.callback) {
-                            task.callback.apply(task, arguments);
-                        }
-                        if (q.drain && q.tasks.length + workers === 0) {
-                            q.drain();
-                        }
-                        q.process();
-                    };
-                    var cb = only_once(next);
-                    worker(task.data, cb);
-                }
-            },
-            length: function () {
-                return q.tasks.length;
-            },
-            running: function () {
-                return workers;
-            },
-            idle: function() {
-                return q.tasks.length + workers === 0;
-            },
-            pause: function () {
-                if (q.paused === true) { return; }
-                q.paused = true;
-                q.process();
-            },
-            resume: function () {
-                if (q.paused === false) { return; }
-                q.paused = false;
-                q.process();
-            }
-        };
-        return q;
-    };
-
-    async.priorityQueue = function (worker, concurrency) {
-
-        function _compareTasks(a, b){
-          return a.priority - b.priority;
-        };
-
-        function _binarySearch(sequence, item, compare) {
-          var beg = -1,
-              end = sequence.length - 1;
-          while (beg < end) {
-            var mid = beg + ((end - beg + 1) >>> 1);
-            if (compare(item, sequence[mid]) >= 0) {
-              beg = mid;
-            } else {
-              end = mid - 1;
-            }
-          }
-          return beg;
-        }
-
-        function _insert(q, data, priority, callback) {
-          if (!q.started){
-            q.started = true;
-          }
-          if (!_isArray(data)) {
-              data = [data];
-          }
-          if(data.length == 0) {
-             // call drain immediately if there are no tasks
-             return async.setImmediate(function() {
-                 if (q.drain) {
-                     q.drain();
-                 }
-             });
-          }
-          _each(data, function(task) {
-              var item = {
-                  data: task,
-                  priority: priority,
-                  callback: typeof callback === 'function' ? callback : null
-              };
-
-              q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
-
-              if (q.saturated && q.tasks.length === q.concurrency) {
-                  q.saturated();
-              }
-              async.setImmediate(q.process);
-          });
-        }
-
-        // Start with a normal queue
-        var q = async.queue(worker, concurrency);
-
-        // Override push to accept second parameter representing priority
-        q.push = function (data, priority, callback) {
-          _insert(q, data, priority, callback);
-        };
-
-        // Remove unshift function
-        delete q.unshift;
-
-        return q;
-    };
-
-    async.cargo = function (worker, payload) {
-        var working     = false,
-            tasks       = [];
-
-        var cargo = {
-            tasks: tasks,
-            payload: payload,
-            saturated: null,
-            empty: null,
-            drain: null,
-            drained: true,
-            push: function (data, callback) {
-                if (!_isArray(data)) {
-                    data = [data];
-                }
-                _each(data, function(task) {
-                    tasks.push({
-                        data: task,
-                        callback: typeof callback === 'function' ? callback : null
-                    });
-                    cargo.drained = false;
-                    if (cargo.saturated && tasks.length === payload) {
-                        cargo.saturated();
-                    }
-                });
-                async.setImmediate(cargo.process);
-            },
-            process: function process() {
-                if (working) return;
-                if (tasks.length === 0) {
-                    if(cargo.drain && !cargo.drained) cargo.drain();
-                    cargo.drained = true;
-                    return;
-                }
-
-                var ts = typeof payload === 'number'
-                            ? tasks.splice(0, payload)
-                            : tasks.splice(0, tasks.length);
-
-                var ds = _map(ts, function (task) {
-                    return task.data;
-                });
-
-                if(cargo.empty) cargo.empty();
-                working = true;
-                worker(ds, function () {
-                    working = false;
-
-                    var args = arguments;
-                    _each(ts, function (data) {
-                        if (data.callback) {
-                            data.callback.apply(null, args);
-                        }
-                    });
-
-                    process();
-                });
-            },
-            length: function () {
-                return tasks.length;
-            },
-            running: function () {
-                return working;
-            }
-        };
-        return cargo;
-    };
-
-    var _console_fn = function (name) {
-        return function (fn) {
-            var args = Array.prototype.slice.call(arguments, 1);
-            fn.apply(null, args.concat([function (err) {
-                var args = Array.prototype.slice.call(arguments, 1);
-                if (typeof console !== 'undefined') {
-                    if (err) {
-                        if (console.error) {
-                            console.error(err);
-                        }
-                    }
-                    else if (console[name]) {
-                        _each(args, function (x) {
-                            console[name](x);
-                        });
-                    }
-                }
-            }]));
-        };
-    };
-    async.log = _console_fn('log');
-    async.dir = _console_fn('dir');
-    /*async.info = _console_fn('info');
-    async.warn = _console_fn('warn');
-    async.error = _console_fn('error');*/
-
-    async.memoize = function (fn, hasher) {
-        var memo = {};
-        var queues = {};
-        hasher = hasher || function (x) {
-            return x;
-        };
-        var memoized = function () {
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-            var key = hasher.apply(null, args);
-            if (key in memo) {
-                async.nextTick(function () {
-                    callback.apply(null, memo[key]);
-                });
-            }
-            else if (key in queues) {
-                queues[key].push(callback);
-            }
-            else {
-                queues[key] = [callback];
-                fn.apply(null, args.concat([function () {
-                    memo[key] = arguments;
-                    var q = queues[key];
-                    delete queues[key];
-                    for (var i = 0, l = q.length; i < l; i++) {
-                      q[i].apply(null, arguments);
-                    }
-                }]));
-            }
-        };
-        memoized.memo = memo;
-        memoized.unmemoized = fn;
-        return memoized;
-    };
-
-    async.unmemoize = function (fn) {
-      return function () {
-        return (fn.unmemoized || fn).apply(null, arguments);
-      };
-    };
-
-    async.times = function (count, iterator, callback) {
-        var counter = [];
-        for (var i = 0; i < count; i++) {
-            counter.push(i);
-        }
-        return async.map(counter, iterator, callback);
-    };
-
-    async.timesSeries = function (count, iterator, callback) {
-        var counter = [];
-        for (var i = 0; i < count; i++) {
-            counter.push(i);
-        }
-        return async.mapSeries(counter, iterator, callback);
-    };
-
-    async.seq = function (/* functions... */) {
-        var fns = arguments;
-        return function () {
-            var that = this;
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-            async.reduce(fns, args, function (newargs, fn, cb) {
-                fn.apply(that, newargs.concat([function () {
-                    var err = arguments[0];
-                    var nextargs = Array.prototype.slice.call(arguments, 1);
-                    cb(err, nextargs);
-                }]))
-            },
-            function (err, results) {
-                callback.apply(that, [err].concat(results));
-            });
-        };
-    };
-
-    async.compose = function (/* functions... */) {
-      return async.seq.apply(null, Array.prototype.reverse.call(arguments));
-    };
-
-    var _applyEach = function (eachfn, fns /*args...*/) {
-        var go = function () {
-            var that = this;
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-            return eachfn(fns, function (fn, cb) {
-                fn.apply(that, args.concat([cb]));
-            },
-            callback);
-        };
-        if (arguments.length > 2) {
-            var args = Array.prototype.slice.call(arguments, 2);
-            return go.apply(this, args);
-        }
-        else {
-            return go;
-        }
-    };
-    async.applyEach = doParallel(_applyEach);
-    async.applyEachSeries = doSeries(_applyEach);
-
-    async.forever = function (fn, callback) {
-        function next(err) {
-            if (err) {
-                if (callback) {
-                    return callback(err);
-                }
-                throw err;
-            }
-            fn(next);
-        }
-        next();
-    };
-
-    // Node.js
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = async;
-    }
-    // AMD / RequireJS
-    else if (typeof define !== 'undefined' && define.amd) {
-        define([], function () {
-            return async;
-        });
-    }
-    // included directly via <script> tag
-    else {
-        root.async = async;
-    }
-
-}());
-
-}).call(this,require('_process'))
-
-},{"_process":4}],14:[function(require,module,exports){
-arguments[4][11][0].apply(exports,arguments)
-},{"dup":11}],15:[function(require,module,exports){
 var async       = require('async'),
     urlParser   = require('url'),
     Resource    = require('./Resource'),
@@ -5387,7 +4289,7 @@ Loader.LOAD_TYPE = Resource.LOAD_TYPE;
 Loader.XHR_READY_STATE = Resource.XHR_READY_STATE;
 Loader.XHR_RESPONSE_TYPE = Resource.XHR_RESPONSE_TYPE;
 
-},{"./Resource":16,"async":13,"eventemitter3":14,"url":9}],16:[function(require,module,exports){
+},{"./Resource":14,"async":1,"eventemitter3":11,"url":9}],14:[function(require,module,exports){
 var EventEmitter = require('eventemitter3'),
     _url = require('url'),
     // tests is CORS is supported in XHR, if not we need to use XDR
@@ -6164,7 +5066,7 @@ function setExtMap(map, extname, val) {
     map[extname] = val;
 }
 
-},{"eventemitter3":14,"url":9}],17:[function(require,module,exports){
+},{"eventemitter3":11,"url":9}],15:[function(require,module,exports){
 module.exports = {
 
     // private property
@@ -6230,7 +5132,7 @@ module.exports = {
     }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = require('./Loader');
 
 module.exports.Resource = require('./Resource');
@@ -6244,7 +5146,7 @@ module.exports.middleware = {
     }
 };
 
-},{"./Loader":15,"./Resource":16,"./middlewares/caching/memory":19,"./middlewares/parsing/blob":20}],19:[function(require,module,exports){
+},{"./Loader":13,"./Resource":14,"./middlewares/caching/memory":17,"./middlewares/parsing/blob":18}],17:[function(require,module,exports){
 // a simple in-memory cache for resources
 var cache = {};
 
@@ -6266,7 +5168,7 @@ module.exports = function () {
     };
 };
 
-},{}],20:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var Resource = require('../../Resource'),
     b64 = require('../../b64');
 
@@ -6326,7 +5228,7 @@ module.exports = function () {
     };
 };
 
-},{"../../Resource":16,"../../b64":17}],21:[function(require,module,exports){
+},{"../../Resource":14,"../../b64":15}],19:[function(require,module,exports){
 module.exports={
   "name": "pixi.js",
   "version": "3.0.7",
@@ -6396,7 +5298,7 @@ module.exports={
   }
 }
 
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * Constant values used in pixi
  *
@@ -6618,7 +5520,7 @@ var CONST = {
 
 module.exports = CONST;
 
-},{"../../package.json":21}],23:[function(require,module,exports){
+},{"../../package.json":19}],21:[function(require,module,exports){
 var math = require('../math'),
     DisplayObject = require('./DisplayObject'),
     RenderTexture = require('../textures/RenderTexture'),
@@ -7194,7 +6096,7 @@ Container.prototype.destroy = function (destroyChildren)
     this.children = null;
 };
 
-},{"../math":32,"../textures/RenderTexture":70,"./DisplayObject":24}],24:[function(require,module,exports){
+},{"../math":30,"../textures/RenderTexture":68,"./DisplayObject":22}],22:[function(require,module,exports){
 var math = require('../math'),
     RenderTexture = require('../textures/RenderTexture'),
     EventEmitter = require('eventemitter3'),
@@ -7660,7 +6562,7 @@ DisplayObject.prototype.destroy = function ()
     this.filterArea = null;
 };
 
-},{"../const":22,"../math":32,"../textures/RenderTexture":70,"eventemitter3":11}],25:[function(require,module,exports){
+},{"../const":20,"../math":30,"../textures/RenderTexture":68,"eventemitter3":11}],23:[function(require,module,exports){
 var Container = require('../display/Container'),
     Texture = require('../textures/Texture'),
     CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer'),
@@ -8842,7 +7744,7 @@ Graphics.prototype.destroy = function () {
     this._localBounds = null;
 };
 
-},{"../const":22,"../display/Container":23,"../math":32,"../renderers/canvas/utils/CanvasBuffer":44,"../renderers/canvas/utils/CanvasGraphics":45,"../textures/Texture":71,"./GraphicsData":26}],26:[function(require,module,exports){
+},{"../const":20,"../display/Container":21,"../math":30,"../renderers/canvas/utils/CanvasBuffer":42,"../renderers/canvas/utils/CanvasGraphics":43,"../textures/Texture":69,"./GraphicsData":24}],24:[function(require,module,exports){
 /**
  * A GraphicsData object.
  *
@@ -8932,7 +7834,7 @@ GraphicsData.prototype.destroy = function () {
     this.shape = null;
 };
 
-},{}],27:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var utils = require('../../utils'),
     math = require('../../math'),
     CONST = require('../../const'),
@@ -9836,7 +8738,7 @@ GraphicsRenderer.prototype.buildPoly = function (graphicsData, webGLData)
     return true;
 };
 
-},{"../../const":22,"../../math":32,"../../renderers/webgl/WebGLRenderer":48,"../../renderers/webgl/utils/ObjectRenderer":62,"../../utils":76,"./WebGLGraphicsData":28,"earcut":10}],28:[function(require,module,exports){
+},{"../../const":20,"../../math":30,"../../renderers/webgl/WebGLRenderer":46,"../../renderers/webgl/utils/ObjectRenderer":60,"../../utils":74,"./WebGLGraphicsData":26,"earcut":10}],26:[function(require,module,exports){
 /**
  * An object containing WebGL specific properties to be used by the WebGL renderer
  *
@@ -9954,7 +8856,7 @@ WebGLGraphicsData.prototype.destroy = function () {
     this.glIndices = null;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /**
  * @file        Main export of the PIXI core library
  * @author      Mat Groves <mat@goodboydigital.com>
@@ -10046,7 +8948,7 @@ var core = module.exports = Object.assign(require('./const'), require('./math'),
     }
 });
 
-},{"./const":22,"./display/Container":23,"./display/DisplayObject":24,"./graphics/Graphics":25,"./graphics/GraphicsData":26,"./graphics/webgl/GraphicsRenderer":27,"./math":32,"./particles/ParticleContainer":38,"./particles/webgl/ParticleRenderer":40,"./renderers/canvas/CanvasRenderer":43,"./renderers/canvas/utils/CanvasBuffer":44,"./renderers/canvas/utils/CanvasGraphics":45,"./renderers/webgl/WebGLRenderer":48,"./renderers/webgl/filters/AbstractFilter":49,"./renderers/webgl/filters/FXAAFilter":50,"./renderers/webgl/filters/SpriteMaskFilter":51,"./renderers/webgl/managers/ShaderManager":55,"./renderers/webgl/shaders/Shader":60,"./renderers/webgl/utils/ObjectRenderer":62,"./renderers/webgl/utils/RenderTarget":64,"./sprites/Sprite":66,"./sprites/webgl/SpriteRenderer":67,"./text/Text":68,"./textures/BaseTexture":69,"./textures/RenderTexture":70,"./textures/Texture":71,"./textures/TextureUvs":72,"./textures/VideoBaseTexture":73,"./ticker":75,"./utils":76}],30:[function(require,module,exports){
+},{"./const":20,"./display/Container":21,"./display/DisplayObject":22,"./graphics/Graphics":23,"./graphics/GraphicsData":24,"./graphics/webgl/GraphicsRenderer":25,"./math":30,"./particles/ParticleContainer":36,"./particles/webgl/ParticleRenderer":38,"./renderers/canvas/CanvasRenderer":41,"./renderers/canvas/utils/CanvasBuffer":42,"./renderers/canvas/utils/CanvasGraphics":43,"./renderers/webgl/WebGLRenderer":46,"./renderers/webgl/filters/AbstractFilter":47,"./renderers/webgl/filters/FXAAFilter":48,"./renderers/webgl/filters/SpriteMaskFilter":49,"./renderers/webgl/managers/ShaderManager":53,"./renderers/webgl/shaders/Shader":58,"./renderers/webgl/utils/ObjectRenderer":60,"./renderers/webgl/utils/RenderTarget":62,"./sprites/Sprite":64,"./sprites/webgl/SpriteRenderer":65,"./text/Text":66,"./textures/BaseTexture":67,"./textures/RenderTexture":68,"./textures/Texture":69,"./textures/TextureUvs":70,"./textures/VideoBaseTexture":71,"./ticker":73,"./utils":74}],28:[function(require,module,exports){
 var Point = require('./Point');
 
 /**
@@ -10406,7 +9308,7 @@ Matrix.IDENTITY = new Matrix();
  */
 Matrix.TEMP_MATRIX = new Matrix();
 
-},{"./Point":31}],31:[function(require,module,exports){
+},{"./Point":29}],29:[function(require,module,exports){
 /**
  * The Point object represents a location in a two-dimensional coordinate system, where x represents
  * the horizontal axis and y represents the vertical axis.
@@ -10476,7 +9378,7 @@ Point.prototype.set = function (x, y)
     this.y = y || ( (y !== 0) ? this.x : 0 ) ;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * Math classes and utilities mixed into PIXI namespace.
  *
@@ -10498,7 +9400,7 @@ module.exports = {
     RoundedRectangle: require('./shapes/RoundedRectangle')
 };
 
-},{"./Matrix":30,"./Point":31,"./shapes/Circle":33,"./shapes/Ellipse":34,"./shapes/Polygon":35,"./shapes/Rectangle":36,"./shapes/RoundedRectangle":37}],33:[function(require,module,exports){
+},{"./Matrix":28,"./Point":29,"./shapes/Circle":31,"./shapes/Ellipse":32,"./shapes/Polygon":33,"./shapes/Rectangle":34,"./shapes/RoundedRectangle":35}],31:[function(require,module,exports){
 var Rectangle = require('./Rectangle'),
     CONST = require('../../const');
 
@@ -10586,7 +9488,7 @@ Circle.prototype.getBounds = function ()
     return new Rectangle(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
 };
 
-},{"../../const":22,"./Rectangle":36}],34:[function(require,module,exports){
+},{"../../const":20,"./Rectangle":34}],32:[function(require,module,exports){
 var Rectangle = require('./Rectangle'),
     CONST = require('../../const');
 
@@ -10681,7 +9583,7 @@ Ellipse.prototype.getBounds = function ()
     return new Rectangle(this.x - this.width, this.y - this.height, this.width, this.height);
 };
 
-},{"../../const":22,"./Rectangle":36}],35:[function(require,module,exports){
+},{"../../const":20,"./Rectangle":34}],33:[function(require,module,exports){
 var Point = require('../Point'),
     CONST = require('../../const');
 
@@ -10784,7 +9686,7 @@ Polygon.prototype.contains = function (x, y)
     return inside;
 };
 
-},{"../../const":22,"../Point":31}],36:[function(require,module,exports){
+},{"../../const":20,"../Point":29}],34:[function(require,module,exports){
 var CONST = require('../../const');
 
 /**
@@ -10878,7 +9780,7 @@ Rectangle.prototype.contains = function (x, y)
     return false;
 };
 
-},{"../../const":22}],37:[function(require,module,exports){
+},{"../../const":20}],35:[function(require,module,exports){
 var CONST = require('../../const');
 
 /**
@@ -10970,7 +9872,7 @@ RoundedRectangle.prototype.contains = function (x, y)
     return false;
 };
 
-},{"../../const":22}],38:[function(require,module,exports){
+},{"../../const":20}],36:[function(require,module,exports){
 var Container = require('../display/Container'),
     CONST = require('../const');
 
@@ -11301,7 +10203,7 @@ ParticleContainer.prototype.destroy = function () {
     this._buffers = null;
 };
 
-},{"../const":22,"../display/Container":23}],39:[function(require,module,exports){
+},{"../const":20,"../display/Container":21}],37:[function(require,module,exports){
 
 /**
  * @author Mat Groves
@@ -11514,7 +10416,7 @@ ParticleBuffer.prototype.destroy = function ()
     this.gl.deleteBuffer(this.staticBuffer);
 };
 
-},{}],40:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 var ObjectRenderer = require('../../renderers/webgl/utils/ObjectRenderer'),
     WebGLRenderer = require('../../renderers/webgl/WebGLRenderer'),
     ParticleShader = require('./ParticleShader'),
@@ -12009,7 +10911,7 @@ ParticleRenderer.prototype.destroy = function ()
     this.tempMatrix = null;
 };
 
-},{"../../math":32,"../../renderers/webgl/WebGLRenderer":48,"../../renderers/webgl/utils/ObjectRenderer":62,"./ParticleBuffer":39,"./ParticleShader":41}],41:[function(require,module,exports){
+},{"../../math":30,"../../renderers/webgl/WebGLRenderer":46,"../../renderers/webgl/utils/ObjectRenderer":60,"./ParticleBuffer":37,"./ParticleShader":39}],39:[function(require,module,exports){
 var TextureShader = require('../../renderers/webgl/shaders/TextureShader');
 
 /**
@@ -12087,7 +10989,7 @@ ParticleShader.prototype.constructor = ParticleShader;
 
 module.exports = ParticleShader;
 
-},{"../../renderers/webgl/shaders/TextureShader":61}],42:[function(require,module,exports){
+},{"../../renderers/webgl/shaders/TextureShader":59}],40:[function(require,module,exports){
 var utils = require('../utils'),
     math = require('../math'),
     CONST = require('../const'),
@@ -12329,7 +11231,7 @@ SystemRenderer.prototype.destroy = function (removeView) {
     this._backgroundColorString = null;
 };
 
-},{"../const":22,"../math":32,"../utils":76,"eventemitter3":11}],43:[function(require,module,exports){
+},{"../const":20,"../math":30,"../utils":74,"eventemitter3":11}],41:[function(require,module,exports){
 var SystemRenderer = require('../SystemRenderer'),
     CanvasMaskManager = require('./utils/CanvasMaskManager'),
     utils = require('../../utils'),
@@ -12614,7 +11516,7 @@ CanvasRenderer.prototype._mapBlendModes = function ()
     }
 };
 
-},{"../../const":22,"../../math":32,"../../utils":76,"../SystemRenderer":42,"./utils/CanvasMaskManager":46}],44:[function(require,module,exports){
+},{"../../const":20,"../../math":30,"../../utils":74,"../SystemRenderer":40,"./utils/CanvasMaskManager":44}],42:[function(require,module,exports){
 /**
  * Creates a Canvas element of the given size.
  *
@@ -12714,7 +11616,7 @@ CanvasBuffer.prototype.destroy = function ()
     this.canvas = null;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var CONST = require('../../../const');
 
 /**
@@ -13067,7 +11969,7 @@ CanvasGraphics.updateGraphicsTint = function (graphics)
 };
 
 
-},{"../../../const":22}],46:[function(require,module,exports){
+},{"../../../const":20}],44:[function(require,module,exports){
 var CanvasGraphics = require('./CanvasGraphics');
 
 /**
@@ -13129,7 +12031,7 @@ CanvasMaskManager.prototype.popMask = function (renderer)
 
 CanvasMaskManager.prototype.destroy = function () {};
 
-},{"./CanvasGraphics":45}],47:[function(require,module,exports){
+},{"./CanvasGraphics":43}],45:[function(require,module,exports){
 var utils = require('../../../utils');
 
 /**
@@ -13363,7 +12265,7 @@ CanvasTinter.canUseMultiply = utils.canUseNewCanvasBlendModes();
  */
 CanvasTinter.tintMethod = CanvasTinter.canUseMultiply ? CanvasTinter.tintWithMultiply :  CanvasTinter.tintWithPerPixel;
 
-},{"../../../utils":76}],48:[function(require,module,exports){
+},{"../../../utils":74}],46:[function(require,module,exports){
 var SystemRenderer = require('../SystemRenderer'),
     ShaderManager = require('./managers/ShaderManager'),
     MaskManager = require('./managers/MaskManager'),
@@ -13908,7 +12810,7 @@ WebGLRenderer.prototype._mapGlModes = function ()
     }
 };
 
-},{"../../const":22,"../../utils":76,"../SystemRenderer":42,"./filters/FXAAFilter":50,"./managers/BlendModeManager":52,"./managers/FilterManager":53,"./managers/MaskManager":54,"./managers/ShaderManager":55,"./managers/StencilManager":56,"./utils/ObjectRenderer":62,"./utils/RenderTarget":64}],49:[function(require,module,exports){
+},{"../../const":20,"../../utils":74,"../SystemRenderer":40,"./filters/FXAAFilter":48,"./managers/BlendModeManager":50,"./managers/FilterManager":51,"./managers/MaskManager":52,"./managers/ShaderManager":53,"./managers/StencilManager":54,"./utils/ObjectRenderer":60,"./utils/RenderTarget":62}],47:[function(require,module,exports){
 var DefaultShader = require('../shaders/TextureShader');
 
 /**
@@ -14026,7 +12928,7 @@ AbstractFilter.prototype.apply = function (frameBuffer)
 };
 */
 
-},{"../shaders/TextureShader":61}],50:[function(require,module,exports){
+},{"../shaders/TextureShader":59}],48:[function(require,module,exports){
 var AbstractFilter = require('./AbstractFilter');
 // @see https://github.com/substack/brfs/issues/25
 
@@ -14074,7 +12976,7 @@ FXAAFilter.prototype.applyFilter = function (renderer, input, output)
     filterManager.applyFilter(shader, input, output);
 };
 
-},{"./AbstractFilter":49}],51:[function(require,module,exports){
+},{"./AbstractFilter":47}],49:[function(require,module,exports){
 var AbstractFilter = require('./AbstractFilter'),
     math =  require('../../../math');
 
@@ -14171,7 +13073,7 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
     }
 });
 
-},{"../../../math":32,"./AbstractFilter":49}],52:[function(require,module,exports){
+},{"../../../math":30,"./AbstractFilter":47}],50:[function(require,module,exports){
 var WebGLManager = require('./WebGLManager');
 
 /**
@@ -14214,7 +13116,7 @@ BlendModeManager.prototype.setBlendMode = function (blendMode)
     return true;
 };
 
-},{"./WebGLManager":57}],53:[function(require,module,exports){
+},{"./WebGLManager":55}],51:[function(require,module,exports){
 var WebGLManager = require('./WebGLManager'),
     RenderTarget = require('../utils/RenderTarget'),
     CONST = require('../../../const'),
@@ -14650,7 +13552,7 @@ FilterManager.prototype.destroy = function ()
     this.texturePool = null;
 };
 
-},{"../../../const":22,"../../../math":32,"../utils/Quad":63,"../utils/RenderTarget":64,"./WebGLManager":57}],54:[function(require,module,exports){
+},{"../../../const":20,"../../../math":30,"../utils/Quad":61,"../utils/RenderTarget":62,"./WebGLManager":55}],52:[function(require,module,exports){
 var WebGLManager = require('./WebGLManager'),
     AlphaMaskFilter = require('../filters/SpriteMaskFilter');
 
@@ -14764,7 +13666,7 @@ MaskManager.prototype.popStencilMask = function (target, maskData)
 };
 
 
-},{"../filters/SpriteMaskFilter":51,"./WebGLManager":57}],55:[function(require,module,exports){
+},{"../filters/SpriteMaskFilter":49,"./WebGLManager":55}],53:[function(require,module,exports){
 var WebGLManager = require('./WebGLManager'),
     TextureShader = require('../shaders/TextureShader'),
     ComplexPrimitiveShader = require('../shaders/ComplexPrimitiveShader'),
@@ -14931,7 +13833,7 @@ ShaderManager.prototype.destroy = function ()
     this.tempAttribState = null;
 };
 
-},{"../../../utils":76,"../shaders/ComplexPrimitiveShader":58,"../shaders/PrimitiveShader":59,"../shaders/TextureShader":61,"./WebGLManager":57}],56:[function(require,module,exports){
+},{"../../../utils":74,"../shaders/ComplexPrimitiveShader":56,"../shaders/PrimitiveShader":57,"../shaders/TextureShader":59,"./WebGLManager":55}],54:[function(require,module,exports){
 var WebGLManager = require('./WebGLManager'),
     utils = require('../../../utils');
 
@@ -15275,7 +14177,7 @@ WebGLMaskManager.prototype.popMask = function (maskData)
 };
 
 
-},{"../../../utils":76,"./WebGLManager":57}],57:[function(require,module,exports){
+},{"../../../utils":74,"./WebGLManager":55}],55:[function(require,module,exports){
 /**
  * @class
  * @memberof PIXI
@@ -15316,7 +14218,7 @@ WebGLManager.prototype.destroy = function ()
     this.renderer = null;
 };
 
-},{}],58:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var Shader = require('./Shader');
 
 /**
@@ -15376,7 +14278,7 @@ ComplexPrimitiveShader.prototype = Object.create(Shader.prototype);
 ComplexPrimitiveShader.prototype.constructor = ComplexPrimitiveShader;
 module.exports = ComplexPrimitiveShader;
 
-},{"./Shader":60}],59:[function(require,module,exports){
+},{"./Shader":58}],57:[function(require,module,exports){
 var Shader = require('./Shader');
 
 /**
@@ -15437,7 +14339,7 @@ PrimitiveShader.prototype = Object.create(Shader.prototype);
 PrimitiveShader.prototype.constructor = PrimitiveShader;
 module.exports = PrimitiveShader;
 
-},{"./Shader":60}],60:[function(require,module,exports){
+},{"./Shader":58}],58:[function(require,module,exports){
 /*global console */
 var utils = require('../../../utils');
 
@@ -15995,7 +14897,7 @@ Shader.prototype._glCompile = function (type, src)
     return shader;
 };
 
-},{"../../../utils":76}],61:[function(require,module,exports){
+},{"../../../utils":74}],59:[function(require,module,exports){
 var Shader = require('./Shader');
 
 /**
@@ -16092,7 +14994,7 @@ TextureShader.defaultFragmentSrc = [
     '}'
 ].join('\n');
 
-},{"./Shader":60}],62:[function(require,module,exports){
+},{"./Shader":58}],60:[function(require,module,exports){
 var WebGLManager = require('../managers/WebGLManager');
 
 /**
@@ -16149,7 +15051,7 @@ ObjectRenderer.prototype.render = function (object) // jshint unused:false
     // render the object
 };
 
-},{"../managers/WebGLManager":57}],63:[function(require,module,exports){
+},{"../managers/WebGLManager":55}],61:[function(require,module,exports){
 /**
  * Helper class to create a quad
  * @class
@@ -16295,7 +15197,7 @@ module.exports = Quad;
 
 
 
-},{}],64:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var math = require('../../../math'),
     utils = require('../../../utils'),
     CONST = require('../../../const'),
@@ -16601,7 +15503,7 @@ RenderTarget.prototype.destroy = function()
     this.texture = null;
 };
 
-},{"../../../const":22,"../../../math":32,"../../../utils":76,"./StencilMaskStack":65}],65:[function(require,module,exports){
+},{"../../../const":20,"../../../math":30,"../../../utils":74,"./StencilMaskStack":63}],63:[function(require,module,exports){
 /**
  * Generic Mask Stack data structure
  * @class
@@ -16635,7 +15537,7 @@ function StencilMaskStack()
 StencilMaskStack.prototype.constructor = StencilMaskStack;
 module.exports = StencilMaskStack;
 
-},{}],66:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 var math = require('../math'),
     Texture = require('../textures/Texture'),
     Container = require('../display/Container'),
@@ -17199,7 +16101,7 @@ Sprite.fromImage = function (imageId, crossorigin, scaleMode)
     return new Sprite(Texture.fromImage(imageId, crossorigin, scaleMode));
 };
 
-},{"../const":22,"../display/Container":23,"../math":32,"../renderers/canvas/utils/CanvasTinter":47,"../textures/Texture":71,"../utils":76}],67:[function(require,module,exports){
+},{"../const":20,"../display/Container":21,"../math":30,"../renderers/canvas/utils/CanvasTinter":45,"../textures/Texture":69,"../utils":74}],65:[function(require,module,exports){
 var ObjectRenderer = require('../../renderers/webgl/utils/ObjectRenderer'),
     WebGLRenderer = require('../../renderers/webgl/WebGLRenderer'),
     CONST = require('../../const');
@@ -17667,7 +16569,7 @@ SpriteRenderer.prototype.destroy = function ()
     this.shader = null;
 };
 
-},{"../../const":22,"../../renderers/webgl/WebGLRenderer":48,"../../renderers/webgl/utils/ObjectRenderer":62}],68:[function(require,module,exports){
+},{"../../const":20,"../../renderers/webgl/WebGLRenderer":46,"../../renderers/webgl/utils/ObjectRenderer":60}],66:[function(require,module,exports){
 var Sprite = require('../sprites/Sprite'),
     Texture = require('../textures/Texture'),
     math = require('../math'),
@@ -18280,7 +17182,7 @@ Text.prototype.destroy = function (destroyBaseTexture)
     this._texture.destroy(destroyBaseTexture === undefined ? true : destroyBaseTexture);
 };
 
-},{"../const":22,"../math":32,"../sprites/Sprite":66,"../textures/Texture":71,"../utils":76}],69:[function(require,module,exports){
+},{"../const":20,"../math":30,"../sprites/Sprite":64,"../textures/Texture":69,"../utils":74}],67:[function(require,module,exports){
 var utils = require('../utils'),
     CONST = require('../const'),
     EventEmitter = require('eventemitter3');
@@ -18713,7 +17615,7 @@ BaseTexture.fromCanvas = function (canvas, scaleMode)
     return baseTexture;
 };
 
-},{"../const":22,"../utils":76,"eventemitter3":11}],70:[function(require,module,exports){
+},{"../const":20,"../utils":74,"eventemitter3":11}],68:[function(require,module,exports){
 var BaseTexture = require('./BaseTexture'),
     Texture = require('./Texture'),
     RenderTarget = require('../renderers/webgl/utils/RenderTarget'),
@@ -19204,7 +18106,7 @@ RenderTexture.prototype.getPixel = function (x, y)
     }
 };
 
-},{"../const":22,"../math":32,"../renderers/canvas/utils/CanvasBuffer":44,"../renderers/webgl/managers/FilterManager":53,"../renderers/webgl/utils/RenderTarget":64,"./BaseTexture":69,"./Texture":71}],71:[function(require,module,exports){
+},{"../const":20,"../math":30,"../renderers/canvas/utils/CanvasBuffer":42,"../renderers/webgl/managers/FilterManager":51,"../renderers/webgl/utils/RenderTarget":62,"./BaseTexture":67,"./Texture":69}],69:[function(require,module,exports){
 var BaseTexture = require('./BaseTexture'),
     VideoBaseTexture = require('./VideoBaseTexture'),
     TextureUvs = require('./TextureUvs'),
@@ -19610,7 +18512,7 @@ Texture.removeTextureFromCache = function (id)
 
 Texture.EMPTY = new Texture(new BaseTexture());
 
-},{"../math":32,"../utils":76,"./BaseTexture":69,"./TextureUvs":72,"./VideoBaseTexture":73,"eventemitter3":11}],72:[function(require,module,exports){
+},{"../math":30,"../utils":74,"./BaseTexture":67,"./TextureUvs":70,"./VideoBaseTexture":71,"eventemitter3":11}],70:[function(require,module,exports){
 
 /**
  * A standard object to store the Uvs of a texture
@@ -19678,7 +18580,7 @@ TextureUvs.prototype.set = function (frame, baseFrame, rotate)
     }
 };
 
-},{}],73:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var BaseTexture = require('./BaseTexture'),
     utils = require('../utils');
 
@@ -19911,7 +18813,7 @@ function createSource(path, type)
     return source;
 }
 
-},{"../utils":76,"./BaseTexture":69}],74:[function(require,module,exports){
+},{"../utils":74,"./BaseTexture":67}],72:[function(require,module,exports){
 var CONST = require('../const'),
     EventEmitter = require('eventemitter3'),
     // Internal event used by composed emitter
@@ -20262,7 +19164,7 @@ Ticker.prototype.update = function update(currentTime)
 
 module.exports = Ticker;
 
-},{"../const":22,"eventemitter3":11}],75:[function(require,module,exports){
+},{"../const":20,"eventemitter3":11}],73:[function(require,module,exports){
 /**
  * @file        Main export of the PIXI extras library
  * @author      Mat Groves <mat@goodboydigital.com>
@@ -20324,7 +19226,7 @@ module.exports = {
     Ticker: Ticker
 };
 
-},{"./Ticker":74}],76:[function(require,module,exports){
+},{"./Ticker":72}],74:[function(require,module,exports){
 var CONST = require('../const');
 
 /**
@@ -20563,7 +19465,7 @@ var utils = module.exports = {
     BaseTextureCache: {}
 };
 
-},{"../const":22,"./pluginTarget":77,"async":2}],77:[function(require,module,exports){
+},{"../const":20,"./pluginTarget":75,"async":1}],75:[function(require,module,exports){
 /**
  * Mixins functionality to make an object have "plugins".
  *
@@ -20633,7 +19535,7 @@ module.exports = {
     }
 };
 
-},{}],78:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 /*global console */
 var core = require('./core'),
     mesh = require('./mesh'),
@@ -20968,7 +19870,7 @@ core.utils.uuid = function ()
     return core.utils.uid();
 };
 
-},{"./core":29,"./extras":85,"./filters":102,"./mesh":126}],79:[function(require,module,exports){
+},{"./core":27,"./extras":83,"./filters":2,"./mesh":2}],77:[function(require,module,exports){
 var core = require('../core');
 
 /**
@@ -21347,7 +20249,7 @@ BitmapText.prototype.validate = function()
 
 BitmapText.fonts = {};
 
-},{"../core":29}],80:[function(require,module,exports){
+},{"../core":27}],78:[function(require,module,exports){
 var core = require('../core');
 
 /**
@@ -21623,7 +20525,7 @@ MovieClip.fromImages = function (images)
     return new MovieClip(textures);
 };
 
-},{"../core":29}],81:[function(require,module,exports){
+},{"../core":27}],79:[function(require,module,exports){
 var core = require('../core'),
     // a sprite use dfor rendering textures..
     tempPoint = new core.Point();
@@ -22060,7 +20962,7 @@ TilingSprite.fromImage = function (imageId, width, height, crossorigin, scaleMod
     return new TilingSprite(core.Texture.fromImage(imageId, crossorigin, scaleMode),width,height);
 };
 
-},{"../core":29}],82:[function(require,module,exports){
+},{"../core":27}],80:[function(require,module,exports){
 var core = require('../core'),
     DisplayObject = core.DisplayObject,
     _tempMatrix = new core.Matrix();
@@ -22332,7 +21234,7 @@ DisplayObject.prototype._cacheAsBitmapDestroy = function ()
     this._originalDestroy();
 };
 
-},{"../core":29}],83:[function(require,module,exports){
+},{"../core":27}],81:[function(require,module,exports){
 var core = require('../core');
 
 /**
@@ -22360,7 +21262,7 @@ core.Container.prototype.getChildByName = function (name)
     return null;
 };
 
-},{"../core":29}],84:[function(require,module,exports){
+},{"../core":27}],82:[function(require,module,exports){
 var core = require('../core');
 
 /**
@@ -22389,7 +21291,7 @@ core.DisplayObject.prototype.getGlobalPosition = function (point)
     return point;
 };
 
-},{"../core":29}],85:[function(require,module,exports){
+},{"../core":27}],83:[function(require,module,exports){
 /**
  * @file        Main export of the PIXI extras library
  * @author      Mat Groves <mat@goodboydigital.com>
@@ -22410,2727 +21312,39 @@ module.exports = {
     BitmapText:     require('./BitmapText')
 };
 
-},{"./BitmapText":79,"./MovieClip":80,"./TilingSprite":81,"./cacheAsBitmap":82,"./getChildByName":83,"./getGlobalPosition":84}],86:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
+},{"./BitmapText":77,"./MovieClip":78,"./TilingSprite":79,"./cacheAsBitmap":80,"./getChildByName":81,"./getGlobalPosition":82}],84:[function(require,module,exports){
+(function (global){
+// run the polyfills
+require('./polyfill');
 
+var core = module.exports = require('./core');
 
-// TODO (cengler) - The Y is flipped in this shader for some reason.
+// add core plugins.
+core.extras         = require('./extras');
+core.filters        = require('./filters');
+core.interaction    = require('./interaction');
+core.loaders        = require('./loaders');
+core.mesh           = require('./mesh');
 
+// export a premade loader instance
 /**
- * @author Vico @vicocotea
- * original shader : https://www.shadertoy.com/view/lssGDj by @movAX13h
- */
-
-/**
- * An ASCII filter.
+ * A premade instance of the loader that can be used to loader resources.
  *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @name loader
+ * @memberof PIXI
+ * @property {PIXI.loaders.Loader}
  */
-function AsciiFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nuniform vec4 dimensions;\nuniform float pixelSize;\nuniform sampler2D uSampler;\n\nfloat character(float n, vec2 p)\n{\n    p = floor(p*vec2(4.0, -4.0) + 2.5);\n    if (clamp(p.x, 0.0, 4.0) == p.x && clamp(p.y, 0.0, 4.0) == p.y)\n    {\n        if (int(mod(n/exp2(p.x + 5.0*p.y), 2.0)) == 1) return 1.0;\n    }\n    return 0.0;\n}\n\nvoid main()\n{\n    vec2 uv = gl_FragCoord.xy;\n\n    vec3 col = texture2D(uSampler, floor( uv / pixelSize ) * pixelSize / dimensions.xy).rgb;\n\n    float gray = (col.r + col.g + col.b) / 3.0;\n\n    float n =  65536.0;             // .\n    if (gray > 0.2) n = 65600.0;    // :\n    if (gray > 0.3) n = 332772.0;   // *\n    if (gray > 0.4) n = 15255086.0; // o\n    if (gray > 0.5) n = 23385164.0; // &\n    if (gray > 0.6) n = 15252014.0; // 8\n    if (gray > 0.7) n = 13199452.0; // @\n    if (gray > 0.8) n = 11512810.0; // #\n\n    vec2 p = mod( uv / ( pixelSize * 0.5 ), 2.0) - vec2(1.0);\n    col = col * character(n, p);\n\n    gl_FragColor = vec4(col, 1.0);\n}\n",
-        // custom uniforms
-        {
-            dimensions: { type: '4fv', value: new Float32Array([0, 0, 0, 0]) },
-            pixelSize:  { type: '1f', value: 8 }
-        }
-    );
-}
+core.loader = new core.loaders.Loader();
 
-AsciiFilter.prototype = Object.create(core.AbstractFilter.prototype);
-AsciiFilter.prototype.constructor = AsciiFilter;
-module.exports = AsciiFilter;
+// mixin the deprecation features.
+Object.assign(core, require('./deprecation'));
 
-Object.defineProperties(AsciiFilter.prototype, {
-    /**
-     * The pixel size used by the filter.
-     *
-     * @member {number}
-     * @memberof AsciiFilter#
-     */
-    size: {
-        get: function ()
-        {
-            return this.uniforms.pixelSize.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.pixelSize.value = value;
-        }
-    }
-});
+// Always export pixi globally.
+// global.PIXI = core;
 
-},{"../../core":29}],87:[function(require,module,exports){
-var core = require('../../core'),
-    BlurXFilter = require('../blur/BlurXFilter'),
-    BlurYFilter = require('../blur/BlurYFilter');
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-/**
- * The BloomFilter applies a Gaussian blur to an object.
- * The strength of the blur can be set for x- and y-axis separately.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function BloomFilter()
-{
-    core.AbstractFilter.call(this);
-
-    this.blurXFilter = new BlurXFilter();
-    this.blurYFilter = new BlurYFilter();
-
-    this.defaultFilter = new core.AbstractFilter();
-}
-
-BloomFilter.prototype = Object.create(core.AbstractFilter.prototype);
-BloomFilter.prototype.constructor = BloomFilter;
-module.exports = BloomFilter;
-
-BloomFilter.prototype.applyFilter = function (renderer, input, output)
-{
-    var renderTarget = renderer.filterManager.getRenderTarget(true);
-
-    //TODO - copyTexSubImage2D could be used here?
-    this.defaultFilter.applyFilter(renderer, input, output);
-
-    this.blurXFilter.applyFilter(renderer, input, renderTarget);
-
-    renderer.blendModeManager.setBlendMode(core.BLEND_MODES.SCREEN);
-
-    this.blurYFilter.applyFilter(renderer, renderTarget, output);
-
-    renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
-
-    renderer.filterManager.returnRenderTarget(renderTarget);
-};
-
-Object.defineProperties(BloomFilter.prototype, {
-    /**
-     * Sets the strength of both the blurX and blurY properties simultaneously
-     *
-     * @member {number}
-     * @memberOf BloomFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = this.blurYFilter.blur = value;
-        }
-    },
-
-    /**
-     * Sets the strength of the blurX property
-     *
-     * @member {number}
-     * @memberOf BloomFilter#
-     * @default 2
-     */
-    blurX: {
-        get: function ()
-        {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = value;
-        }
-    },
-
-    /**
-     * Sets the strength of the blurY property
-     *
-     * @member {number}
-     * @memberOf BloomFilter#
-     * @default 2
-     */
-    blurY: {
-        get: function ()
-        {
-            return this.blurYFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurYFilter.blur = value;
-        }
-    }
-});
-
-},{"../../core":29,"../blur/BlurXFilter":90,"../blur/BlurYFilter":91}],88:[function(require,module,exports){
-var core = require('../../core');
-
-
-/**
- * The BlurDirFilter applies a Gaussian blur toward a direction to an object.
- *
- * @class
- * @param {number} dirX
- * @param {number} dirY
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function BlurDirFilter(dirX, dirY)
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform float strength;\nuniform float dirX;\nuniform float dirY;\nuniform mat3 projectionMatrix;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\nvarying vec2 vBlurTexCoords[3];\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * vec3((aVertexPosition), 1.0)).xy, 0.0, 1.0);\n    vTextureCoord = aTextureCoord;\n\n    vBlurTexCoords[0] = aTextureCoord + vec2( (0.004 * strength) * dirX, (0.004 * strength) * dirY );\n    vBlurTexCoords[1] = aTextureCoord + vec2( (0.008 * strength) * dirX, (0.008 * strength) * dirY );\n    vBlurTexCoords[2] = aTextureCoord + vec2( (0.012 * strength) * dirX, (0.012 * strength) * dirY );\n\n    vColor = vec4(aColor.rgb * aColor.a, aColor.a);\n}\n",
-        // fragment shader
-        "precision lowp float;\n\nvarying vec2 vTextureCoord;\nvarying vec2 vBlurTexCoords[3];\nvarying vec4 vColor;\n\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    gl_FragColor = vec4(0.0);\n\n    gl_FragColor += texture2D(uSampler, vTextureCoord     ) * 0.3989422804014327;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 0]) * 0.2419707245191454;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 1]) * 0.05399096651318985;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 2]) * 0.004431848411938341;\n}\n",
-        // set the uniforms
-        {
-            strength: { type: '1f', value: 1 },
-            dirX: { type: '1f', value: dirX || 0 },
-            dirY: { type: '1f', value: dirY || 0 }
-        }
-    );
-
-    this.defaultFilter = new core.AbstractFilter();
-
-    /**
-     * Sets the number of passes for blur. More passes means higher quaility bluring.
-     *
-     * @member {number}
-     * @memberof BlurDirFilter#
-     * @default 1
-     */
-    this.passes = 1;
-
-    /**
-     * Sets the X direction of the blur
-     *
-     * @member {number}
-     * @memberof BlurDirFilter#
-     * @default 0
-     */
-    this.dirX = dirX || 0;
-
-    /**
-     * Sets the Y direction of the blur
-     *
-     * @member {number}
-     * @memberof BlurDirFilter#
-     * @default 0
-     */
-    this.dirY = dirY || 0;
-
-    this.strength = 4;
-}
-
-BlurDirFilter.prototype = Object.create(core.AbstractFilter.prototype);
-BlurDirFilter.prototype.constructor = BlurDirFilter;
-module.exports = BlurDirFilter;
-
-BlurDirFilter.prototype.applyFilter = function (renderer, input, output, clear) {
-
-    var shader = this.getShader(renderer);
-
-    this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
-
-    if (this.passes === 1) {
-        renderer.filterManager.applyFilter(shader, input, output, clear);
-    } else {
-        var renderTarget = renderer.filterManager.getRenderTarget(true);
-
-        renderer.filterManager.applyFilter(shader, input, renderTarget, clear);
-
-        for(var i = 0; i < this.passes-2; i++)
-        {
-            //this.uniforms.strength.value = this.strength / 4 / (this.passes+(i*2)) * (input.frame.width / input.size.width);
-            renderer.filterManager.applyFilter(shader, renderTarget, renderTarget, clear);
-        }
-
-        renderer.filterManager.applyFilter(shader, renderTarget, output, clear);
-
-        renderer.filterManager.returnRenderTarget(renderTarget);
-    }
-};
-
-
-Object.defineProperties(BlurDirFilter.prototype, {
-    /**
-     * Sets the strength of both the blur.
-     *
-     * @member {number}
-     * @memberof BlurDirFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return this.strength;
-        },
-        set: function (value)
-        {
-            this.padding = value * 0.5;
-            this.strength = value;
-        }
-    },
-    /**
-     * Sets the X direction of the blur.
-     *
-     * @member {number}
-     * @memberof BlurYFilter#
-     * @default 0
-     */
-    dirX: {
-        get: function ()
-        {
-            return this.dirX;
-        },
-        set: function (value)
-        {
-            this.uniforms.dirX.value = value;
-        }
-    },
-    /**
-     * Sets the Y direction of the blur.
-     *
-     * @member {number}
-     * @memberof BlurDirFilter#
-     * @default 0
-     */
-    dirY: {
-        get: function ()
-        {
-            return this.dirY;
-        },
-        set: function (value)
-        {
-            this.uniforms.dirY.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],89:[function(require,module,exports){
-var core = require('../../core'),
-    BlurXFilter = require('./BlurXFilter'),
-    BlurYFilter = require('./BlurYFilter');
-
-/**
- * The BlurFilter applies a Gaussian blur to an object.
- * The strength of the blur can be set for x- and y-axis separately.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function BlurFilter()
-{
-    core.AbstractFilter.call(this);
-
-    this.blurXFilter = new BlurXFilter();
-    this.blurYFilter = new BlurYFilter();
-}
-
-BlurFilter.prototype = Object.create(core.AbstractFilter.prototype);
-BlurFilter.prototype.constructor = BlurFilter;
-module.exports = BlurFilter;
-
-BlurFilter.prototype.applyFilter = function (renderer, input, output)
-{
-    var renderTarget = renderer.filterManager.getRenderTarget(true);
-
-    this.blurXFilter.applyFilter(renderer, input, renderTarget);
-    this.blurYFilter.applyFilter(renderer, renderTarget, output);
-
-    renderer.filterManager.returnRenderTarget(renderTarget);
-};
-
-Object.defineProperties(BlurFilter.prototype, {
-    /**
-     * Sets the strength of both the blurX and blurY properties simultaneously
-     *
-     * @member {number}
-     * @memberOf BlurFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.padding = Math.abs(value) * 0.5;
-            this.blurXFilter.blur = this.blurYFilter.blur = value;
-        }
-    },
-
-    /**
-     * Sets the number of passes for blur. More passes means higher quaility bluring.
-     *
-     * @member {number}
-     * @memberof BlurYFilter#
-     * @default 1
-     */
-    passes: {
-        get: function ()
-        {
-            return  this.blurXFilter.passes;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.passes = this.blurYFilter.passes = value;
-        }
-    },
-
-    /**
-     * Sets the strength of the blurX property
-     *
-     * @member {number}
-     * @memberOf BlurFilter#
-     * @default 2
-     */
-    blurX: {
-        get: function ()
-        {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = value;
-        }
-    },
-
-    /**
-     * Sets the strength of the blurY property
-     *
-     * @member {number}
-     * @memberOf BlurFilter#
-     * @default 2
-     */
-    blurY: {
-        get: function ()
-        {
-            return this.blurYFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurYFilter.blur = value;
-        }
-    }
-});
-
-},{"../../core":29,"./BlurXFilter":90,"./BlurYFilter":91}],90:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The BlurXFilter applies a horizontal Gaussian blur to an object.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function BlurXFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform float strength;\nuniform mat3 projectionMatrix;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\nvarying vec2 vBlurTexCoords[6];\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * vec3((aVertexPosition), 1.0)).xy, 0.0, 1.0);\n    vTextureCoord = aTextureCoord;\n\n    vBlurTexCoords[ 0] = aTextureCoord + vec2(-0.012 * strength, 0.0);\n    vBlurTexCoords[ 1] = aTextureCoord + vec2(-0.008 * strength, 0.0);\n    vBlurTexCoords[ 2] = aTextureCoord + vec2(-0.004 * strength, 0.0);\n    vBlurTexCoords[ 3] = aTextureCoord + vec2( 0.004 * strength, 0.0);\n    vBlurTexCoords[ 4] = aTextureCoord + vec2( 0.008 * strength, 0.0);\n    vBlurTexCoords[ 5] = aTextureCoord + vec2( 0.012 * strength, 0.0);\n\n    vColor = vec4(aColor.rgb * aColor.a, aColor.a);\n}\n",
-        // fragment shader
-        "precision lowp float;\n\nvarying vec2 vTextureCoord;\nvarying vec2 vBlurTexCoords[6];\nvarying vec4 vColor;\n\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    gl_FragColor = vec4(0.0);\n\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 0])*0.004431848411938341;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 1])*0.05399096651318985;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 2])*0.2419707245191454;\n    gl_FragColor += texture2D(uSampler, vTextureCoord     )*0.3989422804014327;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 3])*0.2419707245191454;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 4])*0.05399096651318985;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 5])*0.004431848411938341;\n}\n",
-        // set the uniforms
-        {
-            strength: { type: '1f', value: 1 }
-        }
-    );
-
-    /**
-     * Sets the number of passes for blur. More passes means higher quaility bluring.
-     *
-     * @member {number}
-     * @memberof BlurXFilter#
-     * @default 1
-     */
-    this.passes = 1;
-
-    this.strength = 4;
-}
-
-BlurXFilter.prototype = Object.create(core.AbstractFilter.prototype);
-BlurXFilter.prototype.constructor = BlurXFilter;
-module.exports = BlurXFilter;
-
-BlurXFilter.prototype.applyFilter = function (renderer, input, output, clear)
-{
-    var shader = this.getShader(renderer);
-
-    this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
-
-    if(this.passes === 1)
-    {
-        renderer.filterManager.applyFilter(shader, input, output, clear);
-    }
-    else
-    {
-        var renderTarget = renderer.filterManager.getRenderTarget(true);
-        var flip = input;
-        var flop = renderTarget;
-
-        for(var i = 0; i < this.passes-1; i++)
-        {
-            renderer.filterManager.applyFilter(shader, flip, flop, true);
-
-           var temp = flop;
-           flop = flip;
-           flip = temp;
-        }
-
-        renderer.filterManager.applyFilter(shader, flip, output, clear);
-
-        renderer.filterManager.returnRenderTarget(renderTarget);
-    }
-};
-
-
-Object.defineProperties(BlurXFilter.prototype, {
-    /**
-     * Sets the strength of both the blur.
-     *
-     * @member {number}
-     * @memberof BlurXFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return  this.strength;
-        },
-        set: function (value)
-        {
-            this.padding =  Math.abs(value) * 0.5;
-            this.strength = value;
-        }
-    }
-});
-
-},{"../../core":29}],91:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The BlurYFilter applies a horizontal Gaussian blur to an object.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function BlurYFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform float strength;\nuniform mat3 projectionMatrix;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\nvarying vec2 vBlurTexCoords[6];\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * vec3((aVertexPosition), 1.0)).xy, 0.0, 1.0);\n    vTextureCoord = aTextureCoord;\n\n    vBlurTexCoords[ 0] = aTextureCoord + vec2(0.0, -0.012 * strength);\n    vBlurTexCoords[ 1] = aTextureCoord + vec2(0.0, -0.008 * strength);\n    vBlurTexCoords[ 2] = aTextureCoord + vec2(0.0, -0.004 * strength);\n    vBlurTexCoords[ 3] = aTextureCoord + vec2(0.0,  0.004 * strength);\n    vBlurTexCoords[ 4] = aTextureCoord + vec2(0.0,  0.008 * strength);\n    vBlurTexCoords[ 5] = aTextureCoord + vec2(0.0,  0.012 * strength);\n\n   vColor = vec4(aColor.rgb * aColor.a, aColor.a);\n}\n",
-        // fragment shader
-        "precision lowp float;\n\nvarying vec2 vTextureCoord;\nvarying vec2 vBlurTexCoords[6];\nvarying vec4 vColor;\n\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    gl_FragColor = vec4(0.0);\n\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 0])*0.004431848411938341;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 1])*0.05399096651318985;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 2])*0.2419707245191454;\n    gl_FragColor += texture2D(uSampler, vTextureCoord     )*0.3989422804014327;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 3])*0.2419707245191454;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 4])*0.05399096651318985;\n    gl_FragColor += texture2D(uSampler, vBlurTexCoords[ 5])*0.004431848411938341;\n}\n",
-        // set the uniforms
-        {
-            strength: { type: '1f', value: 1 }
-        }
-    );
-
-    this.passes = 1;
-    this.strength = 4;
-}
-
-BlurYFilter.prototype = Object.create(core.AbstractFilter.prototype);
-BlurYFilter.prototype.constructor = BlurYFilter;
-module.exports = BlurYFilter;
-
-BlurYFilter.prototype.applyFilter = function (renderer, input, output, clear)
-{
-    var shader = this.getShader(renderer);
-
-    this.uniforms.strength.value = Math.abs(this.strength) / 4 / this.passes * (input.frame.height / input.size.height);
-
-    if(this.passes === 1)
-    {
-        renderer.filterManager.applyFilter(shader, input, output, clear);
-    }
-    else
-    {
-        var renderTarget = renderer.filterManager.getRenderTarget(true);
-        var flip = input;
-        var flop = renderTarget;
-
-        for(var i = 0; i < this.passes-1; i++)
-        {
-            renderer.filterManager.applyFilter(shader, flip, flop, true);
-
-           var temp = flop;
-           flop = flip;
-           flip = temp;
-        }
-
-        renderer.filterManager.applyFilter(shader, flip, output, clear);
-
-        renderer.filterManager.returnRenderTarget(renderTarget);
-    }
-};
-
-
-Object.defineProperties(BlurYFilter.prototype, {
-    /**
-     * Sets the strength of both the blur.
-     *
-     * @member {number}
-     * @memberof BlurYFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return  this.strength;
-        },
-        set: function (value)
-        {
-            this.padding = Math.abs(value) * 0.5;
-            this.strength = value;
-        }
-    }
-});
-
-},{"../../core":29}],92:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * A Smart Blur Filter.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function SmartBlurFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform vec2 delta;\n\nfloat random(vec3 scale, float seed)\n{\n    return fract(sin(dot(gl_FragCoord.xyz + seed, scale)) * 43758.5453 + seed);\n}\n\nvoid main(void)\n{\n    vec4 color = vec4(0.0);\n    float total = 0.0;\n\n    float offset = random(vec3(12.9898, 78.233, 151.7182), 0.0);\n\n    for (float t = -30.0; t <= 30.0; t++)\n    {\n        float percent = (t + offset - 0.5) / 30.0;\n        float weight = 1.0 - abs(percent);\n        vec4 sample = texture2D(uSampler, vTextureCoord + delta * percent);\n        sample.rgb *= sample.a;\n        color += sample * weight;\n        total += weight;\n    }\n\n    gl_FragColor = color / total;\n    gl_FragColor.rgb /= gl_FragColor.a + 0.00001;\n}\n",
-        // uniforms
-        {
-          delta: { type: 'v2', value: { x: 0.1, y: 0.0 } }
-        }
-    );
-}
-
-SmartBlurFilter.prototype = Object.create(core.AbstractFilter.prototype);
-SmartBlurFilter.prototype.constructor = SmartBlurFilter;
-module.exports = SmartBlurFilter;
-
-},{"../../core":29}],93:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The ColorMatrixFilter class lets you apply a 5x4 matrix transformation on the RGBA
- * color and alpha values of every pixel on your displayObject to produce a result
- * with a new set of RGBA color and alpha values. It's pretty powerful!
- *
- * ```js
- *  var colorMatrix = new PIXI.ColorMatrixFilter();
- *  container.filters = [colorMatrix];
- *  colorMatrix.contrast(2);
- * ```
- * @author Clément Chenebault <clement@goodboydigital.com>
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function ColorMatrixFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nuniform sampler2D uSampler;\nuniform float m[25];\n\nvoid main(void)\n{\n\n    vec4 c = texture2D(uSampler, vTextureCoord);\n\n    gl_FragColor.r = (m[0] * c.r);\n        gl_FragColor.r += (m[1] * c.g);\n        gl_FragColor.r += (m[2] * c.b);\n        gl_FragColor.r += (m[3] * c.a);\n        gl_FragColor.r += m[4];\n\n    gl_FragColor.g = (m[5] * c.r);\n        gl_FragColor.g += (m[6] * c.g);\n        gl_FragColor.g += (m[7] * c.b);\n        gl_FragColor.g += (m[8] * c.a);\n        gl_FragColor.g += m[9];\n\n     gl_FragColor.b = (m[10] * c.r);\n        gl_FragColor.b += (m[11] * c.g);\n        gl_FragColor.b += (m[12] * c.b);\n        gl_FragColor.b += (m[13] * c.a);\n        gl_FragColor.b += m[14];\n\n     gl_FragColor.a = (m[15] * c.r);\n        gl_FragColor.a += (m[16] * c.g);\n        gl_FragColor.a += (m[17] * c.b);\n        gl_FragColor.a += (m[18] * c.a);\n        gl_FragColor.a += m[19];\n\n}\n",
-        // custom uniforms
-        {
-            m: {
-                type: '1fv', value: [
-                    1, 0, 0, 0, 0,
-                    0, 1, 0, 0, 0,
-                    0, 0, 1, 0, 0,
-                    0, 0, 0, 1, 0
-                ]
-            }
-        }
-    );
-}
-
-ColorMatrixFilter.prototype = Object.create(core.AbstractFilter.prototype);
-ColorMatrixFilter.prototype.constructor = ColorMatrixFilter;
-module.exports = ColorMatrixFilter;
-
-
-/**
- * Transforms current matrix and set the new one
- *
- * @param matrix {number[]} (mat 5x4)
- * @param multiply {boolean} if true, current matrix and matrix are multiplied. If false, just set the current matrix with @param matrix
- */
-ColorMatrixFilter.prototype._loadMatrix = function (matrix, multiply)
-{
-    multiply = !!multiply;
-
-    var newMatrix = matrix;
-
-    if (multiply) {
-        this._multiply(newMatrix, this.uniforms.m.value, matrix);
-        newMatrix = this._colorMatrix(newMatrix);
-    }
-
-    // set the new matrix
-    this.uniforms.m.value = newMatrix;
-};
-
-/**
- * Multiplies two mat5's
- *
- * @param out {array} (mat 5x4) the receiving matrix
- * @param a {array} (mat 5x4) the first operand
- * @param b {array} (mat 5x4) the second operand
- * @returns out {array} (mat 5x4)
- */
-ColorMatrixFilter.prototype._multiply = function (out, a, b)
-{
-
-    // Red Channel
-    out[0] = (a[0] * b[0]) + (a[1] * b[5]) + (a[2] * b[10]) + (a[3] * b[15]);
-    out[1] = (a[0] * b[1]) + (a[1] * b[6]) + (a[2] * b[11]) + (a[3] * b[16]);
-    out[2] = (a[0] * b[2]) + (a[1] * b[7]) + (a[2] * b[12]) + (a[3] * b[17]);
-    out[3] = (a[0] * b[3]) + (a[1] * b[8]) + (a[2] * b[13]) + (a[3] * b[18]);
-    out[4] = (a[0] * b[4]) + (a[1] * b[9]) + (a[2] * b[14]) + (a[3] * b[19]);
-
-    // Green Channel
-    out[5] = (a[5] * b[0]) + (a[6] * b[5]) + (a[7] * b[10]) + (a[8] * b[15]);
-    out[6] = (a[5] * b[1]) + (a[6] * b[6]) + (a[7] * b[11]) + (a[8] * b[16]);
-    out[7] = (a[5] * b[2]) + (a[6] * b[7]) + (a[7] * b[12]) + (a[8] * b[17]);
-    out[8] = (a[5] * b[3]) + (a[6] * b[8]) + (a[7] * b[13]) + (a[8] * b[18]);
-    out[9] = (a[5] * b[4]) + (a[6] * b[9]) + (a[7] * b[14]) + (a[8] * b[19]);
-
-    // Blue Channel
-    out[10] = (a[10] * b[0]) + (a[11] * b[5]) + (a[12] * b[10]) + (a[13] * b[15]);
-    out[11] = (a[10] * b[1]) + (a[11] * b[6]) + (a[12] * b[11]) + (a[13] * b[16]);
-    out[12] = (a[10] * b[2]) + (a[11] * b[7]) + (a[12] * b[12]) + (a[13] * b[17]);
-    out[13] = (a[10] * b[3]) + (a[11] * b[8]) + (a[12] * b[13]) + (a[13] * b[18]);
-    out[14] = (a[10] * b[4]) + (a[11] * b[9]) + (a[12] * b[14]) + (a[13] * b[19]);
-
-    // Alpha Channel
-    out[15] = (a[15] * b[0]) + (a[16] * b[5]) + (a[17] * b[10]) + (a[18] * b[15]);
-    out[16] = (a[15] * b[1]) + (a[16] * b[6]) + (a[17] * b[11]) + (a[18] * b[16]);
-    out[17] = (a[15] * b[2]) + (a[16] * b[7]) + (a[17] * b[12]) + (a[18] * b[17]);
-    out[18] = (a[15] * b[3]) + (a[16] * b[8]) + (a[17] * b[13]) + (a[18] * b[18]);
-    out[19] = (a[15] * b[4]) + (a[16] * b[9]) + (a[17] * b[14]) + (a[18] * b[19]);
-
-    return out;
-};
-
-/**
- * Create a Float32 Array and normalize the offset component to 0-1
- *
- * @param matrix {number[]} (mat 5x4)
- * @return m {number[]} (mat 5x4) with all values between 0-1
- */
-ColorMatrixFilter.prototype._colorMatrix = function (matrix)
-{
-    // Create a Float32 Array and normalize the offset component to 0-1
-    var m = new Float32Array(matrix);
-    m[4] /= 255;
-    m[9] /= 255;
-    m[14] /= 255;
-    m[19] /= 255;
-
-    return m;
-};
-
-/**
- * Adjusts brightness
- *
- * Multiply the current matrix
- * @param b {number} value of the brigthness (0 is black)
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.brightness = function (b, multiply)
-{
-    var matrix = [
-        b, 0, 0, 0, 0,
-        0, b, 0, 0, 0,
-        0, 0, b, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Set the matrices in grey scales
- *
- * Multiply the current matrix
- * @param scale {number} value of the grey (0 is black)
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.greyscale = function (scale, multiply)
-{
-    var matrix = [
-        scale, scale, scale, 0, 0,
-        scale, scale, scale, 0, 0,
-        scale, scale, scale, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-//Americanized alias
-ColorMatrixFilter.prototype.grayscale = ColorMatrixFilter.prototype.greyscale;
-
-/**
- * Set the black and white matrice
- * Multiply the current matrix
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.blackAndWhite = function (multiply)
-{
-    var matrix = [
-        0.3, 0.6, 0.1, 0, 0,
-        0.3, 0.6, 0.1, 0, 0,
-        0.3, 0.6, 0.1, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Set the hue property of the color
- *
- * Multiply the current matrix
- * @param rotation {number} in degrees
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.hue = function (rotation, multiply)
-{
-    rotation = (rotation || 0) / 180 * Math.PI;
-    var cos = Math.cos(rotation),
-        sin = Math.sin(rotation);
-
-    // luminanceRed, luminanceGreen, luminanceBlue
-    var lumR = 0.213, // or 0.3086
-        lumG = 0.715, // or 0.6094
-        lumB = 0.072; // or 0.0820
-
-    var matrix = [
-        lumR + cos * (1 - lumR) + sin * (-lumR), lumG + cos * (-lumG) + sin * (-lumG), lumB + cos * (-lumB) + sin * (1 - lumB), 0, 0,
-        lumR + cos * (-lumR) + sin * (0.143), lumG + cos * (1 - lumG) + sin * (0.140), lumB + cos * (-lumB) + sin * (-0.283), 0, 0,
-        lumR + cos * (-lumR) + sin * (-(1 - lumR)), lumG + cos * (-lumG) + sin * (lumG), lumB + cos * (1 - lumB) + sin * (lumB), 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-
-/**
- * Set the contrast matrix, increase the separation between dark and bright
- * Increase contrast : shadows darker and highlights brighter
- * Decrease contrast : bring the shadows up and the highlights down
- *
- * @param amount {number} value of the contrast
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.contrast = function (amount, multiply)
-{
-    var v = (amount || 0) + 1;
-    var o = -128 * (v - 1);
-
-    var matrix = [
-        v, 0, 0, 0, o,
-        0, v, 0, 0, o,
-        0, 0, v, 0, o,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Set the saturation matrix, increase the separation between colors
- * Increase saturation : increase contrast, brightness, and sharpness
- * @param amount {number}
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.saturate = function (amount, multiply)
-{
-    var x = (amount || 0) * 2 / 3 + 1;
-    var y = ((x - 1) * -0.5);
-
-    var matrix = [
-        x, y, y, 0, 0,
-        y, x, y, 0, 0,
-        y, y, x, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Desaturate image (remove color)
- *
- * Call the saturate function
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.desaturate = function (multiply) // jshint unused:false
-{
-    this.saturate(-1);
-};
-
-/**
- * Negative image (inverse of classic rgb matrix)
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.negative = function (multiply)
-{
-    var matrix = [
-        0, 1, 1, 0, 0,
-        1, 0, 1, 0, 0,
-        1, 1, 0, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Sepia image
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.sepia = function (multiply)
-{
-    var matrix = [
-        0.393, 0.7689999, 0.18899999, 0, 0,
-        0.349, 0.6859999, 0.16799999, 0, 0,
-        0.272, 0.5339999, 0.13099999, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Color motion picture process invented in 1916 (thanks Dominic Szablewski)
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.technicolor = function (multiply)
-{
-    var matrix = [
-        1.9125277891456083, -0.8545344976951645, -0.09155508482755585, 0, 11.793603434377337,
-        -0.3087833385928097, 1.7658908555458428, -0.10601743074722245, 0, -70.35205161461398,
-        -0.231103377548616, -0.7501899197440212, 1.847597816108189, 0, 30.950940869491138,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Polaroid filter
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.polaroid = function (multiply)
-{
-    var matrix = [
-        1.438, -0.062, -0.062, 0, 0,
-        -0.122, 1.378, -0.122, 0, 0,
-        -0.016, -0.016, 1.483, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Filter who transforms : Red -> Blue and Blue -> Red
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.toBGR = function (multiply)
-{
-    var matrix = [
-        0, 0, 1, 0, 0,
-        0, 1, 0, 0, 0,
-        1, 0, 0, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Color reversal film introduced by Eastman Kodak in 1935. (thanks Dominic Szablewski)
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.kodachrome = function (multiply)
-{
-    var matrix = [
-        1.1285582396593525, -0.3967382283601348, -0.03992559172921793, 0, 63.72958762196502,
-        -0.16404339962244616, 1.0835251566291304, -0.05498805115633132, 0, 24.732407896706203,
-        -0.16786010706155763, -0.5603416277695248, 1.6014850761964943, 0, 35.62982807460946,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/**
- * Brown delicious browni filter (thanks Dominic Szablewski)
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.browni = function (multiply)
-{
-    var matrix = [
-        0.5997023498159715, 0.34553243048391263, -0.2708298674538042, 0, 47.43192855600873,
-        -0.037703249837783157, 0.8609577587992641, 0.15059552388459913, 0, -36.96841498319127,
-        0.24113635128153335, -0.07441037908422492, 0.44972182064877153, 0, -7.562075277591283,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/*
- * Vintage filter (thanks Dominic Szablewski)
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.vintage = function (multiply)
-{
-    var matrix = [
-        0.6279345635605994, 0.3202183420819367, -0.03965408211312453, 0, 9.651285835294123,
-        0.02578397704808868, 0.6441188644374771, 0.03259127616149294, 0, 7.462829176470591,
-        0.0466055556782719, -0.0851232987247891, 0.5241648018700465, 0, 5.159190588235296,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/*
- * We don't know exactly what it does, kind of gradient map, but funny to play with!
- *
- * @param desaturation {number}
- * @param toned {number}
- * @param lightColor {string} (example : "0xFFE580")
- * @param darkColor {string}  (example : "0xFFE580")
- *
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.colorTone = function (desaturation, toned, lightColor, darkColor, multiply)
-{
-    desaturation = desaturation || 0.2;
-    toned = toned || 0.15;
-    lightColor = lightColor || 0xFFE580;
-    darkColor = darkColor || 0x338000;
-
-    var lR = ((lightColor >> 16) & 0xFF) / 255;
-    var lG = ((lightColor >> 8) & 0xFF) / 255;
-    var lB = (lightColor & 0xFF) / 255;
-
-    var dR = ((darkColor >> 16) & 0xFF) / 255;
-    var dG = ((darkColor >> 8) & 0xFF) / 255;
-    var dB = (darkColor & 0xFF) / 255;
-
-    var matrix = [
-        0.3, 0.59, 0.11, 0, 0,
-        lR, lG, lB, desaturation, 0,
-        dR, dG, dB, toned, 0,
-        lR - dR, lG - dG, lB - dB, 0, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/*
- * Night effect
- *
- * @param intensity {number}
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.night = function (intensity, multiply)
-{
-    intensity = intensity || 0.1;
-    var matrix = [
-        intensity * ( -2.0), -intensity, 0, 0, 0,
-        -intensity, 0, intensity, 0, 0,
-        0, intensity, intensity * 2.0, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-
-/*
- * Predator effect
- *
- * Erase the current matrix by setting a new indepent one
- *
- * @param amount {number} how much the predator feels his future victim
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.predator = function (amount, multiply)
-{
-    var matrix = [
-        11.224130630493164 * amount, -4.794486999511719 * amount, -2.8746118545532227 * amount, 0 * amount, 0.40342438220977783 * amount,
-        -3.6330697536468506 * amount, 9.193157196044922 * amount, -2.951810836791992 * amount, 0 * amount, -1.316135048866272 * amount,
-        -3.2184197902679443 * amount, -4.2375030517578125 * amount, 7.476448059082031 * amount, 0 * amount, 0.8044459223747253 * amount,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/*
- * LSD effect
- *
- * Multiply the current matrix
- *
- * @param amount {number} How crazy is your effect
- * @param multiply {boolean} refer to ._loadMatrix() method
- */
-ColorMatrixFilter.prototype.lsd = function (multiply)
-{
-    var matrix = [
-        2, -0.4, 0.5, 0, 0,
-        -0.5, 2, -0.4, 0, 0,
-        -0.4, -0.5, 3, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, multiply);
-};
-
-/*
- * Reset function
- *
- * Erase the current matrix by setting the default one
- *
- */
-ColorMatrixFilter.prototype.reset = function ()
-{
-    var matrix = [
-        1, 0, 0, 0, 0,
-        0, 1, 0, 0, 0,
-        0, 0, 1, 0, 0,
-        0, 0, 0, 1, 0
-    ];
-
-    this._loadMatrix(matrix, false);
-};
-
-
-Object.defineProperties(ColorMatrixFilter.prototype, {
-    /**
-     * Sets the matrix of the color matrix filter
-     *
-     * @member {number[]}
-     * @memberof ColorMatrixFilter#
-     * @default [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
-     */
-    matrix: {
-        get: function ()
-        {
-            return this.uniforms.m.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.m.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],94:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * This lowers the color depth of your image by the given amount, producing an image with a smaller palette.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function ColorStepFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform float step;\n\nvoid main(void)\n{\n    vec4 color = texture2D(uSampler, vTextureCoord);\n\n    color = floor(color * step) / step;\n\n    gl_FragColor = color;\n}\n",
-        // custom uniforms
-        {
-            step: { type: '1f', value: 5 }
-        }
-    );
-}
-
-ColorStepFilter.prototype = Object.create(core.AbstractFilter.prototype);
-ColorStepFilter.prototype.constructor = ColorStepFilter;
-module.exports = ColorStepFilter;
-
-Object.defineProperties(ColorStepFilter.prototype, {
-    /**
-     * The number of steps to reduce the palette by.
-     *
-     * @member {number}
-     * @memberof ColorStepFilter#
-     */
-    step: {
-        get: function ()
-        {
-            return this.uniforms.step.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.step.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],95:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The ConvolutionFilter class applies a matrix convolution filter effect.
- * A convolution combines pixels in the input image with neighboring pixels to produce a new image.
- * A wide variety of image effects can be achieved through convolutions, including blurring, edge
- * detection, sharpening, embossing, and beveling. The matrix should be specified as a 9 point Array.
- * See http://docs.gimp.org/en/plug-in-convmatrix.html for more info.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- * @param matrix {number[]} An array of values used for matrix transformation. Specified as a 9 point Array.
- * @param width {number} Width of the object you are transforming
- * @param height {number} Height of the object you are transforming
- */
-function ConvolutionFilter(matrix, width, height)
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying mediump vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform vec2 texelSize;\nuniform float matrix[9];\n\nvoid main(void)\n{\n   vec4 c11 = texture2D(uSampler, vTextureCoord - texelSize); // top left\n   vec4 c12 = texture2D(uSampler, vec2(vTextureCoord.x, vTextureCoord.y - texelSize.y)); // top center\n   vec4 c13 = texture2D(uSampler, vec2(vTextureCoord.x + texelSize.x, vTextureCoord.y - texelSize.y)); // top right\n\n   vec4 c21 = texture2D(uSampler, vec2(vTextureCoord.x - texelSize.x, vTextureCoord.y)); // mid left\n   vec4 c22 = texture2D(uSampler, vTextureCoord); // mid center\n   vec4 c23 = texture2D(uSampler, vec2(vTextureCoord.x + texelSize.x, vTextureCoord.y)); // mid right\n\n   vec4 c31 = texture2D(uSampler, vec2(vTextureCoord.x - texelSize.x, vTextureCoord.y + texelSize.y)); // bottom left\n   vec4 c32 = texture2D(uSampler, vec2(vTextureCoord.x, vTextureCoord.y + texelSize.y)); // bottom center\n   vec4 c33 = texture2D(uSampler, vTextureCoord + texelSize); // bottom right\n\n   gl_FragColor =\n       c11 * matrix[0] + c12 * matrix[1] + c13 * matrix[2] +\n       c21 * matrix[3] + c22 * matrix[4] + c23 * matrix[5] +\n       c31 * matrix[6] + c32 * matrix[7] + c33 * matrix[8];\n\n   gl_FragColor.a = c22.a;\n}\n",
-        // custom uniforms
-        {
-            matrix:     { type: '1fv', value: new Float32Array(matrix) },
-            texelSize:  { type: 'v2', value: { x: 1 / width, y: 1 / height } }
-        }
-    );
-}
-
-ConvolutionFilter.prototype = Object.create(core.AbstractFilter.prototype);
-ConvolutionFilter.prototype.constructor = ConvolutionFilter;
-module.exports = ConvolutionFilter;
-
-Object.defineProperties(ConvolutionFilter.prototype, {
-    /**
-     * An array of values used for matrix transformation. Specified as a 9 point Array.
-     *
-     * @member {number[]}
-     * @memberof ConvolutionFilter#
-     */
-    matrix: {
-        get: function ()
-        {
-            return this.uniforms.matrix.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.matrix.value = new Float32Array(value);
-        }
-    },
-
-    /**
-     * Width of the object you are transforming
-     *
-     * @member {number}
-     * @memberof ConvolutionFilter#
-     */
-    width: {
-        get: function ()
-        {
-            return 1/this.uniforms.texelSize.value.x;
-        },
-        set: function (value)
-        {
-            this.uniforms.texelSize.value.x = 1/value;
-        }
-    },
-
-    /**
-     * Height of the object you are transforming
-     *
-     * @member {number}
-     * @memberof ConvolutionFilter#
-     */
-    height: {
-        get: function ()
-        {
-            return 1/this.uniforms.texelSize.value.y;
-        },
-        set: function (value)
-        {
-            this.uniforms.texelSize.value.y = 1/value;
-        }
-    }
-});
-
-},{"../../core":29}],96:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * A Cross Hatch effect filter.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function CrossHatchFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    float lum = length(texture2D(uSampler, vTextureCoord.xy).rgb);\n\n    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n\n    if (lum < 1.00)\n    {\n        if (mod(gl_FragCoord.x + gl_FragCoord.y, 10.0) == 0.0)\n        {\n            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n        }\n    }\n\n    if (lum < 0.75)\n    {\n        if (mod(gl_FragCoord.x - gl_FragCoord.y, 10.0) == 0.0)\n        {\n            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n        }\n    }\n\n    if (lum < 0.50)\n    {\n        if (mod(gl_FragCoord.x + gl_FragCoord.y - 5.0, 10.0) == 0.0)\n        {\n            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n        }\n    }\n\n    if (lum < 0.3)\n    {\n        if (mod(gl_FragCoord.x - gl_FragCoord.y - 5.0, 10.0) == 0.0)\n        {\n            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n        }\n    }\n}\n"
-    );
-}
-
-CrossHatchFilter.prototype = Object.create(core.AbstractFilter.prototype);
-CrossHatchFilter.prototype.constructor = CrossHatchFilter;
-module.exports = CrossHatchFilter;
-
-},{"../../core":29}],97:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The DisplacementFilter class uses the pixel values from the specified texture (called the displacement map) to perform a displacement of an object.
- * You can use this filter to apply all manor of crazy warping effects
- * Currently the r property of the texture is used to offset the x and the g property of the texture is used to offset the y.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- * @param sprite {Sprite} the sprite used for the displacement map. (make sure its added to the scene!)
- */
-function DisplacementFilter(sprite)
-{
-    var maskMatrix = new core.Matrix();
-    sprite.renderable = false;
-
-    core.AbstractFilter.call(this,
-        // vertex shader
-        "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform mat3 projectionMatrix;\nuniform mat3 otherMatrix;\n\nvarying vec2 vMapCoord;\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nvoid main(void)\n{\n   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n   vTextureCoord = aTextureCoord;\n   vMapCoord = ( otherMatrix * vec3( aTextureCoord, 1.0)  ).xy;\n   vColor = vec4(aColor.rgb * aColor.a, aColor.a);\n}\n",
-        // fragment shader
-        "precision lowp float;\n\nvarying vec2 vMapCoord;\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform vec2 scale;\n\nuniform sampler2D uSampler;\nuniform sampler2D mapSampler;\n\nvoid main(void)\n{\n   vec4 original =  texture2D(uSampler, vTextureCoord);\n   vec4 map =  texture2D(mapSampler, vMapCoord);\n\n   map -= 0.5;\n   map.xy *= scale;\n\n   gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.x + map.x, vTextureCoord.y + map.y));\n}\n",
-        // uniforms
-        {
-            mapSampler:     { type: 'sampler2D', value: sprite.texture },
-            otherMatrix:    { type: 'mat3', value: maskMatrix.toArray(true) },
-            scale:          { type: 'v2', value: { x: 1, y: 1 } }
-        }
-    );
-
-    this.maskSprite = sprite;
-    this.maskMatrix = maskMatrix;
-
-
-    this.scale = new core.Point(20,20);
-
-}
-
-DisplacementFilter.prototype = Object.create(core.AbstractFilter.prototype);
-DisplacementFilter.prototype.constructor = DisplacementFilter;
-module.exports = DisplacementFilter;
-
-DisplacementFilter.prototype.applyFilter = function (renderer, input, output)
-{
-    var filterManager = renderer.filterManager;
-
-    filterManager.calculateMappedMatrix(input.frame, this.maskSprite, this.maskMatrix);
-
-    this.uniforms.otherMatrix.value = this.maskMatrix.toArray(true);
-    this.uniforms.scale.value.x = this.scale.x * (1/input.frame.width);
-    this.uniforms.scale.value.y = this.scale.y * (1/input.frame.height);
-
-    var shader = this.getShader(renderer);
-     // draw the filter...
-    filterManager.applyFilter(shader, input, output);
-};
-
-
-Object.defineProperties(DisplacementFilter.prototype, {
-    /**
-     * The texture used for the displacement map. Must be power of 2 sized texture.
-     *
-     * @member {Texture}
-     * @memberof DisplacementFilter#
-     */
-    map: {
-        get: function ()
-        {
-            return this.uniforms.mapSampler.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.mapSampler.value = value;
-
-        }
-    }
-});
-
-},{"../../core":29}],98:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * @author Mat Groves http://matgroves.com/ @Doormat23
- * original filter: https://github.com/evanw/glfx.js/blob/master/src/filters/fun/dotscreen.js
- */
-
-/**
- * This filter applies a dotscreen effect making display objects appear to be made out of
- * black and white halftone dots like an old printer.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function DotScreenFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform vec4 dimensions;\nuniform sampler2D uSampler;\n\nuniform float angle;\nuniform float scale;\n\nfloat pattern()\n{\n   float s = sin(angle), c = cos(angle);\n   vec2 tex = vTextureCoord * dimensions.xy;\n   vec2 point = vec2(\n       c * tex.x - s * tex.y,\n       s * tex.x + c * tex.y\n   ) * scale;\n   return (sin(point.x) * sin(point.y)) * 4.0;\n}\n\nvoid main()\n{\n   vec4 color = texture2D(uSampler, vTextureCoord);\n   float average = (color.r + color.g + color.b) / 3.0;\n   gl_FragColor = vec4(vec3(average * 10.0 - 5.0 + pattern()), color.a);\n}\n",
-        // custom uniforms
-        {
-            scale:      { type: '1f', value: 1 },
-            angle:      { type: '1f', value: 5 },
-            dimensions: { type: '4fv', value: [0, 0, 0, 0] }
-        }
-    );
-}
-
-DotScreenFilter.prototype = Object.create(core.AbstractFilter.prototype);
-DotScreenFilter.prototype.constructor = DotScreenFilter;
-module.exports = DotScreenFilter;
-
-Object.defineProperties(DotScreenFilter.prototype, {
-    /**
-     * The scale of the effect.
-     * @member {number}
-     * @memberof DotScreenFilter#
-     */
-    scale: {
-        get: function ()
-        {
-            return this.uniforms.scale.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.scale.value = value;
-        }
-    },
-
-    /**
-     * The radius of the effect.
-     * @member {number}
-     * @memberof DotScreenFilter#
-     */
-    angle: {
-        get: function ()
-        {
-            return this.uniforms.angle.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.angle.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],99:[function(require,module,exports){
-var core = require('../../core');
-
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The BlurYTintFilter applies a vertical Gaussian blur to an object.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function BlurYTintFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aColor;\n\nuniform float strength;\nuniform vec2 offset;\n\nuniform mat3 projectionMatrix;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\nvarying vec2 vBlurTexCoords[6];\n\nvoid main(void)\n{\n    gl_Position = vec4((projectionMatrix * vec3((aVertexPosition+offset), 1.0)).xy, 0.0, 1.0);\n    vTextureCoord = aTextureCoord;\n\n    vBlurTexCoords[ 0] = aTextureCoord + vec2(0.0, -0.012 * strength);\n    vBlurTexCoords[ 1] = aTextureCoord + vec2(0.0, -0.008 * strength);\n    vBlurTexCoords[ 2] = aTextureCoord + vec2(0.0, -0.004 * strength);\n    vBlurTexCoords[ 3] = aTextureCoord + vec2(0.0,  0.004 * strength);\n    vBlurTexCoords[ 4] = aTextureCoord + vec2(0.0,  0.008 * strength);\n    vBlurTexCoords[ 5] = aTextureCoord + vec2(0.0,  0.012 * strength);\n\n   vColor = vec4(aColor.rgb * aColor.a, aColor.a);\n}\n",
-        // fragment shader
-        "precision lowp float;\n\nvarying vec2 vTextureCoord;\nvarying vec2 vBlurTexCoords[6];\nvarying vec4 vColor;\n\nuniform vec3 color;\nuniform float alpha;\n\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    vec4 sum = vec4(0.0);\n\n    sum += texture2D(uSampler, vBlurTexCoords[ 0])*0.004431848411938341;\n    sum += texture2D(uSampler, vBlurTexCoords[ 1])*0.05399096651318985;\n    sum += texture2D(uSampler, vBlurTexCoords[ 2])*0.2419707245191454;\n    sum += texture2D(uSampler, vTextureCoord     )*0.3989422804014327;\n    sum += texture2D(uSampler, vBlurTexCoords[ 3])*0.2419707245191454;\n    sum += texture2D(uSampler, vBlurTexCoords[ 4])*0.05399096651318985;\n    sum += texture2D(uSampler, vBlurTexCoords[ 5])*0.004431848411938341;\n\n    gl_FragColor = vec4( color.rgb * sum.a * alpha, sum.a * alpha );\n}\n",
-        // set the uniforms
-        {
-            blur: { type: '1f', value: 1 / 512 },
-            color: { type: 'c', value: [0,0,0]},
-            alpha: { type: '1f', value: 0.7 },
-            offset: { type: '2f', value:[5, 5]},
-            strength: { type: '1f', value:1}
-        }
-    );
-
-    this.passes = 1;
-    this.strength = 4;
-}
-
-BlurYTintFilter.prototype = Object.create(core.AbstractFilter.prototype);
-BlurYTintFilter.prototype.constructor = BlurYTintFilter;
-module.exports = BlurYTintFilter;
-
-BlurYTintFilter.prototype.applyFilter = function (renderer, input, output, clear)
-{
-    var shader = this.getShader(renderer);
-
-    this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.height / input.size.height);
-
-    if(this.passes === 1)
-    {
-        renderer.filterManager.applyFilter(shader, input, output, clear);
-    }
-    else
-    {
-        var renderTarget = renderer.filterManager.getRenderTarget(true);
-        var flip = input;
-        var flop = renderTarget;
-
-        for(var i = 0; i < this.passes-1; i++)
-        {
-            renderer.filterManager.applyFilter(shader, flip, flop, clear);
-
-           var temp = flop;
-           flop = flip;
-           flip = temp;
-        }
-
-        renderer.filterManager.applyFilter(shader, flip, output, clear);
-
-        renderer.filterManager.returnRenderTarget(renderTarget);
-    }
-};
-
-
-Object.defineProperties(BlurYTintFilter.prototype, {
-    /**
-     * Sets the strength of both the blur.
-     *
-     * @member {number}
-     * @memberof BlurYFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return  this.strength;
-        },
-        set: function (value)
-        {
-            this.padding = value * 0.5;
-            this.strength = value;
-        }
-    }
-});
-
-},{"../../core":29}],100:[function(require,module,exports){
-var core = require('../../core'),
-    BlurXFilter = require('../blur/BlurXFilter'),
-    BlurYTintFilter = require('./BlurYTintFilter');
-
-/**
- * The DropShadowFilter applies a Gaussian blur to an object.
- * The strength of the blur can be set for x- and y-axis separately.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function DropShadowFilter()
-{
-    core.AbstractFilter.call(this);
-
-    this.blurXFilter = new BlurXFilter();
-    this.blurYTintFilter = new BlurYTintFilter();
-
-    this.defaultFilter = new core.AbstractFilter();
-
-    this.padding = 30;
-
-    this._dirtyPosition = true;
-    this._angle = 45 * Math.PI / 180;
-    this._distance = 10;
-    this.alpha = 0.75;
-    this.hideObject = false;
-    this.blendMode = core.BLEND_MODES.MULTIPLY;
-}
-
-DropShadowFilter.prototype = Object.create(core.AbstractFilter.prototype);
-DropShadowFilter.prototype.constructor = DropShadowFilter;
-module.exports = DropShadowFilter;
-
-DropShadowFilter.prototype.applyFilter = function (renderer, input, output)
-{
-    var renderTarget = renderer.filterManager.getRenderTarget(true);
-
-    //TODO - copyTexSubImage2D could be used here?
-    if(this._dirtyPosition)
-    {
-        this._dirtyPosition = false;
-
-        this.blurYTintFilter.uniforms.offset.value[0] = Math.sin(this._angle) * this._distance;
-        this.blurYTintFilter.uniforms.offset.value[1] = Math.cos(this._angle) * this._distance;
-    }
-
-    this.blurXFilter.applyFilter(renderer, input, renderTarget);
-
-    renderer.blendModeManager.setBlendMode(this.blendMode);
-
-    this.blurYTintFilter.applyFilter(renderer, renderTarget, output);
-
-    renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
-
-    if(!this.hideObject)
-    {
-
-        this.defaultFilter.applyFilter(renderer, input, output);
-    }
-
-
-    renderer.filterManager.returnRenderTarget(renderTarget);
-};
-
-Object.defineProperties(DropShadowFilter.prototype, {
-    /**
-     * Sets the strength of both the blurX and blurY properties simultaneously
-     *
-     * @member {number}
-     * @memberOf DropShadowFilter#
-     * @default 2
-     */
-    blur: {
-        get: function ()
-        {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = this.blurYTintFilter.blur = value;
-        }
-    },
-
-    /**
-     * Sets the strength of the blurX property
-     *
-     * @member {number}
-     * @memberOf DropShadowFilter#
-     * @default 2
-     */
-    blurX: {
-        get: function ()
-        {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = value;
-        }
-    },
-
-    /**
-     * Sets the strength of the blurY property
-     *
-     * @member {number}
-     * @memberOf DropShadowFilter#
-     * @default 2
-     */
-    blurY: {
-        get: function ()
-        {
-            return this.blurYTintFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurYTintFilter.blur = value;
-        }
-    },
-
-    color: {
-        get: function ()
-        {
-            return  core.utils.rgb2hex( this.blurYTintFilter.uniforms.color.value );
-        },
-        set: function (value)
-        {
-            this.blurYTintFilter.uniforms.color.value = core.utils.hex2rgb(value);
-        }
-    },
-
-    alpha: {
-        get: function ()
-        {
-            return  this.blurYTintFilter.uniforms.alpha.value;
-        },
-        set: function (value)
-        {
-            this.blurYTintFilter.uniforms.alpha.value = value;
-        }
-    },
-
-    distance: {
-        get: function ()
-        {
-            return  this._distance;
-        },
-        set: function (value)
-        {
-            this._dirtyPosition = true;
-            this._distance = value;
-        }
-    },
-
-    angle: {
-        get: function ()
-        {
-            return  this._angle;
-        },
-        set: function (value)
-        {
-            this._dirtyPosition = true;
-            this._angle = value;
-        }
-    }
-});
-
-},{"../../core":29,"../blur/BlurXFilter":90,"./BlurYTintFilter":99}],101:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * This greyscales the palette of your Display Objects.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function GrayFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform sampler2D uSampler;\nuniform float gray;\n\nvoid main(void)\n{\n   gl_FragColor = texture2D(uSampler, vTextureCoord);\n   gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126*gl_FragColor.r + 0.7152*gl_FragColor.g + 0.0722*gl_FragColor.b), gray);\n}\n",
-        // set the uniforms
-        {
-            gray: { type: '1f', value: 1 }
-        }
-    );
-}
-
-GrayFilter.prototype = Object.create(core.AbstractFilter.prototype);
-GrayFilter.prototype.constructor = GrayFilter;
-module.exports = GrayFilter;
-
-Object.defineProperties(GrayFilter.prototype, {
-    /**
-     * The strength of the gray. 1 will make the object black and white, 0 will make the object its normal color.
-     *
-     * @member {number}
-     * @memberof GrayFilter#
-     */
-    gray: {
-        get: function ()
-        {
-            return this.uniforms.gray.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.gray.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],102:[function(require,module,exports){
-/**
- * @file        Main export of the PIXI filters library
- * @author      Mat Groves <mat@goodboydigital.com>
- * @copyright   2013-2015 GoodBoyDigital
- * @license     {@link https://github.com/GoodBoyDigital/pixi.js/blob/master/LICENSE|MIT License}
- */
-
-/**
- * @namespace PIXI.filters
- */
-module.exports = {
-    AsciiFilter:        require('./ascii/AsciiFilter'),
-    BloomFilter:        require('./bloom/BloomFilter'),
-    BlurFilter:         require('./blur/BlurFilter'),
-    BlurXFilter:        require('./blur/BlurXFilter'),
-    BlurYFilter:        require('./blur/BlurYFilter'),
-    BlurDirFilter:      require('./blur/BlurDirFilter'),
-    ColorMatrixFilter:  require('./color/ColorMatrixFilter'),
-    ColorStepFilter:    require('./color/ColorStepFilter'),
-    ConvolutionFilter:  require('./convolution/ConvolutionFilter'),
-    CrossHatchFilter:   require('./crosshatch/CrossHatchFilter'),
-    DisplacementFilter: require('./displacement/DisplacementFilter'),
-    DotScreenFilter:    require('./dot/DotScreenFilter'),
-    GrayFilter:         require('./gray/GrayFilter'),
-    DropShadowFilter:   require('./dropshadow/DropShadowFilter'),
-    InvertFilter:       require('./invert/InvertFilter'),
-    NoiseFilter:        require('./noise/NoiseFilter'),
-    NormalMapFilter:    require('./normal/NormalMapFilter'),
-    PixelateFilter:     require('./pixelate/PixelateFilter'),
-    RGBSplitFilter:     require('./rgb/RGBSplitFilter'),
-    ShockwaveFilter:    require('./shockwave/ShockwaveFilter'),
-    SepiaFilter:        require('./sepia/SepiaFilter'),
-    SmartBlurFilter:    require('./blur/SmartBlurFilter'),
-    TiltShiftFilter:    require('./tiltshift/TiltShiftFilter'),
-    TiltShiftXFilter:   require('./tiltshift/TiltShiftXFilter'),
-    TiltShiftYFilter:   require('./tiltshift/TiltShiftYFilter'),
-    TwistFilter:        require('./twist/TwistFilter')
-};
-
-},{"./ascii/AsciiFilter":86,"./bloom/BloomFilter":87,"./blur/BlurDirFilter":88,"./blur/BlurFilter":89,"./blur/BlurXFilter":90,"./blur/BlurYFilter":91,"./blur/SmartBlurFilter":92,"./color/ColorMatrixFilter":93,"./color/ColorStepFilter":94,"./convolution/ConvolutionFilter":95,"./crosshatch/CrossHatchFilter":96,"./displacement/DisplacementFilter":97,"./dot/DotScreenFilter":98,"./dropshadow/DropShadowFilter":100,"./gray/GrayFilter":101,"./invert/InvertFilter":103,"./noise/NoiseFilter":104,"./normal/NormalMapFilter":105,"./pixelate/PixelateFilter":106,"./rgb/RGBSplitFilter":107,"./sepia/SepiaFilter":108,"./shockwave/ShockwaveFilter":109,"./tiltshift/TiltShiftFilter":111,"./tiltshift/TiltShiftXFilter":112,"./tiltshift/TiltShiftYFilter":113,"./twist/TwistFilter":114}],103:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * This inverts your Display Objects colors.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function InvertFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform float invert;\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    gl_FragColor = texture2D(uSampler, vTextureCoord);\n\n    gl_FragColor.rgb = mix( (vec3(1)-gl_FragColor.rgb) * gl_FragColor.a, gl_FragColor.rgb, 1.0 - invert);\n}\n",
-        // custom uniforms
-        {
-            invert: { type: '1f', value: 1 }
-        }
-    );
-}
-
-InvertFilter.prototype = Object.create(core.AbstractFilter.prototype);
-InvertFilter.prototype.constructor = InvertFilter;
-module.exports = InvertFilter;
-
-Object.defineProperties(InvertFilter.prototype, {
-    /**
-     * The strength of the invert. `1` will fully invert the colors, and
-     * `0` will make the object its normal color.
-     *
-     * @member {number}
-     * @memberof InvertFilter#
-     */
-    invert: {
-        get: function ()
-        {
-            return this.uniforms.invert.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.invert.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],104:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * @author Vico @vicocotea
- * original filter: https://github.com/evanw/glfx.js/blob/master/src/filters/adjust/noise.js
- */
-
-/**
- * A Noise effect filter.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function NoiseFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform float noise;\nuniform sampler2D uSampler;\n\nfloat rand(vec2 co)\n{\n    return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);\n}\n\nvoid main()\n{\n    vec4 color = texture2D(uSampler, vTextureCoord);\n\n    float diff = (rand(vTextureCoord) - 0.5) * noise;\n\n    color.r += diff;\n    color.g += diff;\n    color.b += diff;\n\n    gl_FragColor = color;\n}\n",
-        // custom uniforms
-        {
-            noise: { type: '1f', value: 0.5 }
-        }
-    );
-}
-
-NoiseFilter.prototype = Object.create(core.AbstractFilter.prototype);
-NoiseFilter.prototype.constructor = NoiseFilter;
-module.exports = NoiseFilter;
-
-Object.defineProperties(NoiseFilter.prototype, {
-    /**
-     * The amount of noise to apply.
-     *
-     * @member {number}
-     * @memberof NoiseFilter#
-     * @default 0.5
-     */
-    noise: {
-        get: function ()
-        {
-            return this.uniforms.noise.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.noise.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],105:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The NormalMapFilter class uses the pixel values from the specified texture (called the normal map)
- * to project lighting onto an object.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- * @param texture {Texture} The texture used for the normal map, must be power of 2 texture at the moment
- */
-function NormalMapFilter(texture)
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nvarying vec4 vColor;\n\nuniform sampler2D displacementMap;\nuniform sampler2D uSampler;\n\nuniform vec4 dimensions;\n\nconst vec2 Resolution = vec2(1.0,1.0);      //resolution of screen\nuniform vec3 LightPos;    //light position, normalized\nconst vec4 LightColor = vec4(1.0, 1.0, 1.0, 1.0);      //light RGBA -- alpha is intensity\nconst vec4 AmbientColor = vec4(1.0, 1.0, 1.0, 0.5);    //ambient RGBA -- alpha is intensity\nconst vec3 Falloff = vec3(0.0, 1.0, 0.2);         //attenuation coefficients\n\nuniform vec3 LightDir; // = vec3(1.0, 0.0, 1.0);\n\nuniform vec2 mapDimensions; // = vec2(256.0, 256.0);\n\n\nvoid main(void)\n{\n    vec2 mapCords = vTextureCoord.xy;\n\n    vec4 color = texture2D(uSampler, vTextureCoord.st);\n    vec3 nColor = texture2D(displacementMap, vTextureCoord.st).rgb;\n\n\n    mapCords *= vec2(dimensions.x/512.0, dimensions.y/512.0);\n\n    mapCords.y *= -1.0;\n    mapCords.y += 1.0;\n\n    // RGBA of our diffuse color\n    vec4 DiffuseColor = texture2D(uSampler, vTextureCoord);\n\n    // RGB of our normal map\n    vec3 NormalMap = texture2D(displacementMap, mapCords).rgb;\n\n    // The delta position of light\n    // vec3 LightDir = vec3(LightPos.xy - (gl_FragCoord.xy / Resolution.xy), LightPos.z);\n    vec3 LightDir = vec3(LightPos.xy - (mapCords.xy), LightPos.z);\n\n    // Correct for aspect ratio\n    // LightDir.x *= Resolution.x / Resolution.y;\n\n    // Determine distance (used for attenuation) BEFORE we normalize our LightDir\n    float D = length(LightDir);\n\n    // normalize our vectors\n    vec3 N = normalize(NormalMap * 2.0 - 1.0);\n    vec3 L = normalize(LightDir);\n\n    // Pre-multiply light color with intensity\n    // Then perform 'N dot L' to determine our diffuse term\n    vec3 Diffuse = (LightColor.rgb * LightColor.a) * max(dot(N, L), 0.0);\n\n    // pre-multiply ambient color with intensity\n    vec3 Ambient = AmbientColor.rgb * AmbientColor.a;\n\n    // calculate attenuation\n    float Attenuation = 1.0 / ( Falloff.x + (Falloff.y*D) + (Falloff.z*D*D) );\n\n    // the calculation which brings it all together\n    vec3 Intensity = Ambient + Diffuse * Attenuation;\n    vec3 FinalColor = DiffuseColor.rgb * Intensity;\n    gl_FragColor = vColor * vec4(FinalColor, DiffuseColor.a);\n\n    // gl_FragColor = vec4(1.0, 0.0, 0.0, Attenuation); // vColor * vec4(FinalColor, DiffuseColor.a);\n\n/*\n    // normalise color\n    vec3 normal = normalize(nColor * 2.0 - 1.0);\n\n    vec3 deltaPos = vec3( (light.xy - gl_FragCoord.xy) / resolution.xy, light.z );\n\n    float lambert = clamp(dot(normal, lightDir), 0.0, 1.0);\n\n    float d = sqrt(dot(deltaPos, deltaPos));\n    float att = 1.0 / ( attenuation.x + (attenuation.y*d) + (attenuation.z*d*d) );\n\n    vec3 result = (ambientColor * ambientIntensity) + (lightColor.rgb * lambert) * att;\n    result *= color.rgb;\n\n    gl_FragColor = vec4(result, 1.0);\n*/\n}\n",
-        // custom uniforms
-        {
-            displacementMap:  { type: 'sampler2D', value: texture },
-            scale:            { type: '2f', value: { x: 15, y: 15 } },
-            offset:           { type: '2f', value: { x: 0,  y: 0 } },
-            mapDimensions:    { type: '2f', value: { x: 1,  y: 1 } },
-            dimensions:       { type: '4f', value: [0, 0, 0, 0] },
-            // LightDir:         { type: 'f3', value: [0, 1, 0] },
-            LightPos:         { type: '3f', value: [0, 1, 0] }
-        }
-    );
-
-    texture.baseTexture._powerOf2 = true;
-
-    if (texture.baseTexture.hasLoaded)
-    {
-        this.onTextureLoaded();
-    }
-    else
-    {
-        texture.baseTexture.once('loaded', this.onTextureLoaded, this);
-    }
-}
-
-NormalMapFilter.prototype = Object.create(core.AbstractFilter.prototype);
-NormalMapFilter.prototype.constructor = NormalMapFilter;
-module.exports = NormalMapFilter;
-
-/**
- * Sets the map dimensions uniforms when the texture becomes available.
- *
- * @private
- */
-NormalMapFilter.prototype.onTextureLoaded = function ()
-{
-    this.uniforms.mapDimensions.value.x = this.uniforms.displacementMap.value.width;
-    this.uniforms.mapDimensions.value.y = this.uniforms.displacementMap.value.height;
-};
-
-Object.defineProperties(NormalMapFilter.prototype, {
-    /**
-     * The texture used for the displacement map. Must be power of 2 texture.
-     *
-     * @member {Texture}
-     * @memberof NormalMapFilter#
-     */
-    map: {
-        get: function ()
-        {
-            return this.uniforms.displacementMap.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.displacementMap.value = value;
-        }
-    },
-
-    /**
-     * The multiplier used to scale the displacement result from the map calculation.
-     *
-     * @member {Point}
-     * @memberof NormalMapFilter#
-     */
-    scale: {
-        get: function ()
-        {
-            return this.uniforms.scale.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.scale.value = value;
-        }
-    },
-
-    /**
-     * The offset used to move the displacement map.
-     *
-     * @member {Point}
-     * @memberof NormalMapFilter#
-     */
-    offset: {
-        get: function ()
-        {
-            return this.uniforms.offset.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.offset.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],106:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * This filter applies a pixelate effect making display objects appear 'blocky'.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function PixelateFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform vec4 dimensions;\nuniform vec2 pixelSize;\nuniform sampler2D uSampler;\n\nvoid main(void)\n{\n    vec2 coord = vTextureCoord;\n\n    vec2 size = dimensions.xy / pixelSize;\n\n    vec2 color = floor( ( vTextureCoord * size ) ) / size + pixelSize/dimensions.xy * 0.5;\n\n    gl_FragColor = texture2D(uSampler, color);\n}\n",
-        // custom uniforms
-        {
-            dimensions: { type: '4fv',  value: new Float32Array([0, 0, 0, 0]) },
-            pixelSize:  { type: 'v2',   value: { x: 10, y: 10 } }
-        }
-    );
-}
-
-PixelateFilter.prototype = Object.create(core.AbstractFilter.prototype);
-PixelateFilter.prototype.constructor = PixelateFilter;
-module.exports = PixelateFilter;
-
-Object.defineProperties(PixelateFilter.prototype, {
-    /**
-     * This a point that describes the size of the blocks.
-     * x is the width of the block and y is the height.
-     *
-     * @member {Point}
-     * @memberof PixelateFilter#
-     */
-    size: {
-        get: function ()
-        {
-            return this.uniforms.pixelSize.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.pixelSize.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],107:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * An RGB Split Filter.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function RGBSplitFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform vec4 dimensions;\nuniform vec2 red;\nuniform vec2 green;\nuniform vec2 blue;\n\nvoid main(void)\n{\n   gl_FragColor.r = texture2D(uSampler, vTextureCoord + red/dimensions.xy).r;\n   gl_FragColor.g = texture2D(uSampler, vTextureCoord + green/dimensions.xy).g;\n   gl_FragColor.b = texture2D(uSampler, vTextureCoord + blue/dimensions.xy).b;\n   gl_FragColor.a = texture2D(uSampler, vTextureCoord).a;\n}\n",
-        // custom uniforms
-        {
-            red:        { type: 'v2', value: { x: 20, y: 20 } },
-            green:      { type: 'v2', value: { x: -20, y: 20 } },
-            blue:       { type: 'v2', value: { x: 20, y: -20 } },
-            dimensions: { type: '4fv', value: [0, 0, 0, 0] }
-        }
-    );
-}
-
-RGBSplitFilter.prototype = Object.create(core.AbstractFilter.prototype);
-RGBSplitFilter.prototype.constructor = RGBSplitFilter;
-module.exports = RGBSplitFilter;
-
-Object.defineProperties(RGBSplitFilter.prototype, {
-    /**
-     * Red channel offset.
-     *
-     * @member {Point}
-     * @memberof RGBSplitFilter#
-     */
-    red: {
-        get: function ()
-        {
-            return this.uniforms.red.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.red.value = value;
-        }
-    },
-
-    /**
-     * Green channel offset.
-     *
-     * @member {Point}
-     * @memberof RGBSplitFilter#
-     */
-    green: {
-        get: function ()
-        {
-            return this.uniforms.green.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.green.value = value;
-        }
-    },
-
-    /**
-     * Blue offset.
-     *
-     * @member {Point}
-     * @memberof RGBSplitFilter#
-     */
-    blue: {
-        get: function ()
-        {
-            return this.uniforms.blue.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.blue.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],108:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * This applies a sepia effect to your Display Objects.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function SepiaFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform float sepia;\n\nconst mat3 sepiaMatrix = mat3(0.3588, 0.7044, 0.1368, 0.2990, 0.5870, 0.1140, 0.2392, 0.4696, 0.0912);\n\nvoid main(void)\n{\n   gl_FragColor = texture2D(uSampler, vTextureCoord);\n   gl_FragColor.rgb = mix( gl_FragColor.rgb, gl_FragColor.rgb * sepiaMatrix, sepia);\n}\n",
-        // custom uniforms
-        {
-            sepia: { type: '1f', value: 1 }
-        }
-    );
-}
-
-SepiaFilter.prototype = Object.create(core.AbstractFilter.prototype);
-SepiaFilter.prototype.constructor = SepiaFilter;
-module.exports = SepiaFilter;
-
-Object.defineProperties(SepiaFilter.prototype, {
-    /**
-     * The strength of the sepia. `1` will apply the full sepia effect, and
-     * `0` will make the object its normal color.
-     *
-     * @member {number}
-     * @memberof SepiaFilter#
-     */
-    sepia: {
-        get: function ()
-        {
-            return this.uniforms.sepia.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.sepia.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],109:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * The ColorMatrixFilter class lets you apply a 4x4 matrix transformation on the RGBA
- * color and alpha values of every pixel on your displayObject to produce a result
- * with a new set of RGBA color and alpha values. It's pretty powerful!
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function ShockwaveFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision lowp float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\n\nuniform vec2 center;\nuniform vec3 params; // 10.0, 0.8, 0.1\nuniform float time;\n\nvoid main()\n{\n    vec2 uv = vTextureCoord;\n    vec2 texCoord = uv;\n\n    float dist = distance(uv, center);\n\n    if ( (dist <= (time + params.z)) && (dist >= (time - params.z)) )\n    {\n        float diff = (dist - time);\n        float powDiff = 1.0 - pow(abs(diff*params.x), params.y);\n\n        float diffTime = diff  * powDiff;\n        vec2 diffUV = normalize(uv - center);\n        texCoord = uv + (diffUV * diffTime);\n    }\n\n    gl_FragColor = texture2D(uSampler, texCoord);\n}\n",
-        // custom uniforms
-        {
-            center: { type: 'v2', value: { x: 0.5, y: 0.5 } },
-            params: { type: 'v3', value: { x: 10, y: 0.8, z: 0.1 } },
-            time: { type: '1f', value: 0 }
-        }
-    );
-}
-
-ShockwaveFilter.prototype = Object.create(core.AbstractFilter.prototype);
-ShockwaveFilter.prototype.constructor = ShockwaveFilter;
-module.exports = ShockwaveFilter;
-
-Object.defineProperties(ShockwaveFilter.prototype, {
-    /**
-     * Sets the center of the shockwave in normalized screen coords. That is
-     * (0,0) is the top-left and (1,1) is the bottom right.
-     *
-     * @member {object<string, number>}
-     * @memberof ShockwaveFilter#
-     */
-    center: {
-        get: function ()
-        {
-            return this.uniforms.center.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.center.value = value;
-        }
-    },
-    /**
-     * Sets the params of the shockwave. These modify the look and behavior of
-     * the shockwave as it ripples out.
-     *
-     * @member {object<string, number>}
-     * @memberof ShockwaveFilter#
-     */
-    params: {
-        get: function ()
-        {
-            return this.uniforms.params.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.params.value = value;
-        }
-    },
-    /**
-     * Sets the elapsed time of the shockwave. This controls the speed at which
-     * the shockwave ripples out.
-     *
-     * @member {number}
-     * @memberof ShockwaveFilter#
-     */
-    time: {
-        get: function ()
-        {
-            return this.uniforms.time.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.time.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],110:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * @author Vico @vicocotea
- * original filter https://github.com/evanw/glfx.js/blob/master/src/filters/blur/tiltshift.js by Evan Wallace : http://madebyevan.com/
- */
-
-/**
- * A TiltShiftAxisFilter.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function TiltShiftAxisFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform float blur;\nuniform float gradientBlur;\nuniform vec2 start;\nuniform vec2 end;\nuniform vec2 delta;\nuniform vec2 texSize;\n\nfloat random(vec3 scale, float seed)\n{\n    return fract(sin(dot(gl_FragCoord.xyz + seed, scale)) * 43758.5453 + seed);\n}\n\nvoid main(void)\n{\n    vec4 color = vec4(0.0);\n    float total = 0.0;\n\n    float offset = random(vec3(12.9898, 78.233, 151.7182), 0.0);\n    vec2 normal = normalize(vec2(start.y - end.y, end.x - start.x));\n    float radius = smoothstep(0.0, 1.0, abs(dot(vTextureCoord * texSize - start, normal)) / gradientBlur) * blur;\n\n    for (float t = -30.0; t <= 30.0; t++)\n    {\n        float percent = (t + offset - 0.5) / 30.0;\n        float weight = 1.0 - abs(percent);\n        vec4 sample = texture2D(uSampler, vTextureCoord + delta / texSize * percent * radius);\n        sample.rgb *= sample.a;\n        color += sample * weight;\n        total += weight;\n    }\n\n    gl_FragColor = color / total;\n    gl_FragColor.rgb /= gl_FragColor.a + 0.00001;\n}\n",
-        // custom uniforms
-        {
-            blur:           { type: '1f', value: 100 },
-            gradientBlur:   { type: '1f', value: 600 },
-            start:          { type: 'v2', value: { x: 0,    y: window.innerHeight / 2 } },
-            end:            { type: 'v2', value: { x: 600,  y: window.innerHeight / 2 } },
-            delta:          { type: 'v2', value: { x: 30,   y: 30 } },
-            texSize:        { type: 'v2', value: { x: window.innerWidth, y: window.innerHeight } }
-        }
-    );
-
-    this.updateDelta();
-}
-
-TiltShiftAxisFilter.prototype = Object.create(core.AbstractFilter.prototype);
-TiltShiftAxisFilter.prototype.constructor = TiltShiftAxisFilter;
-module.exports = TiltShiftAxisFilter;
-
-/**
- * Updates the filter delta values.
- * This is overridden in the X and Y filters, does nothing for this class.
- *
- */
-TiltShiftAxisFilter.prototype.updateDelta = function ()
-{
-    this.uniforms.delta.value.x = 0;
-    this.uniforms.delta.value.y = 0;
-};
-
-Object.defineProperties(TiltShiftAxisFilter.prototype, {
-    /**
-     * The strength of the blur.
-     *
-     * @member {number}
-     * @memberof TiltShiftAxisFilter#
-     */
-    blur: {
-        get: function ()
-        {
-            return this.uniforms.blur.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.blur.value = value;
-        }
-    },
-
-    /**
-     * The strength of the gradient blur.
-     *
-     * @member {number}
-     * @memberof TiltShiftAxisFilter#
-     */
-    gradientBlur: {
-        get: function ()
-        {
-            return this.uniforms.gradientBlur.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.gradientBlur.value = value;
-        }
-    },
-
-    /**
-     * The X value to start the effect at.
-     *
-     * @member {Point}
-     * @memberof TiltShiftAxisFilter#
-     */
-    start: {
-        get: function ()
-        {
-            return this.uniforms.start.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.start.value = value;
-            this.updateDelta();
-        }
-    },
-
-    /**
-     * The X value to end the effect at.
-     *
-     * @member {Point}
-     * @memberof TiltShiftAxisFilter#
-     */
-    end: {
-        get: function ()
-        {
-            return this.uniforms.end.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.end.value = value;
-            this.updateDelta();
-        }
-    }
-});
-
-},{"../../core":29}],111:[function(require,module,exports){
-var core = require('../../core'),
-    TiltShiftXFilter = require('./TiltShiftXFilter'),
-    TiltShiftYFilter = require('./TiltShiftYFilter');
-
-/**
- * @author Vico @vicocotea
- * original filter https://github.com/evanw/glfx.js/blob/master/src/filters/blur/tiltshift.js by Evan Wallace : http://madebyevan.com/
- */
-
-/**
- * A TiltShift Filter. Manages the pass of both a TiltShiftXFilter and TiltShiftYFilter.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function TiltShiftFilter()
-{
-    core.AbstractFilter.call(this);
-
-    this.tiltShiftXFilter = new TiltShiftXFilter();
-    this.tiltShiftYFilter = new TiltShiftYFilter();
-}
-
-TiltShiftFilter.prototype = Object.create(core.AbstractFilter.prototype);
-TiltShiftFilter.prototype.constructor = TiltShiftFilter;
-module.exports = TiltShiftFilter;
-
-TiltShiftFilter.prototype.applyFilter = function (renderer, input, output)
-{
-    var renderTarget = renderer.filterManager.getRenderTarget(true);
-
-    this.tiltShiftXFilter.applyFilter(renderer, input, renderTarget);
-
-    this.tiltShiftYFilter.applyFilter(renderer, renderTarget, output);
-
-    renderer.filterManager.returnRenderTarget(renderTarget);
-};
-
-Object.defineProperties(TiltShiftFilter.prototype, {
-    /**
-     * The strength of the blur.
-     *
-     * @member {number}
-     * @memberof TiltShiftFilter#
-     */
-    blur: {
-        get: function ()
-        {
-            return this.tiltShiftXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.tiltShiftXFilter.blur = this.tiltShiftYFilter.blur = value;
-        }
-    },
-
-    /**
-     * The strength of the gradient blur.
-     *
-     * @member {number}
-     * @memberof TiltShiftFilter#
-     */
-    gradientBlur: {
-        get: function ()
-        {
-            return this.tiltShiftXFilter.gradientBlur;
-        },
-        set: function (value)
-        {
-            this.tiltShiftXFilter.gradientBlur = this.tiltShiftYFilter.gradientBlur = value;
-        }
-    },
-
-    /**
-     * The Y value to start the effect at.
-     *
-     * @member {number}
-     * @memberof TiltShiftFilter#
-     */
-    start: {
-        get: function ()
-        {
-            return this.tiltShiftXFilter.start;
-        },
-        set: function (value)
-        {
-            this.tiltShiftXFilter.start = this.tiltShiftYFilter.start = value;
-        }
-    },
-
-    /**
-     * The Y value to end the effect at.
-     *
-     * @member {number}
-     * @memberof TiltShiftFilter#
-     */
-    end: {
-        get: function ()
-        {
-            return this.tiltShiftXFilter.end;
-        },
-        set: function (value)
-        {
-            this.tiltShiftXFilter.end = this.tiltShiftYFilter.end = value;
-        }
-    }
-});
-
-},{"../../core":29,"./TiltShiftXFilter":112,"./TiltShiftYFilter":113}],112:[function(require,module,exports){
-var TiltShiftAxisFilter = require('./TiltShiftAxisFilter');
-
-/**
- * @author Vico @vicocotea
- * original filter https://github.com/evanw/glfx.js/blob/master/src/filters/blur/tiltshift.js by Evan Wallace : http://madebyevan.com/
- */
-
-/**
- * A TiltShiftXFilter.
- *
- * @class
- * @extends PIXI.TiltShiftAxisFilter
- * @memberof PIXI.filters
- */
-function TiltShiftXFilter()
-{
-    TiltShiftAxisFilter.call(this);
-}
-
-TiltShiftXFilter.prototype = Object.create(TiltShiftAxisFilter.prototype);
-TiltShiftXFilter.prototype.constructor = TiltShiftXFilter;
-module.exports = TiltShiftXFilter;
-
-/**
- * Updates the filter delta values.
- *
- */
-TiltShiftXFilter.prototype.updateDelta = function ()
-{
-    var dx = this.uniforms.end.value.x - this.uniforms.start.value.x;
-    var dy = this.uniforms.end.value.y - this.uniforms.start.value.y;
-    var d = Math.sqrt(dx * dx + dy * dy);
-
-    this.uniforms.delta.value.x = dx / d;
-    this.uniforms.delta.value.y = dy / d;
-};
-
-},{"./TiltShiftAxisFilter":110}],113:[function(require,module,exports){
-var TiltShiftAxisFilter = require('./TiltShiftAxisFilter');
-
-/**
- * @author Vico @vicocotea
- * original filter https://github.com/evanw/glfx.js/blob/master/src/filters/blur/tiltshift.js by Evan Wallace : http://madebyevan.com/
- */
-
-/**
- * A TiltShiftYFilter.
- *
- * @class
- * @extends PIXI.TiltShiftAxisFilter
- * @memberof PIXI.filters
- */
-function TiltShiftYFilter()
-{
-    TiltShiftAxisFilter.call(this);
-}
-
-TiltShiftYFilter.prototype = Object.create(TiltShiftAxisFilter.prototype);
-TiltShiftYFilter.prototype.constructor = TiltShiftYFilter;
-module.exports = TiltShiftYFilter;
-
-/**
- * Updates the filter delta values.
- *
- */
-TiltShiftYFilter.prototype.updateDelta = function ()
-{
-    var dx = this.uniforms.end.value.x - this.uniforms.start.value.x;
-    var dy = this.uniforms.end.value.y - this.uniforms.start.value.y;
-    var d = Math.sqrt(dx * dx + dy * dy);
-
-    this.uniforms.delta.value.x = -dy / d;
-    this.uniforms.delta.value.y = dx / d;
-};
-
-},{"./TiltShiftAxisFilter":110}],114:[function(require,module,exports){
-var core = require('../../core');
-// @see https://github.com/substack/brfs/issues/25
-
-
-/**
- * This filter applies a twist effect making display objects appear twisted in the given direction.
- *
- * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- */
-function TwistFilter()
-{
-    core.AbstractFilter.call(this,
-        // vertex shader
-        null,
-        // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\n\nuniform sampler2D uSampler;\nuniform float radius;\nuniform float angle;\nuniform vec2 offset;\n\nvoid main(void)\n{\n   vec2 coord = vTextureCoord - offset;\n   float dist = length(coord);\n\n   if (dist < radius)\n   {\n       float ratio = (radius - dist) / radius;\n       float angleMod = ratio * ratio * angle;\n       float s = sin(angleMod);\n       float c = cos(angleMod);\n       coord = vec2(coord.x * c - coord.y * s, coord.x * s + coord.y * c);\n   }\n\n   gl_FragColor = texture2D(uSampler, coord+offset);\n}\n",
-        // custom uniforms
-        {
-            radius:     { type: '1f', value: 0.5 },
-            angle:      { type: '1f', value: 5 },
-            offset:     { type: 'v2', value: { x: 0.5, y: 0.5 } }
-        }
-    );
-}
-
-TwistFilter.prototype = Object.create(core.AbstractFilter.prototype);
-TwistFilter.prototype.constructor = TwistFilter;
-module.exports = TwistFilter;
-
-Object.defineProperties(TwistFilter.prototype, {
-    /**
-     * This point describes the the offset of the twist.
-     *
-     * @member {Point}
-     * @memberof TwistFilter#
-     */
-    offset: {
-        get: function ()
-        {
-            return this.uniforms.offset.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.offset.value = value;
-        }
-    },
-
-    /**
-     * This radius of the twist.
-     *
-     * @member {number}
-     * @memberof TwistFilter#
-     */
-    radius: {
-        get: function ()
-        {
-            return this.uniforms.radius.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.radius.value = value;
-        }
-    },
-
-    /**
-     * This angle of the twist.
-     *
-     * @member {number}
-     * @memberof TwistFilter#
-     */
-    angle: {
-        get: function ()
-        {
-            return this.uniforms.angle.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.angle.value = value;
-        }
-    }
-});
-
-},{"../../core":29}],115:[function(require,module,exports){
+},{"./core":27,"./deprecation":76,"./extras":83,"./filters":2,"./interaction":87,"./loaders":90,"./mesh":2,"./polyfill":95}],85:[function(require,module,exports){
 var core = require('../core');
 
 /**
@@ -25193,7 +21407,7 @@ InteractionData.prototype.getLocalPosition = function (displayObject, point, glo
     return point;
 };
 
-},{"../core":29}],116:[function(require,module,exports){
+},{"../core":27}],86:[function(require,module,exports){
 var core = require('../core'),
     InteractionData = require('./InteractionData');
 
@@ -26044,7 +22258,7 @@ InteractionManager.prototype.destroy = function () {
 core.WebGLRenderer.registerPlugin('interaction', InteractionManager);
 core.CanvasRenderer.registerPlugin('interaction', InteractionManager);
 
-},{"../core":29,"./InteractionData":115,"./interactiveTarget":118}],117:[function(require,module,exports){
+},{"../core":27,"./InteractionData":85,"./interactiveTarget":88}],87:[function(require,module,exports){
 /**
  * @file        Main export of the PIXI interactions library
  * @author      Mat Groves <mat@goodboydigital.com>
@@ -26061,7 +22275,7 @@ module.exports = {
     interactiveTarget:  require('./interactiveTarget')
 };
 
-},{"./InteractionData":115,"./InteractionManager":116,"./interactiveTarget":118}],118:[function(require,module,exports){
+},{"./InteractionData":85,"./InteractionManager":86,"./interactiveTarget":88}],88:[function(require,module,exports){
 /**
  * Default property values of interactive objects
  * used by {@link PIXI.interaction.InteractionManager}.
@@ -26110,7 +22324,7 @@ var interactiveTarget = {
 
 module.exports = interactiveTarget;
 
-},{}],119:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var Resource = require('resource-loader').Resource,
     core = require('../core'),
     extras = require('../extras'),
@@ -26230,7 +22444,7 @@ module.exports = function ()
     };
 };
 
-},{"../core":29,"../extras":85,"path":3,"resource-loader":18}],120:[function(require,module,exports){
+},{"../core":27,"../extras":83,"path":3,"resource-loader":16}],90:[function(require,module,exports){
 /**
  * @file        Main export of the PIXI loaders library
  * @author      Mat Groves <mat@goodboydigital.com>
@@ -26251,7 +22465,7 @@ module.exports = {
     Resource:           require('resource-loader').Resource
 };
 
-},{"./bitmapFontParser":119,"./loader":121,"./spritesheetParser":122,"./textureParser":123,"resource-loader":18}],121:[function(require,module,exports){
+},{"./bitmapFontParser":89,"./loader":91,"./spritesheetParser":92,"./textureParser":93,"resource-loader":16}],91:[function(require,module,exports){
 var ResourceLoader = require('resource-loader'),
     textureParser = require('./textureParser'),
     spritesheetParser = require('./spritesheetParser'),
@@ -26313,7 +22527,7 @@ var Resource = ResourceLoader.Resource;
 
 Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
-},{"./bitmapFontParser":119,"./spritesheetParser":122,"./textureParser":123,"resource-loader":18}],122:[function(require,module,exports){
+},{"./bitmapFontParser":89,"./spritesheetParser":92,"./textureParser":93,"resource-loader":16}],92:[function(require,module,exports){
 var Resource = require('resource-loader').Resource,
     path = require('path'),
     core = require('../core');
@@ -26396,7 +22610,7 @@ module.exports = function ()
     };
 };
 
-},{"../core":29,"path":3,"resource-loader":18}],123:[function(require,module,exports){
+},{"../core":27,"path":3,"resource-loader":16}],93:[function(require,module,exports){
 var core = require('../core');
 
 module.exports = function ()
@@ -26415,994 +22629,7 @@ module.exports = function ()
     };
 };
 
-},{"../core":29}],124:[function(require,module,exports){
-var core = require('../core'),
-    tempPoint = new core.Point(),
-    tempPolygon = new core.Polygon();
-
-/**
- * Base mesh class
- * @class
- * @extends PIXI.Container
- * @memberof PIXI.mesh
- * @param texture {Texture} The texture to use
- * @param [vertices] {Float32Arrif you want to specify the vertices
- * @param [uvs] {Float32Array} if you want to specify the uvs
- * @param [indices] {Uint16Array} if you want to specify the indices
- * @param [drawMode] {number} the drawMode, can be any of the Mesh.DRAW_MODES consts
- */
-function Mesh(texture, vertices, uvs, indices, drawMode)
-{
-    core.Container.call(this);
-
-    /**
-     * The texture of the Mesh
-     *
-     * @member {Texture}
-     * @private
-     */
-    this._texture = null;
-
-    /**
-     * The Uvs of the Mesh
-     *
-     * @member {Float32Array}
-     */
-    this.uvs = uvs || new Float32Array([0, 1,
-        1, 1,
-        1, 0,
-        0, 1]);
-
-    /**
-     * An array of vertices
-     *
-     * @member {Float32Array}
-     */
-    this.vertices = vertices || new Float32Array([0, 0,
-        100, 0,
-        100, 100,
-        0, 100]);
-
-    /*
-     * @member {Uint16Array} An array containing the indices of the vertices
-     */
-    //  TODO auto generate this based on draw mode!
-    this.indices = indices || new Uint16Array([0, 1, 2, 3]);
-
-    /**
-     * Whether the Mesh is dirty or not
-     *
-     * @member {boolean}
-     */
-    this.dirty = true;
-
-    /**
-     * The blend mode to be applied to the sprite. Set to blendModes.NORMAL to remove any blend mode.
-     *
-     * @member {number}
-     * @default CONST.BLEND_MODES.NORMAL;
-     */
-    this.blendMode = core.BLEND_MODES.NORMAL;
-
-    /**
-     * Triangles in canvas mode are automatically antialiased, use this value to force triangles to overlap a bit with each other.
-     *
-     * @member {number}
-     */
-    this.canvasPadding = 0;
-
-    /**
-     * The way the Mesh should be drawn, can be any of the Mesh.DRAW_MODES consts
-     *
-     * @member {number}
-     */
-    this.drawMode = drawMode || Mesh.DRAW_MODES.TRIANGLE_MESH;
-
-    // run texture setter;
-    this.texture = texture;
-}
-
-// constructor
-Mesh.prototype = Object.create(core.Container.prototype);
-Mesh.prototype.constructor = Mesh;
-module.exports = Mesh;
-
-Object.defineProperties(Mesh.prototype, {
-    /**
-     * The texture that the sprite is using
-     *
-     * @member {PIXI.Texture}
-     * @memberof PIXI.mesh.Mesh#
-     */
-    texture: {
-        get: function ()
-        {
-            return  this._texture;
-        },
-        set: function (value)
-        {
-            if (this._texture === value)
-            {
-                return;
-            }
-
-            this._texture = value;
-
-            if (value)
-            {
-                // wait for the texture to load
-                if (value.baseTexture.hasLoaded)
-                {
-                    this._onTextureUpdate();
-                }
-                else
-                {
-                    value.once('update', this._onTextureUpdate, this);
-                }
-            }
-        }
-    }
-});
-
-/**
- * Renders the object using the WebGL renderer
- *
- * @param renderer {WebGLRenderer} a reference to the WebGL renderer
- * @private
- */
-Mesh.prototype._renderWebGL = function (renderer)
-{
-    renderer.setObjectRenderer(renderer.plugins.mesh);
-    renderer.plugins.mesh.render(this);
-};
-
-/**
- * Renders the object using the Canvas renderer
- *
- * @param renderer {CanvasRenderer}
- * @private
- */
-Mesh.prototype._renderCanvas = function (renderer)
-{
-    var context = renderer.context;
-
-    var transform = this.worldTransform;
-
-    if (renderer.roundPixels)
-    {
-        context.setTransform(transform.a, transform.b, transform.c, transform.d, transform.tx | 0, transform.ty | 0);
-    }
-    else
-    {
-        context.setTransform(transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
-    }
-
-    if (this.drawMode === Mesh.DRAW_MODES.TRIANGLE_MESH)
-    {
-        this._renderCanvasTriangleMesh(context);
-    }
-    else
-    {
-        this._renderCanvasTriangles(context);
-    }
-};
-
-/**
- * Draws the object in Triangle Mesh mode using canvas
- *
- * @param context {CanvasRenderingContext2D} the current drawing context
- * @private
- */
-Mesh.prototype._renderCanvasTriangleMesh = function (context)
-{
-    // draw triangles!!
-    var vertices = this.vertices;
-    var uvs = this.uvs;
-
-    var length = vertices.length / 2;
-    // this.count++;
-
-    for (var i = 0; i < length - 2; i++)
-    {
-        // draw some triangles!
-        var index = i * 2;
-        this._renderCanvasDrawTriangle(context, vertices, uvs, index, (index + 2), (index + 4));
-    }
-};
-
-/**
- * Draws the object in triangle mode using canvas
- *
- * @param context {CanvasRenderingContext2D} the current drawing context
- * @private
- */
-Mesh.prototype._renderCanvasTriangles = function (context)
-{
-    // draw triangles!!
-    var vertices = this.vertices;
-    var uvs = this.uvs;
-    var indices = this.indices;
-
-    var length = indices.length;
-    // this.count++;
-
-    for (var i = 0; i < length; i += 3)
-    {
-        // draw some triangles!
-        var index0 = indices[i] * 2, index1 = indices[i + 1] * 2, index2 = indices[i + 2] * 2;
-        this._renderCanvasDrawTriangle(context, vertices, uvs, index0, index1, index2);
-    }
-};
-
-/**
- * Draws one of the triangles that form this Mesh
- *
- * @param context {CanvasRenderingContext2D} the current drawing context
- * @param vertices {Float32Array} a reference to the vertices of the Mesh
- * @param uvs {Float32Array} a reference to the uvs of the Mesh
- * @param index0 {number} the index of the first vertex
- * @param index1 {number} the index of the second vertex
- * @param index2 {number} the index of the third vertex
- * @private
- */
-Mesh.prototype._renderCanvasDrawTriangle = function (context, vertices, uvs, index0, index1, index2)
-{
-    var textureSource = this._texture.baseTexture.source;
-    var textureWidth = this._texture.baseTexture.width;
-    var textureHeight = this._texture.baseTexture.height;
-
-    var x0 = vertices[index0], x1 = vertices[index1], x2 = vertices[index2];
-    var y0 = vertices[index0 + 1], y1 = vertices[index1 + 1], y2 = vertices[index2 + 1];
-
-    var u0 = uvs[index0] * textureWidth, u1 = uvs[index1] * textureWidth, u2 = uvs[index2] * textureWidth;
-    var v0 = uvs[index0 + 1] * textureHeight, v1 = uvs[index1 + 1] * textureHeight, v2 = uvs[index2 + 1] * textureHeight;
-
-    if (this.canvasPadding > 0)
-    {
-        var paddingX = this.canvasPadding / this.worldTransform.a;
-        var paddingY = this.canvasPadding / this.worldTransform.d;
-        var centerX = (x0 + x1 + x2) / 3;
-        var centerY = (y0 + y1 + y2) / 3;
-
-        var normX = x0 - centerX;
-        var normY = y0 - centerY;
-
-        var dist = Math.sqrt(normX * normX + normY * normY);
-        x0 = centerX + (normX / dist) * (dist + paddingX);
-        y0 = centerY + (normY / dist) * (dist + paddingY);
-
-        //
-
-        normX = x1 - centerX;
-        normY = y1 - centerY;
-
-        dist = Math.sqrt(normX * normX + normY * normY);
-        x1 = centerX + (normX / dist) * (dist + paddingX);
-        y1 = centerY + (normY / dist) * (dist + paddingY);
-
-        normX = x2 - centerX;
-        normY = y2 - centerY;
-
-        dist = Math.sqrt(normX * normX + normY * normY);
-        x2 = centerX + (normX / dist) * (dist + paddingX);
-        y2 = centerY + (normY / dist) * (dist + paddingY);
-    }
-
-    context.save();
-    context.beginPath();
-
-
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
-    context.lineTo(x2, y2);
-
-    context.closePath();
-
-    context.clip();
-
-    // Compute matrix transform
-    var delta =  (u0 * v1)      + (v0 * u2)      + (u1 * v2)      - (v1 * u2)      - (v0 * u1)      - (u0 * v2);
-    var deltaA = (x0 * v1)      + (v0 * x2)      + (x1 * v2)      - (v1 * x2)      - (v0 * x1)      - (x0 * v2);
-    var deltaB = (u0 * x1)      + (x0 * u2)      + (u1 * x2)      - (x1 * u2)      - (x0 * u1)      - (u0 * x2);
-    var deltaC = (u0 * v1 * x2) + (v0 * x1 * u2) + (x0 * u1 * v2) - (x0 * v1 * u2) - (v0 * u1 * x2) - (u0 * x1 * v2);
-    var deltaD = (y0 * v1)      + (v0 * y2)      + (y1 * v2)      - (v1 * y2)      - (v0 * y1)      - (y0 * v2);
-    var deltaE = (u0 * y1)      + (y0 * u2)      + (u1 * y2)      - (y1 * u2)      - (y0 * u1)      - (u0 * y2);
-    var deltaF = (u0 * v1 * y2) + (v0 * y1 * u2) + (y0 * u1 * v2) - (y0 * v1 * u2) - (v0 * u1 * y2) - (u0 * y1 * v2);
-
-    context.transform(deltaA / delta, deltaD / delta,
-        deltaB / delta, deltaE / delta,
-        deltaC / delta, deltaF / delta);
-
-    context.drawImage(textureSource, 0, 0);
-    context.restore();
-};
-
-
-
-/**
- * Renders a flat Mesh
- *
- * @param Mesh {Mesh} The Mesh to render
- * @private
- */
-Mesh.prototype.renderMeshFlat = function (Mesh)
-{
-    var context = this.context;
-    var vertices = Mesh.vertices;
-
-    var length = vertices.length/2;
-    // this.count++;
-
-    context.beginPath();
-    for (var i=1; i < length-2; i++)
-    {
-        // draw some triangles!
-        var index = i*2;
-
-        var x0 = vertices[index],   x1 = vertices[index+2], x2 = vertices[index+4];
-        var y0 = vertices[index+1], y1 = vertices[index+3], y2 = vertices[index+5];
-
-        context.moveTo(x0, y0);
-        context.lineTo(x1, y1);
-        context.lineTo(x2, y2);
-    }
-
-    context.fillStyle = '#FF0000';
-    context.fill();
-    context.closePath();
-};
-
-/*
- Mesh.prototype.setTexture = function (texture)
- {
- //TODO SET THE TEXTURES
- //TODO VISIBILITY
- //TODO SETTER
-
- // stop current texture
- this.texture = texture;
- this.width   = texture.frame.width;
- this.height  = texture.frame.height;
- this.updateFrame = true;
- };
- */
-
-/**
- * When the texture is updated, this event will fire to update the scale and frame
- *
- * @param event
- * @private
- */
-Mesh.prototype._onTextureUpdate = function ()
-{
-    this.updateFrame = true;
-};
-
-/**
- * Returns the bounds of the mesh as a rectangle. The bounds calculation takes the worldTransform into account.
- *
- * @param matrix {Matrix} the transformation matrix of the sprite
- * @return {Rectangle} the framing rectangle
- */
-Mesh.prototype.getBounds = function (matrix)
-{
-    if (!this._currentBounds) {
-        var worldTransform = matrix || this.worldTransform;
-
-        var a = worldTransform.a;
-        var b = worldTransform.b;
-        var c = worldTransform.c;
-        var d = worldTransform.d;
-        var tx = worldTransform.tx;
-        var ty = worldTransform.ty;
-
-        var maxX = -Infinity;
-        var maxY = -Infinity;
-
-        var minX = Infinity;
-        var minY = Infinity;
-
-        var vertices = this.vertices;
-        for (var i = 0, n = vertices.length; i < n; i += 2) {
-            var rawX = vertices[i], rawY = vertices[i + 1];
-            var x = (a * rawX) + (c * rawY) + tx;
-            var y = (d * rawY) + (b * rawX) + ty;
-
-            minX = x < minX ? x : minX;
-            minY = y < minY ? y : minY;
-
-            maxX = x > maxX ? x : maxX;
-            maxY = y > maxY ? y : maxY;
-        }
-
-        if (minX === -Infinity || maxY === Infinity) {
-            return core.Rectangle.EMPTY;
-        }
-
-        var bounds = this._bounds;
-
-        bounds.x = minX;
-        bounds.width = maxX - minX;
-
-        bounds.y = minY;
-        bounds.height = maxY - minY;
-
-        // store a reference so that if this function gets called again in the render cycle we do not have to recalculate
-        this._currentBounds = bounds;
-    }
-
-    return this._currentBounds;
-};
-
-/**
- * Tests if a point is inside this mesh. Works only for TRIANGLE_MESH
- *
- * @param point {Point} the point to test
- * @return {boolean} the result of the test
- */
-Mesh.prototype.containsPoint = function( point ) {
-    if (!this.getBounds().contains(point.x, point.y)) {
-        return false;
-    }
-    this.worldTransform.applyInverse(point,  tempPoint);
-
-    var vertices = this.vertices;
-    var points = tempPolygon.points;
-    var i, len;
-
-    if (this.drawMode === Mesh.DRAW_MODES.TRIANGLES) {
-        var indices = this.indices;
-        len = this.indices.length;
-        //TODO: inline this.
-        for (i=0;i<len;i+=3) {
-            var ind0 = indices[i]*2, ind1 = indices[i+1]*2, ind2 = indices[i+2]*2;
-            points[0] = vertices[ind0];
-            points[1] = vertices[ind0+1];
-            points[2] = vertices[ind1];
-            points[3] = vertices[ind1+1];
-            points[4] = vertices[ind2];
-            points[5] = vertices[ind2+1];
-            if (tempPolygon.contains(tempPoint.x, tempPoint.y)) {
-                return true;
-            }
-        }
-    } else {
-        len = vertices.length;
-        for (i=0;i<len;i+=6) {
-            points[0] = vertices[i];
-            points[1] = vertices[i+1];
-            points[2] = vertices[i+2];
-            points[3] = vertices[i+3];
-            points[4] = vertices[i+4];
-            points[5] = vertices[i+5];
-            if (tempPolygon.contains(tempPoint.x, tempPoint.y)) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
-/**
- * Different drawing buffer modes supported
- *
- * @static
- * @constant
- * @property {object} DRAW_MODES
- * @property {number} DRAW_MODES.TRIANGLE_MESH
- * @property {number} DRAW_MODES.TRIANGLES
- */
-Mesh.DRAW_MODES = {
-    TRIANGLE_MESH: 0,
-    TRIANGLES: 1
-};
-
-},{"../core":29}],125:[function(require,module,exports){
-var Mesh = require('./Mesh');
-var core = require('../core');
-
-/**
- * The rope allows you to draw a texture across several points and them manipulate these points
- *
- *```js
- * for (var i = 0; i < 20; i++) {
- *     points.push(new PIXI.Point(i * 50, 0));
- * };
- * var rope = new PIXI.Rope(PIXI.Texture.fromImage("snake.png"), points);
- *  ```
- *
- * @class
- * @extends PIXI.Mesh
- * @memberof PIXI.mesh
- * @param {Texture} texture - The texture to use on the rope.
- * @param {Array} points - An array of {Point} objects to construct this rope.
- *
- */
-function Rope(texture, points)
-{
-    Mesh.call(this, texture);
-
-    /*
-     * @member {Array} An array of points that determine the rope
-     */
-    this.points = points;
-
-    /*
-     * @member {Float32Array} An array of vertices used to construct this rope.
-     */
-    this.vertices = new Float32Array(points.length * 4);
-
-    /*
-     * @member {Float32Array} The WebGL Uvs of the rope.
-     */
-    this.uvs = new Float32Array(points.length * 4);
-
-    /*
-     * @member {Float32Array} An array containing the color components
-     */
-    this.colors = new Float32Array(points.length * 2);
-
-    /*
-     * @member {Uint16Array} An array containing the indices of the vertices
-     */
-    this.indices = new Uint16Array(points.length * 2);
-
-    /**
-     * Tracker for if the rope is ready to be drawn. Needed because Mesh ctor can
-     * call _onTextureUpdated which could call refresh too early.
-     *
-     * @member {boolean}
-     * @private
-     */
-     this._ready = true;
-
-     this.refresh();
-}
-
-
-// constructor
-Rope.prototype = Object.create(Mesh.prototype);
-Rope.prototype.constructor = Rope;
-module.exports = Rope;
-
-/**
- * Refreshes
- *
- */
-Rope.prototype.refresh = function ()
-{
-    var points = this.points;
-
-    // if too little points, or texture hasn't got UVs set yet just move on.
-    if (points.length < 1 || !this._texture._uvs)
-    {
-        return;
-    }
-
-    var uvs = this.uvs;
-
-    var indices = this.indices;
-    var colors = this.colors;
-
-    var textureUvs = this._texture._uvs;
-    var offset = new core.Point(textureUvs.x0, textureUvs.y0);
-    var factor = new core.Point(textureUvs.x2 - textureUvs.x0, textureUvs.y2 - textureUvs.y0);
-
-    uvs[0] = 0 + offset.x;
-    uvs[1] = 0 + offset.y;
-    uvs[2] = 0 + offset.x;
-    uvs[3] = 1 * factor.y + offset.y;
-
-    colors[0] = 1;
-    colors[1] = 1;
-
-    indices[0] = 0;
-    indices[1] = 1;
-
-    var total = points.length,
-        point, index, amount;
-
-    for (var i = 1; i < total; i++)
-    {
-        point = points[i];
-        index = i * 4;
-        // time to do some smart drawing!
-        amount = i / (total-1);
-
-        uvs[index] = amount * factor.x + offset.x;
-        uvs[index+1] = 0 + offset.y;
-
-        uvs[index+2] = amount * factor.x + offset.x;
-        uvs[index+3] = 1 * factor.y + offset.y;
-
-        index = i * 2;
-        colors[index] = 1;
-        colors[index+1] = 1;
-
-        index = i * 2;
-        indices[index] = index;
-        indices[index + 1] = index + 1;
-    }
-
-    this.dirty = true;
-};
-
-/**
- * Clear texture UVs when new texture is set
- *
- * @private
- */
-Rope.prototype._onTextureUpdate = function ()
-{
-    Mesh.prototype._onTextureUpdate.call(this);
-
-    // wait for the Rope ctor to finish before calling refresh
-    if (this._ready) {
-        this.refresh();
-    }
-};
-
-/**
- * Updates the object transform for rendering
- *
- * @private
- */
-Rope.prototype.updateTransform = function ()
-{
-    var points = this.points;
-
-    if (points.length < 1)
-    {
-        return;
-    }
-
-    var lastPoint = points[0];
-    var nextPoint;
-    var perpX = 0;
-    var perpY = 0;
-
-    // this.count -= 0.2;
-
-    var vertices = this.vertices;
-    var total = points.length,
-        point, index, ratio, perpLength, num;
-
-    for (var i = 0; i < total; i++)
-    {
-        point = points[i];
-        index = i * 4;
-
-        if (i < points.length-1)
-        {
-            nextPoint = points[i+1];
-        }
-        else
-        {
-            nextPoint = point;
-        }
-
-        perpY = -(nextPoint.x - lastPoint.x);
-        perpX = nextPoint.y - lastPoint.y;
-
-        ratio = (1 - (i / (total-1))) * 10;
-
-        if (ratio > 1)
-        {
-            ratio = 1;
-        }
-
-        perpLength = Math.sqrt(perpX * perpX + perpY * perpY);
-        num = this._texture.height / 2; //(20 + Math.abs(Math.sin((i + this.count) * 0.3) * 50) )* ratio;
-        perpX /= perpLength;
-        perpY /= perpLength;
-
-        perpX *= num;
-        perpY *= num;
-
-        vertices[index] = point.x + perpX;
-        vertices[index+1] = point.y + perpY;
-        vertices[index+2] = point.x - perpX;
-        vertices[index+3] = point.y - perpY;
-
-        lastPoint = point;
-    }
-
-    this.containerUpdateTransform();
-};
-
-},{"../core":29,"./Mesh":124}],126:[function(require,module,exports){
-/**
- * @file        Main export of the PIXI extras library
- * @author      Mat Groves <mat@goodboydigital.com>
- * @copyright   2013-2015 GoodBoyDigital
- * @license     {@link https://github.com/GoodBoyDigital/pixi.js/blob/master/LICENSE|MIT License}
- */
-
-/**
- * @namespace PIXI.mesh
- */
-module.exports = {
-    Mesh:           require('./Mesh'),
-    Rope:           require('./Rope'),
-    MeshRenderer:   require('./webgl/MeshRenderer'),
-    MeshShader:     require('./webgl/MeshShader')
-};
-
-},{"./Mesh":124,"./Rope":125,"./webgl/MeshRenderer":127,"./webgl/MeshShader":128}],127:[function(require,module,exports){
-var core = require('../../core'),
-    Mesh = require('../Mesh');
-
-/**
- * @author Mat Groves
- *
- * Big thanks to the very clever Matt DesLauriers <mattdesl> https://github.com/mattdesl/
- * for creating the original pixi version!
- * Also a thanks to https://github.com/bchevalier for tweaking the tint and alpha so that they now share 4 bytes on the vertex buffer
- *
- * Heavily inspired by LibGDX's MeshRenderer:
- * https://github.com/libgdx/libgdx/blob/master/gdx/src/com/badlogic/gdx/graphics/g2d/MeshRenderer.java
- */
-
-/**
- *
- * @class
- * @private
- * @memberof PIXI.mesh
- * @extends PIXI.ObjectRenderer
- * @param renderer {WebGLRenderer} The renderer this sprite batch works for.
- */
-function MeshRenderer(renderer)
-{
-    core.ObjectRenderer.call(this, renderer);
-
-
-    /**
-     * Holds the indices
-     *
-     * @member {Uint16Array}
-     */
-    this.indices = new Uint16Array(15000);
-
-    //TODO this could be a single buffer shared amongst all renderers as we reuse this set up in most renderers
-    for (var i=0, j=0; i < 15000; i += 6, j += 4)
-    {
-        this.indices[i + 0] = j + 0;
-        this.indices[i + 1] = j + 1;
-        this.indices[i + 2] = j + 2;
-        this.indices[i + 3] = j + 0;
-        this.indices[i + 4] = j + 2;
-        this.indices[i + 5] = j + 3;
-    }
-}
-
-MeshRenderer.prototype = Object.create(core.ObjectRenderer.prototype);
-MeshRenderer.prototype.constructor = MeshRenderer;
-module.exports = MeshRenderer;
-
-core.WebGLRenderer.registerPlugin('mesh', MeshRenderer);
-
-/**
- * Sets up the renderer context and necessary buffers.
- *
- * @private
- * @param gl {WebGLRenderingContext} the current WebGL drawing context
- */
-MeshRenderer.prototype.onContextChange = function ()
-{
-
-};
-
-/**
- * Renders the sprite object.
- *
- * @param mesh {Mesh} the mesh to render
- */
-MeshRenderer.prototype.render = function (mesh)
-{
-    if(!mesh._vertexBuffer)
-    {
-        this._initWebGL(mesh);
-    }
-
-    var renderer = this.renderer,
-        gl = renderer.gl,
-        texture = mesh._texture.baseTexture,
-        shader = renderer.shaderManager.plugins.meshShader;
-
-    var drawMode = mesh.drawMode === Mesh.DRAW_MODES.TRIANGLE_MESH ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
-
-    renderer.blendModeManager.setBlendMode(mesh.blendMode);
-
-
-    // set uniforms
-    gl.uniformMatrix3fv(shader.uniforms.translationMatrix._location, false, mesh.worldTransform.toArray(true));
-
-    gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, renderer.currentRenderTarget.projectionMatrix.toArray(true));
-    gl.uniform1f(shader.uniforms.alpha._location, mesh.worldAlpha);
-
-    if (!mesh.dirty)
-    {
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh._vertexBuffer);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.vertices);
-        gl.vertexAttribPointer(shader.attributes.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
-
-        // update the uvs
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh._uvBuffer);
-        gl.vertexAttribPointer(shader.attributes.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
-
-
-        gl.activeTexture(gl.TEXTURE0);
-
-       if (!texture._glTextures[gl.id])
-        {
-            this.renderer.updateTexture(texture);
-        }
-        else
-        {
-            // bind the current texture
-            gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
-        }
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh._indexBuffer);
-        gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, mesh.indices);
-    }
-    else
-    {
-
-        mesh.dirty = false;
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh._vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.STATIC_DRAW);
-        gl.vertexAttribPointer(shader.attributes.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
-
-        // update the uvs
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh._uvBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, mesh.uvs, gl.STATIC_DRAW);
-        gl.vertexAttribPointer(shader.attributes.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
-
-         gl.activeTexture(gl.TEXTURE0);
-
-        if (!texture._glTextures[gl.id])
-        {
-            this.renderer.updateTexture(texture);
-        }
-        else
-        {
-            // bind the current texture
-            gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
-        }
-
-        // dont need to upload!
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh._indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.indices, gl.STATIC_DRAW);
-
-    }
-
-    gl.drawElements(drawMode, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
-
-};
-
-/**
- * Prepares all the buffers to render this mesh
- * @param mesh {Mesh} the mesh to render
- */
-MeshRenderer.prototype._initWebGL = function (mesh)
-{
-    // build the strip!
-    var gl = this.renderer.gl;
-
-    mesh._vertexBuffer = gl.createBuffer();
-    mesh._indexBuffer = gl.createBuffer();
-    mesh._uvBuffer = gl.createBuffer();
-
-
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, mesh._vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.DYNAMIC_DRAW);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, mesh._uvBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER,  mesh.uvs, gl.STATIC_DRAW);
-
-    if(mesh.colors){
-        mesh._colorBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh._colorBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, mesh.colors, gl.STATIC_DRAW);
-    }
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh._indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.indices, gl.STATIC_DRAW);
-};
-
-
-/**
- * Empties the current batch.
- *
- */
-MeshRenderer.prototype.flush = function ()
-{
-
-};
-
-/**
- * Starts a new mesh renderer.
- *
- */
-MeshRenderer.prototype.start = function ()
-{
-    var shader = this.renderer.shaderManager.plugins.meshShader;
-
-    this.renderer.shaderManager.setShader(shader);
-};
-
-/**
- * Destroys the Mesh renderer
- *
- */
-MeshRenderer.prototype.destroy = function ()
-{
-};
-
-},{"../../core":29,"../Mesh":124}],128:[function(require,module,exports){
-var core = require('../../core');
-
-/**
- * @class
- * @extends PIXI.Shader
- * @memberof PIXI.mesh
- * @param shaderManager {ShaderManager} The WebGL shader manager this shader works for.
- */
-function StripShader(shaderManager)
-{
-    core.Shader.call(this,
-        shaderManager,
-        // vertex shader
-        [
-            'precision lowp float;',
-            'attribute vec2 aVertexPosition;',
-            'attribute vec2 aTextureCoord;',
-
-            'uniform mat3 translationMatrix;',
-            'uniform mat3 projectionMatrix;',
-
-            'varying vec2 vTextureCoord;',
-
-            'void main(void){',
-            '   gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
-            '   vTextureCoord = aTextureCoord;',
-            '}'
-        ].join('\n'),
-        [
-            'precision lowp float;',
-
-            'varying vec2 vTextureCoord;',
-            'uniform float alpha;',
-
-            'uniform sampler2D uSampler;',
-
-            'void main(void){',
-            '   gl_FragColor = texture2D(uSampler, vTextureCoord) * alpha ;',
-            '}'
-        ].join('\n'),
-        // custom uniforms
-        {
-            alpha:  { type: '1f', value: 0 },
-            translationMatrix: { type: 'mat3', value: new Float32Array(9) },
-            projectionMatrix: { type: 'mat3', value: new Float32Array(9) }
-        },
-        // custom attributes
-        {
-            aVertexPosition:0,
-            aTextureCoord:0
-        }
-    );
-}
-
-StripShader.prototype = Object.create(core.Shader.prototype);
-StripShader.prototype.constructor = StripShader;
-module.exports = StripShader;
-
-core.ShaderManager.registerPlugin('meshShader', StripShader);
-
-},{"../../core":29}],129:[function(require,module,exports){
+},{"../core":27}],94:[function(require,module,exports){
 // References:
 // https://github.com/sindresorhus/object-assign
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
@@ -27412,11 +22639,11 @@ if (!Object.assign)
     Object.assign = require('object-assign');
 }
 
-},{"object-assign":12}],130:[function(require,module,exports){
+},{"object-assign":12}],95:[function(require,module,exports){
 require('./Object.assign');
 require('./requestAnimationFrame');
 
-},{"./Object.assign":129,"./requestAnimationFrame":131}],131:[function(require,module,exports){
+},{"./Object.assign":94,"./requestAnimationFrame":96}],96:[function(require,module,exports){
 (function (global){
 // References:
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -27487,7 +22714,7 @@ if (!global.cancelAnimationFrame) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}]},{},[1])(1)
+},{}]},{},[84])(84)
 });
 
 });
