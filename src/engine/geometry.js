@@ -8,28 +8,28 @@ game.module(
     @class Vector
     @extends game.Class
     @constructor
-    @param {Number} [x]
-    @param {Number} [y]
+    @param {Number} [x=0]
+    @param {Number} [y=0]
   **/
   game.createClass('Vector', {
     x: 0,
     y: 0,
 
     init: function(x, y) {
-      if (typeof x === 'number') this.x = x;
-      if (typeof y === 'number') this.y = y;
+      this.x = x || 0;
+      this.y = y || ((y !== 0) ? this.x : 0);
     },
 
     /**
       Set vector values.
       @method set
-      @param {Number} x
-      @param {Number} y
+      @param {Number} [x=0]
+      @param {Number} [y=0]
       @return {game.Vector}
     **/
     set: function(x, y) {
-      this.x = x;
-      this.y = y;
+      this.x = x || 0;
+      this.y = y || ((y !== 0) ? this.x : 0);
       return this;
     },
 
@@ -245,6 +245,15 @@ game.module(
       this.x = Math.round(this.x);
       this.y = Math.round(this.y);
       return this;
+    },
+
+    /**
+     * Returns true if the given point is equal to this point
+     * @param  {game.Vector} vector
+     * @return {Boolean}
+     */
+    equals: function(vector) {
+      return (vector.x === this.x) && (vector.y === this.y);
     }
   });
 
