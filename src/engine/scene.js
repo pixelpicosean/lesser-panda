@@ -447,9 +447,9 @@ game.addAttributes('Scene', {
     /**
         Default background color.
         @attribute {Number} backgroundColor
-        @default null
+        @default 0x000000
     **/
-    backgroundColor: null
+    backgroundColor: 0x000000
 });
 
 });
