@@ -101,15 +101,15 @@ game.module(
       this._mouseup = this._mouseup.bind(this);
       this._mouseout = this._mouseout.bind(this);
 
-      canvas.addEventListener('mousedown', this._mousedown);
-      canvas.addEventListener('mousemove', this._mousemove);
-      canvas.addEventListener('mouseup', this._mouseup);
-      canvas.addEventListener('mouseout', this._mouseout);
+      canvas.addEventListener('mousedown', this._mousedown, true);
+      window.document.addEventListener('mousemove', this._mousemove, true);
+      window.addEventListener('mouseup', this._mouseup, true);
+      canvas.addEventListener('mouseout', this._mouseout, true);
 
-      canvas.addEventListener('touchstart', this._mousedown);
-      canvas.addEventListener('touchmove', this._mousemove);
-      canvas.addEventListener('touchend', this._mouseup);
-      canvas.addEventListener('touchcancle', this._mouseout);
+      canvas.addEventListener('touchstart', this._mousedown, true);
+      canvas.addEventListener('touchmove', this._mousemove, true);
+      canvas.addEventListener('touchend', this._mouseup, true);
+      canvas.addEventListener('touchcancle', this._mouseout, true);
 
       this.stage = new game.Container();
       if (game.system.webGL && game.device.cocoonJS) {
@@ -197,8 +197,8 @@ game.module(
       var canvas = game.system.canvas;
 
       canvas.removeEventListener('mousedown', this._mousedown);
-      canvas.removeEventListener('mousemove', this._mousemove);
-      canvas.removeEventListener('mouseup', this._mouseup);
+      window.document.removeEventListener('mousemove', this._mousemove);
+      window.removeEventListener('mouseup', this._mouseup);
       canvas.removeEventListener('mouseout', this._mouseout);
 
       canvas.removeEventListener('touchstart', this._mousedown);
@@ -222,15 +222,6 @@ game.module(
       @param {String} key
     **/
     keyup: function() {},
-
-    /**
-      Callback for mouse click and touch tap on the scene stage.
-      @method click
-      @param {Number} x
-      @param {Number} y
-      @param {MouseEvent|TouchEvent} event
-    **/
-    click: function() {},
 
     /**
       Callback for mousedown and touchstart on the scene stage.
@@ -364,11 +355,6 @@ game.module(
       this.mouseup(this.mouse.x, this.mouse.y, event);
     },
 
-    _click: function(event) {
-      windowToCanvas(event.clientX, event.clientY, this.mouse);
-      this.click(this.mouse.x, this.mouse.y, event);
-    },
-
     _mousemove: function(event) {
       windowToCanvas(event.clientX, event.clientY, this.mouse);
       this.mousemove(this.mouse.x, this.mouse.y, event);
@@ -384,7 +370,6 @@ game.module(
     _mouseout: function(event) {
       windowToCanvas(event.clientX, event.clientY, this.mouse);
       this.mouseout(this.mouse.x, this.mouse.y, event);
-      this.mouseup(this.mouse.x, this.mouse.y, event);
     },
 
     _swipe: function(event, dir) {

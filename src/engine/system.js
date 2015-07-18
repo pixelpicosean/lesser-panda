@@ -351,10 +351,6 @@ game.module(
           this.canvas.style.top = game.System.top + 'px';
         }
 
-        document.addEventListener('touchstart', function(e) {
-          e.preventDefault();
-        }, false);
-
         if (game.System.rotateScreen) {
           var div = document.createElement('div');
           div.innerHTML = game.System.rotateImg ? '' : game.System.rotateMsg;
