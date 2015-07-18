@@ -297,7 +297,7 @@ game.module(
 
     setSceneNow: function(sceneClass, removeAssets) {
       if (this.paused) this.paused = false;
-      if (game.scene) game.scene.exit();
+      if (game.scene) game.scene._exit();
       if (removeAssets) game.removeAssets();
       game.scene = new (sceneClass)();
       if (game.Debug && game.Debug.enabled && !game.device.cocoonJS && !this.debug) this.debug = new game.Debug();

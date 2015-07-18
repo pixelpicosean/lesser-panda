@@ -61,6 +61,8 @@ game.module(
     **/
     _updateOrder: null,
 
+    mouse: null,
+
     staticInit: function() {
       this.emitters = [];
       this.objects = [];
@@ -91,12 +93,23 @@ game.module(
       }
       game.system.renderer.backgroundColor = this.backgroundColor;
 
-      game.system.stage.interactive = true;
-      game.system.stage.mousemove = game.system.stage.touchmove = this._mousemove.bind(this);
-      game.system.stage.click = game.system.stage.tap = this._click.bind(this);
-      game.system.stage.mousedown = game.system.stage.touchstart = this._mousedown.bind(this);
-      game.system.stage.mouseup = game.system.stage.mouseupoutside = game.system.stage.touchend = game.system.stage.touchendoutside = this._mouseup.bind(this);
-      game.system.stage.mouseout = this._mouseout.bind(this);
+      var canvas = game.system.canvas;
+      this.mouse = new game.Vector();
+
+      this._mousedown = this._mousedown.bind(this);
+      this._mousemove = this._mousemove.bind(this);
+      this._mouseup = this._mouseup.bind(this);
+      this._mouseout = this._mouseout.bind(this);
+
+      canvas.addEventListener('mousedown', this._mousedown);
+      canvas.addEventListener('mousemove', this._mousemove);
+      canvas.addEventListener('mouseup', this._mouseup);
+      canvas.addEventListener('mouseout', this._mouseout);
+
+      canvas.addEventListener('touchstart', this._mousedown);
+      canvas.addEventListener('touchmove', this._mousemove);
+      canvas.addEventListener('touchend', this._mouseup);
+      canvas.addEventListener('touchcancle', this._mouseout);
 
       this.stage = new game.Container();
       if (game.system.webGL && game.device.cocoonJS) {
@@ -179,6 +192,22 @@ game.module(
       @method exit
     **/
     exit: function() {},
+
+    _exit: function() {
+      var canvas = game.system.canvas;
+
+      canvas.removeEventListener('mousedown', this._mousedown);
+      canvas.removeEventListener('mousemove', this._mousemove);
+      canvas.removeEventListener('mouseup', this._mouseup);
+      canvas.removeEventListener('mouseout', this._mouseout);
+
+      canvas.removeEventListener('touchstart', this._mousedown);
+      canvas.removeEventListener('touchmove', this._mousemove);
+      canvas.removeEventListener('touchend', this._mouseup);
+      canvas.removeEventListener('touchcancle', this._mouseout);
+
+      this.exit();
+    },
 
     /**
       Callback for keydown.
@@ -323,38 +352,44 @@ game.module(
     update: function() {},
 
     _mousedown: function(event) {
-      event.data.startTime = Date.now();
-      event.data.swipeX = event.data.global.x;
-      event.data.swipeY = event.data.global.y;
-      this.mousedown(event.data.global.x, event.data.global.y, event.data.originalEvent);
+      windowToCanvas(event.clientX, event.clientY, this.mouse);
+      this._swipeStartTime = Date.now();
+      this._swipeX = this.mouse.x;
+      this._swipeY = this.mouse.y;
+      this.mousedown(this.mouse.x, this.mouse.y, event);
     },
 
     _mouseup: function(event) {
-      this.mouseup(event.data.global.x, event.data.global.y, event.data.originalEvent);
+      windowToCanvas(event.clientX, event.clientY, this.mouse);
+      this.mouseup(this.mouse.x, this.mouse.y, event);
     },
 
     _click: function(event) {
-      this.click(event.data.global.x, event.data.global.y, event.data.originalEvent);
+      windowToCanvas(event.clientX, event.clientY, this.mouse);
+      this.click(this.mouse.x, this.mouse.y, event);
     },
 
     _mousemove: function(event) {
-      this.mousemove(event.data.global.x, event.data.global.y, event.data.originalEvent);
+      windowToCanvas(event.clientX, event.clientY, this.mouse);
+      this.mousemove(this.mouse.x, this.mouse.y, event);
 
-      if (!event.data.startTime) return;
+      if (!this._swipeStartTime) return;
 
-      if (event.data.global.x - event.data.swipeX >= this.swipeDist) this._swipe(event, 'right');
-      else if (event.data.global.x - event.data.swipeX <= -this.swipeDist) this._swipe(event, 'left');
-      else if (event.data.global.y - event.data.swipeY >= this.swipeDist) this._swipe(event, 'down');
-      else if (event.data.global.y - event.data.swipeY <= -this.swipeDist) this._swipe(event, 'up');
+      if (this.mouse.x - this._swipeX >= this.swipeDist) this._swipe(event, 'right');
+      else if (this.mouse.x - this._swipeX <= -this.swipeDist) this._swipe(event, 'left');
+      else if (this.mouse.y - this._swipeY >= this.swipeDist) this._swipe(event, 'down');
+      else if (this.mouse.y - this._swipeY <= -this.swipeDist) this._swipe(event, 'up');
     },
 
     _mouseout: function(event) {
-      this.mouseout(event.data.global.x, event.data.global.y, event.data.originalEvent);
+      windowToCanvas(event.clientX, event.clientY, this.mouse);
+      this.mouseout(this.mouse.x, this.mouse.y, event);
+      this.mouseup(this.mouse.x, this.mouse.y, event);
     },
 
     _swipe: function(event, dir) {
-      var time = Date.now() - event.data.startTime;
-      event.data.startTime = null;
+      var time = Date.now() - this._swipeStartTime;
+      this._swipeStartTime = null;
       if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(dir);
     },
 
@@ -428,6 +463,16 @@ game.module(
       }
     }
   });
+
+  function windowToCanvas(x, y, pos) {
+    var canvas = game.system.canvas;
+    var bbox = canvas.getBoundingClientRect();
+
+    return pos.set(
+      (x - bbox.left) * (canvas.width / bbox.width) / game.scale,
+      (y - bbox.top) * (canvas.height / bbox.height) / game.scale
+    );
+  }
 
   game.addAttributes('Scene', {
     /**
