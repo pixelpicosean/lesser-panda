@@ -16,9 +16,6 @@ game.module(
   // Disable pixi log
   PIXI.utils._saidHello = true;
 
-  // Replace Point with better alternative "Vector"
-  PIXI.Point = game.Point = game.Vector;
-
   game.blendModes = PIXI.BLEND_MODES;
 
   game.autoDetectRenderer = PIXI.autoDetectRenderer;
@@ -388,9 +385,9 @@ game.module(
   game.TilingSprite = function(path, width, height, properties) {
     /**
       Texture scroll speed
-      @property {game.Point} speed
+      @property {game.Vector} speed
     **/
-    this.speed = new game.Point();
+    this.speed = new game.Vector();
     path = game.paths[path] || path;
     var texture = path instanceof game.Texture ? path : path instanceof game.RenderTexture ? path : game.Texture.fromFrame(this.path || path);
     PIXI.TilingSprite.call(this, texture, width || texture.width, height || texture.height);

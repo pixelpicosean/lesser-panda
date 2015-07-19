@@ -1,5 +1,8 @@
 game.module(
-    'engine.pixi'
+  'engine.pixi'
+)
+.require(
+  'engine.geometry'
 )
 .body(function() { 'use strict';
 
@@ -3804,7 +3807,6 @@ EventEmitter.prefixed = prefix;
 //
 if ('undefined' !== typeof module) {
   module.exports = EventEmitter;
-  game.EventEmitter = EventEmitter;
 }
 
 },{}],12:[function(require,module,exports){
@@ -8873,6 +8875,7 @@ var core = module.exports = Object.assign(require('./const'), require('./math'),
     // utils
     utils: require('./utils'),
     ticker: require('./ticker'),
+    EventEmitter: require('eventemitter3'),
 
     // display
     DisplayObject:          require('./display/DisplayObject'),
@@ -8949,7 +8952,7 @@ var core = module.exports = Object.assign(require('./const'), require('./math'),
     }
 });
 
-},{"./const":20,"./display/Container":21,"./display/DisplayObject":22,"./graphics/Graphics":23,"./graphics/GraphicsData":24,"./graphics/webgl/GraphicsRenderer":25,"./math":30,"./particles/ParticleContainer":36,"./particles/webgl/ParticleRenderer":38,"./renderers/canvas/CanvasRenderer":41,"./renderers/canvas/utils/CanvasBuffer":42,"./renderers/canvas/utils/CanvasGraphics":43,"./renderers/webgl/WebGLRenderer":46,"./renderers/webgl/filters/AbstractFilter":47,"./renderers/webgl/filters/FXAAFilter":48,"./renderers/webgl/filters/SpriteMaskFilter":49,"./renderers/webgl/managers/ShaderManager":53,"./renderers/webgl/shaders/Shader":58,"./renderers/webgl/utils/ObjectRenderer":60,"./renderers/webgl/utils/RenderTarget":62,"./sprites/Sprite":64,"./sprites/webgl/SpriteRenderer":65,"./text/Text":66,"./textures/BaseTexture":67,"./textures/RenderTexture":68,"./textures/Texture":69,"./textures/TextureUvs":70,"./textures/VideoBaseTexture":71,"./ticker":73,"./utils":74}],28:[function(require,module,exports){
+},{"./const":20,"./display/Container":21,"./display/DisplayObject":22,"./graphics/Graphics":23,"./graphics/GraphicsData":24,"./graphics/webgl/GraphicsRenderer":25,"./math":30,"./particles/ParticleContainer":36,"./particles/webgl/ParticleRenderer":38,"./renderers/canvas/CanvasRenderer":41,"./renderers/canvas/utils/CanvasBuffer":42,"./renderers/canvas/utils/CanvasGraphics":43,"./renderers/webgl/WebGLRenderer":46,"./renderers/webgl/filters/AbstractFilter":47,"./renderers/webgl/filters/FXAAFilter":48,"./renderers/webgl/filters/SpriteMaskFilter":49,"./renderers/webgl/managers/ShaderManager":53,"./renderers/webgl/shaders/Shader":58,"./renderers/webgl/utils/ObjectRenderer":60,"./renderers/webgl/utils/RenderTarget":62,"./sprites/Sprite":64,"./sprites/webgl/SpriteRenderer":65,"./text/Text":66,"./textures/BaseTexture":67,"./textures/RenderTexture":68,"./textures/Texture":69,"./textures/TextureUvs":70,"./textures/VideoBaseTexture":71,"./ticker":73,"./utils":74,"eventemitter3":11}],28:[function(require,module,exports){
 var Point = require('./Point');
 
 /**
@@ -9335,7 +9338,7 @@ function Point(x, y)
 }
 
 Point.prototype.constructor = Point;
-module.exports = Point;
+module.exports = game.Vector || Point;
 
 /**
  * Creates a clone of this point
