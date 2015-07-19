@@ -40,6 +40,8 @@ game.module(
 
   game.Matrix = PIXI.Matrix;
 
+  game.EventEmitter = PIXI.EventEmitter;
+
   /**
     @class AnimationData
     @constructor
