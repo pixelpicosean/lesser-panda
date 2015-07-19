@@ -185,8 +185,6 @@ game.module(
       else game.system.setScene(this.callback);
     },
 
-    exit: function() {},
-
     run: function() {
       if (this.loopId) {
         this.last = game.Timer.time;
@@ -221,10 +219,7 @@ game.module(
 
     getPath: function(path) {
       return game.system.retina || game.system.hires ? path.replace(/\.(?=[^.]*$)/, '@' + game.scale + 'x.') : path;
-    },
-
-    keydown: function() {},
-    keyup: function() {}
+    }
   });
 
   var JSON_ATLAS_SURFIX = 'json_image';
