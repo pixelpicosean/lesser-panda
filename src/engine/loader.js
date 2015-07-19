@@ -113,7 +113,6 @@ game.module(
         for (var i = this.stage.children.length - 1; i >= 0; i--) {
           this.stage.removeChild(this.stage.children[i]);
         }
-        this.stage.interactive = false;
         if (game.tweenEngine) game.tweenEngine.removeAll();
 
         game.system.renderer.backgroundColor = game.Loader.bgColor;
@@ -135,9 +134,11 @@ game.module(
       throw 'loading file ' + path;
     },
 
-    progress: function(loader) {
-      if (loader && loader.json) game.json[loader.url] = loader.json;
-      this.loaded++;
+    progress: function(loader, res) {
+      if (res.isJson) game.json[loader.url] = res.data;
+      if (!(res.isImage && isSpriteAtlas(res))) {
+        this.loaded++;
+      }
       this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
       this.onPercentChange();
 
@@ -225,6 +226,11 @@ game.module(
     keydown: function() {},
     keyup: function() {}
   });
+
+  var JSON_ATLAS_SURFIX = 'json_image';
+  function isSpriteAtlas(res) {
+    return res.name.slice(-JSON_ATLAS_SURFIX.length) == JSON_ATLAS_SURFIX;
+  }
 
   game.addAttributes('Loader', {
     /**

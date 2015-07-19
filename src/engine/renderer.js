@@ -11,33 +11,37 @@ game.module(
 )
 .body(function() { 'use strict';
 
+  var PIXI = game.PIXI;
+
   // Disable pixi log
-  game.PIXI.utils._saidHello = true;
+  PIXI.utils._saidHello = true;
 
   // Replace Point with better alternative "Vector"
-  game.PIXI.Point = game.Point = game.Vector;
+  PIXI.Point = game.Point = game.Vector;
 
-  game.blendModes = game.PIXI.BLEND_MODES;
+  game.blendModes = PIXI.BLEND_MODES;
 
-  game.autoDetectRenderer = game.PIXI.autoDetectRenderer;
-  game.CanvasRenderer = game.PIXI.CanvasRenderer;
+  game.autoDetectRenderer = PIXI.autoDetectRenderer;
+  game.CanvasRenderer = PIXI.CanvasRenderer;
 
-  game.TextureCache = game.PIXI.utils.TextureCache;
-  game.BaseTexture = game.PIXI.BaseTexture;
-  game.Texture = game.PIXI.Texture;
-  game.RenderTexture = game.PIXI.RenderTexture;
+  game.TextureCache = PIXI.utils.TextureCache;
+  game.BaseTexture = PIXI.BaseTexture;
+  game.Texture = PIXI.Texture;
+  game.RenderTexture = PIXI.RenderTexture;
 
-  game.DisplayObject = game.PIXI.DisplayObject;
-  game.Graphics = game.PIXI.Graphics;
-  game.Container = game.PIXI.Container;
-  game.ParticleContainer = game.PIXI.ParticleContainer;
-  game.Text = game.PIXI.Text;
-  game.BitmapText = game.PIXI.extras.BitmapText;
+  game.DisplayObject = PIXI.DisplayObject;
+  game.Graphics = PIXI.Graphics;
+  game.Container = PIXI.Container;
+  game.ParticleContainer = PIXI.ParticleContainer;
+  game.Text = PIXI.Text;
+  game.BitmapText = PIXI.extras.BitmapText;
 
-  game.HitCircle = game.PIXI.Circle;
-  game.HitEllipse = game.PIXI.Ellipse;
-  game.HitPolygon = game.PIXI.Polygon;
-  game.HitRectangle = game.PIXI.Rectangle;
+  game.HitCircle = PIXI.Circle;
+  game.HitEllipse = PIXI.Ellipse;
+  game.HitPolygon = PIXI.Polygon;
+  game.HitRectangle = PIXI.Rectangle;
+
+  game.Matrix = PIXI.Matrix;
 
   /**
     @class AnimationData
@@ -124,10 +128,10 @@ game.module(
 
     this.addAnim('default');
 
-    game.PIXI.Sprite.call(this, this.textures[0]);
+    PIXI.Sprite.call(this, this.textures[0]);
   };
 
-  game.Animation.prototype = Object.create(game.PIXI.Sprite.prototype);
+  game.Animation.prototype = Object.create(PIXI.Sprite.prototype);
   game.Animation.prototype.constructor = game.Animation;
 
   /**
@@ -251,7 +255,7 @@ game.module(
 
   game.Animation.prototype.updateTransform = function() {
     if (this.currentAnim) this.updateAnimation();
-    game.PIXI.Sprite.prototype.updateTransform.call(this);
+    PIXI.Sprite.prototype.updateTransform.call(this);
   };
 
   /**
@@ -302,7 +306,7 @@ game.module(
       texture = game.paths[texture] || texture;
       texture = game.Texture.fromFrame(texture);
     }
-    game.PIXI.Sprite.call(this, texture);
+    PIXI.Sprite.call(this, texture);
 
     game.merge(this, properties);
 
@@ -316,7 +320,7 @@ game.module(
     if (game.device.mobile && !this.touchendoutside && this.mouseupoutside) this.touchendoutside = this.mouseupoutside;
   };
 
-  game.Sprite.prototype = Object.create(game.PIXI.Sprite.prototype);
+  game.Sprite.prototype = Object.create(PIXI.Sprite.prototype);
   game.Sprite.prototype.constructor = game.Sprite;
 
   game.Sprite.prototype.setTexture = function(texture) {
@@ -324,7 +328,7 @@ game.module(
       texture = game.paths[texture] || texture;
       texture = game.Texture.fromFrame(texture);
     }
-    game.PIXI.Sprite.prototype.setTexture.call(this, texture);
+    PIXI.Sprite.prototype.setTexture.call(this, texture);
   };
 
   /**
@@ -337,7 +341,7 @@ game.module(
     @chainable
   **/
   game.Sprite.prototype.crop = function(x, y, width, height) {
-    var texture = new game.PIXI.Texture(this.texture, new game.HitRectangle(x, y, width, height));
+    var texture = new PIXI.Texture(this.texture, new game.HitRectangle(x, y, width, height));
     this.setTexture(texture);
     return this;
   };
@@ -357,12 +361,12 @@ game.module(
     return this;
   };
 
-  game.Sprite.fromFrame = game.PIXI.Sprite.fromFrame;
-  game.Sprite.fromImage = game.PIXI.Sprite.fromImage;
+  game.Sprite.fromFrame = PIXI.Sprite.fromFrame;
+  game.Sprite.fromImage = PIXI.Sprite.fromImage;
 
   game.Texture.fromAsset = function(id) {
     var path = game.paths[id] || id;
-    var texture = game.PIXI.utils.TextureCache[path];
+    var texture = PIXI.utils.TextureCache[path];
 
     if (!texture) {
       texture = game.Texture.fromFrame(path);
@@ -389,11 +393,11 @@ game.module(
     this.speed = new game.Point();
     path = game.paths[path] || path;
     var texture = path instanceof game.Texture ? path : path instanceof game.RenderTexture ? path : game.Texture.fromFrame(this.path || path);
-    game.PIXI.TilingSprite.call(this, texture, width || texture.width, height || texture.height);
+    PIXI.TilingSprite.call(this, texture, width || texture.width, height || texture.height);
     game.merge(this, properties);
   };
 
-  game.TilingSprite.prototype = Object.create(game.PIXI.extras.TilingSprite.prototype);
+  game.TilingSprite.prototype = Object.create(PIXI.extras.TilingSprite.prototype);
   game.TilingSprite.prototype.constructor = game.TilingSprite;
 
   /**
@@ -539,7 +543,7 @@ game.module(
         this.videoElem.appendChild(source);
       }
 
-      var videoTexture = game.PIXI.VideoTexture.textureFromVideo(this.videoElem);
+      var videoTexture = PIXI.VideoTexture.textureFromVideo(this.videoElem);
       videoTexture.baseTexture.addEventListener('loaded', this._loaded.bind(this));
 
       this.sprite = new game.Sprite(videoTexture);
