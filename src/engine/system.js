@@ -509,7 +509,7 @@ game.module(
 
         if (!game.device.ejecta) window.scroll(0, 1);
 
-        if (!this.rotateScreenVisible && game.loader && !game.loader.started) game.loader.start();
+        if (!this.rotateScreenVisible && game._loader && !game._loader.started) game._loader.start();
       }
       else {
         // Desktop resize
