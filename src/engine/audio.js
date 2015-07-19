@@ -546,7 +546,13 @@ game.module(
         });
       }
 
-      if (typeof callback === 'function') callback(path);
+      if (typeof callback === 'function') {
+        callback(path, {
+          isAudio: true,
+          name: path,
+          url: path
+        });
+      }
     },
 
     /**
