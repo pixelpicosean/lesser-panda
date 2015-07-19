@@ -380,7 +380,7 @@ game.module(
               img.src = game.System.rotateImg;
             }
             else {
-              img.src = game.getMediaPath(game.System.rotateImg);
+              img.src = game._getFilePath(game.System.rotateImg);
             }
             img.style.position = 'relative';
             img.style.maxWidth = '100%';
