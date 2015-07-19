@@ -1,4 +1,5 @@
 game.config = {
+  // General configs
   name: 'My Awesome Game',
   version: '0.0.1',
 
@@ -6,14 +7,19 @@ game.config = {
     width: 640,
     height: 400,
 
-    /* Scale and center to fit window on desktop */
-    center: true,
     scale: true,
-    scaleToFit: true,
-
-    /* Resize on mobile */
-    resizeToFill: true,
+    center: true,
+    resize: false,
 
     webGL: false
+  },
+
+  // Mobile configs
+  mobile: {
+    system: {
+      resize: true,
+
+      webGL: true
+    }
   }
 };
