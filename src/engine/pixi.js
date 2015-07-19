@@ -3804,6 +3804,7 @@ EventEmitter.prefixed = prefix;
 //
 if ('undefined' !== typeof module) {
   module.exports = EventEmitter;
+  game.EventEmitter = EventEmitter;
 }
 
 },{}],12:[function(require,module,exports){

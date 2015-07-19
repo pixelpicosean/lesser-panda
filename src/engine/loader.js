@@ -136,7 +136,7 @@ game.module(
 
     progress: function(loader, res) {
       if (res.isJson) game.json[loader.url] = res.data;
-      if (!(res.isImage && isSpriteAtlas(res))) {
+      if (!(res.isImage && game.Loader.isSpriteAtlas(res))) {
         this.loaded++;
       }
       this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
@@ -228,7 +228,7 @@ game.module(
   });
 
   var JSON_ATLAS_SURFIX = 'json_image';
-  function isSpriteAtlas(res) {
+  game.Loader.isSpriteAtlas = function isSpriteAtlas(res) {
     return res.name.slice(-JSON_ATLAS_SURFIX.length) == JSON_ATLAS_SURFIX;
   }
 
@@ -272,9 +272,9 @@ game.module(
     /**
       Threat requests as crossorigin.
       @attribute {Boolean} crossorigin
-      @default true
+      @default false
     **/
-    crossorigin: true,
+    crossorigin: false,
     /**
       Default loader class name.
       @attribute {String} className
