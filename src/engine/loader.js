@@ -138,9 +138,10 @@ game.module(
       if (res.isJson) game.json[loader.url] = res.data;
       if (!(res.isImage && game.Loader.isSpriteAtlas(res))) {
         this.loaded++;
+
+        this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
+        this.onPercentChange();
       }
-      this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
-      this.onPercentChange();
 
       if (this.dynamic && this.loaded === this.assetQueue.length + this.audioQueue.length) this.ready();
     },
