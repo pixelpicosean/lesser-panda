@@ -183,6 +183,7 @@ game.module(
         height = window.innerHeight * game.device.pixelRatio;
       }
 
+      game.PIXI.RESOLUTION = game.scale;
       if (game.System.webGL) this.renderer = game.autoDetectRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
@@ -192,6 +193,7 @@ game.module(
       else this.renderer = new game.CanvasRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
+        antialias: game.System.antialias,
         resolution: game.scale
       });
 
