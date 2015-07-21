@@ -414,7 +414,7 @@ game.module(
     this.speed = new game.Vector();
     path = game.paths[path] || path;
     var texture = path instanceof game.Texture ? path : path instanceof game.RenderTexture ? path : game.Texture.fromFrame(this.path || path);
-    PIXI.TilingSprite.call(this, texture, width || texture.width, height || texture.height);
+    PIXI.extras.TilingSprite.call(this, texture, width || texture.width, height || texture.height);
     game.merge(this, properties);
   };
 
