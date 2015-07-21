@@ -56,12 +56,16 @@ game.module(
     **/
     tweens: [],
     /**
+     * Mouse position on screen
+     * @type {game.Vector}
+     */
+    mouse: null,
+
+    /**
       @property {Array} _updateOrder
       @private
     **/
     _updateOrder: null,
-
-    mouse: null,
 
     staticInit: function() {
       this.emitters = [];
@@ -163,7 +167,13 @@ game.module(
       @return {Timer}
     **/
     addTimer: function(time, callback, repeat) {
-      var timer = new game.Timer(time);
+      var timer;
+      if (timer = game.pool.get('Timer')) {
+        timer.init(time);
+      }
+      else {
+        timer = new game.Timer(time);
+      }
       timer.repeat = !!repeat;
       timer.callback = callback;
       this.timers.push(timer);
@@ -429,11 +439,20 @@ game.module(
       @private
     **/
     _updateTimers: function() {
+      var timer;
       for (var i = this.timers.length - 1; i >= 0; i--) {
-        if (this.timers[i].time() >= 0) {
-          if (typeof this.timers[i].callback === 'function') this.timers[i].callback();
-          if (this.timers[i].repeat) this.timers[i].reset();
-          else this.timers.splice(i, 1);
+        timer = this.timers[i];
+        if (timer.time() >= 0) {
+          if (typeof timer.callback === 'function') {
+            timer.callback();
+          }
+          if (timer.repeat) {
+            timer.reset();
+          }
+          else {
+            game.pool.put('Timer', timer);
+            this.timers.splice(i, 1);
+          }
         }
       }
     },

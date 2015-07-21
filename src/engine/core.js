@@ -978,6 +978,13 @@ var game = {
       this.plugins[name] = new (this.plugins[name])();
     }
 
+    // Add some timer instances to the pool
+    this.pool.create('Timer');
+    for (var i = 0; i < 32; i++) {
+      this.pool.put('Timer', new this.Timer());
+    }
+
+    // Start to load assets
     var loaderClass = this.Loader.className;
     this._loader = new this[loaderClass](this.System.startScene);
     if (!this.system.rotateScreenVisible) this._loader.start();
