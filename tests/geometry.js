@@ -99,17 +99,17 @@ describe('Vector', function() {
     });
   });
 
-  describe('.multiply', function() {
+  describe('.scale', function() {
     it('should multiply both x and y with param if it\'s a number', function() {
       a.set(1, 1);
-      a.multiply(2);
+      a.scale(2);
       expect(a.x).toBe(1 * 2);
       expect(a.y).toBe(1 * 2);
     });
 
     it('should multiply x with the first param and y with the second if both of them are numbers', function() {
       a.set(1, 1);
-      a.multiply(2, 3);
+      a.scale(2, 3);
       expect(a.x).toBe(1 * 2);
       expect(a.y).toBe(1 * 3);
     });
@@ -117,13 +117,9 @@ describe('Vector', function() {
     it('should multiply self.x with value.x and self.y with value.y if param is a vector', function() {
       a.set(1, 1);
       b.set(2, 3);
-      a.multiply(b);
+      a.scale(b);
       expect(a.x).toBe(1 * b.x);
       expect(a.y).toBe(1 * b.y);
-    });
-
-    it('should be called "scale" instead', function() {
-      expect('multiply').toBe('scale');
     });
   });
 
