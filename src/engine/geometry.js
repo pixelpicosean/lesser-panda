@@ -81,28 +81,15 @@ game.module(
     },
 
     /**
-      Multiply vector values.
-      @method multiply
+      Scale vector.
+      @method scale
       @param {Number|game.Vector} x
       @param {Number} [y]
       @return {game.Vector}
     **/
-    multiply: function(x, y) {
+    scale: function(x, y) {
       this.x *= x instanceof game.Vector ? x.x : x;
       this.y *= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
-      return this;
-    },
-
-    /**
-      Multiply and add vector values.
-      @method multiplyAdd
-      @param {Number|game.Vector} x
-      @param {Number} [y]
-      @return {game.Vector}
-    **/
-    multiplyAdd: function(x, y) {
-      this.x += x instanceof game.Vector ? x.x * y : x * y;
-      this.y += x instanceof game.Vector ? x.y * y : x * y;
       return this;
     },
 
