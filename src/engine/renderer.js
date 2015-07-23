@@ -16,9 +16,6 @@ game.module(
   // Disable pixi log
   PIXI.utils._saidHello = true;
 
-  // Replace Point with better alternative "Vector"
-  PIXI.Point = game.Point = game.Vector;
-
   game.blendModes = PIXI.BLEND_MODES;
 
   game.autoDetectRenderer = PIXI.autoDetectRenderer;
@@ -42,6 +39,8 @@ game.module(
   game.HitRectangle = PIXI.Rectangle;
 
   game.Matrix = PIXI.Matrix;
+
+  game.EventEmitter = PIXI.EventEmitter;
 
   /**
     @class AnimationData
@@ -198,7 +197,7 @@ game.module(
     if (!anim) return;
     this.currentFrame = frame;
     this._frameTime = 0;
-    this.setTexture(this.textures[anim.frames[frame]]);
+    this.texture = this.textures[anim.frames[frame]];
     return this;
   };
 
@@ -220,7 +219,7 @@ game.module(
         }
 
         this.currentFrame = nextFrame;
-        this.setTexture(this.textures[anim.frames[nextFrame]]);
+        this.texture = this.textures[anim.frames[nextFrame]];
         return;
       }
 
@@ -229,7 +228,7 @@ game.module(
       if (nextFrame >= anim.frames.length) {
         if (anim.loop) {
           this.currentFrame = 0;
-          this.setTexture(this.textures[anim.frames[0]]);
+          this.texture = this.textures[anim.frames[0]];
         }
         else {
           this.playing = false;
@@ -239,7 +238,7 @@ game.module(
       else if (nextFrame < 0) {
         if (anim.loop) {
           this.currentFrame = anim.frames.length - 1;
-          this.setTexture(this.textures[anim.frames.last()]);
+          this.texture = this.textures[anim.frames.last()];
         }
         else {
           this.playing = false;
@@ -248,7 +247,7 @@ game.module(
       }
       else {
         this.currentFrame = nextFrame;
-        this.setTexture(this.textures[anim.frames[nextFrame]]);
+        this.texture = this.textures[anim.frames[nextFrame]];
       }
     }
   };
@@ -323,13 +322,35 @@ game.module(
   game.Sprite.prototype = Object.create(PIXI.Sprite.prototype);
   game.Sprite.prototype.constructor = game.Sprite;
 
-  game.Sprite.prototype.setTexture = function(texture) {
-    if (typeof texture === 'string') {
-      texture = game.paths[texture] || texture;
-      texture = game.Texture.fromFrame(texture);
+  Object.defineProperty(game.Sprite.prototype, 'texture', {
+    get: function() {
+      return this._texture;
+    },
+    set: function(v) {
+      var value = v;
+      if (typeof value === 'string') {
+        value = game.paths[value] || value;
+        value = game.Texture.fromFrame(value);
+      }
+
+      if (this._texture === value) {
+        return;
+      }
+
+      this._texture = value;
+      this.cachedTint = 0xFFFFFF;
+
+      if (value) {
+        // wait for the texture to load
+        if (value.baseTexture.hasLoaded) {
+          this._onTextureUpdate();
+        }
+        else {
+          value.once('update', this._onTextureUpdate, this);
+        }
+      }
     }
-    PIXI.Sprite.prototype.setTexture.call(this, texture);
-  };
+  });
 
   /**
     Crop sprite.
@@ -342,7 +363,7 @@ game.module(
   **/
   game.Sprite.prototype.crop = function(x, y, width, height) {
     var texture = new PIXI.Texture(this.texture, new game.HitRectangle(x, y, width, height));
-    this.setTexture(texture);
+    this.texture = texture;
     return this;
   };
 
@@ -388,12 +409,12 @@ game.module(
   game.TilingSprite = function(path, width, height, properties) {
     /**
       Texture scroll speed
-      @property {game.Point} speed
+      @property {game.Vector} speed
     **/
-    this.speed = new game.Point();
+    this.speed = new game.Vector();
     path = game.paths[path] || path;
     var texture = path instanceof game.Texture ? path : path instanceof game.RenderTexture ? path : game.Texture.fromFrame(this.path || path);
-    PIXI.TilingSprite.call(this, texture, width || texture.width, height || texture.height);
+    PIXI.extras.TilingSprite.call(this, texture, width || texture.width, height || texture.height);
     game.merge(this, properties);
   };
 

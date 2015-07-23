@@ -26,7 +26,7 @@ game.module(
     acceleration: 3,
     /**
       Camera offset.
-      @property {game.Point} offset
+      @property {game.Vector} offset
       @default game.system.width / 2, game.system.height / 2
     **/
     offset: null,
@@ -42,7 +42,7 @@ game.module(
     container: null,
     /**
       Current speed of camera.
-      @property {game.Point} speed
+      @property {game.Vector} speed
     **/
     speed: null,
     /**
@@ -68,10 +68,10 @@ game.module(
     maxY: null,
 
     init: function(x, y) {
-      this.position = new game.Point();
-      this.speed = new game.Point();
-      this.offset = new game.Point(game.system.width / 2, game.system.height / 2);
-      this.sensorPosition = new game.Point(this.offset.x, this.offset.y);
+      this.position = new game.Vector();
+      this.speed = new game.Vector();
+      this.offset = new game.Vector(game.system.width / 2, game.system.height / 2);
+      this.sensorPosition = new game.Vector(this.offset.x, this.offset.y);
       this.sensorWidth = 200 * game.scale;
       this.sensorHeight = 200 * game.scale;
       if (typeof x === 'number' && typeof y === 'number') this.setPosition(x, y);

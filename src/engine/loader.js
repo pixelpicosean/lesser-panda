@@ -138,9 +138,10 @@ game.module(
       if (res.isJson) game.json[loader.url] = res.data;
       if (!(res.isImage && game.Loader.isSpriteAtlas(res))) {
         this.loaded++;
+
+        this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
+        this.onPercentChange();
       }
-      this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
-      this.onPercentChange();
 
       if (this.dynamic && this.loaded === this.assetQueue.length + this.audioQueue.length) this.ready();
     },
@@ -185,8 +186,6 @@ game.module(
       else game.system.setScene(this.callback);
     },
 
-    exit: function() {},
-
     run: function() {
       if (this.loopId) {
         this.last = game.Timer.time;
@@ -221,10 +220,7 @@ game.module(
 
     getPath: function(path) {
       return game.system.retina || game.system.hires ? path.replace(/\.(?=[^.]*$)/, '@' + game.scale + 'x.') : path;
-    },
-
-    keydown: function() {},
-    keyup: function() {}
+    }
   });
 
   var JSON_ATLAS_SURFIX = 'json_image';

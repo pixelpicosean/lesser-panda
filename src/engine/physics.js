@@ -415,7 +415,7 @@ game.module(
       if (this.velocityLimit.x > 0) this.velocity.x = this.velocity.x.limit(-this.velocityLimit.x, this.velocityLimit.x);
       if (this.velocityLimit.y > 0) this.velocity.y = this.velocity.y.limit(-this.velocityLimit.y, this.velocityLimit.y);
 
-      this.position.multiplyAdd(this.velocity, game.scale * game.system.delta);
+      this.position.multiplyAdd(this.velocity, game.system.delta);
     }
   });
 
@@ -442,8 +442,8 @@ game.module(
     height: 50,
 
     init: function(width, height) {
-      this.width = width || this.width * game.scale;
-      this.height = height || this.height * game.scale;
+      this.width = width || this.width;
+      this.height = height || this.height;
     }
   });
 
@@ -463,7 +463,7 @@ game.module(
     radius: 50,
 
     init: function(radius) {
-      this.radius = radius || this.radius * game.scale;
+      this.radius = radius || this.radius;
     }
   });
 

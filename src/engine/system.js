@@ -183,6 +183,7 @@ game.module(
         height = window.innerHeight * game.device.pixelRatio;
       }
 
+      game.PIXI.RESOLUTION = game.scale;
       if (game.System.webGL) this.renderer = game.autoDetectRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
@@ -192,6 +193,7 @@ game.module(
       else this.renderer = new game.CanvasRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
+        antialias: game.System.antialias,
         resolution: game.scale
       });
 
@@ -201,28 +203,29 @@ game.module(
     },
 
     resizeToFill: function() {
-      if (!game.System.resizeToFill || !game.device.mobile) return;
-      if (this.rotateScreenVisible) return;
+      if (!game.System.resize) return;
+      if (game.device.mobile && this.rotateScreenVisible) return;
 
-      if (this._resizeToFill) return;
-      this._resizeToFill = true;
+      // Mobile devices ONLY resize once
+      if (game.device.mobile) {
+        if (this._resizeToFill) return;
+        this._resizeToFill = true;
+      }
 
-      var gameOrientation = this.width > this.height ? 'landscape' : 'portrait';
-      var gameRatio = this.width / this.height;
-      var screenOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+      var gameRatio = game.System.width / game.System.height;
       var screenRatio = window.innerWidth / window.innerHeight;
 
-      if (screenRatio !== gameRatio && gameOrientation === screenOrientation) {
-        if (gameRatio < screenRatio) {
-          // Letterbox left/right
-          this.width = Math.round(this.height * (window.innerWidth / window.innerHeight));
-        }
-        else {
-          // Letterbox top/bottom
-          this.height = Math.round(this.width * (window.innerHeight / window.innerWidth));
-        }
-        this.resize(this.width, this.height);
+      if (gameRatio < screenRatio) {
+        // Letterbox left/right
+        this.height = game.System.height;
+        this.width = Math.round(this.height * (window.innerWidth / window.innerHeight));
       }
+      else {
+        // Letterbox top/bottom
+        this.width = game.System.width;
+        this.height = Math.round(this.width * (window.innerHeight / window.innerWidth));
+      }
+      this.resize(this.width, this.height);
     },
 
     /**
@@ -331,26 +334,31 @@ game.module(
     },
 
     resize: function(width, height) {
-      this.width = this.canvas.width = width;
-      this.height = this.canvas.height = height;
-      this.canvas.style.width = width + 'px';
-      this.canvas.style.height = height + 'px';
-      this.renderer.resize(this.width, this.height);
+      this.renderer.resize(width, height);
+      game.scene && game.scene.resize && game.scene.resize(width, height);
     },
 
     initResize: function() {
       this.ratio = this.width > this.height ? this.width / this.height : this.height / this.width;
 
-      if (game.System.center) this.canvas.style.margin = 'auto';
+      // Disable center and scale when resizing to fill the window
+      if (game.System.resize) {
+        game.System.center = false;
+        game.System.scale = false;
+      }
+
+      // Place canvas to the center of window
+      if (game.System.center) {
+        this.canvas.style.position = 'absolute';
+        this.canvas.style.margin = 'auto';
+
+        this.canvas.style.top = 0;
+        this.canvas.style.left = 0;
+        this.canvas.style.bottom = 0;
+        this.canvas.style.right = 0;
+      }
 
       if (game.device.mobile) {
-        // Mobile position
-        if (!game.System.center) {
-          this.canvas.style.position = 'absolute';
-          this.canvas.style.left = game.System.left + 'px';
-          this.canvas.style.top = game.System.top + 'px';
-        }
-
         if (game.System.rotateScreen) {
           var div = document.createElement('div');
           div.innerHTML = game.System.rotateImg ? '' : game.System.rotateMsg;
@@ -380,37 +388,11 @@ game.module(
               img.src = game.System.rotateImg;
             }
             else {
-              img.src = game.getMediaPath(game.System.rotateImg);
+              img.src = game._getFilePath(game.System.rotateImg);
             }
             img.style.position = 'relative';
             img.style.maxWidth = '100%';
           }
-        }
-      }
-      else {
-        // Desktop center
-        if (game.System.center || game.System.left || game.System.top) this.canvas.style.position = 'absolute';
-        if (game.System.center) {
-          this.canvas.style.top = 0;
-          this.canvas.style.left = 0;
-          this.canvas.style.bottom = 0;
-          this.canvas.style.right = 0;
-        }
-        else if (game.System.left || game.System.top) {
-          this.canvas.style.left = game.System.left + 'px';
-          this.canvas.style.top = game.System.top + 'px';
-        }
-
-        // Desktop scaling
-        if (game.System.scale) {
-          var minWidth = game.System.minWidth === 'auto' ? this.retina ? this.width / 4 : this.width / 2 : game.System.minWidth;
-          var minHeight = game.System.minHeight === 'auto' ? this.retina ? this.height / 4 : this.height / 2 : game.System.minHeight;
-          var maxWidth = game.System.maxWidth === 'auto' ? this.retina ? this.width / 2 : this.width : game.System.maxWidth;
-          var maxHeight = game.System.maxHeight === 'auto' ? this.retina ? this.height / 2 : this.height : game.System.maxHeight;
-          if (game.System.minWidth) this.canvas.style.minWidth = minWidth + 'px';
-          if (game.System.minHeight) this.canvas.style.minHeight = minHeight + 'px';
-          if (game.System.maxWidth && !game.System.scaleToFit) this.canvas.style.maxWidth = maxWidth + 'px';
-          if (game.System.maxHeight && !game.System.scaleToFit) this.canvas.style.maxHeight = maxHeight + 'px';
         }
       }
 
@@ -465,9 +447,14 @@ game.module(
 
     onResize: function() {
       // Mobile orientation
-      if (game.device.mobile) this.checkOrientation();
+      if (game.device.mobile) {
+        this.checkOrientation();
+      }
 
-      if (!game.System.scale) return;
+      // Do nothing if neither scale or resize
+      if (!game.System.scale && !game.System.resize) {
+        return;
+      }
 
       if (game.device.mobile) {
         this.ratio = this.orientation === 'landscape' ? this.width / this.height : this.height / this.width;
@@ -514,19 +501,27 @@ game.module(
       else {
         // Desktop resize
         if (window.innerWidth === 0) return; // Chrome bug
-        if (window.innerWidth < this.width || window.innerHeight < this.height || game.System.scaleToFit) {
-          if (window.innerWidth / this.width < window.innerHeight / this.height) {
-            this.canvas.style.width = window.innerWidth + 'px';
-            this.canvas.style.height = Math.floor(window.innerWidth * (this.height / this.width)) + 'px';
+        if (game.System.scale) {
+          if (window.innerWidth < this.width || window.innerHeight < this.height || game.System.scale) {
+            if (window.innerWidth / this.width < window.innerHeight / this.height) {
+              this.canvas.style.width = window.innerWidth + 'px';
+              this.canvas.style.height = Math.floor(window.innerWidth * (this.height / this.width)) + 'px';
+            }
+            else {
+              this.canvas.style.height = window.innerHeight + 'px';
+              this.canvas.style.width = Math.floor(window.innerHeight * (this.width / this.height)) + 'px';
+            }
           }
           else {
-            this.canvas.style.height = window.innerHeight + 'px';
-            this.canvas.style.width = Math.floor(window.innerHeight * (this.width / this.height)) + 'px';
+            this.canvas.style.width = this.width + 'px';
+            this.canvas.style.height = this.height + 'px';
           }
         }
-        else {
-          this.canvas.style.width = this.width + 'px';
-          this.canvas.style.height = this.height + 'px';
+        else if (game.System.resize) {
+          this.resizeToFill();
+
+          this.canvas.style.width = '100%';
+          this.canvas.style.height = '100%';
         }
       }
     }
@@ -540,47 +535,17 @@ game.module(
     **/
     center: true,
     /**
-      Canvas position from left, when centering is disabled.
-      @attribute {Number} left
-      @default 0
-    **/
-    left: 0,
-    /**
-      Canvas position from top, when centering is disabled.
-      @attribute {Number} top
-      @default 0
-    **/
-    top: 0,
-    /**
-      Enable/disable canvas scaling.
+      Scale canvas to fit window size
       @attribute {Boolean} resize
       @default true
     **/
     scale: true,
     /**
-      Minimum width for canvas, when using scaling on desktop.
-      @attribute {Number} minWidth
-      @default auto
+      Resize canvas to fill screen.
+      @attribute {Boolean} resize
+      @default false
     **/
-    minWidth: 'auto',
-    /**
-      Minimum height for canvas, when using scaling on desktop.
-      @attribute {Number} minHeight
-      @default auto
-    **/
-    minHeight: 'auto',
-    /**
-      Maximum width for canvas, when using scaling on desktop.
-      @attribute {Number} maxWidth
-      @default auto
-    **/
-    maxWidth: 'auto',
-    /**
-      Maximum height for canvas, when using scaling on desktop.
-      @attribute {Number} maxHeight
-      @default auto
-    **/
-    maxHeight: 'auto',
+    resize: false,
     /**
       Scaling method for CocoonJS.
       @attribute {ScaleToFill|ScaleAspectFit|ScaleAspectFill} idtkScale
@@ -703,23 +668,11 @@ game.module(
     **/
     antialias: false,
     /**
-      Resize canvas to fill screen on mobile.
-      @attribute {Boolean} resizeToFill
-      @default false
-    **/
-    resizeToFill: false,
-    /**
       Default start scene.
       @attribute {String} startScene
       @default Main
     **/
     startScene: 'Main',
-    /**
-      Scale canvas to fit window size on desktop.
-      @attribute {Boolean} scaleToFit
-      @default false
-    **/
-    scaleToFit: false,
     /**
       Id for canvas element.
       @attribute {String} canvasId
