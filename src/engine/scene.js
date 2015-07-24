@@ -97,24 +97,6 @@ game.module(
       }
       game.system.renderer.backgroundColor = this.backgroundColor;
 
-      var canvas = game.system.canvas;
-      this.mouse = new game.Vector();
-
-      this._mousedown = this._mousedown.bind(this);
-      this._mousemove = this._mousemove.bind(this);
-      this._mouseup = this._mouseup.bind(this);
-      this._mouseout = this._mouseout.bind(this);
-
-      canvas.addEventListener('mousedown', this._mousedown, true);
-      window.document.addEventListener('mousemove', this._mousemove, true);
-      window.addEventListener('mouseup', this._mouseup, true);
-      canvas.addEventListener('mouseout', this._mouseout, true);
-
-      canvas.addEventListener('touchstart', this._mousedown, true);
-      canvas.addEventListener('touchmove', this._mousemove, true);
-      canvas.addEventListener('touchend', this._mouseup, true);
-      canvas.addEventListener('touchcancle', this._mouseout, true);
-
       this.stage = new game.Container();
       if (game.system.webGL && game.device.cocoonJS) {
         var rendererRatio = game.renderer.width / game.renderer.height;
@@ -131,6 +113,19 @@ game.module(
         }
       }
       game.system.stage.addChild(this.stage);
+
+      // Enable stage inputs and accept all events
+      this.stage.interactive = true;
+      this.stage.containsPoint = function() { return true; };
+
+      this.stage.on('mousedown', this._mousedown, this);
+      this.stage.on('mousemove', this._mousemove, this);
+      this.stage.on('mouseup', this._mouseup, this);
+      this.stage.on('mouseout', this._mouseout, this);
+
+      this.stage.on('touchstart', this._touchstart, this);
+      this.stage.on('touchmove', this._touchmove, this);
+      this.stage.on('touchend', this._touchend, this);
 
       if (game.debugDraw) game.debugDraw.reset();
     },
@@ -204,17 +199,14 @@ game.module(
     exit: function() {},
 
     _exit: function() {
-      var canvas = game.system.canvas;
+      this.stage.off('mousedown', this._mousedown, this);
+      this.stage.off('mousemove', this._mousemove, this);
+      this.stage.off('mouseup', this._mouseup, this);
+      this.stage.off('mouseout', this._mouseout, this);
 
-      canvas.removeEventListener('mousedown', this._mousedown);
-      window.document.removeEventListener('mousemove', this._mousemove);
-      window.removeEventListener('mouseup', this._mouseup);
-      canvas.removeEventListener('mouseout', this._mouseout);
-
-      canvas.removeEventListener('touchstart', this._mousedown);
-      canvas.removeEventListener('touchmove', this._mousemove);
-      canvas.removeEventListener('touchend', this._mouseup);
-      canvas.removeEventListener('touchcancle', this._mouseout);
+      this.stage.off('touchstart', this._touchstart, this);
+      this.stage.off('touchmove', this._touchmove, this);
+      this.stage.off('touchend', this._touchend, this);
 
       this.exit();
     },
@@ -236,38 +228,41 @@ game.module(
     /**
       Callback for mousedown and touchstart on the scene stage.
       @method mousedown
-      @param {Number} x
-      @param {Number} y
-      @param {MouseEvent|TouchEvent} event
+      @param {InteractiveData} event
     **/
     mousedown: function() {},
 
     /**
       Callback for mouseup and touchend on the scene stage.
       @method mouseup
-      @param {Number} x
-      @param {Number} y
-      @param {MouseEvent|TouchEvent} event
+      @param {InteractiveData} event
     **/
     mouseup: function() {},
 
     /**
       Callback for mousemove and touchmove on the scene stage.
       @method mousemove
-      @param {Number} x
-      @param {Number} y
-      @param {MouseEvent|TouchEvent} event
+      @param {InteractiveData} event
     **/
     mousemove: function() {},
 
     /**
       Callback for mouseout on the scene stage.
       @method mouseout
-      @param {Number} x
-      @param {Number} y
-      @param {MouseEvent|TouchEvent} event
+      @param {InteractiveData} event
     **/
     mouseout: function() {},
+
+    touchstart: function() {},
+    touchmove: function() {},
+    touchend: function() {},
+
+    /**
+      Callback for swipe.
+      @method swipe
+      @param {InteractiveData} event
+    **/
+    swipe: function() {},
 
     /**
       Remove emitter from scene.
@@ -322,13 +317,6 @@ game.module(
     },
 
     /**
-      Callback for swipe.
-      @method swipe
-      @param {String} direction
-    **/
-    swipe: function() {},
-
-    /**
       Clear stage.
       @method clear
     **/
@@ -353,39 +341,62 @@ game.module(
     update: function() {},
 
     _mousedown: function(event) {
-      windowToCanvas(event.clientX, event.clientY, this.mouse);
-      this._swipeStartTime = Date.now();
-      this._swipeX = this.mouse.x;
-      this._swipeY = this.mouse.y;
-      this.mousedown(this.mouse.x, this.mouse.y, event);
-    },
-
-    _mouseup: function(event) {
-      windowToCanvas(event.clientX, event.clientY, this.mouse);
-      this.mouseup(this.mouse.x, this.mouse.y, event);
+      event.data._swipeStartTime = Date.now();
+      event.data._swipeX = event.data.global.x;
+      event.data._swipeY = event.data.global.y;
+      this.mousedown(event);
     },
 
     _mousemove: function(event) {
-      windowToCanvas(event.clientX, event.clientY, this.mouse);
-      this.mousemove(this.mouse.x, this.mouse.y, event);
+      this.mousemove(event);
 
-      if (!this._swipeStartTime) return;
+      if (!event.data._swipeStartTime) return;
 
-      if (this.mouse.x - this._swipeX >= this.swipeDist) this._swipe(event, 'right');
-      else if (this.mouse.x - this._swipeX <= -this.swipeDist) this._swipe(event, 'left');
-      else if (this.mouse.y - this._swipeY >= this.swipeDist) this._swipe(event, 'down');
-      else if (this.mouse.y - this._swipeY <= -this.swipeDist) this._swipe(event, 'up');
+      event.data.type = 'swipe';
+      if (event.data.global.x - event.data._swipeX >= event.data.swipeDist) event.data.dir = 'right';
+      else if (event.data.global.x - this._swipeX <= -this.swipeDist) event.data.dir = 'left';
+      else if (event.data.global.y - this._swipeY >= this.swipeDist) event.data.dir = 'down';
+      else if (event.data.global.y - this._swipeY <= -this.swipeDist) event.data.dir = 'up';
+
+      this._swipe(event);
+    },
+
+    _mouseup: function(event) {
+      this.mouseup(event);
     },
 
     _mouseout: function(event) {
-      windowToCanvas(event.clientX, event.clientY, this.mouse);
-      this.mouseout(this.mouse.x, this.mouse.y, event);
+      this.mouseout(event);
     },
 
-    _swipe: function(event, dir) {
-      var time = Date.now() - this._swipeStartTime;
-      this._swipeStartTime = null;
-      if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(dir);
+    _touchstart: function(event) {
+      event.data._swipeStartTime = Date.now();
+      event.data._swipeX = event.data.global.x;
+      event.data._swipeY = event.data.global.y;
+      this.touchstart(event);
+    },
+    _touchmove: function(event) {
+      this.touchmove(event);
+
+      if (!event.data._swipeStartTime) return;
+
+      event.data.type = 'swipe';
+      event.data.dir = 'none';
+      if (event.data.global.x - event.data._swipeX >= this.swipeDist) event.data.dir = 'right';
+      else if (event.data.global.x - event.data._swipeX <= -this.swipeDist) event.data.dir = 'left';
+      else if (event.data.global.y - event.data._swipeY >= this.swipeDist) event.data.dir = 'down';
+      else if (event.data.global.y - event.data._swipeY <= -this.swipeDist) event.data.dir = 'up';
+
+      (event.data.dir !== 'none') && this._swipe(event);
+    },
+    _touchend: function(event) {
+      this.touchend(event);
+    },
+
+    _swipe: function(event) {
+      var time = Date.now() - event.data._swipeStartTime;
+      event.data._swipeStartTime = null;
+      if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(event);
     },
 
     run: function() {
