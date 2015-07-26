@@ -92,9 +92,7 @@ game.module(
         this._updateOrder.push(game.Scene.updateOrder[i].ucfirst());
       }
 
-      for (var i = game.system.stage.children.length - 1; i >= 0; i--) {
-        game.system.stage.removeChild(game.system.stage.children[i]);
-      }
+      game.system.stage.removeChildren();
       game.system.renderer.backgroundColor = this.backgroundColor;
 
       this.stage = new game.Container();
