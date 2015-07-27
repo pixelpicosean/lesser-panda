@@ -123,4 +123,43 @@ describe('Vector', function() {
     });
   });
 
+  describe('.divide', function() {
+    it('should divide param by both x and y if it\'s a number', function() {
+      a.set(2, 2);
+      a.divide(2);
+      expect(a.x).toBe(2 / 2);
+      expect(a.y).toBe(2 / 2);
+    });
+
+    it('should divide first param by x and second by y if both of them are numbers', function() {
+      a.set(4, 9);
+      a.divide(2, 3);
+      expect(a.x).toBe(4 / 2);
+      expect(a.y).toBe(9 / 3);
+    });
+
+    it('should divide x by self.x and y by self.y if it\'s a vector', function() {
+      a.set(12, 32);
+      b.set(3, 8);
+      a.divide(b);
+      expect(a.x).toBe(12 / b.x);
+      expect(a.y).toBe(32 / b.y);
+    });
+  });
+
+  describe('.distance', function() {
+    it('should return distance from self to the target vector', function() {
+      a.set(2, 2);
+      b.set(0, 2);
+      expect(a.distance(b)).toBe(2);
+    });
+  });
+
+  describe('.length', function() {
+    it('should return self\'s length', function() {
+      a.set(0, 4);
+      expect(a.length()).toBe(4);
+    });
+  });
+
 });
