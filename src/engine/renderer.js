@@ -478,15 +478,17 @@ game.module(
     init: function(id, width, height) {
       this.width = width;
       this.height = height;
-      var baseTexture = game.TextureCache[game.paths[id]];
-      this.sx = Math.floor(baseTexture.width / this.width);
-      this.sy = Math.floor(baseTexture.height / this.height);
+      var sheetTexture = game.Texture.fromFrame(game.paths[id] || id);
+      var crop = sheetTexture.crop;
+      var baseTexture = sheetTexture.baseTexture;
+      this.sx = Math.floor(sheetTexture.width / this.width);
+      this.sy = Math.floor(sheetTexture.height / this.height);
       this.frames = this.sx * this.sy;
 
       for (var i = 0; i < this.frames; i++) {
         var x = (i % this.sx) * this.width;
         var y = Math.floor(i / this.sx) * this.height;
-        var texture = new game.Texture(baseTexture, new game.HitRectangle(x, y, this.width, this.height));
+        var texture = new game.Texture(baseTexture, new game.HitRectangle(x + crop.x, y + crop.y, this.width, this.height));
         this.textures.push(texture);
       }
     },

@@ -328,7 +328,7 @@ game.module(
         particle.sprite = new game.Sprite(this.textures.random(), particle.position.x, particle.position.y, this.spriteSettings);
       }
       else {
-        particle.sprite.setTexture(this.textures.random());
+        particle.sprite.texture = this.textures.random();
         particle.sprite.position.x = particle.position.x;
         particle.sprite.position.y = particle.position.y;
         particle.sprite.rotation = 0;

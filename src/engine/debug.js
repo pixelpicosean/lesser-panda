@@ -106,7 +106,7 @@ game.module(
   game.PIXI.DisplayObject.prototype._updateTransform = game.PIXI.DisplayObject.prototype.updateTransform;
   game.PIXI.DisplayObject.prototype.updateTransform = function() {
     if (game.system.debug) game.system.debug.sprites++;
-    this._updateTransform();
+    this.parent && this._updateTransform();
   };
   game.PIXI.DisplayObject.prototype.displayObjectUpdateTransform = game.PIXI.DisplayObject.prototype.updateTransform;
 

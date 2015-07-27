@@ -1,5 +1,6 @@
-// Panda.js HTML5 game engine
-// created by Eemeli Kelokorpi
+// LesserPanda HTML5 game engine (a fork of panda.js engine)
+// Originally created by Eemeli Kelokorpi
+// Forked by Sean Bohan
 
 'use strict';
 
