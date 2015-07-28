@@ -1,5 +1,5 @@
 game.module(
-    'game.main'
+  'game.main'
 )
 .body(function() { 'use strict';
 
