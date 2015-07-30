@@ -162,4 +162,39 @@ describe('Vector', function() {
     });
   });
 
+  describe('.dot', function() {
+    it('should return 0 as the dot product of (1, 0) and (0, 1)', function() {
+      a.set(1, 0);
+      b.set(0, 1);
+      expect(a.dot(b)).toBe(0);
+    });
+    it('should return 1 as the dot product of (1, 0) and (1, 0)', function() {
+      a.set(1, 0);
+      b.set(1, 0);
+      expect(a.dot(b)).toBe(1);
+    });
+  });
+
+  describe('.dotNormalized', function() {
+    it('should return number not greater than 1 since the dot product of (1, 1) and (1, 1) is noramlized', function() {
+      a.set(1, 1);
+      expect(a.dotNormalized(a)).toBeCloseTo(1);
+      expect(a.dotNormalized(a)).not.toBeGreaterThan(1);
+    });
+  });
+
+  describe('.rotate', function() {
+    it('should rotate a vector', function() {
+      a.set(1, 0);
+      a.rotate(Math.PI);
+      expect(a.x).toBeCloseTo(-1);
+      expect(a.y).toBeCloseTo(0);
+
+      a.set(1, 0);
+      a.rotate(Math.PI * 0.5);
+      expect(a.x).toBeCloseTo(0);
+      expect(a.y).toBeCloseTo(1);
+    });
+  });
+
 });
