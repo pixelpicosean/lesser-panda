@@ -197,4 +197,39 @@ describe('Vector', function() {
     });
   });
 
+  describe('.normalize', function() {
+    it('should normalize a vector so that its length is 1', function() {
+      a.set(2, 2).normalize();
+      expect(a.length()).toBeCloseTo(1);
+    });
+    it('and its angle should not change', function() {
+      a.set(2, 2).normalize();
+      b.set(2, 2);
+      expect(a.angle()).toBeCloseTo(b.angle());
+    });
+  });
+
+  describe('.angle', function() {
+    it('should return the angle of a vector', function() {
+      a.set(4, 4);
+      expect(a.angle()).toBeCloseTo(Math.PI * 0.25);
+    });
+  });
+
+  describe('.round', function() {
+    it('should round both x and y to integers', function() {
+      a.set(1.25, 3.14).round();
+      expect(a.x).toBe(1);
+      expect(a.y).toBe(3);
+    });
+  });
+
+  describe('.equals', function() {
+    it('should return whether two vectors are the same', function() {
+      a.set(100, 20);
+      b.set(100, 20);
+      expect(a.equals(b)).toBe(true);
+    });
+  });
+
 });
