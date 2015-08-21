@@ -4,7 +4,8 @@
 game.module(
   'engine.loader'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Dynamic loader for assets and audio files.
@@ -50,12 +51,14 @@ game.module(
         if (game.TextureCache[game.assetQueue[i]]) continue;
         this.assetQueue.push(this.getPath(game.assetQueue[i]));
       }
+
       game.assetQueue.length = 0;
 
       if (game.Audio.enabled) {
         for (var i = 0; i < game.audioQueue.length; i++) {
           this.audioQueue.push(game.audioQueue[i]);
         }
+
         game.audioQueue.length = 0;
       }
 
@@ -113,6 +116,7 @@ game.module(
         for (var i = this.stage.children.length - 1; i >= 0; i--) {
           this.stage.removeChild(this.stage.children[i]);
         }
+
         if (game.tweenEngine) game.tweenEngine.removeAll();
 
         game.system.renderer.backgroundColor = game.Loader.bgColor;
@@ -184,8 +188,7 @@ game.module(
         var startScene = game.System.startScene;
         game.System.startScene = null;
         game.system.setScene(startScene);
-      }
-      else game.system.setScene(this.callback);
+      } else game.system.setScene(this.callback);
     },
 
     run: function() {
@@ -208,8 +211,7 @@ game.module(
           this._ready = true;
           this.ready();
         }
-      }
-      else if (this.loaded === this.assetQueue.length + this.audioQueue.length) {
+      } else if (this.loaded === this.assetQueue.length + this.audioQueue.length) {
         var loadTime = Date.now() - this.startTime;
         var waitTime = Math.max(0, game.Loader.time - loadTime);
         this.timeoutTimer = new game.Timer(waitTime);
@@ -222,7 +224,7 @@ game.module(
 
     getPath: function(path) {
       return game.system.retina || game.system.hires ? path.replace(/\.(?=[^.]*$)/, '@' + game.scale + 'x.') : path;
-    }
+    },
   });
 
   var JSON_ATLAS_SURFIX = 'json_image';
@@ -278,7 +280,7 @@ game.module(
       @attribute {String} className
       @default Loader
     **/
-    className: 'Loader'
+    className: 'Loader',
   });
 
 });

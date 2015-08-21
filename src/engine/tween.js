@@ -4,7 +4,8 @@
 game.module(
   'engine.tween'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     @class Tween
@@ -187,10 +188,10 @@ game.module(
       if (typeof easing === 'string') {
         easing = easing.split('.');
         this.easingFunction = game.Tween.Easing[easing[0]][easing[1]];
-      }
-      else {
+      } else {
         this.easingFunction = easing;
       }
+
       return this;
     },
 
@@ -295,15 +296,19 @@ game.module(
           if (this._valuesEnd[property].length === 0) {
             continue;
           }
+
           // create a local copy of the Array with the start value at the front
           this._valuesEnd[property] = [this.object[property]].concat(this._valuesEnd[property]);
         }
+
         this._valuesStart[property] = this.object[property];
         if ((this._valuesStart[property] instanceof Array) === false) {
           this._valuesStart[property] *= 1.0; // Ensures we're using numbers, not strings
         }
+
         this._valuesStartRepeat[property] = this._valuesStart[property] || 0;
       }
+
       return this;
     },
 
@@ -371,6 +376,7 @@ game.module(
         if (this.onStartCallback !== null) {
           this.onStartCallback.call(this.object);
         }
+
         this._onStartCallbackFired = true;
       }
 
@@ -383,60 +389,70 @@ game.module(
         var end = this._valuesEnd[property];
         if (end instanceof Array) {
           this.object[property] = this.interpolationFunction(end, value);
-        }
-        else {
+        } else {
           // Parses relative end values with start as base (e.g.: +10, -3)
           if (typeof end === 'string') {
             end = start + parseFloat(end, 10);
           }
+
           // Protect against non numeric properties
           if (typeof end === 'number') {
             this.object[property] = start + (end - start) * value;
           }
         }
       }
+
       if (this.onUpdateCallback !== null) {
         this.onUpdateCallback.call(this.object, value);
       }
+
       if (elapsed === 1) {
         if (this.repeatCount > 0) {
           if (isFinite(this.repeatCount)) {
             this.repeatCount--;
           }
+
           this._repeats += 1;
+
           // Reassign starting values, restart by making startTime = now
           for (property in this._valuesStartRepeat) {
             if (typeof this._valuesEnd[property] === 'string') {
               this._valuesStartRepeat[property] = this._valuesStartRepeat[property] + parseFloat(this._valuesEnd[property], 10);
             }
+
             if (this.yoyoEnabled) {
               var tmp = this._valuesStartRepeat[property];
               this._valuesStartRepeat[property] = this._valuesEnd[property];
               this._valuesEnd[property] = tmp;
               this.reversed = !this.reversed;
             }
+
             this._valuesStart[property] = this._valuesStartRepeat[property];
           }
+
           if (!this.delayRepeat) this.delayTime = 0;
           this._startTime = this._originalStartTime + this._repeats * (this.duration + this.delayTime);
           if (this.onRepeatCallback !== null) {
             this.onRepeatCallback.call(this.object);
           }
+
           return true;
-        }
-        else {
+        } else {
           this.playing = false;
           if (this.onCompleteCallback !== null) {
             this.onCompleteCallback.call(this.object);
           }
+
           for (var i = 0, numChainedTweens = this.chainedTweens.length; i < numChainedTweens; i++) {
             this.chainedTweens[i].start();
           }
+
           return false;
         }
       }
+
       return true;
-    }
+    },
   });
 
   game.addAttributes('Tween', {
@@ -447,7 +463,7 @@ game.module(
       Linear: {
         None: function(k) {
           return k;
-        }
+        },
       },
 
       Quadratic: {
@@ -462,7 +478,7 @@ game.module(
         InOut: function(k) {
           if ((k *= 2) < 1) return 0.5 * k * k;
           return -0.5 * (--k * (k - 2) - 1);
-        }
+        },
       },
 
       Cubic: {
@@ -477,7 +493,7 @@ game.module(
         InOut: function(k) {
           if ((k *= 2) < 1) return 0.5 * k * k * k;
           return 0.5 * ((k -= 2) * k * k + 2);
-        }
+        },
       },
 
       Quartic: {
@@ -492,7 +508,7 @@ game.module(
         InOut: function(k) {
           if ((k *= 2) < 1) return 0.5 * k * k * k * k;
           return -0.5 * ((k -= 2) * k * k * k - 2);
-        }
+        },
       },
 
       Quintic: {
@@ -507,7 +523,7 @@ game.module(
         InOut: function(k) {
           if ((k *= 2) < 1) return 0.5 * k * k * k * k * k;
           return 0.5 * ((k -= 2) * k * k * k * k + 2);
-        }
+        },
       },
 
       Sinusoidal: {
@@ -521,7 +537,7 @@ game.module(
 
         InOut: function(k) {
           return 0.5 * (1 - Math.cos(Math.PI * k));
-        }
+        },
       },
 
       Exponential: {
@@ -538,7 +554,7 @@ game.module(
           if (k === 1) return 1;
           if ((k *= 2) < 1) return 0.5 * Math.pow(1024, k - 1);
           return 0.5 * (-Math.pow(2, -10 * (k - 1)) + 2);
-        }
+        },
       },
 
       Circular: {
@@ -553,7 +569,7 @@ game.module(
         InOut: function(k) {
           if ((k *= 2) < 1) return -0.5 * (Math.sqrt(1 - k * k) - 1);
           return 0.5 * (Math.sqrt(1 - (k -= 2) * k) + 1);
-        }
+        },
       },
 
       Elastic: {
@@ -565,8 +581,7 @@ game.module(
           if (!a || a < 1) {
             a = 1;
             s = p / 4;
-          }
-          else s = p * Math.asin(1 / a) / (2 * Math.PI);
+          } else s = p * Math.asin(1 / a) / (2 * Math.PI);
           return -(a * Math.pow(2, 10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p));
         },
 
@@ -578,8 +593,7 @@ game.module(
           if (!a || a < 1) {
             a = 1;
             s = p / 4;
-          }
-          else s = p * Math.asin(1 / a) / (2 * Math.PI);
+          } else s = p * Math.asin(1 / a) / (2 * Math.PI);
           return (a * Math.pow(2, -10 * k) * Math.sin((k - s) * (2 * Math.PI) / p) + 1);
         },
 
@@ -591,11 +605,10 @@ game.module(
           if (!a || a < 1) {
             a = 1;
             s = p / 4;
-          }
-          else s = p * Math.asin(1 / a) / (2 * Math.PI);
+          } else s = p * Math.asin(1 / a) / (2 * Math.PI);
           if ((k *= 2) < 1) return -0.5 * (a * Math.pow(2, 10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p));
           return a * Math.pow(2, -10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p) * 0.5 + 1;
-        }
+        },
       },
 
       Back: {
@@ -613,7 +626,7 @@ game.module(
           var s = 1.70158 * 1.525;
           if ((k *= 2) < 1) return 0.5 * (k * k * ((s + 1) * k - s));
           return 0.5 * ((k -= 2) * k * ((s + 1) * k + s) + 2);
-        }
+        },
       },
 
       Bounce: {
@@ -624,14 +637,11 @@ game.module(
         Out: function(k) {
           if (k < (1 / 2.75)) {
             return 7.5625 * k * k;
-          }
-          else if (k < (2 / 2.75)) {
+          } else if (k < (2 / 2.75)) {
             return 7.5625 * (k -= (1.5 / 2.75)) * k + 0.75;
-          }
-          else if (k < (2.5 / 2.75)) {
+          } else if (k < (2.5 / 2.75)) {
             return 7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375;
-          }
-          else {
+          } else {
             return 7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375;
           }
         },
@@ -639,8 +649,8 @@ game.module(
         InOut: function(k) {
           if (k < 0.5) return game.Tween.Easing.Bounce.In(k * 2) * 0.5;
           return game.Tween.Easing.Bounce.Out(k * 2 - 1) * 0.5 + 0.5;
-        }
-      }
+        },
+      },
     },
 
     /**
@@ -666,6 +676,7 @@ game.module(
         for (i = 0; i <= n; i++) {
           b += pw(1 - k, n - i) * pw(k, i) * v[i] * bn(n, i);
         }
+
         return b;
       },
 
@@ -677,8 +688,7 @@ game.module(
         if (v[0] === v[m]) {
           if (k < 0) i = Math.floor(f = m * (1 + k));
           return fn(v[(i - 1 + m) % m], v[i], v[(i + 1) % m], v[(i + 2) % m], f - i);
-        }
-        else {
+        } else {
           if (k < 0) return v[0] - (fn(v[0], v[0], v[1], v[1], -f) - v[0]);
           if (k > 1) return v[m] - (fn(v[m], v[m], v[m - 1], v[m - 1], f - m) - v[m]);
           return fn(v[i ? i - 1 : 0], v[i], v[m < i + 1 ? m : i + 1], v[m < i + 2 ? m : i + 2], f - i);
@@ -697,7 +707,7 @@ game.module(
 
         Factorial: (function() {
           var a = [1];
-          return function (n) {
+          return function(n) {
             var s = 1, i;
             if (a[n]) return a[n];
             for (i = n; i > 1; i--) s *= i;
@@ -711,9 +721,9 @@ game.module(
             t2 = t * t,
             t3 = t * t2;
           return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
   /**
@@ -819,9 +829,10 @@ game.module(
       for (var i = 0; i < this.tweens.length; i++) {
         if (this.tweens[i].playing) return;
       }
+
       this._complete = true;
       if (typeof this.onComplete === 'function') this.onComplete();
-    }
+    },
   });
 
 });

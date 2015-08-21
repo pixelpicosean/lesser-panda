@@ -36,11 +36,6 @@ var game = {
   **/
   debug: null,
   /**
-    Current delta time in seconds.
-    @property {Number} delta
-  **/
-  // delta: 0,
-  /**
     Device information.
     @property {Object} device
   **/
@@ -50,11 +45,6 @@ var game = {
     @property {DeviceAcceleration} devicemotion
   **/
   devicemotion: null,
-  /**
-    Height of game.
-    @property {Number} height
-  **/
-  // height: 0,
   /**
     List of JSON files.
     @property {Object} json
@@ -107,11 +97,6 @@ var game = {
   **/
   version: '0.1.0',
   /**
-    Width of game.
-    @property {Number} width
-  **/
-  // width: 0,
-  /**
     @property {Boolean} _booted
     @private
   **/
@@ -125,10 +110,10 @@ var game = {
     'engine.audio',
     'engine.camera',
     'engine.debug',
+    'engine.geometry',
     'engine.keyboard',
     'engine.loader',
     'engine.particle',
-    'engine.geometry',
     'engine.physics',
     'engine.pixi',
     'engine.pool',
@@ -137,7 +122,7 @@ var game = {
     'engine.storage',
     'engine.system',
     'engine.timer',
-    'engine.tween'
+    'engine.tween',
   ],
   /**
     @property {Object} _current
@@ -252,6 +237,7 @@ var game = {
       this._current = null;
       return this._boot();
     }
+
     this._current = null;
     if (this._loadFinished) this._loadModules();
     if (this._gameModuleDefined && this._DOMLoaded && !this._loadFinished) {
@@ -287,19 +273,19 @@ var game = {
       (this.Container && object instanceof this.Container)
     ) {
       return object;
-    }
-    else if (object instanceof Array) {
+    } else if (object instanceof Array) {
       c = [];
       for (i = 0, l = object.length; i < l; i++) {
         c[i] = this.copy(object[i]);
       }
+
       return c;
-    }
-    else {
+    } else {
       c = {};
       for (i in object) {
         c[i] = this.copy(object[i]);
       }
+
       return c;
     }
   },
@@ -352,7 +338,7 @@ var game = {
     for (var name in properties) {
       Object.defineProperty(this[className].prototype, name, {
         get: properties[name].get,
-        set: properties[name].set
+        set: properties[name].set,
       });
     }
   },
@@ -407,14 +393,15 @@ var game = {
         ext instanceof this.Container
       ) {
         to[key] = ext;
-      }
-      else {
+      } else {
         if (!to[key] || typeof to[key] !== 'object') {
           to[key] = (ext instanceof Array) ? [] : {};
         }
+
         this.merge(to[key], ext);
       }
     }
+
     return to;
   },
 
@@ -445,9 +432,11 @@ var game = {
           if (this.config.ignoreModules.indexOf(this._coreModules[i]) !== -1) this._coreModules.splice(i, 1);
         }
       }
+
       this._current.requires = this._coreModules;
       this.body(function() {});
     }
+
     return this;
   },
 
@@ -475,6 +464,7 @@ var game = {
       var name = modules[i];
       if (name && this._current.requires.indexOf(name) === -1) this._current.requires.push(name);
     }
+
     return this;
   },
 
@@ -514,8 +504,7 @@ var game = {
         for (var o in this.config[i]) {
           if (typeof this.config[i][o] === 'object') {
             this.merge(this.config[o], this.config[i][o]);
-          }
-          else {
+          } else {
             this.config[o] = this.config[i][o];
           }
         }
@@ -558,8 +547,7 @@ var game = {
 
     if (document.readyState === 'complete') {
       this._DOMReady();
-    }
-    else {
+    } else {
       document.addEventListener('DOMContentLoaded', this._DOMReady.bind(this), false);
       window.addEventListener('load', this._DOMReady.bind(this), false);
     }
@@ -623,12 +611,12 @@ var game = {
         this.TextureCache[key].destroy(true);
         delete this.TextureCache[key];
       }
-    }
-    else if (this.TextureCache[path]) {
+    } else if (this.TextureCache[path]) {
       // Sprite
       this.TextureCache[path].destroy(true);
       delete this.TextureCache[path];
     }
+
     delete this.paths[id];
   },
 
@@ -641,6 +629,7 @@ var game = {
       this.TextureCache[key].destroy(true);
       delete this.TextureCache[key];
     }
+
     this.paths = {};
   },
 
@@ -652,7 +641,7 @@ var game = {
     this.device.pixelRatio = window.devicePixelRatio || 1;
     this.device.screen = {
       width: window.screen.availWidth * this.device.pixelRatio,
-      height: window.screen.availHeight * this.device.pixelRatio
+      height: window.screen.availHeight * this.device.pixelRatio,
     };
 
     // iPod
@@ -714,8 +703,7 @@ var game = {
       catch (err) {
         this.device.flash = false;
       }
-    }
-    else {
+    } else {
       this.device.flash = !!navigator.plugins['Shockwave Flash'];
     }
   },
@@ -735,8 +723,7 @@ var game = {
         if (!this.modules[name]) {
           dependenciesLoaded = false;
           this._loadScript(name, module.name);
-        }
-        else if (!this.modules[name].loaded) {
+        } else if (!this.modules[name].loaded) {
           dependenciesLoaded = false;
         }
       }
@@ -754,8 +741,7 @@ var game = {
 
     if (moduleLoaded && this._moduleQueue.length > 0) {
       this._loadModules();
-    }
-    else if (this._waitForLoad === 0 && this._moduleQueue.length !== 0) {
+    } else if (this._waitForLoad === 0 && this._moduleQueue.length !== 0) {
       var unresolved = [];
       for (i = 0; i < this._moduleQueue.length; i++) {
         var unloaded = [];
@@ -766,11 +752,12 @@ var game = {
             unloaded.push(requires[j]);
           }
         }
+
         unresolved.push(this._moduleQueue[i].name + ' (requires: ' + unloaded.join(', ') + ')');
       }
+
       throw 'Unresolved modules:\n' + unresolved.join('\n');
-    }
-    else {
+    } else {
       this._loadFinished = true;
     }
   },
@@ -816,6 +803,7 @@ var game = {
           return this;
         }
       }
+
       return this;
     };
 
@@ -833,6 +821,7 @@ var game = {
         this[i] = this[p];
         this[p] = t;
       }
+
       return this;
     };
 
@@ -877,6 +866,7 @@ var game = {
     script.onerror = function() {
       throw 'Error loading module ' + name + ' at ' + path + ' required from ' + requiredFrom;
     };
+
     document.getElementsByTagName('head')[0].appendChild(script);
   },
 
@@ -936,10 +926,10 @@ var game = {
         window.requestAnimationFrame(animate);
         callback();
       };
+
       window.requestAnimationFrame(animate);
       return id;
-    }
-    else {
+    } else {
       return window.setInterval(callback, 1000 / 60);
     }
   },
@@ -991,7 +981,7 @@ var game = {
     if (!this.system.rotateScreenVisible) this._loader.start();
 
     this.onStart();
-  }
+  },
 };
 
 game.Core = game;
@@ -1030,8 +1020,7 @@ game.Class.extend = function(prop) {
       game._fnTest.test(prop[name])
     ) {
       prototype[name] = makeFn(name, prop[name]);
-    }
-    else {
+    } else {
       prototype[name] = prop[name];
     }
   }
@@ -1094,8 +1083,7 @@ game.Class.extend = function(prop) {
       ) {
         parent[name] = proto[name];
         proto[name] = makeFn(name, prop[name]);
-      }
-      else {
+      } else {
         proto[name] = prop[name];
       }
     }

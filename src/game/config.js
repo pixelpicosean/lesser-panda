@@ -11,7 +11,7 @@ game.config = {
     center: true,
     resize: false,
 
-    webGL: false
+    webGL: false,
   },
 
   // Mobile configs
@@ -19,7 +19,7 @@ game.config = {
     system: {
       resize: true,
 
-      webGL: true
-    }
-  }
+      webGL: true,
+    },
+  },
 };

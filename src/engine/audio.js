@@ -4,7 +4,8 @@
 game.module(
   'engine.audio'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Audio manager.
@@ -162,11 +163,11 @@ game.module(
     stopSound: function(id, skipCallback) {
       if (id) {
         return this._stop(id, !!skipCallback);
-      }
-      else {
+      } else {
         for (var i = this.playingSounds.length - 1; i >= 0; i--) {
           this._stop(this.playingSounds[i], !!skipCallback);
         }
+
         return true;
       }
     },
@@ -199,14 +200,15 @@ game.module(
         this._pause(id);
         this.playingSounds.splice(index, 1);
         this.pausedSounds.push(id);
-      }
-      else {
+      } else {
         for (var i = this.playingSounds.length - 1; i >= 0; i--) {
           this._pause(this.playingSounds[i]);
           this.pausedSounds.push(this.playingSounds[i]);
         }
+
         this.playingSounds.length = 0;
       }
+
       return true;
     },
 
@@ -236,16 +238,17 @@ game.module(
     muteSound: function(id) {
       if (id) {
         return this._mute(id);
-      }
-      else {
+      } else {
         this.soundMuted = true;
         var i;
         for (i = this.playingSounds.length - 1; i >= 0; i--) {
           this._mute(this.playingSounds[i]);
         }
+
         for (i = this.pausedSounds.length - 1; i >= 0; i--) {
           this._mute(this.pausedSounds[i]);
         }
+
         return true;
       }
     },
@@ -259,16 +262,17 @@ game.module(
     unmuteSound: function(id) {
       if (id) {
         return this._unmute(id, this.soundVolume);
-      }
-      else {
+      } else {
         this.soundMuted = false;
         var i;
         for (i = this.playingSounds.length - 1; i >= 0; i--) {
           this._unmute(this.playingSounds[i], this.soundVolume);
         }
+
         for (i = this.pausedSounds.length - 1; i >= 0; i--) {
           this._unmute(this.pausedSounds[i], this.soundVolume);
         }
+
         return true;
       }
     },
@@ -367,8 +371,7 @@ game.module(
       for (i = this.playingSounds.length - 1; i >= 0; i--) {
         if (this.context) {
           this._audioObjects[this.playingSounds[i]].gainNode.gain.value = this.soundVolume;
-        }
-        else {
+        } else {
           this.playingSounds[i].volume = this.soundVolume;
         }
       }
@@ -376,8 +379,7 @@ game.module(
       for (i = this.pausedSounds.length - 1; i >= 0; i--) {
         if (this.context) {
           this._audioObjects[this.pausedSounds[i]].gainNode.gain.value = this.soundVolume;
-        }
-        else {
+        } else {
           this.pausedSounds[i].volume = this.soundVolume;
         }
       }
@@ -395,8 +397,7 @@ game.module(
 
       if (this.context) {
         this._audioObjects[this.currentMusic].gainNode.gain.value = this.musicVolume;
-      }
-      else {
+      } else {
         this.currentMusic.volume = this.musicVolume;
       }
     },
@@ -493,18 +494,17 @@ game.module(
         request.responseType = 'arraybuffer';
         request.onload = this._decode.bind(this, request, path, callback);
         request.send();
-      }
-      else {
+      } else {
         var audio = new Audio(realPath);
         if (game.device.ie) {
           // Sometimes IE fails to trigger events, when loading audio
           this._loaded(path, callback, audio);
-        }
-        else {
+        } else {
           audio.loadCallback = this._loaded.bind(this, path, callback, audio);
           audio.addEventListener('canplaythrough', audio.loadCallback);
           audio.addEventListener('error', this._error.bind(this, path));
         }
+
         audio.preload = 'auto';
         audio.load();
       }
@@ -536,7 +536,7 @@ game.module(
 
       this._sources[id] = {
         audio: audio,
-        path: path
+        path: path,
       };
 
       if (!this.context) {
@@ -550,7 +550,7 @@ game.module(
         callback(path, {
           isAudio: true,
           name: path,
-          url: path
+          url: path,
         });
       }
     },
@@ -598,8 +598,7 @@ game.module(
         var from = audio.gainNode.gain.value;
         audio.gainNode.gain.linearRampToValueAtTime(from, currTime);
         audio.gainNode.gain.linearRampToValueAtTime(to, currTime + time);
-      }
-      else return false;
+      } else return false;
 
       return true;
     },
@@ -639,8 +638,7 @@ game.module(
         else audio[method](0);
 
         audio.startTime = this.context.currentTime - (time || 0);
-      }
-      else {
+      } else {
         var audio = this._sources[name].audio;
         audio.volume = typeof volume === 'number' ? volume : 1;
         audio.loop = !!loop;
@@ -674,8 +672,7 @@ game.module(
         if (audio.pauseTime >= 0) return false;
         if (typeof audio.stop === 'function') audio.stop(0);
         else audio.noteOff(0);
-      }
-      else {
+      } else {
         audio.pause();
         audio.playing = false;
       }
@@ -698,8 +695,7 @@ game.module(
         if (typeof audio.stop === 'function') audio.stop(0);
         else audio.noteOff(0);
         audio.pauseTime = (this.context.currentTime - audio.startTime) % audio.buffer.duration;
-      }
-      else {
+      } else {
         if (audio.currentTime > 0 && audio.currentTime < audio.duration || audio.loop) {
           audio.pause();
         }
@@ -722,10 +718,8 @@ game.module(
         if (audio.pauseTime >= 0) {
           var audioName = this._getNameForAudio(audio);
           this._play(audioName, audio.loop, audio.gainNode.gain.value, audio.callback, audio.playbackRate.value, audio.pauseTime, id);
-        }
-        else return false;
-      }
-      else {
+        } else return false;
+      } else {
         if (audio.playing) audio.play();
         else return false;
       }
@@ -803,7 +797,7 @@ game.module(
       }
 
       this._systemPaused.length = 0;
-    }
+    },
   });
 
   game.addAttributes('Audio', {
@@ -820,7 +814,7 @@ game.module(
     formats: [
       { ext: 'ogg', type: 'audio/ogg; codecs="vorbis"' },
       { ext: 'm4a', type: 'audio/mp4; codecs="mp4a.40.5"' },
-      { ext: 'wav', type: 'audio/wav' }
+      { ext: 'wav', type: 'audio/wav' },
     ],
     /**
       Music volume.
@@ -845,7 +839,7 @@ game.module(
       @attribute {Boolean} webAudio
       @default true
     **/
-    webAudio: true
+    webAudio: true,
   });
 
 });

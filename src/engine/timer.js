@@ -4,7 +4,8 @@
 game.module(
   'engine.timer'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     @class Timer
@@ -96,7 +97,7 @@ game.module(
         this.base += game.Timer.time - this._pauseTime;
         this._pauseTime = 0;
       }
-    }
+    },
   });
 
   game.addAttributes('Timer', {
@@ -143,7 +144,7 @@ game.module(
       this.delta = Math.min(this._realDelta, 1000 / this.minFPS) * this.speed;
       this.time += this.delta;
       this._last = now;
-    }
+    },
   });
 
 });

@@ -8,7 +8,8 @@ game.module(
 .require(
   'engine.geometry'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Physics world.
@@ -117,6 +118,7 @@ game.module(
             }
           }
         }
+
         for (i = body._collides.length - 1; i >= 0; i--) {
           if (this.solver.hitResponse(body, body._collides[i])) {
             body.afterCollide(body._collides[i]);
@@ -135,24 +137,25 @@ game.module(
         if (this.bodies[i]._remove) {
           this.removeBodyCollision(this.bodies[i]);
           this.bodies.splice(i, 1);
-        }
-        else {
+        } else {
           this.bodies[i].update();
         }
       }
+
       for (i in this.collisionGroups) {
         // Remove empty collision group
         if (this.collisionGroups[i].length === 0) {
           delete this.collisionGroups[i];
           continue;
         }
+
         for (j = this.collisionGroups[i].length - 1; j >= 0; j--) {
           if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst.length > 0) {
             this.collide(this.collisionGroups[i][j]);
           }
         }
       }
-    }
+    },
   });
 
   /**
@@ -177,9 +180,11 @@ game.module(
           a.position.x + a.shape.width / 2 <= b.position.x - b.shape.width / 2
         );
       }
+
       if (a.shape.radius && b.shape.radius) {
         return (a.shape.radius + b.shape.radius > a.position.distance(b.position));
       }
+
       if (a.shape.width && b.shape.radius || a.shape.radius && b.shape.width) {
         var rect = a.shape.width ? a : b;
         var circle = a.shape.radius ? a : b;
@@ -190,6 +195,7 @@ game.module(
         var dist = Math.pow(circle.position.x - x, 2) + Math.pow(circle.position.y - y, 2);
         return dist < (circle.shape.radius * circle.shape.radius);
       }
+
       return false;
     },
 
@@ -207,31 +213,26 @@ game.module(
             a.position.y = b.position.y - b.shape.height / 2 - a.shape.height / 2;
             return true;
           }
-        }
-        else if (a.last.y - a.shape.height / 2 >= b.last.y + b.shape.height / 2) {
+        } else if (a.last.y - a.shape.height / 2 >= b.last.y + b.shape.height / 2) {
           if (a.collide(b, 'UP')) {
             a.position.y = b.position.y + b.shape.height / 2 + a.shape.height / 2;
             return true;
           }
-        }
-        else if (a.last.x + a.shape.width / 2 <= b.last.x - b.shape.width / 2) {
+        } else if (a.last.x + a.shape.width / 2 <= b.last.x - b.shape.width / 2) {
           if (a.collide(b, 'RIGHT')) {
             a.position.x = b.position.x - b.shape.width / 2 - a.shape.width / 2;
             return true;
           }
-        }
-        else if (a.last.x - a.shape.width / 2 >= b.last.x + b.shape.width / 2) {
+        } else if (a.last.x - a.shape.width / 2 >= b.last.x + b.shape.width / 2) {
           if (a.collide(b, 'LEFT')) {
             a.position.x = b.position.x + b.shape.width / 2 + a.shape.width / 2;
             return true;
           }
-        }
-        else {
+        } else {
           // Inside
           if (a.collide(b)) return true;
         }
-      }
-      else if (a.shape.radius && b.shape.radius) {
+      } else if (a.shape.radius && b.shape.radius) {
         var angle = b.position.angle(a.position);
         if (a.collide(b, angle)) {
           var dist = a.shape.radius + b.shape.radius;
@@ -240,7 +241,7 @@ game.module(
           return true;
         }
       }
-    }
+    },
   });
 
   /**
@@ -414,6 +415,7 @@ game.module(
           this.world.gravity.y * this.mass * game.system.delta
         );
       }
+
       this.velocity.add(this.force.x * game.system.delta, this.force.y * game.system.delta);
       if (this.damping > 0 && this.damping < 1) this.velocity.scale(Math.pow(1 - this.damping, game.system.delta));
 
@@ -421,7 +423,7 @@ game.module(
       if (this.velocityLimit.y > 0) this.velocity.y = this.velocity.y.limit(-this.velocityLimit.y, this.velocityLimit.y);
 
       this.position.add(this.velocity.x * game.system.delta, this.velocity.y * game.system.delta);
-    }
+    },
   });
 
   /**
@@ -449,7 +451,7 @@ game.module(
     init: function(width, height) {
       this.width = width || this.width;
       this.height = height || this.height;
-    }
+    },
   });
 
   /**
@@ -469,7 +471,7 @@ game.module(
 
     init: function(radius) {
       this.radius = radius || this.radius;
-    }
+    },
   });
 
 });

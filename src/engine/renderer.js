@@ -9,7 +9,8 @@ game.module(
   'engine.pixi',
   'engine.geometry'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   var PIXI = game.PIXI;
 
@@ -87,7 +88,7 @@ game.module(
     staticInit: function(frames, props) {
       this.frames = frames;
       game.merge(this, props);
-    }
+    },
   });
 
   /**
@@ -123,6 +124,7 @@ game.module(
 
       newTextures.push(texture);
     }
+
     this.textures = newTextures;
 
     this.addAnim('default');
@@ -149,6 +151,7 @@ game.module(
         frames.push(i);
       }
     }
+
     var anim = new game.AnimationData(frames, props);
     this.anims[name] = anim;
     return this;
@@ -170,6 +173,7 @@ game.module(
     if (typeof frame !== 'number' && anim.reverse) {
       frame = anim.frames.length - 1;
     }
+
     this.gotoFrame(frame || 0);
     return this;
   };
@@ -229,23 +233,19 @@ game.module(
         if (anim.loop) {
           this.currentFrame = 0;
           this.texture = this.textures[anim.frames[0]];
-        }
-        else {
+        } else {
           this.playing = false;
           if (anim.onComplete) anim.onComplete();
         }
-      }
-      else if (nextFrame < 0) {
+      } else if (nextFrame < 0) {
         if (anim.loop) {
           this.currentFrame = anim.frames.length - 1;
           this.texture = this.textures[anim.frames.last()];
-        }
-        else {
+        } else {
           this.playing = false;
           if (anim.onComplete) anim.onComplete();
         }
-      }
-      else {
+      } else {
         this.currentFrame = nextFrame;
         this.texture = this.textures[anim.frames[nextFrame]];
       }
@@ -269,6 +269,7 @@ game.module(
     for (var i in game.Texture.cache) {
       if (i.indexOf(name) === 0) textures.push(game.Texture.cache[i]);
     }
+
     if (textures.length > 0) return new game.Animation(textures);
   };
 
@@ -305,6 +306,7 @@ game.module(
       texture = game.paths[texture] || texture;
       texture = game.Texture.fromFrame(texture);
     }
+
     PIXI.Sprite.call(this, texture);
 
     game.merge(this, properties);
@@ -326,6 +328,7 @@ game.module(
     get: function() {
       return this._texture;
     },
+
     set: function(v) {
       var value = v;
       if (typeof value === 'string') {
@@ -344,12 +347,11 @@ game.module(
         // wait for the texture to load
         if (value.baseTexture.hasLoaded) {
           this._onTextureUpdate();
-        }
-        else {
+        } else {
           value.once('update', this._onTextureUpdate, this);
         }
       }
-    }
+    },
   });
 
   /**
@@ -520,15 +522,15 @@ game.module(
         for (var i = 0; i < frames.length; i++) {
           textures.push(this.textures[startIndex + frames[i]]);
         }
-      }
-      else {
+      } else {
         for (var i = 0; i < frames; i++) {
           textures.push(this.textures[startIndex + i]);
         }
       }
+
       if (onlyTextures) return textures;
       return new game.Animation(textures);
-    }
+    },
   });
 
   /**
@@ -619,7 +621,7 @@ game.module(
     stop: function(remove) {
       this.videoElem.pause();
       if (remove) this.sprite.remove();
-    }
+    },
   });
 
 });

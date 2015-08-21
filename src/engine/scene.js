@@ -5,7 +5,8 @@
 game.module(
   'engine.scene'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Game scene.
@@ -103,13 +104,13 @@ game.module(
           var scale = game.renderer.width / game.system.width;
           this.stage.scale.set(scale, scale);
           this.stage.position.y = game.renderer.height / 2 - game.system.height * scale / 2;
-        }
-        else {
+        } else {
           var scale = game.renderer.height / game.system.height;
           this.stage.scale.set(scale, scale);
           this.stage.position.x = game.renderer.width / 2 - game.system.width * scale / 2;
         }
       }
+
       game.system.stage.addChild(this.stage);
 
       // Enable stage inputs and accept all events
@@ -163,10 +164,10 @@ game.module(
       var timer;
       if (timer = game.pool.get('Timer')) {
         timer.init(time);
-      }
-      else {
+      } else {
         timer = new game.Timer(time);
       }
+
       timer.repeat = !!repeat;
       timer.callback = callback;
       this.timers.push(timer);
@@ -187,6 +188,7 @@ game.module(
       for (var i in settings) {
         tween[i](settings[i]);
       }
+
       return tween;
     },
 
@@ -252,7 +254,9 @@ game.module(
     mouseout: function() {},
 
     touchstart: function() {},
+
     touchmove: function() {},
+
     touchend: function() {},
 
     /**
@@ -373,6 +377,7 @@ game.module(
       event.data._swipeY = event.data.global.y;
       this.touchstart(event);
     },
+
     _touchmove: function(event) {
       this.touchmove(event);
 
@@ -387,6 +392,7 @@ game.module(
 
       (event.data.dir !== 'none') && this._swipe(event);
     },
+
     _touchend: function(event) {
       this.touchend(event);
     },
@@ -455,10 +461,10 @@ game.module(
           if (typeof timer.callback === 'function') {
             timer.callback();
           }
+
           if (timer.repeat) {
             timer.reset();
-          }
-          else {
+          } else {
             game.pool.put('Timer', timer);
             this.timers.splice(i, 1);
           }
@@ -474,7 +480,7 @@ game.module(
       for (var i = this.tweens.length - 1; i >= 0; i--) {
         if (!this.tweens[i]._update()) this.tweens.splice(i, 1);
       }
-    }
+    },
   });
 
   function windowToCanvas(x, y, pos) {
@@ -499,14 +505,14 @@ game.module(
       'timers',
       'emitters',
       'objects',
-      'renderer'
+      'renderer',
     ],
     /**
       Default background color.
       @attribute {Number} backgroundColor
       @default 0x000000
     **/
-    backgroundColor: 0x000000
+    backgroundColor: 0x000000,
   });
 
 });

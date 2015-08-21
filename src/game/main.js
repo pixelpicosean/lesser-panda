@@ -1,7 +1,8 @@
 game.module(
   'game.main'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   game.addAsset('logo.png');
 
@@ -12,7 +13,7 @@ game.module(
       var logo = new game.Sprite('logo.png')
         .center()
         .addTo(this.stage);
-    }
+    },
   });
 
 });

@@ -5,7 +5,8 @@
 game.module(
   'engine.camera'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     @class Camera
@@ -106,16 +107,15 @@ game.module(
       if (typeof this.minX === 'number' && this.position.x < this.minX) {
         this.position.x = this.minX;
         this.speed.x = 0;
-      }
-      else if (typeof this.maxX === 'number' && this.position.x > this.maxX) {
+      } else if (typeof this.maxX === 'number' && this.position.x > this.maxX) {
         this.position.x = this.maxX;
         this.speed.x = 0;
       }
+
       if (typeof this.minY === 'number' && this.position.y < this.minY) {
         this.position.y = this.minY;
         this.speed.y = 0;
-      }
-      else if (typeof this.maxY === 'number' && this.position.y > this.maxY) {
+      } else if (typeof this.maxY === 'number' && this.position.y > this.maxY) {
         this.position.y = this.maxY;
         this.speed.y = 0;
       }
@@ -143,15 +143,13 @@ game.module(
 
       if (targetPosX < this.sensorPosition.x - this.sensorWidth / 2 + targetWidth / 2) {
         this.sensorPosition.x = targetPosX + this.sensorWidth / 2 - targetWidth / 2;
-      }
-      else if (targetPosX + (this.sensorWidth / 2 + targetWidth / 2) > this.sensorPosition.x + this.sensorWidth) {
+      } else if (targetPosX + (this.sensorWidth / 2 + targetWidth / 2) > this.sensorPosition.x + this.sensorWidth) {
         this.sensorPosition.x = targetPosX + (this.sensorWidth / 2 + targetWidth / 2) - this.sensorWidth;
       }
 
       if (targetPosY < this.sensorPosition.y - this.sensorHeight / 2 + targetHeight / 2) {
         this.sensorPosition.y = targetPosY + this.sensorHeight / 2 - targetHeight / 2;
-      }
-      else if (targetPosY + (this.sensorHeight / 2 + targetHeight / 2) > this.sensorPosition.y + this.sensorHeight) {
+      } else if (targetPosY + (this.sensorHeight / 2 + targetHeight / 2) > this.sensorPosition.y + this.sensorHeight) {
         this.sensorPosition.y = targetPosY + (this.sensorHeight / 2 + targetHeight / 2) - this.sensorHeight;
       }
     },
@@ -169,8 +167,7 @@ game.module(
           this.position.x + this.offset.x - this.speed.x * this.acceleration * game.system.delta,
           this.position.y + this.offset.y - this.speed.y * this.acceleration * game.system.delta
         );
-      }
-      else {
+      } else {
         this.speed.set(0, 0);
       }
     },
@@ -178,7 +175,7 @@ game.module(
     update: function() {
       this.moveSensor();
       this.moveCamera();
-    }
+    },
   });
 
 });

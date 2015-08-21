@@ -5,7 +5,8 @@
 game.module(
   'engine.particle'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     @class Particle
@@ -53,7 +54,7 @@ game.module(
     setAccel: function(angle, speed) {
       this.accel.x = Math.cos(angle) * speed;
       this.accel.y = Math.sin(angle) * speed;
-    }
+    },
   });
 
   /**
@@ -282,6 +283,7 @@ game.module(
         if (typeof this[name] === 'number') {
           this[name] = game.Emitter.prototype[name];
         }
+
         if (this[name] instanceof game.Vector && resetVec) {
           this[name].set(0, 0);
         }
@@ -326,8 +328,7 @@ game.module(
 
       if (!particle.sprite) {
         particle.sprite = new game.Sprite(this.textures.random(), particle.position.x, particle.position.y, this.spriteSettings);
-      }
-      else {
+      } else {
         particle.sprite.texture = this.textures.random();
         particle.sprite.position.x = particle.position.x;
         particle.sprite.position.y = particle.position.y;
@@ -340,8 +341,7 @@ game.module(
       if (this.startAlpha !== this.endAlpha) {
         particle.deltaAlpha = this.endAlpha - this.startAlpha;
         particle.deltaAlpha /= particle.life / 1000;
-      }
-      else particle.deltaAlpha = 0;
+      } else particle.deltaAlpha = 0;
 
       particle.sprite.alpha = this.startAlpha;
 
@@ -349,8 +349,7 @@ game.module(
       if (this.startScale !== this.endScale) {
         particle.deltaScale = (this.endScale + this.getVariance(this.endScaleVar)) - startScale;
         particle.deltaScale /= particle.life / 1000;
-      }
-      else particle.deltaScale = 0;
+      } else particle.deltaScale = 0;
       particle.sprite.scale.x = particle.sprite.scale.y = startScale;
 
       if (this.container) this.container.addChild(particle.sprite);
@@ -436,6 +435,7 @@ game.module(
         for (var i = this.particles.length - 1; i >= 0; i--) {
           this.removeParticle(this.particles[i]);
         }
+
         return;
       }
 
@@ -476,7 +476,7 @@ game.module(
     **/
     addTo: function(container) {
       this.container = container;
-    }
+    },
   });
 
 });

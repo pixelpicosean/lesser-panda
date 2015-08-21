@@ -5,7 +5,8 @@
 game.module(
   'engine.keyboard'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     @class Keyboard
@@ -73,7 +74,7 @@ game.module(
       for (var key in this._keysDown) {
         this._keysDown[key] = false;
       }
-    }
+    },
   });
 
   game.addAttributes('Keyboard', {
@@ -170,8 +171,8 @@ game.module(
       187: 'PLUS',
       189: 'MINUS',
       192: 'GRAVE_ACCENT',
-      222: 'SINGLE_QUOTE'
-    }
+      222: 'SINGLE_QUOTE',
+    },
   });
 
 });

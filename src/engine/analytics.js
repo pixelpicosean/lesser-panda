@@ -5,7 +5,8 @@
 game.module(
   'engine.analytics'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Google Analytics tracking.
@@ -33,13 +34,13 @@ game.module(
         var params = 'v=1&tid=' + this.trackId + '&cid=' + this.clientId + '&t=pageview&dp=%2F';
         request.open('POST', 'http://www.google-analytics.com/collect', true);
         request.send(params);
-      }
-      else {
+      } else {
         (function(i, s, o, g, r, a, m) {
           i['GoogleAnalyticsObject'] = r;
           i[r] = i[r] || function() {
             (i[r].q = i[r].q || []).push(arguments)
           };
+
           i[r].l = 1 * new Date();
           a = s.createElement(o);
           m = s.getElementsByTagName(o)[0];
@@ -71,11 +72,10 @@ game.module(
         if (typeof value !== 'undefined') params += '&ev=' + value;
         request.open('POST', 'http://www.google-analytics.com/collect', true);
         request.send(params);
-      }
-      else {
+      } else {
         ga('send', 'event', category, action, label, value);
       }
-    }
+    },
   });
 
   game.addAttributes('Analytics', {
@@ -83,7 +83,7 @@ game.module(
       Tracking id for analytics.
       @attribute {String} id
     **/
-    id: ''
+    id: '',
   });
 
 });

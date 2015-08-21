@@ -5,7 +5,8 @@
 game.module(
   'engine.pool'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Object pool.
@@ -24,6 +25,7 @@ game.module(
         this[pool] = [];
         return true;
       }
+
       return false;
     },
 
@@ -49,7 +51,7 @@ game.module(
       if (!this[pool]) return false;
       this[pool].push(object);
       return true;
-    }
+    },
   });
 
 });

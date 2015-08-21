@@ -11,7 +11,8 @@ game.module(
   'engine.camera',
   'engine.renderer'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Show debug box.
@@ -61,8 +62,9 @@ game.module(
       if (game.scene.world) {
         text += ' BODIES:' + game.scene.world.bodies.length;
       }
+
       this.debugDiv.innerHTML = text;
-    }
+    },
   });
 
   game.addAttributes('Debug', {
@@ -100,7 +102,7 @@ game.module(
       @attribute {Number} positionY
       @default 0,0
     **/
-    positionY: 0
+    positionY: 0,
   });
 
   game.PIXI.DisplayObject.prototype._updateTransform = game.PIXI.DisplayObject.prototype.updateTransform;
@@ -108,6 +110,7 @@ game.module(
     if (game.system.debug) game.system.debug.sprites++;
     this.parent && this._updateTransform();
   };
+
   game.PIXI.DisplayObject.prototype.displayObjectUpdateTransform = game.PIXI.DisplayObject.prototype.updateTransform;
 
   /**
@@ -133,11 +136,13 @@ game.module(
       for (var i = this.spriteContainer.children.length - 1; i >= 0; i--) {
         this.spriteContainer.removeChild(this.spriteContainer.children[i]);
       }
+
       game.system.stage.addChild(this.spriteContainer);
 
       for (var i = this.bodyContainer.children.length - 1; i >= 0; i--) {
         this.bodyContainer.removeChild(this.bodyContainer.children[i]);
       }
+
       game.system.stage.addChild(this.bodyContainer);
     },
 
@@ -154,12 +159,10 @@ game.module(
       if (sprite.hitArea) {
         if (sprite.hitArea instanceof game.HitRectangle) {
           grap.drawRect(sprite.hitArea.x, sprite.hitArea.y, sprite.hitArea.width, sprite.hitArea.height);
-        }
-        else if (sprite.hitArea instanceof game.HitCircle) {
+        } else if (sprite.hitArea instanceof game.HitCircle) {
           grap.drawCircle(sprite.hitArea.x, sprite.hitArea.y, sprite.hitArea.radius);
         }
-      }
-      else {
+      } else {
         grap.drawRect(-sprite.width * sprite.anchor.x, -sprite.height * sprite.anchor.y, sprite.width, sprite.height);
       }
 
@@ -199,8 +202,7 @@ game.module(
 
       if (body.shape instanceof game.Rectangle) {
         sprite.drawRect(-body.shape.width / 2, -body.shape.height / 2, body.shape.width, body.shape.height);
-      }
-      else if (body.shape instanceof game.Circle) {
+      } else if (body.shape instanceof game.Circle) {
         sprite.drawCircle(0, 0, body.shape.radius);
       }
     },
@@ -217,6 +219,7 @@ game.module(
         sprite.scale.y = sprite.target.scale.y;
         if (!sprite.target.parent) this.spriteContainer.removeChild(sprite);
       }
+
       game.system.debug.sprites -= this.spriteContainer.children.length;
     },
 
@@ -228,14 +231,15 @@ game.module(
         if (body.width !== body.target.shape.width ||
           body.height !== body.target.shape.height) {
           this.drawBodySprite(body, body.target);
-        }
-        else if (body.radius !== body.target.shape.radius) {
+        } else if (body.radius !== body.target.shape.radius) {
           this.drawBodySprite(body, body.target);
         }
+
         body.position.x = body.target.position.x;
         body.position.y = body.target.position.y;
         if (!body.target.world) body.remove();
       }
+
       game.system.debug.sprites -= this.bodyContainer.children.length;
     },
 
@@ -247,7 +251,7 @@ game.module(
       game.system.debug.sprites -= 2;
       this.updateSprites();
       this.updateBodies();
-    }
+    },
   });
 
   game.addAttributes('DebugDraw', {
@@ -291,14 +295,14 @@ game.module(
       @attribute {Number} bodyAlpha
       @default 0.5
     **/
-    bodyAlpha: 0.5
+    bodyAlpha: 0.5,
   });
 
   game.World.inject({
     addBody: function(body) {
       this.super(body);
       if (game.debugDraw && body.shape) game.debugDraw.addBody(body);
-    }
+    },
   });
 
   game.Camera.inject({
@@ -332,13 +336,13 @@ game.module(
     update: function() {
       this.super();
       if (this.debugBox) this.debugBox.position.set(this.sensorPosition.x - this.position.x, this.sensorPosition.y - this.position.y);
-    }
+    },
   });
 
   game.addAttributes('Camera', {
     debug: false,
     debugColor: 0xff00ff,
-    debugAlpha: 0.2
+    debugAlpha: 0.2,
   });
 
   game.PIXI.Container.prototype._addChild = game.PIXI.Container.prototype.addChild;

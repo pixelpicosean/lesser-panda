@@ -5,7 +5,8 @@
 game.module(
   'engine.system'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     @class System
@@ -99,6 +100,7 @@ game.module(
           game.scale = i;
         }
       }
+
       if (game.System.retina && game.device.pixelRatio === 2) {
         // Check if we are already using highest textures
         if (game.scale < game.System.hires) {
@@ -129,14 +131,11 @@ game.module(
         var visibilityChange;
         if (typeof document.hidden !== 'undefined') {
           visibilityChange = 'visibilitychange';
-        }
-        else if (typeof document.mozHidden !== 'undefined') {
+        } else if (typeof document.mozHidden !== 'undefined') {
           visibilityChange = 'mozvisibilitychange';
-        }
-        else if (typeof document.msHidden !== 'undefined') {
+        } else if (typeof document.msHidden !== 'undefined') {
           visibilityChange = 'msvisibilitychange';
-        }
-        else if (typeof document.webkitHidden !== 'undefined') {
+        } else if (typeof document.webkitHidden !== 'undefined') {
           visibilityChange = 'webkitvisibilitychange';
         }
 
@@ -158,11 +157,11 @@ game.module(
           if (game.System.bgColor) document.body.style.backgroundColor = game.System.bgColor;
           if (game.System.bgImage) document.body.style.backgroundImage = 'url(' + game.getMediaPath(game.System.bgImage) + ')';
         }
+
         if (game.System.bgPosition) document.body.style.backgroundPosition = game.System.bgPosition;
 
         this.initResize();
-      }
-      else {
+      } else {
         this.resizeToFill();
         this.canvas.style.cssText = 'idtkscale:' + game.System.idtkScale + ';';
       }
@@ -188,13 +187,13 @@ game.module(
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
         antialias: game.System.antialias,
-        resolution: game.scale
+        resolution: game.scale,
       });
       else this.renderer = new game.CanvasRenderer(width, height, {
         view: document.getElementById(this.canvasId),
         transparent: game.System.transparent,
         antialias: game.System.antialias,
-        resolution: game.scale
+        resolution: game.scale,
       });
 
       this.webGL = !!this.renderer.gl;
@@ -219,12 +218,12 @@ game.module(
         // Letterbox left/right
         this.height = game.System.height;
         this.width = Math.round(this.height * (window.innerWidth / window.innerHeight));
-      }
-      else {
+      } else {
         // Letterbox top/bottom
         this.width = game.System.width;
         this.height = Math.round(this.width * (window.innerHeight / window.innerWidth));
       }
+
       this.resize(this.width, this.height);
     },
 
@@ -294,8 +293,7 @@ game.module(
       if (this.running && !this.paused) {
         this.newSceneClass = sceneClass;
         this.removeAssets = removeAssets;
-      }
-      else this.setSceneNow(sceneClass, removeAssets);
+      } else this.setSceneNow(sceneClass, removeAssets);
     },
 
     setSceneNow: function(sceneClass, removeAssets) {
@@ -384,12 +382,13 @@ game.module(
               div.appendChild(img);
               me.resizeRotateImage();
             };
+
             if (game.System.rotateImg.indexOf('data:') === 0) {
               img.src = game.System.rotateImg;
-            }
-            else {
+            } else {
               img.src = game._getFilePath(game.System.rotateImg);
             }
+
             img.style.position = 'relative';
             img.style.maxWidth = '100%';
           }
@@ -398,8 +397,7 @@ game.module(
 
       if (typeof window.onorientationchange !== 'undefined' && !game.device.android) {
         window.onorientationchange = this.onResize.bind(this);
-      }
-      else {
+      } else {
         window.onresize = this.onResize.bind(this);
       }
 
@@ -476,19 +474,18 @@ game.module(
           if (this.orientation === 'landscape' && height * this.ratio <= width) {
             this.canvas.style.height = height + 'px';
             this.canvas.style.width = height * this.width / this.height + 'px';
-          }
-          else {
+          } else {
             this.canvas.style.width = width + 'px';
             this.canvas.style.height = width * this.height / this.width + 'px';
           }
         }
+
         // Portrait game
         else {
           if (this.orientation === 'portrait' && width * this.ratio <= height) {
             this.canvas.style.width = width + 'px';
             this.canvas.style.height = width * this.height / this.width + 'px';
-          }
-          else {
+          } else {
             this.canvas.style.height = height + 'px';
             this.canvas.style.width = height * this.width / this.height + 'px';
           }
@@ -497,8 +494,7 @@ game.module(
         if (!game.device.ejecta) window.scroll(0, 1);
 
         if (!this.rotateScreenVisible && game._loader && !game._loader.started) game._loader.start();
-      }
-      else {
+      } else {
         // Desktop resize
         if (window.innerWidth === 0) return; // Chrome bug
         if (game.System.scale) {
@@ -506,25 +502,22 @@ game.module(
             if (window.innerWidth / this.width < window.innerHeight / this.height) {
               this.canvas.style.width = window.innerWidth + 'px';
               this.canvas.style.height = Math.floor(window.innerWidth * (this.height / this.width)) + 'px';
-            }
-            else {
+            } else {
               this.canvas.style.height = window.innerHeight + 'px';
               this.canvas.style.width = Math.floor(window.innerHeight * (this.width / this.height)) + 'px';
             }
-          }
-          else {
+          } else {
             this.canvas.style.width = this.width + 'px';
             this.canvas.style.height = this.height + 'px';
           }
-        }
-        else if (game.System.resize) {
+        } else if (game.System.resize) {
           this.resizeToFill();
 
           this.canvas.style.width = '100%';
           this.canvas.style.height = '100%';
         }
       }
-    }
+    },
   });
 
   game.addAttributes('System', {
@@ -684,7 +677,7 @@ game.module(
       @attribute {String} scaleMode
       @default linear
     **/
-    scaleMode: 'linear'
+    scaleMode: 'linear',
   });
 
 });

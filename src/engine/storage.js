@@ -4,7 +4,8 @@
 game.module(
   'engine.storage'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Local storage.
@@ -116,15 +117,16 @@ game.module(
       catch (e) {
         return false;
       }
+
       return true;
-    }
+    },
   });
 
   game.addAttributes('Storage', {
     /**
       @attribute {String} id
     **/
-    id: ''
+    id: '',
   });
 
 });

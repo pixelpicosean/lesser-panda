@@ -1,7 +1,8 @@
 game.module(
   'engine.geometry'
 )
-.body(function() { 'use strict';
+.body(function() {
+  'use strict';
 
   /**
     Vector class.
@@ -154,8 +155,7 @@ game.module(
         var x2 = vector.x / len2;
         var y2 = vector.y / len2;
         return x1 * x2 + y1 * y2;
-      }
-      else return x1 * x1 + y1 * y1;
+      } else return x1 * x1 + y1 * y1;
     },
 
     /**
@@ -207,8 +207,7 @@ game.module(
     angle: function(vector) {
       if (vector) {
         return Math.atan2(vector.y - this.y, vector.x - this.x);
-      }
-      else {
+      } else {
         return Math.atan2(this.y, this.x);
       }
     },
@@ -241,7 +240,7 @@ game.module(
      */
     equals: function(vector) {
       return (vector.x === this.x) && (vector.y === this.y);
-    }
+    },
   });
 
 });
