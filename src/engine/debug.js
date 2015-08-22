@@ -202,6 +202,12 @@ game.module(
 
       if (body.shape instanceof game.Rectangle) {
         sprite.drawRect(-body.shape.width / 2, -body.shape.height / 2, body.shape.width, body.shape.height);
+      } else if (game.Polygon && body.shape instanceof game.Polygon) {
+        var points = body.shape.points;
+        sprite.moveTo(points[0].x, points[0].y);
+        for (var i = 0, len = points.length; i < len; i++) {
+          sprite.lineTo(points[i].x, points[i].y);
+        }
       } else if (body.shape instanceof game.Circle) {
         sprite.drawCircle(0, 0, body.shape.radius);
       }
