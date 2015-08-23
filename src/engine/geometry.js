@@ -82,15 +82,27 @@ game.module(
     },
 
     /**
-      Scale vector.
+      Scales self by a scalar number.
       @method scale
+      @param {Number} s
+      @return {game.Vector}
+    **/
+    scale: function(s) {
+      this.x *= s;
+      this.y *= s;
+      return this;
+    },
+
+    /**
+      Multiply self with another vector or 2 numbers.
+      @method multiply
       @param {Number|game.Vector} x
       @param {Number} [y]
       @return {game.Vector}
     **/
-    scale: function(x, y) {
+    multiply: function(x, y) {
       this.x *= x instanceof game.Vector ? x.x : x;
-      this.y *= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
+      this.y *= x instanceof game.Vector ? x.y : y;
       return this;
     },
 
@@ -103,7 +115,7 @@ game.module(
     **/
     divide: function(x, y) {
       this.x /= x instanceof game.Vector ? x.x : x;
-      this.y /= x instanceof game.Vector ? x.y : (y || ((y !== 0) ? x : 0));
+      this.y /= x instanceof game.Vector ? x.y : y;
       return this;
     },
 
@@ -120,12 +132,33 @@ game.module(
     },
 
     /**
+      Get squared euclidian distance of two vectors.
+      @method distance
+      @param {game.Vector} vector
+      @return {Number}
+    **/
+    squaredDistance: function(vector) {
+      var x = vector.x - this.x;
+      var y = vector.y - this.y;
+      return x * x + y * y;
+    },
+
+    /**
       Get length of vector.
       @method length
       @return {Number}
     **/
     length: function() {
-      return Math.sqrt(this.dot());
+      return Math.sqrt(this.lengthSquared());
+    },
+
+    /**
+      Get squared length of vector.
+      @method length
+      @return {Number}
+    **/
+    squaredLength: function() {
+      return this.x * this.x + this.y * this.y;
     },
 
     /**
