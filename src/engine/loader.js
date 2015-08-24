@@ -144,9 +144,7 @@ game.module(
         this.loaded++;
 
         this.percent = Math.round(this.loaded / (this.assetQueue.length + this.audioQueue.length) * 100);
-        if (this.percent <= 100) {
-          this.onPercentChange();
-        }
+        this.onPercentChange();
       }
 
       if (this.dynamic && this.loaded === this.assetQueue.length + this.audioQueue.length) this.ready();
@@ -228,8 +226,10 @@ game.module(
   });
 
   var JSON_ATLAS_SURFIX = 'json_image';
+  var FONT_ATLAS_SURFIX = 'fnt_image';
   game.Loader.isSpriteAtlas = function isSpriteAtlas(res) {
-    return res.name.slice(-JSON_ATLAS_SURFIX.length) == JSON_ATLAS_SURFIX;
+    return (res.name.slice(-JSON_ATLAS_SURFIX.length) == JSON_ATLAS_SURFIX) ||
+      (res.name.slice(-FONT_ATLAS_SURFIX.length) == FONT_ATLAS_SURFIX);
   }
 
   game.addAttributes('Loader', {
