@@ -311,7 +311,6 @@ var game = {
     if (!this[extend]) throw 'Class ' + extend + ' not found';
 
     this[name] = this[extend].extend(content);
-    this._currentModule.classes.push(name);
     return this[name];
   },
 
@@ -416,7 +415,7 @@ var game = {
 
     if (this.modules[name] && this.modules[name].body) throw 'Module ' + name + ' is already defined';
 
-    this._current = { name: name, requires: [], loaded: false, classes: [] };
+    this._current = { name: name, requires: [], loaded: false, imports: {}, exports: {} };
 
     if (name.indexOf('game.') === 0) {
       this._gameModuleDefined = true;
@@ -725,6 +724,8 @@ var game = {
           this._loadScript(name, module.name);
         } else if (!this.modules[name].loaded) {
           dependenciesLoaded = false;
+        } else {
+          module.imports[name] = this.modules[name].exports;
         }
       }
 
