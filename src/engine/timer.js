@@ -12,95 +12,92 @@ game.module(
     @constructor
     @param {Number} [ms]
   **/
-  game.createClass('Timer', {
+  function Timer(ms) {
     /**
       Timer's target time.
       @property {Number} target
     **/
-    target: 0,
+    this.target = 0;
     /**
       Timer's base time.
       @property {Number} base
     **/
-    base: 0,
+    this.base = 0;
     /**
       @property {Number} _last
       @private
     **/
-    _last: 0,
+    this._last = game.Timer.time;
     /**
       @property {Number} _pauseTime
       @private
     **/
-    _pauseTime: 0,
+    this._pauseTime = 0;
 
-    init: function(ms) {
-      this._last = game.Timer.time;
-      this.set(ms);
-    },
+    this.set(ms);
+  }
 
-    /**
-      Set time for timer.
-      @method set
-      @param {Number} ms
-    **/
-    set: function(ms) {
-      if (typeof ms !== 'number') ms = 0;
-      this.target = ms;
-      this.reset();
-    },
+  /**
+    Set time for timer.
+    @method set
+    @param {Number} ms
+  **/
+  Timer.prototype.set = function set(ms) {
+    if (typeof ms !== 'number') ms = 0;
+    this.target = ms;
+    this.reset();
+  };
 
-    /**
-      Reset timer.
-      @method reset
-    **/
-    reset: function() {
-      this.base = game.Timer.time;
+  /**
+    Reset timer.
+    @method reset
+  **/
+  Timer.prototype.reset = function reset() {
+    this.base = Timer.time;
+    this._pauseTime = 0;
+  };
+
+  /**
+    Get time since last delta.
+    @method delta
+    @return {Number} delta
+  **/
+  Timer.prototype.delta = function delta() {
+    var delta = Timer.time - this._last;
+    this._last = Timer.time;
+    return this._pauseTime ? 0 : delta;
+  };
+
+  /**
+    Get time since start.
+    @method time
+    @return {Number} time
+  **/
+  Timer.prototype.time = function time() {
+    var time = (this._pauseTime || Timer.time) - this.base - this.target;
+    return time;
+  };
+
+  /**
+    Pause timer.
+    @method pause
+  **/
+  Timer.prototype.pause = function pause() {
+    if (!this._pauseTime) this._pauseTime = Timer.time;
+  };
+
+  /**
+    Resume paused timer.
+    @method resume
+  **/
+  Timer.prototype.resume = function resume() {
+    if (this._pauseTime) {
+      this.base += Timer.time - this._pauseTime;
       this._pauseTime = 0;
-    },
+    }
+  };
 
-    /**
-      Get time since last delta.
-      @method delta
-      @return {Number} delta
-    **/
-    delta: function() {
-      var delta = game.Timer.time - this._last;
-      this._last = game.Timer.time;
-      return this._pauseTime ? 0 : delta;
-    },
-
-    /**
-      Get time since start.
-      @method time
-      @return {Number} time
-    **/
-    time: function() {
-      var time = (this._pauseTime || game.Timer.time) - this.base - this.target;
-      return time;
-    },
-
-    /**
-      Pause timer.
-      @method pause
-    **/
-    pause: function() {
-      if (!this._pauseTime) this._pauseTime = game.Timer.time;
-    },
-
-    /**
-      Resume paused timer.
-      @method resume
-    **/
-    resume: function() {
-      if (this._pauseTime) {
-        this.base += game.Timer.time - this._pauseTime;
-        this._pauseTime = 0;
-      }
-    },
-  });
-
-  game.addAttributes('Timer', {
+  game.addAttributes(Timer, {
     /**
       Current time.
       @attribute {Number} time
@@ -146,5 +143,7 @@ game.module(
       this._last = now;
     },
   });
+
+  game.Timer = Timer;
 
 });
