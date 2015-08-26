@@ -13,120 +13,117 @@ game.module(
     @constructor
     @param {String} id
   **/
-  game.createClass('Storage', {
+  function Storage(id) {
     /**
       @property {String} id
     **/
-    id: null,
+    this.id = id || Storage.id;
     /**
       Is local storage supported.
       @property {Boolean} supported
     **/
-    supported: null,
+    this.supported = this._isSupported();
+  }
 
-    init: function(id) {
-      this.id = id || game.Storage.id;
-      this.supported = this._isSupported();
-    },
+  /**
+    Set value to local storage.
+    @method set
+    @param {String} key
+    @param {*} value
+  **/
+  Storage.prototype.set = function set(key, value) {
+    if (!this.supported) return false;
+    localStorage.setItem(this.id + '.' + key, this._encode(value));
+  };
 
-    /**
-      Set value to local storage.
-      @method set
-      @param {String} key
-      @param {*} value
-    **/
-    set: function(key, value) {
-      if (!this.supported) return false;
-      localStorage.setItem(this.id + '.' + key, this._encode(value));
-    },
+  /**
+    Get key from local storage.
+    @method get
+    @param {String} key
+    @param {*} [defaultValue]
+    @return {*} value
+  **/
+  Storage.prototype.get = function get(key, defaultValue) {
+    var raw = localStorage.getItem(this.id + '.' + key);
+    if (raw === null) return defaultValue;
+    try {
+      return this._decode(raw);
+    }
+    catch (e) {
+      return raw;
+    }
+  };
 
-    /**
-      Get key from local storage.
-      @method get
-      @param {String} key
-      @param {*} [defaultValue]
-      @return {*} value
-    **/
-    get: function(key, defaultValue) {
-      var raw = localStorage.getItem(this.id + '.' + key);
-      if (raw === null) return defaultValue;
-      try {
-        return this._decode(raw);
-      }
-      catch (e) {
-        return raw;
-      }
-    },
+  /**
+    Check if a key is in local storage.
+    @method has
+    @param {String} key
+    @return {Boolean}
+  **/
+  Storage.prototype.has = function has(key) {
+    return localStorage.getItem(this.id + '.' + key) !== null;
+  };
 
-    /**
-      Check if a key is in local storage.
-      @method has
-      @param {String} key
-      @return {Boolean}
-    **/
-    has: function(key) {
-      return localStorage.getItem(this.id + '.' + key) !== null;
-    },
+  /**
+    Remove key from local storage.
+    @method remove
+    @param {String} key
+  **/
+  Storage.prototype.remove = function remove(key) {
+    localStorage.removeItem(this.id + '.' + key);
+  };
 
-    /**
-      Remove key from local storage.
-      @method remove
-      @param {String} key
-    **/
-    remove: function(key) {
-      localStorage.removeItem(this.id + '.' + key);
-    },
+  /**
+    Reset local storage. This removes ALL keys.
+    @method reset
+  **/
+  Storage.prototype.reset = function reset() {
+    for (var i = localStorage.length - 1; i >= 0; i--) {
+      var key = localStorage.key(i);
+      if (key.indexOf(this.id + '.') !== -1) localStorage.removeItem(key);
+    }
+  };
 
-    /**
-      Reset local storage. This removes ALL keys.
-      @method reset
-    **/
-    reset: function() {
-      for (var i = localStorage.length - 1; i >= 0; i--) {
-        var key = localStorage.key(i);
-        if (key.indexOf(this.id + '.') !== -1) localStorage.removeItem(key);
-      }
-    },
+  /**
+    @method _encode
+    @private
+  **/
+  Storage.prototype._encode = function _encode(val) {
+    return JSON.stringify(val);
+  };
 
-    /**
-      @method _encode
-      @private
-    **/
-    _encode: function(val) {
-      return JSON.stringify(val);
-    },
+  /**
+    @method _decode
+    @private
+  **/
+  Storage.prototype._decode = function _decode(str) {
+    return JSON.parse(str);
+  };
 
-    /**
-      @method _decode
-      @private
-    **/
-    _decode: function(str) {
-      return JSON.parse(str);
-    },
+  /**
+    @method _isSupported
+    @private
+  **/
+  Storage.prototype._isSupported = function _isSupported() {
+    if (typeof localStorage !== 'object') return false;
+    try {
+      localStorage.setItem('localStorage', 1);
+      localStorage.removeItem('localStorage');
+    }
+    catch (e) {
+      return false;
+    }
 
-    /**
-      @method _isSupported
-      @private
-    **/
-    _isSupported: function() {
-      if (typeof localStorage !== 'object') return false;
-      try {
-        localStorage.setItem('localStorage', 1);
-        localStorage.removeItem('localStorage');
-      }
-      catch (e) {
-        return false;
-      }
+    return true;
+  };
 
-      return true;
-    },
-  });
-
-  game.addAttributes('Storage', {
+  game.addAttributes(Storage, {
     /**
       @attribute {String} id
     **/
     id: '',
   });
+
+  game.Storage = Storage;
 
 });
