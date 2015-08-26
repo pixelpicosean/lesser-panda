@@ -12,450 +12,444 @@ game.module(
     @constructor
     @param {Object} object
   **/
-  game.createClass('Tween', {
+  function Tween(object) {
+    if (typeof object !== 'object') throw 'Tween parameter must be object';
+
     /**
       List of chainged tweens.
       @property {Array} chainedTweens
     **/
-    chainedTweens: [],
+    this.chainedTweens = [];
     /**
       Current time of tween.
       @property {Number} currentTime
     **/
-    currentTime: 0,
+    this.currentTime = 0;
     /**
       Is delay repeating.
       @property {Boolean} delayRepeat
       @default false
     **/
-    delayRepeat: false,
+    this.delayRepeat = false;
     /**
       Tween's delay time.
       @property {Number} delayTime
       @default 0
     **/
-    delayTime: 0,
+    this.delayTime = 0;
     /**
       Tween duration.
       @property {Number} duration
       @default 1000
     **/
-    duration: 1000,
+    this.duration = 1000;
     /**
       Tween's easing function.
       @property {Function} easingFunction
     **/
-    easingFunction: null,
+    this.easingFunction = game.Tween.Easing.Linear.None;
     /**
       Tween's interpolation function.
       @property {Function} interpolationFunction
     **/
-    interpolationFunction: null,
+    this.interpolationFunction = game.Tween.Interpolation.Linear;
     /**
       Tween's target object.
       @property {Object} object
     **/
-    object: null,
+    this.object = object;
     /**
       Tween's complete callback.
       @property {Function} onCompleteCallback
     **/
-    onCompleteCallback: null,
+    this.onCompleteCallback = null;
     /**
       Tween's repeat callback.
       @property {Function} onRepeatCallback
     **/
-    onRepeatCallback: null,
+    this.onRepeatCallback = null;
     /**
       Tween's start callback.
       @property {Function} onStartCallback
     **/
-    onStartCallback: null,
+    this.onStartCallback = null;
     /**
       Tween's update callback.
       @property {Function} onUpdateCallback
     **/
-    onUpdateCallback: null,
+    this.onUpdateCallback = null;
     /**
       Is tween paused.
       @property {Boolean} paused
     **/
-    paused: false,
+    this.paused = false;
     /**
       Is tween playing.
       @property {Boolean} playing
     **/
-    playing: false,
+    this.playing = false;
     /**
       Tween's repeat count.
       @property {Number} repeatCount
     **/
-    repeatCount: 0,
+    this.repeatCount = 0;
     /**
       Is tween currently reversed.
       @property {Boolean} reversed
     **/
-    reversed: false,
+    this.reversed = false;
     /**
       Is yoyo enabled.
       @property {Boolean} yoyoEnabled
     **/
-    yoyoEnabled: false,
+    this.yoyoEnabled = false;
     /**
       @property {Boolean} _onStartCallbackFired
       @private
     **/
-    _onStartCallbackFired: false,
+    this._onStartCallbackFired = false;
     /**
       @property {Number} _originalStartTime
       @private
     **/
-    _originalStartTime: null,
+    this._originalStartTime = null;
     /**
       @property {Number} _repeats
       @private
     **/
-    _repeats: 0,
+    this._repeats = 0;
     /**
       @property {Boolean} _shouldRemove
       @private
     **/
-    _shouldRemove: false,
+    this._shouldRemove = false;
     /**
       @property {Number} _startTime
       @private
     **/
-    _startTime: null,
+    this._startTime = null;
     /**
       @property {Object} _valuesEnd
       @private
     **/
-    _valuesEnd: null,
+    this._valuesEnd = null;
     /**
       @property {Object} _valuesStart
       @private
     **/
-    _valuesStart: {},
+    this._valuesStart = {};
     /**
       @property {Object} _valuesStartRepeat
       @private
     **/
-    _valuesStartRepeat: {},
+    this._valuesStartRepeat = {};
 
-    staticInit: function(object) {
-      if (typeof object !== 'object') throw 'Tween parameter must be object';
-      this.object = object;
+    for (var field in object) {
+      this._valuesStart[field] = parseFloat(object[field], 10);
+    }
+  }
 
-      this.easingFunction = game.Tween.Easing.Linear.None;
-      this.interpolationFunction = game.Tween.Interpolation.Linear;
+  /**
+    Chain tween.
+    @method chain
+    @param {Tween} tween
+    @chainable
+  **/
+  Tween.prototype.chain = function chain() {
+    this.chainedTweens = arguments;
+    return this;
+  };
 
-      for (var field in object) {
-        this._valuesStart[field] = parseFloat(object[field], 10);
+  /**
+    Set delay for tween.
+    @method delay
+    @param {Number} time
+    @param {Boolean} repeat
+    @chainable
+  **/
+  Tween.prototype.delay = function delay(time, repeat) {
+    this.delayTime = time;
+    this.delayRepeat = !!repeat;
+    return this;
+  };
+
+  /**
+    Set easing for tween.
+    @method easing
+    @param {String} easing
+    @chainable
+  **/
+  Tween.prototype.easing = function easing(easing) {
+    if (typeof easing === 'string') {
+      easing = easing.split('.');
+      this.easingFunction = Tween.Easing[easing[0]][easing[1]];
+    } else {
+      this.easingFunction = easing;
+    }
+
+    return this;
+  };
+
+  /**
+    Set interpolation for tween.
+    @method interpolation
+    @param {Function} interpolation
+    @chainable
+  **/
+  Tween.prototype.interpolation = function interpolation(interpolation) {
+    this.interpolationFunction = interpolation;
+    return this;
+  };
+
+  /**
+    Set onComplete callback for tween.
+    @method onComplete
+    @param {Function} callback
+    @chainable
+  **/
+  Tween.prototype.onComplete = function onComplete(callback) {
+    this.onCompleteCallback = callback;
+    return this;
+  };
+
+  /**
+    Set onRepeat callback for tween.
+    @method onRepeat
+    @param {Function} callback
+    @chainable
+  **/
+  Tween.prototype.onRepeat = function onRepeat(callback) {
+    this.onRepeatCallback = callback;
+    return this;
+  };
+
+  /**
+    Set onStart callback for tween.
+    @method onStart
+    @param {Function} callback
+    @chainable
+  **/
+  Tween.prototype.onStart = function onStart(callback) {
+    this.onStartCallback = callback;
+    return this;
+  };
+
+  /**
+    Set onUpdate callback for tween.
+    @method onUpdate
+    @param {Function} callback
+    @chainable
+  **/
+  Tween.prototype.onUpdate = function onUpdate(callback) {
+    this.onUpdateCallback = callback;
+    return this;
+  };
+
+  /**
+    Pause tween.
+    @method pause
+  **/
+  Tween.prototype.pause = function pause() {
+    this.paused = true;
+  };
+
+  /**
+    Set repeat for tween.
+    @method repeat
+    @param {Number} times
+    @chainable
+  **/
+  Tween.prototype.repeat = function repeat(times) {
+    if (typeof times === 'undefined') times = Infinity;
+    this.repeatCount = times;
+    return this;
+  };
+
+  /**
+    Resume tween.
+    @method resume
+  **/
+  Tween.prototype.resume = function resume() {
+    this.paused = false;
+  };
+
+  /**
+    Start tween.
+    @method start
+    @chainable
+  **/
+  Tween.prototype.start = function start() {
+    if (game.scene) game.scene.tweens.push(this);
+    this.currentTime = 0;
+    this.playing = true;
+    this._onStartCallbackFired = false;
+    this._startTime = this.delayTime;
+    this._originalStartTime = this._startTime;
+    for (var property in this._valuesEnd) {
+      // check ifan Array was provided as property value
+      if (this._valuesEnd[property] instanceof Array) {
+        if (this._valuesEnd[property].length === 0) {
+          continue;
+        }
+
+        // create a local copy of the Array with the start value at the front
+        this._valuesEnd[property] = [this.object[property]].concat(this._valuesEnd[property]);
       }
-    },
 
-    /**
-      Chain tween.
-      @method chain
-      @param {Tween} tween
-      @chainable
-    **/
-    chain: function() {
-      this.chainedTweens = arguments;
-      return this;
-    },
+      this._valuesStart[property] = this.object[property];
+      if ((this._valuesStart[property] instanceof Array) === false) {
+        this._valuesStart[property] *= 1.0; // Ensures we're using numbers, not strings
+      }
 
-    /**
-      Set delay for tween.
-      @method delay
-      @param {Number} time
-      @param {Boolean} repeat
-      @chainable
-    **/
-    delay: function(time, repeat) {
-      this.delayTime = time;
-      this.delayRepeat = !!repeat;
-      return this;
-    },
+      this._valuesStartRepeat[property] = this._valuesStart[property] || 0;
+    }
 
-    /**
-      Set easing for tween.
-      @method easing
-      @param {String} easing
-      @chainable
-    **/
-    easing: function(easing) {
-      if (typeof easing === 'string') {
-        easing = easing.split('.');
-        this.easingFunction = game.Tween.Easing[easing[0]][easing[1]];
+    return this;
+  };
+
+  /**
+    Stop tween.
+    @method stop
+    @chainable
+  **/
+  Tween.prototype.stop = function stop() {
+    if (!this.playing) return this;
+    this.playing = false;
+    this._shouldRemove = true;
+    this._stopChainedTweens();
+    return this;
+  };
+
+  /**
+    Set tween properties
+    @method to
+    @param {Object} properties
+    @param {Number} duration
+    @chainable
+  **/
+  Tween.prototype.to = function to(properties, duration) {
+    this.duration = duration || this.duration;
+    this._valuesEnd = properties;
+    return this;
+  };
+
+  /**
+    Set tween to yoyo.
+    @method yoyo
+    @param {Boolean} enabled
+    @chainable
+  **/
+  Tween.prototype.yoyo = function yoyo(enabled) {
+    if (typeof enabled === 'undefined') enabled = true;
+    this.yoyoEnabled = enabled;
+    return this;
+  };
+
+  /**
+    @method _stopChainedTweens
+    @private
+  **/
+  Tween.prototype._stopChainedTweens = function _stopChainedTweens() {
+    for (var i = 0, numChainedTweens = this.chainedTweens.length; i < numChainedTweens; i++) {
+      this.chainedTweens[i].stop();
+    }
+  };
+
+  /**
+    @method _update
+    @private
+  **/
+  Tween.prototype._update = function _update() {
+    if (this._shouldRemove) return false;
+    if (this.paused) return true;
+
+    this.currentTime += game.system.delta * 1000;
+
+    if (this.currentTime < this._startTime) return true;
+
+    if (this._onStartCallbackFired === false) {
+      if (this.onStartCallback !== null) {
+        this.onStartCallback.call(this.object);
+      }
+
+      this._onStartCallbackFired = true;
+    }
+
+    var elapsed = (this.currentTime - this._startTime) / this.duration;
+    elapsed = elapsed > 1 ? 1 : elapsed;
+    var value = this.easingFunction(elapsed);
+    var property;
+    for (property in this._valuesEnd) {
+      var start = this._valuesStart[property] || 0;
+      var end = this._valuesEnd[property];
+      if (end instanceof Array) {
+        this.object[property] = this.interpolationFunction(end, value);
       } else {
-        this.easingFunction = easing;
-      }
-
-      return this;
-    },
-
-    /**
-      Set interpolation for tween.
-      @method interpolation
-      @param {Function} interpolation
-      @chainable
-    **/
-    interpolation: function(interpolation) {
-      this.interpolationFunction = interpolation;
-      return this;
-    },
-
-    /**
-      Set onComplete callback for tween.
-      @method onComplete
-      @param {Function} callback
-      @chainable
-    **/
-    onComplete: function(callback) {
-      this.onCompleteCallback = callback;
-      return this;
-    },
-
-    /**
-      Set onRepeat callback for tween.
-      @method onRepeat
-      @param {Function} callback
-      @chainable
-    **/
-    onRepeat: function(callback) {
-      this.onRepeatCallback = callback;
-      return this;
-    },
-
-    /**
-      Set onStart callback for tween.
-      @method onStart
-      @param {Function} callback
-      @chainable
-    **/
-    onStart: function(callback) {
-      this.onStartCallback = callback;
-      return this;
-    },
-
-    /**
-      Set onUpdate callback for tween.
-      @method onUpdate
-      @param {Function} callback
-      @chainable
-    **/
-    onUpdate: function(callback) {
-      this.onUpdateCallback = callback;
-      return this;
-    },
-
-    /**
-      Pause tween.
-      @method pause
-    **/
-    pause: function() {
-      this.paused = true;
-    },
-
-    /**
-      Set repeat for tween.
-      @method repeat
-      @param {Number} times
-      @chainable
-    **/
-    repeat: function(times) {
-      if (typeof times === 'undefined') times = Infinity;
-      this.repeatCount = times;
-      return this;
-    },
-
-    /**
-      Resume tween.
-      @method resume
-    **/
-    resume: function() {
-      this.paused = false;
-    },
-
-    /**
-      Start tween.
-      @method start
-      @chainable
-    **/
-    start: function() {
-      if (game.scene) game.scene.tweens.push(this);
-      this.currentTime = 0;
-      this.playing = true;
-      this._onStartCallbackFired = false;
-      this._startTime = this.delayTime;
-      this._originalStartTime = this._startTime;
-      for (var property in this._valuesEnd) {
-        // check ifan Array was provided as property value
-        if (this._valuesEnd[property] instanceof Array) {
-          if (this._valuesEnd[property].length === 0) {
-            continue;
-          }
-
-          // create a local copy of the Array with the start value at the front
-          this._valuesEnd[property] = [this.object[property]].concat(this._valuesEnd[property]);
+        // Parses relative end values with start as base (e.g.: +10, -3)
+        if (typeof end === 'string') {
+          end = start + parseFloat(end, 10);
         }
 
-        this._valuesStart[property] = this.object[property];
-        if ((this._valuesStart[property] instanceof Array) === false) {
-          this._valuesStart[property] *= 1.0; // Ensures we're using numbers, not strings
-        }
-
-        this._valuesStartRepeat[property] = this._valuesStart[property] || 0;
-      }
-
-      return this;
-    },
-
-    /**
-      Stop tween.
-      @method stop
-      @chainable
-    **/
-    stop: function() {
-      if (!this.playing) return this;
-      this.playing = false;
-      this._shouldRemove = true;
-      this._stopChainedTweens();
-      return this;
-    },
-
-    /**
-      Set tween properties
-      @method to
-      @param {Object} properties
-      @param {Number} duration
-      @chainable
-    **/
-    to: function(properties, duration) {
-      this.duration = duration || this.duration;
-      this._valuesEnd = properties;
-      return this;
-    },
-
-    /**
-      Set tween to yoyo.
-      @method yoyo
-      @param {Boolean} enabled
-      @chainable
-    **/
-    yoyo: function(enabled) {
-      if (typeof enabled === 'undefined') enabled = true;
-      this.yoyoEnabled = enabled;
-      return this;
-    },
-
-    /**
-      @method _stopChainedTweens
-      @private
-    **/
-    _stopChainedTweens: function() {
-      for (var i = 0, numChainedTweens = this.chainedTweens.length; i < numChainedTweens; i++) {
-        this.chainedTweens[i].stop();
-      }
-    },
-
-    /**
-      @method _update
-      @private
-    **/
-    _update: function() {
-      if (this._shouldRemove) return false;
-      if (this.paused) return true;
-
-      this.currentTime += game.system.delta * 1000;
-
-      if (this.currentTime < this._startTime) return true;
-
-      if (this._onStartCallbackFired === false) {
-        if (this.onStartCallback !== null) {
-          this.onStartCallback.call(this.object);
-        }
-
-        this._onStartCallbackFired = true;
-      }
-
-      var elapsed = (this.currentTime - this._startTime) / this.duration;
-      elapsed = elapsed > 1 ? 1 : elapsed;
-      var value = this.easingFunction(elapsed);
-      var property;
-      for (property in this._valuesEnd) {
-        var start = this._valuesStart[property] || 0;
-        var end = this._valuesEnd[property];
-        if (end instanceof Array) {
-          this.object[property] = this.interpolationFunction(end, value);
-        } else {
-          // Parses relative end values with start as base (e.g.: +10, -3)
-          if (typeof end === 'string') {
-            end = start + parseFloat(end, 10);
-          }
-
-          // Protect against non numeric properties
-          if (typeof end === 'number') {
-            this.object[property] = start + (end - start) * value;
-          }
+        // Protect against non numeric properties
+        if (typeof end === 'number') {
+          this.object[property] = start + (end - start) * value;
         }
       }
+    }
 
-      if (this.onUpdateCallback !== null) {
-        this.onUpdateCallback.call(this.object, value);
-      }
+    if (this.onUpdateCallback !== null) {
+      this.onUpdateCallback.call(this.object, value);
+    }
 
-      if (elapsed === 1) {
-        if (this.repeatCount > 0) {
-          if (isFinite(this.repeatCount)) {
-            this.repeatCount--;
-          }
-
-          this._repeats += 1;
-
-          // Reassign starting values, restart by making startTime = now
-          for (property in this._valuesStartRepeat) {
-            if (typeof this._valuesEnd[property] === 'string') {
-              this._valuesStartRepeat[property] = this._valuesStartRepeat[property] + parseFloat(this._valuesEnd[property], 10);
-            }
-
-            if (this.yoyoEnabled) {
-              var tmp = this._valuesStartRepeat[property];
-              this._valuesStartRepeat[property] = this._valuesEnd[property];
-              this._valuesEnd[property] = tmp;
-              this.reversed = !this.reversed;
-            }
-
-            this._valuesStart[property] = this._valuesStartRepeat[property];
-          }
-
-          if (!this.delayRepeat) this.delayTime = 0;
-          this._startTime = this._originalStartTime + this._repeats * (this.duration + this.delayTime);
-          if (this.onRepeatCallback !== null) {
-            this.onRepeatCallback.call(this.object);
-          }
-
-          return true;
-        } else {
-          this.playing = false;
-          if (this.onCompleteCallback !== null) {
-            this.onCompleteCallback.call(this.object);
-          }
-
-          for (var i = 0, numChainedTweens = this.chainedTweens.length; i < numChainedTweens; i++) {
-            this.chainedTweens[i].start();
-          }
-
-          return false;
+    if (elapsed === 1) {
+      if (this.repeatCount > 0) {
+        if (isFinite(this.repeatCount)) {
+          this.repeatCount--;
         }
+
+        this._repeats += 1;
+
+        // Reassign starting values, restart by making startTime = now
+        for (property in this._valuesStartRepeat) {
+          if (typeof this._valuesEnd[property] === 'string') {
+            this._valuesStartRepeat[property] = this._valuesStartRepeat[property] + parseFloat(this._valuesEnd[property], 10);
+          }
+
+          if (this.yoyoEnabled) {
+            var tmp = this._valuesStartRepeat[property];
+            this._valuesStartRepeat[property] = this._valuesEnd[property];
+            this._valuesEnd[property] = tmp;
+            this.reversed = !this.reversed;
+          }
+
+          this._valuesStart[property] = this._valuesStartRepeat[property];
+        }
+
+        if (!this.delayRepeat) this.delayTime = 0;
+        this._startTime = this._originalStartTime + this._repeats * (this.duration + this.delayTime);
+        if (this.onRepeatCallback !== null) {
+          this.onRepeatCallback.call(this.object);
+        }
+
+        return true;
+      } else {
+        this.playing = false;
+        if (this.onCompleteCallback !== null) {
+          this.onCompleteCallback.call(this.object);
+        }
+
+        for (var i = 0, numChainedTweens = this.chainedTweens.length; i < numChainedTweens; i++) {
+          this.chainedTweens[i].start();
+        }
+
+        return false;
       }
+    }
 
-      return true;
-    },
-  });
+    return true;
+  };
 
-  game.addAttributes('Tween', {
+  game.addAttributes(Tween, {
     /**
       @attribute {Object} Easing
     **/
@@ -726,113 +720,113 @@ game.module(
     },
   });
 
+  game.Tween = Tween;
+
   /**
     @class TweenGroup
     @constructor
     @param {Function} [onComplete]
   **/
-  game.createClass('TweenGroup', {
+  function TweenGroup(onComplete) {
     /**
       On complete callback for group.
       @property {Function} onComplete
     **/
-    onComplete: null,
+    this.onComplete = onComplete;
     /**
       List of tweens in group.
       @property {Array} tweens
     **/
-    tweens: [],
+    this.tweens = [];
     /**
       @property {Boolean} _complete
       @private
     **/
-    _complete: false,
+    this._complete = false;
+  }
 
-    staticInit: function(onComplete) {
-      this.onComplete = onComplete;
-    },
+  /**
+    Add tween to group.
+    @method add
+    @param {Tween} tween
+    @return {Tween}
+  **/
+  TweenGroup.prototype.add = function add(tween) {
+    tween.onComplete(this._tweenComplete.bind(this));
+    this.tweens.push(tween);
+    return tween;
+  };
 
-    /**
-      Add tween to group.
-      @method add
-      @param {Tween} tween
-      @return {Tween}
-    **/
-    add: function(tween) {
-      tween.onComplete(this._tweenComplete.bind(this));
-      this.tweens.push(tween);
-      return tween;
-    },
+  /**
+    Pause tweening.
+    @method pause
+  **/
+  TweenGroup.prototype.pause = function pause() {
+    for (var i = 0; i < this.tweens.length; i++) {
+      this.tweens[i].pause();
+    }
+  };
 
-    /**
-      Pause tweening.
-      @method pause
-    **/
-    pause: function() {
-      for (var i = 0; i < this.tweens.length; i++) {
-        this.tweens[i].pause();
-      }
-    },
+  /**
+    Remove tween from group.
+    @method remove
+    @param {Tween} tween
+  **/
+  TweenGroup.prototype.remove = function remove(tween) {
+    this.tweens.erase(tween);
+  };
 
-    /**
-      Remove tween from group.
-      @method remove
-      @param {Tween} tween
-    **/
-    remove: function(tween) {
-      this.tweens.erase(tween);
-    },
+  /**
+    Resume tweening.
+    @method resume
+  **/
+  TweenGroup.prototype.resume = function resume() {
+    for (var i = 0; i < this.tweens.length; i++) {
+      this.tweens[i].resume();
+    }
+  };
 
-    /**
-      Resume tweening.
-      @method resume
-    **/
-    resume: function() {
-      for (var i = 0; i < this.tweens.length; i++) {
-        this.tweens[i].resume();
-      }
-    },
+  /**
+    Start tweening.
+    @method start
+  **/
+  TweenGroup.prototype.start = function start() {
+    for (var i = 0; i < this.tweens.length; i++) {
+      this.tweens[i].start();
+    }
+  };
 
-    /**
-      Start tweening.
-      @method start
-    **/
-    start: function() {
-      for (var i = 0; i < this.tweens.length; i++) {
-        this.tweens[i].start();
-      }
-    },
+  /**
+    Stop tweening.
+    @method stop
+    @param {Boolean} doComplete Call onComplete function
+    @param {Boolean} endTween Set started tweens to end values
+  **/
+  TweenGroup.prototype.stop = function stop(doComplete, endTween) {
+    if (this._complete) return;
 
-    /**
-      Stop tweening.
-      @method stop
-      @param {Boolean} doComplete Call onComplete function
-      @param {Boolean} endTween Set started tweens to end values
-    **/
-    stop: function(doComplete, endTween) {
-      if (this._complete) return;
+    for (var i = 0; i < this.tweens.length; i++) {
+      this.tweens[i].stop(endTween);
+    }
 
-      for (var i = 0; i < this.tweens.length; i++) {
-        this.tweens[i].stop(endTween);
-      }
+    if (!this._complete && doComplete) this._tweenComplete();
+    this._complete = true;
+  };
 
-      if (!this._complete && doComplete) this._tweenComplete();
-      this._complete = true;
-    },
+  /**
+    @method _tweenComplete
+    @private
+  **/
+  TweenGroup.prototype._tweenComplete = function _tweenComplete() {
+    if (this._complete) return;
+    for (var i = 0; i < this.tweens.length; i++) {
+      if (this.tweens[i].playing) return;
+    }
 
-    /**
-      @method _tweenComplete
-      @private
-    **/
-    _tweenComplete: function() {
-      if (this._complete) return;
-      for (var i = 0; i < this.tweens.length; i++) {
-        if (this.tweens[i].playing) return;
-      }
+    this._complete = true;
+    if (typeof this.onComplete === 'function') this.onComplete();
+  };
 
-      this._complete = true;
-      if (typeof this.onComplete === 'function') this.onComplete();
-    },
-  });
+  game.TweenGroup = TweenGroup;
 
 });

@@ -44,52 +44,67 @@ game.module(
   game.EventEmitter = PIXI.EventEmitter;
 
   /**
+    Remove from it's parent.
+    @method remove
+  **/
+  game.DisplayObject.prototype.remove = function remove() {
+    if (this.parent) this.parent.removeChild(this);
+  };
+
+  /**
+    Add to container.
+    @method addTo
+    @param {game.DisplayObject|game.Container} container
+  **/
+  game.DisplayObject.prototype.addTo = function addTo(container) {
+    container.addChild(this);
+    return this;
+  };
+
+  /**
     @class AnimationData
     @constructor
     @param {Array} frames
     @param {Object} [props]
   **/
-  game.createClass('AnimationData', {
+  function AnimationData(frames, props) {
     /**
       Is animation looping.
       @property {Boolean} loop
       @default true
     **/
-    loop: true,
+    this.loop = true;
     /**
       Function that is called, when animation is completed.
       @property {Function} onComplete
     **/
-    onComplete: null,
+    this.onComplete = null;
     /**
       Play animation in random order.
       @property {Boolean} random
       @default false
     **/
-    random: false,
+    this.random = false;
     /**
       Play animation in reverse.
       @property {Boolean} reverse
       @default false
     **/
-    reverse: false,
+    this.reverse = false;
     /**
       Speed of animation (frames per second).
       @property {Number} speed
       @default 10
     **/
-    speed: 10,
+    this.speed = 10;
     /**
       Animation frame order.
       @property {Array} frames
     **/
-    frames: null,
+    this.frames = frames;
 
-    staticInit: function(frames, props) {
-      this.frames = frames;
-      game.merge(this, props);
-    },
-  });
+    game.merge(this, props);
+  }
 
   /**
     http://www.goodboydigital.com/pixijs/docs/classes/MovieClip.html
@@ -98,7 +113,7 @@ game.module(
     @constructor
     @param {Array} textures Textures this animation made up of
   **/
-  game.Animation = function(textures) {
+  function Animation(textures) {
     this.anims = {};
     this.currentAnim = 'default';
     this.currentFrame = 0;
@@ -132,8 +147,8 @@ game.module(
     PIXI.Sprite.call(this, this.textures[0]);
   };
 
-  game.Animation.prototype = Object.create(PIXI.Sprite.prototype);
-  game.Animation.prototype.constructor = game.Animation;
+  Animation.prototype = Object.create(PIXI.Sprite.prototype);
+  Animation.prototype.constructor = Animation;
 
   /**
     Add new animation.
@@ -143,7 +158,7 @@ game.module(
     @param {Object} [props]
     @chainable
   **/
-  game.Animation.prototype.addAnim = function(name, frames, props) {
+  Animation.prototype.addAnim = function addAnim(name, frames, props) {
     if (!name) return;
     if (!frames) {
       frames = [];
@@ -152,7 +167,7 @@ game.module(
       }
     }
 
-    var anim = new game.AnimationData(frames, props);
+    var anim = new AnimationData(frames, props);
     this.anims[name] = anim;
     return this;
   };
@@ -164,7 +179,7 @@ game.module(
     @param {Number} [frame] Frame index
     @chainable
   **/
-  game.Animation.prototype.play = function(name, frame) {
+  Animation.prototype.play = function play(name, frame) {
     name = name || this.currentAnim;
     var anim = this.anims[name];
     if (!anim) return;
@@ -184,7 +199,7 @@ game.module(
     @param {Number} [frame] Frame index
     @chainable
   **/
-  game.Animation.prototype.stop = function(frame) {
+  Animation.prototype.stop = function stop(frame) {
     this.playing = false;
     if (typeof frame === 'number') this.gotoFrame(frame);
     return this;
@@ -196,7 +211,7 @@ game.module(
     @param {Number} frame
     @chainable
   **/
-  game.Animation.prototype.gotoFrame = function(frame) {
+  Animation.prototype.gotoFrame = function gotoFrame(frame) {
     var anim = this.anims[this.currentAnim];
     if (!anim) return;
     this.currentFrame = frame;
@@ -208,7 +223,7 @@ game.module(
   /**
     @method updateAnimation
   **/
-  game.Animation.prototype.updateAnimation = function() {
+  Animation.prototype.updateAnimation = function updateAnimation() {
     var anim = this.anims[this.currentAnim];
 
     if (this.playing) this._frameTime += anim.speed * game.system.delta;
@@ -252,7 +267,7 @@ game.module(
     }
   };
 
-  game.Animation.prototype.updateTransform = function() {
+  Animation.prototype.updateTransform = function updateTransform() {
     if (this.currentAnim) this.updateAnimation();
     PIXI.Sprite.prototype.updateTransform.call(this);
   };
@@ -264,7 +279,7 @@ game.module(
     @param {String} name
     @return {Animation}
   **/
-  game.Animation.fromFrames = function(name) {
+  Animation.fromFrames = function fromFrames(name) {
     var textures = [];
     for (var i in game.Texture.cache) {
       if (i.indexOf(name) === 0) textures.push(game.Texture.cache[i]);
@@ -273,23 +288,7 @@ game.module(
     if (textures.length > 0) return new game.Animation(textures);
   };
 
-  /**
-    Remove from it's parent.
-    @method remove
-  **/
-  game.DisplayObject.prototype.remove = function() {
-    if (this.parent) this.parent.removeChild(this);
-  };
-
-  /**
-    Add to container.
-    @method addTo
-    @param {game.DisplayObject|game.Container} container
-  **/
-  game.DisplayObject.prototype.addTo = function(container) {
-    container.addChild(this);
-    return this;
-  };
+  game.Animation = Animation;
 
   /**
     http://www.goodboydigital.com/pixijs/docs/classes/Sprite.html
@@ -301,7 +300,7 @@ game.module(
     @param {Number} [y]
     @param {Object} [properties]
   **/
-  game.Sprite = function(texture, x, y, properties) {
+  function Sprite(texture, x, y, properties) {
     if (typeof texture === 'string') {
       texture = game.paths[texture] || texture;
       texture = game.Texture.fromFrame(texture);
@@ -321,10 +320,10 @@ game.module(
     if (game.device.mobile && !this.touchendoutside && this.mouseupoutside) this.touchendoutside = this.mouseupoutside;
   };
 
-  game.Sprite.prototype = Object.create(PIXI.Sprite.prototype);
-  game.Sprite.prototype.constructor = game.Sprite;
+  Sprite.prototype = Object.create(PIXI.Sprite.prototype);
+  Sprite.prototype.constructor = Sprite;
 
-  Object.defineProperty(game.Sprite.prototype, 'texture', {
+  Object.defineProperty(Sprite.prototype, 'texture', {
     get: function() {
       return this._texture;
     },
@@ -363,7 +362,7 @@ game.module(
     @param {Number} height The height of sprite to crop to
     @chainable
   **/
-  game.Sprite.prototype.crop = function(x, y, width, height) {
+  Sprite.prototype.crop = function crop(x, y, width, height) {
     var texture = new PIXI.Texture(this.texture, new game.HitRectangle(x, y, width, height));
     this.texture = texture;
     return this;
@@ -376,7 +375,7 @@ game.module(
     @param {Number} offsetY Offset y coordinate to system center
     @chainable
   **/
-  game.Sprite.prototype.center = function(offsetX, offsetY) {
+  Sprite.prototype.center = function center(offsetX, offsetY) {
     this.position.x = game.system.width / 2 - this.width / 2 + this.width * this.anchor.x;
     this.position.y = game.system.height / 2 - this.height / 2 + this.height * this.anchor.y;
     this.position.x += offsetX || 0;
@@ -384,10 +383,12 @@ game.module(
     return this;
   };
 
-  game.Sprite.fromFrame = PIXI.Sprite.fromFrame;
-  game.Sprite.fromImage = PIXI.Sprite.fromImage;
+  Sprite.fromFrame = PIXI.Sprite.fromFrame;
+  Sprite.fromImage = PIXI.Sprite.fromImage;
 
-  game.Texture.fromAsset = function(id) {
+  game.Sprite = Sprite;
+
+  game.Texture.fromAsset = function fromAsset(id) {
     var path = game.paths[id] || id;
     var texture = PIXI.utils.TextureCache[path];
 
@@ -408,7 +409,7 @@ game.module(
     @param {Number} height Sprite height
     @param {Object} [properties] Properties to be merged into this sprite
   **/
-  game.TilingSprite = function(path, width, height, properties) {
+  function TilingSprite(path, width, height, properties) {
     /**
       Texture scroll speed
       @property {game.Vector} speed
@@ -420,208 +421,206 @@ game.module(
     game.merge(this, properties);
   };
 
-  game.TilingSprite.prototype = Object.create(PIXI.extras.TilingSprite.prototype);
-  game.TilingSprite.prototype.constructor = game.TilingSprite;
+  TilingSprite.prototype = Object.create(PIXI.extras.TilingSprite.prototype);
+  TilingSprite.prototype.constructor = TilingSprite;
 
   /**
     Update tile position with speed.
     @method update
   **/
-  game.TilingSprite.prototype.update = function() {
+  TilingSprite.prototype.update = function() {
     this.tilePosition.x += this.speed.x * game.system.delta;
     this.tilePosition.y += this.speed.y * game.system.delta;
   };
 
+  game.TilingSprite = TilingSprite;
+
   /**
     @class SpriteSheet
-    @extends game.Class
     @constructor
     @param {String} id Asset ID
     @param {Number} width Sprite frame width
     @param {Number} height Sprite frame height
   **/
-  game.createClass('SpriteSheet', {
+  function SpriteSheet(id, width, height) {
     /**
       List of textures.
       @property {Array} textures
     **/
-    textures: [],
+    this.textures = [];
     /**
       Number of frames.
       @property {Number} frames
     **/
-    frames: 0,
+    this.frames = 0;
     /**
       Width of frame.
       @property {Number} width
     **/
-    width: 0,
+    this.width = width;
     /**
       Height of frame.
       @property {Number} height
     **/
-    height: 0,
+    this.height = height;
     /**
       Asset id of texture to use as spritesheet.
       @property {String} texture
     **/
-    texture: null,
+    this.texture = null;
     /**
       @property {Number} _sx
       @private
     **/
-    _sx: 0,
+    this._sx = 0;
     /**
       @property {Number} _sy
       @private
     **/
-    _sy: 0,
+    this._sy = 0;
 
-    init: function(id, width, height) {
-      this.width = width;
-      this.height = height;
-      var sheetTexture = game.Texture.fromFrame(game.paths[id] || id);
-      var crop = sheetTexture.crop;
-      var baseTexture = sheetTexture.baseTexture;
-      this.sx = Math.floor(sheetTexture.width / this.width);
-      this.sy = Math.floor(sheetTexture.height / this.height);
-      this.frames = this.sx * this.sy;
+    var sheetTexture = game.Texture.fromFrame(game.paths[id] || id);
+    var crop = sheetTexture.crop;
+    var baseTexture = sheetTexture.baseTexture;
+    this.sx = Math.floor(sheetTexture.width / this.width);
+    this.sy = Math.floor(sheetTexture.height / this.height);
+    this.frames = this.sx * this.sy;
 
-      for (var i = 0; i < this.frames; i++) {
-        var x = (i % this.sx) * this.width;
-        var y = Math.floor(i / this.sx) * this.height;
-        var texture = new game.Texture(baseTexture, new game.HitRectangle(x + crop.x, y + crop.y, this.width, this.height));
-        this.textures.push(texture);
+    for (var i = 0; i < this.frames; i++) {
+      var x = (i % this.sx) * this.width;
+      var y = Math.floor(i / this.sx) * this.height;
+      var texture = new game.Texture(baseTexture, new game.HitRectangle(x + crop.x, y + crop.y, this.width, this.height));
+      this.textures.push(texture);
+    }
+  }
+
+  /**
+    Create sprite from specific frame.
+    @method frame
+    @param {Number} index Frame index
+    @return {game.Sprite}
+  **/
+  SpriteSheet.prototype.frame = function frame(index) {
+    index = index.limit(0, this.frames - 1);
+    return new Sprite(this.textures[index]);
+  };
+
+  /**
+    Create animation from spritesheet.
+    @method anim
+    @param {Number|Array} frames List or number of frames
+    @param {Number} [startIndex] The index to begin with, default to 0
+    @param {Boolean} [onlyTextures] Return only textures
+    @return {game.Animation|Array}
+  **/
+  SpriteSheet.prototype.anim = function anim(frames, startIndex, onlyTextures) {
+    startIndex = startIndex || 0;
+    frames = frames || this.frames;
+    var textures = [];
+    if (frames.length > 0) {
+      for (var i = 0; i < frames.length; i++) {
+        textures.push(this.textures[startIndex + frames[i]]);
       }
-    },
-
-    /**
-      Create sprite from specific frame.
-      @method frame
-      @param {Number} index Frame index
-      @return {game.Sprite}
-    **/
-    frame: function(index) {
-      index = index.limit(0, this.frames - 1);
-      return new game.Sprite(this.textures[index]);
-    },
-
-    /**
-      Create animation from spritesheet.
-      @method anim
-      @param {Number|Array} frames List or number of frames
-      @param {Number} [startIndex] The index to begin with, default to 0
-      @param {Boolean} [onlyTextures] Return only textures
-      @return {game.Animation|Array}
-    **/
-    anim: function(frames, startIndex, onlyTextures) {
-      startIndex = startIndex || 0;
-      frames = frames || this.frames;
-      var textures = [];
-      if (frames.length > 0) {
-        for (var i = 0; i < frames.length; i++) {
-          textures.push(this.textures[startIndex + frames[i]]);
-        }
-      } else {
-        for (var i = 0; i < frames; i++) {
-          textures.push(this.textures[startIndex + i]);
-        }
+    } else {
+      for (var i = 0; i < frames; i++) {
+        textures.push(this.textures[startIndex + i]);
       }
+    }
 
-      if (onlyTextures) return textures;
-      return new game.Animation(textures);
-    },
-  });
+    if (onlyTextures) return textures;
+    return new Animation(textures);
+  };
+
+  game.SpriteSheet = SpriteSheet;
 
   /**
     @class Video
-    @extends game.Class
     @constructor
     @param {String} source
   **/
-  game.createClass('Video', {
+  function Video() {
     /**
       @property {Boolean} loop
       @default false
     **/
-    loop: false,
+    this.loop = false;
     /**
       Video element.
       @property {Video} videoElem
     **/
-    videoElem: null,
+    this.videoElem = null;
     /**
       Video sprite.
       @property {game.Sprite} sprite
     **/
-    sprite: null,
+    this.sprite = null;
 
-    init: function() {
-      this.videoElem = document.createElement('video');
-      this.videoElem.addEventListener('ended', this._complete.bind(this));
+    this.videoElem = document.createElement('video');
+    this.videoElem.addEventListener('ended', this._complete.bind(this));
 
-      var urls = Array.prototype.slice.call(arguments);
-      var source;
-      for (var i = 0; i < urls.length; i++) {
-        source = document.createElement('source');
-        source.src = game.getMediaPath(urls[i]);
-        this.videoElem.appendChild(source);
-      }
+    var urls = Array.prototype.slice.call(arguments);
+    var source;
+    for (var i = 0; i < urls.length; i++) {
+      source = document.createElement('source');
+      source.src = game.getMediaPath(urls[i]);
+      this.videoElem.appendChild(source);
+    }
 
-      var videoTexture = PIXI.VideoTexture.textureFromVideo(this.videoElem);
-      videoTexture.baseTexture.addEventListener('loaded', this._loaded.bind(this));
+    var videoTexture = PIXI.VideoTexture.textureFromVideo(this.videoElem);
+    videoTexture.baseTexture.addEventListener('loaded', this._loaded.bind(this));
 
-      this.sprite = new game.Sprite(videoTexture);
-    },
+    this.sprite = new Sprite(videoTexture);
+  }
 
-    /**
-      @method _loaded
-      @private
-    **/
-    _loaded: function() {
-      if (typeof this._loadCallback === 'function') this._loadCallback();
-    },
+  /**
+    @method _loaded
+    @private
+  **/
+  Video.prototype._loaded = function _loaded() {
+    if (typeof this._loadCallback === 'function') this._loadCallback();
+  };
 
-    /**
-      @method _complete
-      @private
-    **/
-    _complete: function() {
-      if (typeof this._completeCallback === 'function') this._completeCallback();
-    },
+  /**
+    @method _complete
+    @private
+  **/
+  Video.prototype._complete = function _complete() {
+    if (typeof this._completeCallback === 'function') this._completeCallback();
+  };
 
-    /**
-      @method onLoaded
-      @param {Function} callback
-    **/
-    onLoaded: function(callback) {
-      this._loadCallback = callback;
-    },
+  /**
+    @method onLoaded
+    @param {Function} callback
+  **/
+  Video.prototype.onLoaded = function onLoaded(callback) {
+    this._loadCallback = callback;
+  };
 
-    /**
-      @method onComplete
-      @param {Function} callback
-    **/
-    onComplete: function(callback) {
-      this._completeCallback = callback;
-    },
+  /**
+    @method onComplete
+    @param {Function} callback
+  **/
+  Video.prototype.onComplete = function onComplete(callback) {
+    this._completeCallback = callback;
+  };
 
-    /**
-      @method play
-    **/
-    play: function() {
-      this.videoElem.loop = !!this.loop;
-      this.videoElem.play();
-    },
+  /**
+    @method play
+  **/
+  Video.prototype.play = function play() {
+    this.videoElem.loop = !!this.loop;
+    this.videoElem.play();
+  };
 
-    /**
-      @method stop
-      @param {Boolean} remove
-    **/
-    stop: function(remove) {
-      this.videoElem.pause();
-      if (remove) this.sprite.remove();
-    },
-  });
+  /**
+    @method stop
+    @param {Boolean} remove
+  **/
+  Video.prototype.stop = function stop(remove) {
+    this.videoElem.pause();
+    if (remove) this.sprite.remove();
+  };
+
+  game.Video = Video;
 
 });

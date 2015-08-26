@@ -140,13 +140,6 @@ var game = {
   **/
   _DOMLoaded: false,
   /**
-    @property {Function} _fnTest
-    @private
-  **/
-  _fnTest: /xyz/.test(function() {
-    var xyz; return xyz;
-  }) ? /\bsuper\b/ : /[\D|\d]*/,
-  /**
     @property {Number} _gameLoopId
     @private
   **/
@@ -161,11 +154,6 @@ var game = {
     @private
   **/
   _gameModuleDefined: false,
-  /**
-    @property {Boolean} _initializing
-    @private
-  **/
-  _initializing: false,
   /**
     @property {Loader} _loader
     @private
@@ -205,14 +193,12 @@ var game = {
   /**
     Add attributes to class.
     @method addAttributes
-    @param {String} className
+    @param {Function} classCtor
     @param {Object} attributes
   **/
-  addAttributes: function(className, attributes) {
-    if (!this[className]) throw 'class ' + className + ' not found';
-
+  addAttributes: function(classCtor, attributes) {
     for (var name in attributes) {
-      this[className][name] = attributes[name];
+      classCtor[name] = attributes[name];
     }
   },
 
@@ -259,83 +245,14 @@ var game = {
   },
 
   /**
-    Copy object.
-    @method copy
-    @param {Object} object
-    @return {Object}
-  **/
-  copy: function(object) {
-    var l, c, i;
-    if (
-      !object || typeof object !== 'object' ||
-      object instanceof HTMLElement ||
-      object instanceof this.Class ||
-      (this.Container && object instanceof this.Container)
-    ) {
-      return object;
-    } else if (object instanceof Array) {
-      c = [];
-      for (i = 0, l = object.length; i < l; i++) {
-        c[i] = this.copy(object[i]);
-      }
-
-      return c;
-    } else {
-      c = {};
-      for (i in object) {
-        c[i] = this.copy(object[i]);
-      }
-
-      return c;
-    }
-  },
-
-  /**
-    Create new class.
-    @method createClass
-    @param {String} name
-    @param {String} [extend]
-    @param {Object} content
-    @return {Class}
-  **/
-  createClass: function(name, extend, content) {
-    if (typeof name === 'object') return this.Class.extend(name);
-
-    if (this[name]) throw 'Class ' + name + ' already created';
-
-    if (typeof extend === 'object') {
-      content = extend;
-      extend = 'Class';
-    }
-
-    if (!this[extend]) throw 'Class ' + extend + ' not found';
-
-    this[name] = this[extend].extend(content);
-    return this[name];
-  },
-
-  /**
-    Create new scene.
-    @method createScene
-    @param {String} name
-    @param {Object} content
-    @return {Scene}
-  **/
-  createScene: function(name, content) {
-    return this.createClass(name, 'Scene', content);
-  },
-
-  /**
     Define properties to class.
     @method defineProperties
-    @param {String} className
+    @param {Function} classCtor
     @param {Object} properties
   **/
-  defineProperties: function(className, properties) {
-    if (!this[className]) throw 'Class ' + className + ' not found';
-
+  defineProperties: function(classCtor, properties) {
     for (var name in properties) {
-      Object.defineProperty(this[className].prototype, name, {
+      Object.defineProperty(classCtor.prototype, name, {
         get: properties[name].get,
         set: properties[name].set,
       });
@@ -378,30 +295,29 @@ var game = {
   /**
     Merge objects.
     @method merge
-    @param {Object} to
-    @param {Object} from
+    @param {Object} target
+    @param {Object} source
     @return {Object}
   **/
-  merge: function(to, from) {
-    for (var key in from) {
-      var ext = from[key];
+  merge: function(target, source) {
+    for (var key in source) {
+      var ext = source[key];
       if (
         typeof ext !== 'object' ||
         ext instanceof HTMLElement ||
-        ext instanceof this.Class ||
         ext instanceof this.Container
       ) {
-        to[key] = ext;
+        target[key] = ext;
       } else {
-        if (!to[key] || typeof to[key] !== 'object') {
-          to[key] = (ext instanceof Array) ? [] : {};
+        if (!target[key] || typeof target[key] !== 'object') {
+          target[key] = (ext instanceof Array) ? [] : {};
         }
 
-        this.merge(to[key], ext);
+        this.merge(target[key], ext);
       }
     }
 
-    return to;
+    return target;
   },
 
   /**
@@ -986,111 +902,5 @@ var game = {
 };
 
 game.Core = game;
-
-/**
-  @class Class
-**/
-game.Class = function() {};
-/**
-  Extend class.
-  @method extend
-  @static
-  @param {Object} prop
-  @return {Class}
-**/
-game.Class.extend = function(prop) {
-  var parent = this.prototype;
-  game._initializing = true;
-  var prototype = new this();
-  game._initializing = false;
-
-  var makeFn = function(name, fn) {
-    return function() {
-      var tmp = this.super;
-      this.super = parent[name];
-      var ret = fn.apply(this, arguments);
-      this.super = tmp;
-      return ret;
-    };
-  };
-
-  for (var name in prop) {
-    if (
-      typeof prop[name] === 'function' &&
-      typeof parent[name] === 'function' &&
-      game._fnTest.test(prop[name])
-    ) {
-      prototype[name] = makeFn(name, prop[name]);
-    } else {
-      prototype[name] = prop[name];
-    }
-  }
-
-  function Class() {
-    if (game._initializing) return this;
-
-    for (var p in this) {
-      if (typeof this[p] === 'object') {
-        this[p] = game.copy(this[p]);
-      }
-    }
-    /**
-      Called before init.
-      @method staticInit
-      @static
-      @param {Array} arguments
-      @return {Boolean} return true, to skip init function.
-    **/
-    var skipInit = false;
-    if (this.staticInit) skipInit = this.staticInit.apply(this, arguments);
-    /**
-      Called, when creating new instance of class.
-      @method init
-      @static
-      @param {Array} arguments
-    **/
-    if (this.init && !skipInit) this.init.apply(this, arguments);
-    return this;
-  }
-
-  Class.prototype = prototype;
-  Class.prototype.constructor = Class;
-  Class.extend = game.Class.extend;
-  /**
-    Inject class.
-    @method inject
-    @static
-    @param {Object} prop
-  **/
-  Class.inject = function(prop) {
-    var proto = this.prototype;
-    var parent = {};
-
-    var makeFn = function(name, fn) {
-      return function() {
-        var tmp = this.super;
-        this.super = parent[name];
-        var ret = fn.apply(this, arguments);
-        this.super = tmp;
-        return ret;
-      };
-    };
-
-    for (var name in prop) {
-      if (
-        typeof prop[name] === 'function' &&
-        typeof proto[name] === 'function' &&
-        game._fnTest.test(prop[name])
-      ) {
-        parent[name] = proto[name];
-        proto[name] = makeFn(name, prop[name]);
-      } else {
-        proto[name] = prop[name];
-      }
-    }
-  };
-
-  return Class;
-};
 
 if (typeof exports !== 'undefined') exports = module.exports = game;

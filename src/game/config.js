@@ -12,14 +12,5 @@ game.config = {
     resize: false,
 
     webGL: false,
-  },
-
-  // Mobile configs
-  mobile: {
-    system: {
-      resize: true,
-
-      webGL: true,
-    },
-  },
+  }
 };
