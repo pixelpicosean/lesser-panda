@@ -48,12 +48,12 @@ game.module(
 
 ## ChangeLog
 
-### 0.2.0
+### 2.0.0
 
 - Add support for module imports/exports, so you do not need to expose everything to global namespaces (like `game`).
 - Remove `Class` system due to performance and capabilities.
 
-### 0.1.0
+### 1.0.0
 
 - Update renderer to PIXI.js latest stable version (v3.0.7).
 
