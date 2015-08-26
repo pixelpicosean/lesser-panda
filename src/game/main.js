@@ -4,14 +4,19 @@ game.module(
 .body(function() {
   'use strict';
 
-  game.addAsset('logo.png');
+  game.addAsset('KenPixel.fnt');
 
   function Main() {
     game.Scene.call(this);
 
-    var logo = new game.Sprite('logo.png')
-      .center()
+    var text = new game.BitmapText('Lesser Panda', {
+        font: '50px KenPixel'
+      })
       .addTo(this.stage);
+    text.position.set(
+      game.system.width * 0.5 - text.width * 0.5,
+      game.system.height * 0.5 - text.height * 0.5
+    )
   };
   Main.prototype = Object.create(game.Scene.prototype);
   Object.assign(Main.prototype, {
