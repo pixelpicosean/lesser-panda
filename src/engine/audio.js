@@ -470,7 +470,7 @@ game.module(
     this.context.decodeAudioData(
       request.response,
       this._loaded.bind(this, path, callback),
-      this._error.bind(this, path)
+      this._error.bind(this, path, callback)
     );
   };
 
@@ -501,7 +501,7 @@ game.module(
       } else {
         audio.loadCallback = this._loaded.bind(this, path, callback, audio);
         audio.addEventListener('canplaythrough', audio.loadCallback);
-        audio.addEventListener('error', this._error.bind(this, path));
+        audio.addEventListener('error', this._error.bind(this, path, callback));
       }
 
       audio.preload = 'auto';
@@ -512,10 +512,11 @@ game.module(
   /**
     @method _error
     @param {String} path
+    @param {Function} callback
     @private
   **/
-  Audio.prototype._error = function _error(path) {
-    throw 'Error loading audio ' + path;
+  Audio.prototype._error = function _error(path, callback) {
+    callback('Error loading audio ' + path);
   };
 
   /**
