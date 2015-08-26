@@ -11,73 +11,71 @@ game.module(
   /**
     @class Keyboard
   **/
-  game.createClass('Keyboard', {
+  function Keyboard() {
     /**
       @property {Array} _keysDown
       @private
     **/
-    _keysDown: [],
+    this._keysDown = [];
 
-    init: function() {
-      window.addEventListener('keydown', this._keydown.bind(this));
-      window.addEventListener('keyup', this._keyup.bind(this));
-      window.addEventListener('blur', this._resetKeys.bind(this));
-    },
+    window.addEventListener('keydown', this._keydown.bind(this));
+    window.addEventListener('keyup', this._keyup.bind(this));
+    window.addEventListener('blur', this._resetKeys.bind(this));
+  }
 
-    /**
-      Check if key is pressed down.
-      @method down
-      @param {String} key
-      @return {Boolean}
-    **/
-    down: function(key) {
-      return !!this._keysDown[key];
-    },
+  /**
+    Check if key is pressed down.
+    @method down
+    @param {String} key
+    @return {Boolean}
+  **/
+  Keyboard.prototype.down = function down(key) {
+    return !!this._keysDown[key];
+  },
 
-    /**
-      @method _keydown
-      @param {KeyboardEvent} event
-      @private
-    **/
-    _keydown: function(event) {
-      if (!game.Keyboard.keys[event.keyCode]) {
-        // Unknown key
-        game.Keyboard.keys[event.keyCode] = event.keyCode;
-      }
+  /**
+    @method _keydown
+    @param {KeyboardEvent} event
+    @private
+  **/
+  Keyboard.prototype._keydown = function _keydown(event) {
+    if (!Keyboard.keys[event.keyCode]) {
+      // Unknown key
+      Keyboard.keys[event.keyCode] = event.keyCode;
+    }
 
-      if (this._keysDown[game.Keyboard.keys[event.keyCode]]) return;
+    if (this._keysDown[Keyboard.keys[event.keyCode]]) return;
 
-      this._keysDown[game.Keyboard.keys[event.keyCode]] = true;
-      if (game.scene && game.scene.keydown) {
-        var prevent = game.scene.keydown(game.Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
-        if (prevent) event.preventDefault();
-      }
-    },
+    this._keysDown[Keyboard.keys[event.keyCode]] = true;
+    if (game.scene && game.scene.keydown) {
+      var prevent = game.scene.keydown(Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
+      if (prevent) event.preventDefault();
+    }
+  };
 
-    /**
-      @method _keyup
-      @param {KeyboardEvent} event
-      @private
-    **/
-    _keyup: function(event) {
-      this._keysDown[game.Keyboard.keys[event.keyCode]] = false;
-      if (game.scene && game.scene.keyup) {
-        game.scene.keyup(game.Keyboard.keys[event.keyCode]);
-      }
-    },
+  /**
+    @method _keyup
+    @param {KeyboardEvent} event
+    @private
+  **/
+  Keyboard.prototype._keyup = function _keyup(event) {
+    this._keysDown[Keyboard.keys[event.keyCode]] = false;
+    if (game.scene && game.scene.keyup) {
+      game.scene.keyup(game.Keyboard.keys[event.keyCode]);
+    }
+  };
 
-    /**
-      @method _resetKeys
-      @private
-    **/
-    _resetKeys: function() {
-      for (var key in this._keysDown) {
-        this._keysDown[key] = false;
-      }
-    },
-  });
+  /**
+    @method _resetKeys
+    @private
+  **/
+  Keyboard.prototype._resetKeys = function _resetKeys() {
+    for (var key in this._keysDown) {
+      this._keysDown[key] = false;
+    }
+  };
 
-  game.addAttributes('Keyboard', {
+  game.addAttributes(Keyboard, {
     /**
       List of available keys.
       @attribute {Object} keys
@@ -174,5 +172,7 @@ game.module(
       222: 'SINGLE_QUOTE',
     },
   });
+
+  game.Keyboard = Keyboard;
 
 });
