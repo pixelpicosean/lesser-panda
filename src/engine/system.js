@@ -283,12 +283,12 @@ game.module(
   /**
     Change current scene.
     @method setScene
-    @param {String} sceneClass
+    @param {String} sceneName
     @param {Boolean} removeAssets
   **/
-  System.prototype.setScene = function setScene(sceneClass, removeAssets) {
-    this.currentSceneName = sceneClass;
-    sceneClass = game[sceneClass];
+  System.prototype.setScene = function setScene(sceneName, removeAssets) {
+    this.currentSceneName = sceneName;
+    var sceneClass = game.s[sceneName];
     if (this.running && !this.paused) {
       this.newSceneClass = sceneClass;
       this.removeAssets = removeAssets;

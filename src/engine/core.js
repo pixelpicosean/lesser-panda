@@ -74,6 +74,11 @@ var game = {
   **/
   pool: null,
   /**
+   * List of scenes.
+   * @property {Object}
+   */
+  s: {},
+  /**
     Scale multiplier for Retina and HiRes mode.
     @property {Number} scale
     @default 1

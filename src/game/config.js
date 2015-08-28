@@ -1,5 +1,4 @@
 game.config = {
-  // General configs
   name: 'My Awesome Game',
   version: '0.0.1',
 

@@ -24,6 +24,6 @@ game.module(
     constructor: Main,
   });
 
-  game.Main = Main;
+  game.s['Main'] = Main;
 
 });
