@@ -13,6 +13,8 @@ game.module(
     @class Scene
   **/
   function Scene(settings) {
+    game.scene = this;
+
     /**
       Background color of scene.
       @property {Number} backgroundColor
@@ -153,7 +155,7 @@ game.module(
   Scene.prototype.addTimer = function addTimer(time, callback, repeat) {
     var timer;
     if (timer = game.pool.get('Timer')) {
-      timer.init(time);
+      game.Timer.call(timer, time);
     } else {
       timer = new game.Timer(time);
     }
