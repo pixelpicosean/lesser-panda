@@ -5,6 +5,9 @@
 game.module(
   'engine.scene'
 )
+.require(
+  'engine.renderer'
+)
 .body(function() {
   'use strict';
 
@@ -13,6 +16,8 @@ game.module(
     @class Scene
   **/
   function Scene(settings) {
+    game.EventEmitter.call(this);
+
     game.scene = this;
 
     /**
@@ -120,6 +125,8 @@ game.module(
 
     if (game.debugDraw) game.debugDraw.reset();
   }
+  Scene.prototype = Object.create(game.EventEmitter.prototype);
+  Scene.prototype.constructor = Scene;
 
   /**
     Add particle emitter to scene.
@@ -200,6 +207,7 @@ game.module(
     this.stage.off('touchmove', this._touchmove, this);
     this.stage.off('touchend', this._touchend, this);
 
+    this.emit('exit');
     this.exit();
   };
 
@@ -396,6 +404,7 @@ game.module(
   };
 
   Scene.prototype.run = function run() {
+    this.emit('update');
     this.update();
     for (var i = 0; i < this._updateOrder.length; i++) {
       this['_update' + this._updateOrder[i]]();
