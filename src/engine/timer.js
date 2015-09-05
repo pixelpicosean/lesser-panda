@@ -134,8 +134,8 @@ game.module(
       Update main timer.
       @attribute {Function} update
     **/
-    update: function() {
-      var now = Date.now();
+    update: function(timestamp) {
+      var now = timestamp ? timestamp : Date.now();
       if (!this._last) this._last = now;
       this._realDelta = now - this._last;
       this.delta = Math.min(this._realDelta, 1000 / this.minFPS) * this.speed;

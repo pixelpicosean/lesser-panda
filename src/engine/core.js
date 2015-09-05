@@ -843,16 +843,18 @@ var game = {
       var id = this._gameLoopId++;
       this._gameLoops[id] = true;
 
-      var animate = function() {
+      var animate = function animate(timestamp) {
         if (!game._gameLoops[id]) return;
         window.requestAnimationFrame(animate);
-        callback();
+        callback(timestamp);
       };
 
       window.requestAnimationFrame(animate);
       return id;
     } else {
-      return window.setInterval(callback, 1000 / 60);
+      return window.setInterval(function() {
+        callback(performance.now());
+      }, 1000 / 60);
     }
   },
 

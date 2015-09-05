@@ -316,10 +316,10 @@ game.module(
     this.running = false;
   };
 
-  System.prototype.run = function run() {
+  System.prototype.run = function run(timestamp) {
     if (this.paused || this.pausedOnHide) return;
 
-    game.Timer.update();
+    game.Timer.update(timestamp);
     this.delta = this.timer.delta() / 1000;
 
     if (this.debug) this.debug.reset();

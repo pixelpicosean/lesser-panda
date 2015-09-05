@@ -188,10 +188,10 @@ game.module(
     } else game.system.setScene(this.callback);
   };
 
-  Loader.prototype.run = function run() {
+  Loader.prototype.run = function run(timestamp) {
     if (this.loopId) {
       this.last = game.Timer.time;
-      game.Timer.update();
+      game.Timer.update(timestamp);
       game.system.delta = (game.Timer.time - this.last) / 1000;
     }
 
