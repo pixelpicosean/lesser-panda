@@ -191,7 +191,7 @@ var game = {
     @param {String} path
     @param {String} [id]
   **/
-  addAsset: function(path, id) {
+  addAsset: function addAsset(path, id) {
     return this._addFileToQueue(path, id, 'assetQueue');
   },
 
@@ -201,7 +201,7 @@ var game = {
     @param {Function} classCtor
     @param {Object} attributes
   **/
-  addAttributes: function(classCtor, attributes) {
+  addAttributes: function addAttributes(classCtor, attributes) {
     for (var name in attributes) {
       classCtor[name] = attributes[name];
     }
@@ -213,7 +213,7 @@ var game = {
     @param {String} path
     @param {String} [id]
   **/
-  addAudio: function(path, id) {
+  addAudio: function addAudio(path, id) {
     this._addFileToQueue(path, id, 'audioQueue');
   },
 
@@ -222,7 +222,7 @@ var game = {
     @method body
     @param {Function} body
   **/
-  body: function(body) {
+  body: function body(body) {
     this._current.body = body;
     if (!this._booted && this._current.name.indexOf('engine.') !== 0) {
       this._current = null;
@@ -240,7 +240,7 @@ var game = {
     Clear engine cache.
     @method clearCache
   **/
-  clearCache: function() {
+  clearCache: function clearCache() {
     // TODO: clear cache of PIXI
     // this.Texture.clearCache();
     // this.BaseTexture.clearCache();
@@ -255,7 +255,7 @@ var game = {
     @param {Function} classCtor
     @param {Object} properties
   **/
-  defineProperties: function(classCtor, properties) {
+  defineProperties: function defineProperties(classCtor, properties) {
     for (var name in properties) {
       Object.defineProperty(classCtor.prototype, name, {
         get: properties[name].get,
@@ -270,7 +270,7 @@ var game = {
     @param {String} id
     @return {Object}
   **/
-  getJSON: function(id) {
+  getJSON: function getJSON(id) {
     return this.json[this.paths[id]];
   },
 
@@ -281,7 +281,7 @@ var game = {
     @param {Function} [compare]
     @return {Object}
   **/
-  ksort: function(obj, compare) {
+  ksort: function ksort(obj, compare) {
     if (!obj || typeof obj !== 'object') return false;
 
     var keys = [], result = {}, i;
@@ -304,7 +304,7 @@ var game = {
     @param {Object} source
     @return {Object}
   **/
-  merge: function(target, source) {
+  merge: function merge(target, source) {
     for (var key in source) {
       var ext = source[key];
       if (
@@ -331,7 +331,7 @@ var game = {
     @param {String} name
     @chainable
   **/
-  module: function(name) {
+  module: function module(name) {
     if (this._current) throw 'Module ' + this._current.name + ' has no body';
 
     if (this.modules[name] && this.modules[name].body) throw 'Module ' + name + ' is already defined';
@@ -364,13 +364,13 @@ var game = {
     Called, when engine is started.
     @method onStart
   **/
-  onStart: function() {},
+  onStart: function onStart() {},
 
   /**
     Called, when core is ready, and autoStart not enabled.
     @method ready
   **/
-  ready: function() {},
+  ready: function ready() {},
 
   /**
     Require module.
@@ -378,7 +378,7 @@ var game = {
     @param {Array} modules
     @chainable
   **/
-  require: function(modules) {
+  require: function require(modules) {
     var i, modules = Array.prototype.slice.call(arguments);
     for (i = 0; i < modules.length; i++) {
       var name = modules[i];
@@ -396,7 +396,7 @@ var game = {
     @private
     @return {String}
   **/
-  _addFileToQueue: function(path, id, queue) {
+  _addFileToQueue: function _addFileToQueue(path, id, queue) {
     if (id && this.paths[id]) return;
     if (this.paths[path]) return;
     var realPath = this._getFilePath(path) + this._nocache;
@@ -410,7 +410,7 @@ var game = {
     @method _boot
     @private
   **/
-  _boot: function() {
+  _boot: function _boot() {
     this._booted = true;
     this._loadNativeExtensions();
     this._loadDeviceInformation();
@@ -477,7 +477,7 @@ var game = {
     @method _clearGameLoop
     @private
   **/
-  _clearGameLoop: function(id) {
+  _clearGameLoop: function _clearGameLoop(id) {
     if (this._gameLoops[id]) delete this._gameLoops[id];
     else window.clearInterval(id);
   },
@@ -486,7 +486,7 @@ var game = {
     @method _DOMReady
     @private
   **/
-  _DOMReady: function() {
+  _DOMReady: function _DOMReady() {
     if (!this._DOMLoaded) {
       if (!document.body) return setTimeout(this._DOMReady.bind(this), 13);
       this._DOMLoaded = true;
@@ -500,7 +500,7 @@ var game = {
     @private
     @return {String}
   **/
-  _getFilePath: function(file) {
+  _getFilePath: function _getFilePath(file) {
     if (file.indexOf('://') !== -1) return file;
     if (this.config.mediaFolder) file = this.config.mediaFolder + '/' + file;
     return file;
@@ -513,7 +513,7 @@ var game = {
     @private
     @return {Object}
   **/
-  _getVendorAttribute: function(el, attr) {
+  _getVendorAttribute: function _getVendorAttribute(el, attr) {
     var uc = attr.ucfirst();
     return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
   },
@@ -523,7 +523,7 @@ var game = {
     @method removeAsset
     @param {String} id
   **/
-  removeAsset: function(id) {
+  removeAsset: function removeAsset(id) {
     var path = this.paths[id];
     if (this.json[path] && this.json[path].frames) {
       // Sprite sheet
@@ -544,7 +544,7 @@ var game = {
     Remove all assets from memory.
     @method removeAssets
   **/
-  removeAssets: function() {
+  removeAssets: function removeAssets() {
     for (var key in this.TextureCache) {
       this.TextureCache[key].destroy(true);
       delete this.TextureCache[key];
@@ -557,7 +557,7 @@ var game = {
     @method _loadDeviceInformation
     @private
   **/
-  _loadDeviceInformation: function() {
+  _loadDeviceInformation: function _loadDeviceInformation() {
     this.device.pixelRatio = window.devicePixelRatio || 1;
     this.device.screen = {
       width: window.screen.availWidth * this.device.pixelRatio,
@@ -632,7 +632,7 @@ var game = {
     @method _loadModules
     @private
   **/
-  _loadModules: function() {
+  _loadModules: function _loadModules() {
     var moduleLoaded, i, j, module, name, dependenciesLoaded;
     for (i = 0; i < this._moduleQueue.length; i++) {
       module = this._moduleQueue[i];
@@ -688,37 +688,14 @@ var game = {
     @method _loadNativeExtensions
     @private
   **/
-  _loadNativeExtensions: function() {
-    Math.distance = function(x, y, x2, y2) {
-      x = x2 - x;
-      y = y2 - y;
-      return Math.sqrt(x * x + y * y);
-    };
-
-    Math._random = Math.random;
-    Math.random = function(min, max) {
-      if (typeof max === 'number') return Math._random() * (max - min) + min;
-      else return Math._random(min);
-    };
-
-    Number.prototype.limit = function(min, max) {
-      var i = this;
-      if (i < min) i = min;
-      if (i > max) i = max;
-      return i;
-    };
-
-    Number.prototype.round = function(precision) {
+  _loadNativeExtensions: function _loadNativeExtensions() {
+    Number.prototype.round = function round(precision) {
       if (precision) precision = Math.pow(10, precision);
       else precision = 1;
       return Math.round(this * precision) / precision;
     };
 
-    Number.prototype.random = function() {
-      return Math.random() * this;
-    };
-
-    Array.prototype.erase = function(item) {
+    Array.prototype.erase = function erase(item) {
       for (var i = this.length; i >= 0; i--) {
         if (this[i] === item) {
           this.splice(i, 1);
@@ -729,12 +706,12 @@ var game = {
       return this;
     };
 
-    Array.prototype.random = function() {
+    Array.prototype.random = function random() {
       return this[Math.floor(Math.random() * this.length)];
     };
 
     // http://jsperf.com/array-shuffle-comparator/2
-    Array.prototype.shuffle = function() {
+    Array.prototype.shuffle = function shuffle() {
       var len = this.length;
       var i = len;
       while (i--) {
@@ -747,12 +724,8 @@ var game = {
       return this;
     };
 
-    Array.prototype.last = function() {
-      return this[this.length - 1];
-    };
-
     // http://jsperf.com/function-bind-performance
-    Function.prototype.bind = function(context) {
+    Function.prototype.bind = function bind(context) {
       var fn = this, linked = [];
       Array.prototype.push.apply(linked, arguments);
       linked.shift();
@@ -774,7 +747,7 @@ var game = {
     @method _loadScript
     @private
   **/
-  _loadScript: function(name, requiredFrom) {
+  _loadScript: function _loadScript(name, requiredFrom) {
     this.modules[name] = true;
     this._waitForLoad++;
 
@@ -796,7 +769,7 @@ var game = {
     @method _modulesLoaded
     @private
   **/
-  _modulesLoaded: function() {
+  _modulesLoaded: function _modulesLoaded() {
     // Parse config
     for (var c in this.config) {
       var m = c.ucfirst();
@@ -817,7 +790,7 @@ var game = {
     @param {String} attr
     @private
   **/
-  _normalizeVendorAttribute: function(el, attr) {
+  _normalizeVendorAttribute: function _normalizeVendorAttribute(el, attr) {
     if (el[attr]) return;
     var prefixedVal = this._getVendorAttribute(el, attr);
     el[attr] = el[attr] || prefixedVal;
@@ -827,7 +800,7 @@ var game = {
     @method _scriptLoaded
     @private
   **/
-  _scriptLoaded: function() {
+  _scriptLoaded: function _scriptLoaded() {
     this._waitForLoad--;
     this._loadModules();
   },
@@ -837,7 +810,7 @@ var game = {
     @private
     @return {Number}
   **/
-  _setGameLoop: function(callback) {
+  _setGameLoop: function _setGameLoop(callback) {
     if (this.System.frameRate) return window.setInterval(callback, 1000 / game.System.frameRate);
     if (window.requestAnimationFrame) {
       var id = this._gameLoopId++;
@@ -865,7 +838,7 @@ var game = {
     @param {*} val
     @private
   **/
-  _setVendorAttribute: function(el, attr, val) {
+  _setVendorAttribute: function _setVendorAttribute(el, attr, val) {
     var uc = attr.ucfirst();
     el[attr] = el['ms' + uc] = el['moz' + uc] = el['webkit' + uc] = el['o' + uc] = val;
   },
@@ -874,7 +847,7 @@ var game = {
     @method _start
     @private
   **/
-  start: function() {
+  start: function start() {
     if (this._moduleQueue.length > 0) return;
 
     // Required classes
