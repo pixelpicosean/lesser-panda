@@ -307,11 +307,7 @@ var game = {
   merge: function merge(target, source) {
     for (var key in source) {
       var ext = source[key];
-      if (
-        typeof ext !== 'object' ||
-        ext instanceof HTMLElement ||
-        ext instanceof this.Container
-      ) {
+      if (typeof ext !== 'object' || ext instanceof HTMLElement) {
         target[key] = ext;
       } else {
         if (!target[key] || typeof target[key] !== 'object') {
