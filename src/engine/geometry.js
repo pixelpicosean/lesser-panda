@@ -144,7 +144,7 @@ game.module(
     @return {Number}
   **/
   Vector.prototype.length = function length() {
-    return Math.sqrt(this.lengthSquared());
+    return Math.sqrt(this.squaredLength());
   };
 
   /**
