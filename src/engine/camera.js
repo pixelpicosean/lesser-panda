@@ -150,8 +150,8 @@ game.module(
   };
 
   Camera.prototype.moveCamera = function moveCamera() {
-    this.speed.x = (this.position.x - this.sensorPosition.x + this.offset.x).limit(-this.maxSpeed, this.maxSpeed);
-    this.speed.y = (this.position.y - this.sensorPosition.y + this.offset.y).limit(-this.maxSpeed, this.maxSpeed);
+    this.speed.x = Math.clamp(this.position.x - this.sensorPosition.x + this.offset.x, -this.maxSpeed, this.maxSpeed);
+    this.speed.y = Math.clamp(this.position.y - this.sensorPosition.y + this.offset.y, -this.maxSpeed, this.maxSpeed);
 
     if (this.speed.x > this.threshold ||
       this.speed.x < -this.threshold ||
