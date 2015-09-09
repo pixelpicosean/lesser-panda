@@ -691,6 +691,10 @@ var game = {
       return Math.round(this * precision) / precision;
     };
 
+    Math.clamp = function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value))
+    };
+
     Array.prototype.erase = function erase(item) {
       for (var i = this.length; i >= 0; i--) {
         if (this[i] === item) {
