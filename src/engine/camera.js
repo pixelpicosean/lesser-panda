@@ -212,6 +212,7 @@ game.module(
     if (this.sensor.width < targetBounds.width) {
       this.sensor.width = targetBounds.width;
     }
+
     if (this.sensor.height < targetBounds.height) {
       this.sensor.height = targetBounds.height;
     }

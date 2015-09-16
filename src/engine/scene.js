@@ -125,6 +125,7 @@ game.module(
 
     if (game.debugDraw) game.debugDraw.reset();
   }
+
   Scene.prototype = Object.create(game.EventEmitter.prototype);
   Scene.prototype.constructor = Scene;
 

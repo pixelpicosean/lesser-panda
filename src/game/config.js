@@ -11,5 +11,5 @@ game.config = {
     resize: false,
 
     webGL: false,
-  }
+  },
 };
