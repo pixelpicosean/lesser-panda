@@ -72,10 +72,6 @@ And another reason is I fell in love with FRP(Functional Reactive Programming)
 which lead me to build games in a more functional and component based way, while
 panda engine is moving forward to the traditional OOP style :(
 
-## Note
-
-It uses a customed version of Pixi.js without "mesh" and "filters".
-
 ## License
 
 LesserPanda is released under the [MIT License](http://opensource.org/licenses/MIT), the same
