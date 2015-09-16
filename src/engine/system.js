@@ -276,7 +276,7 @@ game.module(
     if (onHide) this.pausedOnHide = false;
     else this.paused = false;
 
-    game.Timer.last = Date.now();
+    game.Timer.last = performance.now();
     if (game.scene) game.scene.resume();
   };
 

@@ -427,7 +427,7 @@ var game = {
       }
     }
 
-    if (document.location.href.match(/\?nocache/) || this.config.disableCache) this._nocache = '?' + Date.now();
+    if (document.location.href.match(/\?nocache/) || this.config.disableCache) this._nocache = '?' + performance.now();
 
     // Default config
     if (typeof this.config.sourceFolder === 'undefined') this.config.sourceFolder = 'src';
@@ -811,7 +811,6 @@ var game = {
     @return {Number}
   **/
   _setGameLoop: function _setGameLoop(callback) {
-    if (this.System.frameRate) return window.setInterval(callback, 1000 / game.System.frameRate);
     if (window.requestAnimationFrame) {
       var id = this._gameLoopId++;
       this._gameLoops[id] = true;
