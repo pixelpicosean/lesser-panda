@@ -41,7 +41,7 @@ game.module(
 
   game.Matrix = PIXI.Matrix;
 
-  game.EventEmitter = PIXI.EventEmitter;
+  game.EventEmitter = PIXI.utils.EventEmitter;
 
   /**
     Remove from it's parent.
