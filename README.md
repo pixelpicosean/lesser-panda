@@ -48,6 +48,11 @@ game.module(
 
 ## ChangeLog
 
+### 2.0.1
+
+- Add camera shake support.
+- Let Scene emit input events just like what PIXI does.
+
 ### 2.0.0
 
 - Add support for module imports/exports, so you do not need to expose everything to global namespaces (like `game`).
