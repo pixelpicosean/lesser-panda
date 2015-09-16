@@ -29,12 +29,17 @@ game.module(
       @property {game.Container} container
     **/
     this.container = null;
+    this.isShaking = false;
     /**
       Camera maximum move speed.
       @property {Number} maxSpeed
       @default 200
     **/
     this.maxSpeed = 200;
+    this.maxX = null;
+    this.maxY = null;
+    this.minX = null;
+    this.minY = null;
     this.position = new game.Vector();
     /**
       Use rounding on container position.
@@ -43,14 +48,6 @@ game.module(
     **/
     this.rounding = false;
     this.rotation = 0;
-    /**
-      Camera zoom
-      (2, 2)      =>  2x
-      (0.5, 0.5)  =>  0.5x
-      @property {game.Vector} zoom
-      @default (1, 1)
-    **/
-    this.zoom = new game.Vector(1, 1);
     /**
       Current speed of camera.
       @property {game.Vector} speed
@@ -61,19 +58,21 @@ game.module(
       @property {game.Sprite} target
     **/
     this.target = null;
-
+    this.threshold = 1;
     this.sensor = {
       x: 0,
       y: 0,
       width: 200,
       height: 200,
     };
-
-    this.threshold = 1;
-    this.minX = null;
-    this.maxX = null;
-    this.minY = null;
-    this.maxY = null;
+    /**
+      Camera zoom
+      (2, 2)      =>  2x
+      (0.5, 0.5)  =>  0.5x
+      @property {game.Vector} zoom
+      @default (1, 1)
+    **/
+    this.zoom = new game.Vector(1, 1);
 
     /* @privates */
     this._targetLeft = 0;
@@ -84,6 +83,13 @@ game.module(
     this._sensorRight = 0;
     this._sensorTop = 0;
     this._sensorBottom = 0;
+
+    this._shakeOffset = new game.Vector();
+    this._shakeForce = new game.Vector();
+    this._shakeForward = false;
+    this._shakeDelay = 0;
+    this._shakeCount = 0;
+    this._startShake = this._startShake.bind(this);
 
     game.scene.addObject(this);
   }
@@ -103,6 +109,8 @@ game.module(
 
     this.position.set(game.system.width, game.system.height)
       .multiply(this.anchor);
+    this.sensor.x = (game.system.width - this.sensor.width) * 0.5;
+    this.sensor.y = (game.system.height - this.sensor.height) * 0.5;
 
     return this;
   };
@@ -148,6 +156,50 @@ game.module(
       this.container.position.set(game.system.width, game.system.height)
         .multiply(this.anchor);
       this.container.pivot.copy(this.position);
+    }
+  };
+
+  /**
+   * Shake camera
+   * @param {game.Vector|Number} force Max shake distance in pixel
+   * @param {Number} duration  How long will the camera shake
+   * @param {Number} count How many times will the camera shake
+   * @param {Boolean} forward ONLY shake forward or not
+   */
+  Camera.prototype.shake = function shake(force, duration, count, forward) {
+    if (typeof force === 'number') {
+      this._shakeForce = this._shakeForce.set(force, force);
+    } else {
+      this._shakeForce = this._shakeForce.set(force.x, force.y);
+    }
+
+    this._shakeDelay = Math.floor(duration / count) || 20;
+    this._shakeCount = count || 3;
+    this._shakeForward = !!forward;
+
+    this._startShake();
+  };
+
+  /** @private */
+  Camera.prototype._startShake = function _startShake() {
+    this.isShaking = true;
+    if (this._shakeCount > 0) {
+      if (this._shakeForward) {
+        this._shakeOffset.x = Math.random() * this._shakeForce.x;
+        this._shakeOffset.y = Math.random() * this._shakeForce.y;
+      } else {
+        this._shakeOffset.x = (Math.random() * 2 - 1) * this._shakeForce.x;
+        this._shakeOffset.y = (Math.random() * 2 - 1) * this._shakeForce.y;
+      }
+
+      // Next shake
+      this._shakeCount -= 1;
+      game.scene.addTimer(this._shakeDelay, this._startShake);
+    } else {
+      // Reset offset
+      this._shakeOffset.set(0, 0);
+      this.setPosition(this.position.x, this.position.y);
+      this.isShaking = false;
     }
   };
 
@@ -202,6 +254,11 @@ game.module(
       );
     } else {
       this.speed.set(0, 0);
+    }
+
+    if (this.isShaking && this.container) {
+      this.setPosition(this.position.x, this.position.y);
+      this.container.pivot.subtract(this._shakeOffset);
     }
   };
 

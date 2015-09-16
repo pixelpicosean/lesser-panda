@@ -16,7 +16,7 @@ game.module(
     text.position.set(
       game.system.width * 0.5 - text.width * 0.5,
       game.system.height * 0.5 - text.height * 0.5
-    )
+    );
   };
   Main.prototype = Object.create(game.Scene.prototype);
   Object.assign(Main.prototype, {
