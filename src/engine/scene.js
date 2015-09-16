@@ -347,10 +347,12 @@ game.module(
     event.data._swipeX = event.data.global.x;
     event.data._swipeY = event.data.global.y;
     this.mousedown(event);
+    this.emit('mousedown', event);
   };
 
   Scene.prototype._mousemove = function _mousemove(event) {
     this.mousemove(event);
+    this.emit('mousemove', event);
 
     if (!event.data._swipeStartTime) return;
 
@@ -365,10 +367,12 @@ game.module(
 
   Scene.prototype._mouseup = function _mouseup(event) {
     this.mouseup(event);
+    this.emit('mouseup', event);
   };
 
   Scene.prototype._mouseout = function _mouseout(event) {
     this.mouseout(event);
+    this.emit('mouseout', event);
   };
 
   Scene.prototype._touchstart = function _touchstart(event) {
@@ -376,10 +380,12 @@ game.module(
     event.data._swipeX = event.data.global.x;
     event.data._swipeY = event.data.global.y;
     this.touchstart(event);
+    this.emit('touchstart', event);
   };
 
   Scene.prototype._touchmove = function _touchmove(event) {
     this.touchmove(event);
+    this.emit('touchmove', event);
 
     if (!event.data._swipeStartTime) return;
 
@@ -395,12 +401,16 @@ game.module(
 
   Scene.prototype._touchend = function _touchend(event) {
     this.touchend(event);
+    this.emit('touchend', event);
   };
 
   Scene.prototype._swipe = function _swipe(event) {
     var time = Date.now() - event.data._swipeStartTime;
     event.data._swipeStartTime = null;
-    if (time <= this.swipeTime || this.swipeTime === 0) this.swipe(event);
+    if (time <= this.swipeTime || this.swipeTime === 0) {
+      this.swipe(event);
+      this.emit('swipe', event);
+    }
   };
 
   Scene.prototype.run = function run() {
