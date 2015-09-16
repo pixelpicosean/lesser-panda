@@ -10881,7 +10881,7 @@ game.module(
     }
 
     Point.prototype.constructor = Point;
-    module.exports = Point;
+    module.exports = game.Vector || Point;
 
     /**
      * Creates a clone of this point
