@@ -129,11 +129,17 @@ game.module(
     this.sensor.y = bounds.y + bounds.height * 0.5 - this.sensor.height * 0.5;
 
     if (!lerp) {
-      this.setPosition(target.position.x, target.position.y);
+      this._setPosition(target.position.x, target.position.y);
     }
   };
 
   Camera.prototype.setPosition = function setPosition(x, y) {
+    this._setPosition(x, y);
+    this.sensor.x = x - this.sensor.width * 0.5;
+    this.sensor.y = y - this.sensor.height * 0.5;
+  };
+
+  Camera.prototype._setPosition = function _setPosition(x, y) {
     this.position.set(x, y);
 
     if (typeof this.minX === 'number' && this.position.x < this.minX) {
@@ -198,7 +204,7 @@ game.module(
     } else {
       // Reset offset
       this._shakeOffset.set(0, 0);
-      this.setPosition(this.position.x, this.position.y);
+      this._setPosition(this.position.x, this.position.y);
       this.isShaking = false;
     }
   };
@@ -249,7 +255,7 @@ game.module(
       this.speed.y > this.threshold ||
       this.speed.y < -this.threshold
     ) {
-      this.setPosition(
+      this._setPosition(
         this.position.x - this.speed.x * this.acceleration * game.system.delta,
         this.position.y - this.speed.y * this.acceleration * game.system.delta
       );
@@ -258,7 +264,7 @@ game.module(
     }
 
     if (this.isShaking && this.container) {
-      this.setPosition(this.position.x, this.position.y);
+      this._setPosition(this.position.x, this.position.y);
       this.container.pivot.subtract(this._shakeOffset);
     }
   };
