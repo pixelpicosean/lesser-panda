@@ -1,5 +1,5 @@
 import { Howl } from './howler.core';
-import loaderMgr from './loader-manager';
+import loader from './loader';
 
 let sounds = {};
 let soundsToLoadCount = 0;
@@ -37,7 +37,7 @@ function onload(snd) {
   }
 }
 
-loaderMgr.registerLoader({
+loader.registerLoader({
   start: function(onComplete, onProgress) {
     progressCB = onProgress;
     completeCB = onComplete;

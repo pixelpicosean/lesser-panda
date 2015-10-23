@@ -1,19 +1,20 @@
-import loaderMgr from 'engine/loader-manager';
+import loader from 'engine/loader';
 import audio from 'engine/audio';
 
-audio.addSound('tune2.mp3', 'a');
+loader.addAsset('KenPixel.fnt');
+loader.addAsset('KenPixel.png', 'fontTexture');
+
+audio.addSound('tune2.mp3');
 
 class LoadingScene {
   constructor() {
-    loaderMgr.on('progress', (progress) => {
+    loader.on('progress', (progress) => {
       console.log(`Load ${Math.floor(progress * 100)}%`);
     });
-    loaderMgr.once('complete', () => {
+    loader.once('complete', () => {
       console.log('Assets loaded!');
-
-      audio.sounds['a'].play();
     });
-    loaderMgr.start();
+    loader.start();
   }
 }
 
