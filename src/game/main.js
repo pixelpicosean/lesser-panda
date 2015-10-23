@@ -1,7 +1,20 @@
-class Game {
+import loaderMgr from 'engine/loader-manager';
+import audio from 'engine/audio';
+
+audio.addSound('tune2.mp3', 'a');
+
+class LoadingScene {
   constructor() {
-    console.log('It Works!');
+    loaderMgr.on('progress', (progress) => {
+      console.log(`Load ${Math.floor(progress * 100)}%`);
+    });
+    loaderMgr.once('complete', () => {
+      console.log('Assets loaded!');
+
+      audio.sounds['a'].play();
+    });
+    loaderMgr.start();
   }
 }
 
-let game = new Game();
+new LoadingScene();
