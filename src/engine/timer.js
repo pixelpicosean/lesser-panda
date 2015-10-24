@@ -27,6 +27,9 @@ function Timer(ms) {
   **/
   this._pauseTime = 0;
 
+  this.callback = null;
+  this.callbackCtx = null;
+
   this.set(ms);
 }
 
@@ -141,17 +144,20 @@ Object.assign(Scene.prototype, {
   /**
     Add timer to game scene.
     @method addTimer
-    @param {Number} time Time in milliseconds
-    @param {Function} callback Callback function to run, when timer ends.
-    @param {Boolean} repeat
+    @param {Number} time        Time in milliseconds
+    @param {Function} callback  Callback function to run, when timer ends
+    @param {Object}   context   Context of the callback to be invoked
+    @param {Boolean} repeat     Whether loop this timer
     @return {Timer}
   **/
-  addTimer: function addTimer(time, callback, repeat) {
+  addTimer: function addTimer(time, callback, context, repeat) {
     var timer = new Timer(time);
 
     timer.repeat = !!repeat;
     timer.callback = callback;
+    timer.callbackCtx = context;
     this.timers.push(timer);
+
     return timer;
   },
 
@@ -163,6 +169,7 @@ Object.assign(Scene.prototype, {
   removeTimer: function removeTimer(timer) {
     if (!timer) return;
     timer.callback = null;
+    timer.callbackCtx = null;
     timer.repeat = false;
     timer.set(0);
   },
@@ -176,7 +183,7 @@ Object.assign(Scene.prototype, {
       timer = this.timers[i];
       if (timer.time() >= 0) {
         if (typeof timer.callback === 'function') {
-          timer.callback();
+          timer.callback.call(timer.callbackCtx);
         }
 
         if (timer.repeat) {
