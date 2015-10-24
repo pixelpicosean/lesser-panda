@@ -1,6 +1,7 @@
 import loader from 'engine/loader';
 import audio from 'engine/audio';
 import keyboard from 'engine/keyboard';
+import storage from 'engine/storage';
 
 loader.addAsset('KenPixel.fnt');
 loader.addAsset('KenPixel.png', 'fontTexture');
@@ -19,6 +20,9 @@ function LoadingScene() {
   keyboard.once('keydown', function(key) {
     console.log(`${key} is pressed.`);
   });
+
+  storage.set('name', 'Sean');
+  console.log(`get data from storage, name = ${storage.get('name')}`);
 }
 
 new LoadingScene();
