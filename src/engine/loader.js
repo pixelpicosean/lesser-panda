@@ -50,6 +50,11 @@ loader.start = function start() {
 
   if (!resourceLoader) {
     resourceLoader = new loader.ResourceLoader('media');
+    // Use middlewares
+    for (let m of middlewares) {
+      resourceLoader.use(m());
+    }
+
     // Load assets
     resourceLoader.add(assetsQueue);
 
