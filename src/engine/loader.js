@@ -1,9 +1,16 @@
 import EventEmitter from 'engine/eventemitter3';
 import ResourceLoader from 'engine/resource-loader';
+import config from 'game/config';
 
 // Loader instance
 // TODO: add dymanic loading support
 const loader = new EventEmitter();
+
+loader.ResourceLoader = ResourceLoader;
+
+Object.assign(loader, {
+  baseURL: 'media',
+}, config.loader);
 
 let assetsQueue = [];
 
@@ -49,7 +56,7 @@ loader.start = function start() {
   }
 
   if (!resourceLoader) {
-    resourceLoader = new loader.ResourceLoader('media');
+    resourceLoader = new loader.ResourceLoader(loader.baseURL);
     // Use middlewares
     for (let m of middlewares) {
       resourceLoader.use(m());
@@ -81,8 +88,6 @@ loader.start = function start() {
 
   loaders[loaderIdx].start(next, progress);
 };
-
-loader.ResourceLoader = ResourceLoader;
 
 /**
  * Add assets to be loaded by ResourceLoader instance

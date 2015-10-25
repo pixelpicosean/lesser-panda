@@ -15,7 +15,7 @@ function addSound(src, id) {
   }
 
   let snd = new Howl({
-    src: 'media/' + src,
+    src: loader.baseURL + '/' + src,
     preload: false,
     onload: onload.bind(undefined, snd),
     onloaderror: onload.bind(undefined, snd, `Failed to load sound[${src}]`),

@@ -23,7 +23,6 @@ function LoadingScene() {
   loader.once('complete', () => {
     console.log('Assets loaded!');
 
-    console.log(loader.resources);
     let a = new PIXI.Sprite(loader.resources['fontTexture'].texture);
     this.container.addChild(a);
   });
