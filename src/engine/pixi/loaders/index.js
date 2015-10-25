@@ -9,11 +9,8 @@
  * @namespace PIXI.loaders
  */
 module.exports = {
-    Loader:             require('./loader'),
-
     // parsers
     bitmapFontParser:   require('./bitmapFontParser'),
     spritesheetParser:  require('./spritesheetParser'),
     textureParser:      require('./textureParser'),
-    Resource:           require('engine/resource-loader').Resource
 };
