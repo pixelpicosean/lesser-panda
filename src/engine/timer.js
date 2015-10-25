@@ -142,13 +142,12 @@ Object.assign(Timer, {
   },
 
   create: function create(ms) {
-    let t;
-    if (pool.length > 0) {
-      t = pool.pop();
-      Timer.call(t, ms);
+    let t = pool.pop();
+    if (!t) {
+      t = new Timer(ms);
     }
     else {
-      t = new Timer(ms);
+      Timer.call(t, ms);
     }
     return t;
   },
@@ -168,7 +167,7 @@ Object.assign(Scene.prototype, {
     @return {Timer}
   **/
   addTimer: function addTimer(time, callback, context, repeat) {
-    var timer = Timer.create(time);
+    let timer = Timer.create(time);
 
     timer.repeat = !!repeat;
     timer.callback = callback;
@@ -197,8 +196,8 @@ Object.assign(Scene.prototype, {
     this.timers = [];
   },
   _updateTimers: function _updateTimers() {
-    var timer;
-    for (var i = this.timers.length - 1; i >= 0; i--) {
+    let timer;
+    for (let i = this.timers.length - 1; i >= 0; i--) {
       timer = this.timers[i];
       if (timer.time() >= 0) {
         if (typeof timer.callback === 'function') {
