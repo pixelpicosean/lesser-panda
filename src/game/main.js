@@ -6,6 +6,7 @@ import audio from 'engine/audio';
 import keyboard from 'engine/keyboard';
 import storage from 'engine/storage';
 import Timer from 'engine/timer';
+import device from 'engine/device';
 
 import PIXI from 'engine/pixi';
 
@@ -34,6 +35,8 @@ function LoadingScene() {
 
   storage.set('name', 'Sean');
   console.log(`get data from storage, name = ${storage.get('name')}`);
+
+  console.log(device);
 }
 LoadingScene.prototype = Object.create(Scene.prototype);
 LoadingScene.prototype.constructor = LoadingScene;
