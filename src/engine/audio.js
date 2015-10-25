@@ -18,15 +18,16 @@ function addSound(src, id) {
     src: 'media/' + src,
     preload: false,
     onload: onload.bind(undefined, snd),
+    onloaderror: onload.bind(undefined, snd, `Failed to load sound[${src}]`),
   });
   sounds[id || src] = snd;
 
   soundsToLoadCount += 1;
 }
 
-function onload(snd) {
+function onload(snd, err) {
   soundsLoadedCount += 1;
-  progressCB && progressCB(snd);
+  progressCB && progressCB(snd, err);
 
   if (soundsLoadedCount === soundsToLoadCount && completeCB) {
     setTimeout(completeCB, 0);
