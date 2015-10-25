@@ -1,5 +1,7 @@
 import Scene from 'engine/scene';
 
+let pool = [];
+
 /**
   @class Timer
   @constructor
@@ -130,13 +132,28 @@ Object.assign(Timer, {
     Update main timer.
     @attribute {Function} update
   **/
-  update: function(timestamp) {
+  update: function update(timestamp) {
     var now = timestamp ? timestamp : Date.now();
     if (!this._last) this._last = now;
     this._realDelta = now - this._last;
     this.delta = Math.min(this._realDelta, 1000 / this.minFPS) * this.speed;
     this.time += this.delta;
     this._last = now;
+  },
+
+  create: function create(ms) {
+    let t;
+    if (pool.length > 0) {
+      t = pool.pop();
+      Timer.call(t, ms);
+    }
+    else {
+      t = new Timer(ms);
+    }
+    return t;
+  },
+  recycle: function recycle(timer) {
+    pool.push(timer);
   },
 });
 
@@ -151,7 +168,7 @@ Object.assign(Scene.prototype, {
     @return {Timer}
   **/
   addTimer: function addTimer(time, callback, context, repeat) {
-    var timer = new Timer(time);
+    var timer = Timer.create(time);
 
     timer.repeat = !!repeat;
     timer.callback = callback;
@@ -172,6 +189,8 @@ Object.assign(Scene.prototype, {
     timer.callbackCtx = null;
     timer.repeat = false;
     timer.set(0);
+
+    Timer.recycle(timer);
   },
 
   _initTimers: function _initTimers() {
