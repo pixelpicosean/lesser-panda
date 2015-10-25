@@ -12,8 +12,13 @@ core.interaction    = require('./interaction');
 var loader = require('engine/loader');
 
 var pixiMiddlewares = require('./loaders');
+// - parse any blob into more usable objects (e.g. Image)
+loader.addMiddleware(loader.ResourceLoader.middleware.parsing.blob);
+// - parse any Image objects into textures
 loader.addMiddleware(pixiMiddlewares.textureParser);
+// - parse any spritesheet data into multiple textures
 loader.addMiddleware(pixiMiddlewares.spritesheetParser);
+// - parse any spritesheet data into multiple textures
 loader.addMiddleware(pixiMiddlewares.bitmapFontParser);
 
 var Resource = loader.ResourceLoader.Resource;
