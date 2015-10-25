@@ -35,7 +35,9 @@ let core = Object.assign(new EventEmitter(), {
 
   startWithScene(sceneName) {
     core.setScene(sceneName);
-    window.addEventListener('load', core.boot);
+
+    window.addEventListener('load', core.boot, false);
+    document.addEventListener('DOMContentLoaded', core.boot, false);
   },
 
   startLoop() {
@@ -66,6 +68,9 @@ let core = Object.assign(new EventEmitter(), {
   },
 
   boot() {
+    window.removeEventListener('load', core.boot);
+    document.removeEventListener('DOMContentLoaded', core.boot);
+
     Renderer.init(config.width || 640, config.height || 400, Object.assign({
       canvasId: 'game',
     }, config.renderer));
