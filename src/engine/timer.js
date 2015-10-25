@@ -199,6 +199,8 @@ Object.assign(Scene.prototype, {
   },
 });
 
-Scene.systems.push('Timer');
+if (Scene.systems.indexOf('Timers') === -1) {
+  Scene.systems.push('Timers');
+}
 
 export default Timer;
