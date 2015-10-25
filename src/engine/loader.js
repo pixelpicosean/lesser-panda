@@ -57,6 +57,8 @@ loader.registerLoader({
   },
 });
 
+loader.resourceLoader = resourceLoader;
+
 // TODO: loader middleware support
 
 loader.addAsset = function addAsset(url, key) {
