@@ -1,24 +1,23 @@
-// run the polyfills
 require('engine/polyfill');
 
 var core = module.exports = require('./core');
 
-// add core plugins.
+// Uncomment to import any plugins you want to use
 core.extras         = require('./extras');
-// core.filters        = require('./filters');
 core.interaction    = require('./interaction');
-core.loaders        = require('./loaders');
+// core.filters        = require('./filters');
 // core.mesh           = require('./mesh');
 
-// export a premade loader instance
-/**
- * A premade instance of the loader that can be used to loader resources.
- *
- * @name loader
- * @memberof PIXI
- * @property {PIXI.loaders.Loader}
- */
-core.loader = require('engine/loader').resourceLoader;
+// Extend loader
+var loader = require('engine/loader');
+
+var pixiMiddlewares = require('./loaders');
+loader.addMiddleware(pixiMiddlewares.textureParser);
+loader.addMiddleware(pixiMiddlewares.spritesheetParser);
+loader.addMiddleware(pixiMiddlewares.bitmapFontParser);
+
+var Resource = loader.ResourceLoader.Resource;
+Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
 // Register PIXI as the renderer of choice
 var Renderer = require('engine/renderer');
@@ -43,7 +42,7 @@ Object.assign(Scene.prototype, {
     this.container = new core.Container();
   },
   _updateRenderer: function _updateRenderer() {
-    Renderer.core.render(scene.container);
+    Renderer.core.render(this.container);
   }
 });
 
