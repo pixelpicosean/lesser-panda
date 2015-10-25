@@ -14,28 +14,30 @@ let core = Object.assign(new EventEmitter(), {
   _loopId: 0,
 
   addScene(name, ctor) {
-    if (this.scenes[name]) {
+    if (core.scenes[name]) {
       console.log(`Scene [${name}] is already defined!`);
       return;
     }
 
     let pair = { ctor: ctor, inst: null };
-    this.scenes[name] = pair;
+    core.scenes[name] = pair;
   },
   setScene(name) {
-    let pair = this.scenes[name];
+    let pair = core.scenes[name];
 
     if (!pair) {
       console.log(`Scene [${name}] is not defined!`);
       return;
     }
 
-    this._nextScene = pair;
+    core._nextScene = pair;
   },
   startLoop() {
-    this._loopId = requestAnimationFrame(this.loop);
+    core._loopId = requestAnimationFrame(core.loop);
   },
   loop(timestamp) {
+    core._loopId = requestAnimationFrame(core.loop);
+
     Timer.update(timestamp);
 
     if (core._nextScene) {
@@ -53,8 +55,8 @@ let core = Object.assign(new EventEmitter(), {
 
     core.scene && core.scene.tickAndRun();
   },
-  stopLoop() {
-    clearAnimationFrame(this._loopId);
+  endLoop() {
+    cancelAnimationFrame(core._loopId);
   },
 
   boot() {
