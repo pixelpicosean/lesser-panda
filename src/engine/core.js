@@ -32,6 +32,12 @@ let core = Object.assign(new EventEmitter(), {
 
     core._nextScene = pair;
   },
+
+  startWithScene(sceneName) {
+    core.setScene(sceneName);
+    window.addEventListener('load', core.boot);
+  },
+
   startLoop() {
     core._loopId = requestAnimationFrame(core.loop);
   },
@@ -66,7 +72,5 @@ let core = Object.assign(new EventEmitter(), {
     core.startLoop();
   },
 });
-
-window.addEventListener('load', core.boot);
 
 export default core;
