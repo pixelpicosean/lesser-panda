@@ -1,3 +1,5 @@
+let pool = [];
+
 /**
   Vector class.
   @class Vector
@@ -252,4 +254,20 @@ Vector.prototype.equals = function equals(vector) {
   return (vector.x === this.x) && (vector.y === this.y);
 };
 
-module.exports = Vector;
+Object.assign(Vector, {
+  create: function create(x, y) {
+    let v = pool.pop();
+    if (!v) {
+      v = new Vector(x, y);
+    }
+    else {
+      Vector.set(x, y);
+    }
+    return v;
+  },
+  recycle: function recycle(vector) {
+    pool.push(vector);
+  },
+});
+
+export default Vector;
