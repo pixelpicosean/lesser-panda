@@ -4,7 +4,7 @@ import EventEmitter from 'engine/eventemitter3';
   Game scene.
   @class Scene
 **/
-function Scene(settings) {
+function Scene() {
   EventEmitter.call(this);
 
   /**
