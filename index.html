@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>LesserPanda v3</title>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 </head>
 <body>
   <!-- Script for live-reload (for development) -->
   {% if (o.htmlWebpackPlugin.options.reloadScript) { %}
     <script src="{%= o.htmlWebpackPlugin.options.reloadScript %}"></script>
   {% } %}
+  <canvas id="game"></canvas>
 </body>
 </html>
