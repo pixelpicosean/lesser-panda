@@ -1,8 +1,15 @@
+/**
+ * Most implementation comes from [Playground](http://playgroundjs.com/playground-ease)
+ * Thanks to author of playground.js: [Rezoner](https://twitter.com/rezoner)
+ */
+
 import EventEmitter from 'engine/eventemitter3';
 import Timer from 'engine/timer';
 import Scene from 'engine/scene';
 
 let pool = [];
+
+// TODO: better easing support (https://github.com/rezoner/ease)
 
 /**
   @class Timeline
