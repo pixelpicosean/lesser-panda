@@ -6,12 +6,12 @@ import audio from 'engine/audio';
 import keyboard from 'engine/keyboard';
 import storage from 'engine/storage';
 import Timer from 'engine/timer';
+import Timeline from 'engine/timeline';
 import device from 'engine/device';
 
 import PIXI from 'engine/pixi';
 
 loader.addAsset('KenPixel.fnt');
-loader.addAsset('KenPixel.png', 'fontTexture');
 
 audio.addSound('tune2.mp3');
 
@@ -24,8 +24,18 @@ function LoadingScene() {
   loader.once('complete', () => {
     console.log('Assets loaded!');
 
-    let a = new PIXI.Sprite(loader.resources['fontTexture'].texture);
-    this.container.addChild(a);
+    let t = new PIXI.extras.BitmapText('#', {
+      font: '32px KenPixel',
+    });
+    this.container.addChild(t);
+
+    this.addTimeline(t)
+      .wait(500)
+      .to({ x: 100, }, 500, 'Quadratic.InOut')
+      .repeat(1)
+      .wait(500)
+      .to({ x: 200, }, 500, 'Quadratic.InOut')
+      .repeat(1);
   });
   loader.start();
 
