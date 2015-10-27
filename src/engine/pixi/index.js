@@ -8,6 +8,17 @@ core.interaction    = require('./interaction');
 // core.filters        = require('./filters');
 // core.mesh           = require('./mesh');
 
+// Extend core objects
+Object.assign(core.DisplayObject.prototype, {
+  remove: function remove() {
+    if (this.parent) this.parent.removeChild(this);
+  },
+  addTo: function addTo(container) {
+    container.addChild(this);
+    return this;
+  },
+});
+
 // Extend loader
 var loader = require('engine/loader');
 
