@@ -167,6 +167,8 @@ Timeline.prototype._next = function _next() {
       this.index--;
       this._step(0);
 
+      this.emit('repeat', this);
+
       return;
     }
     else {
