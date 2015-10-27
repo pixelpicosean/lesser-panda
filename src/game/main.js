@@ -30,12 +30,18 @@ function LoadingScene() {
     this.container.addChild(t);
 
     this.addTimeline(t)
-      .wait(500)
-      .to({ x: 100, }, 500, 'Quadratic.InOut')
-      .repeat(1)
-      .wait(500)
-      .to({ x: 200, }, 500, 'Quadratic.InOut')
-      .repeat(1);
+      .to({ x: 300, y: 0 }, 1000)
+      .to({ x: 300, y: 160 }, 1000)
+      .to({ x: 0, y: 160 }, 1000)
+      .to({ x: 0, y: 0 }, 1000)
+      .to({
+        x: [100, 100, 0, 0],
+        y: [0, 100, 100, 0]
+      }, 4000, 'Quadratic.InOut', 'Bezier')
+      .repeat(3)
+      .on('finish', function() {
+        console.log('action finished');
+      });
   });
   loader.start();
 
