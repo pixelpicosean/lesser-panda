@@ -12,6 +12,7 @@ import device from 'engine/device';
 import PIXI from 'engine/pixi';
 
 loader.addAsset('KenPixel.fnt');
+loader.addAsset('meter.png', 'meter');
 
 audio.addSound('tune2.mp3');
 
@@ -28,6 +29,14 @@ function LoadingScene() {
       font: '32px KenPixel',
     });
     this.container.addChild(t);
+
+    // console.log(PIXI.utils.TextureCache);
+    let anim = PIXI.extras.Animation.fromSpriteSheet('media/meter.png', 28, 7, 6)
+      .addTo(this.container);
+    anim.anchor.set(0.5);
+    anim.scale.set(2);
+    anim.position.set(160, 100);
+    anim.play();
 
     let c = 0;
     this.addTimeline(t)
