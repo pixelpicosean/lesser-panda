@@ -118,7 +118,7 @@ Timeline.prototype.to = function to(properties, duration, easing = Timeline.Easi
  * @chainable
  */
 Timeline.prototype.repeat = function repeat(times) {
-  this.actions.push(['repeat', times]);
+  this.actions.push(['repeat', times - 1]);
   return this;
 };
 
