@@ -88,18 +88,27 @@ Timeline.prototype.constructor = Timeline;
 
 /**
  * Add a new action to the timeline
- * @param  {Object} properties          Target properties
- * @param  {Number} duration            Duration of the action in ms
- * @param  {String|Function} easing     Easing function
+ * @param  {Object} properties              Target properties
+ * @param  {Number} duration                Duration of the action in ms
+ * @param  {String|Function} easing         Easing function
+ * @param  {String|Function} interpolation  Interpolation function
  * @chainable
  */
-Timeline.prototype.to = function to(properties, duration, easing = Timeline.Easing.Linear.None) {
+Timeline.prototype.to = function to(properties, duration, easing = Timeline.Easing.Linear.None, interpolation = Timeline.Interpolation.Linear) {
   let easingFn = easing;
+  let interpolationFn = interpolation;
+
   if (typeof easing === 'string') {
     easing = easing.split('.');
     easingFn = Timeline.Easing[easing[0]][easing[1]];
   }
-  this.actions.push([properties, duration, easingFn]);
+
+  if (typeof interpolation === 'string') {
+    interpolationFn = Timeline.Interpolation[interpolation];
+  }
+
+  this.actions.push([properties, duration, easingFn, interpolationFn]);
+
   return this;
 };
 
@@ -184,6 +193,11 @@ Timeline.prototype._next = function _next() {
         this.change.push(properties[key] - value);
         this.types.push(0);
       }
+      else if (Array.isArray(properties[key])) {
+        this.before.push(value);
+        this.change.push([value].concat(properties[key]));
+        this.types.push(1);
+      }
       else {
         console.log('This type of action is not supported yet!');
       }
@@ -193,6 +207,7 @@ Timeline.prototype._next = function _next() {
 
     this.duration = this.current[1];
     this.easing = this.current[2];
+    this.interpolation = this.current[3];
   }
 };
 
@@ -205,15 +220,15 @@ Timeline.prototype._step = function _step(delta) {
 
   switch (this.currentAction) {
     case 'animate':
-      this._doAnimate(delta);
+      this._doAnimate();
       break;
     case 'wait':
-      this._doWait(delta);
+      this._doWait();
       break;
   }
 };
 
-Timeline.prototype._doAnimate = function _doAnimate(delta) {
+Timeline.prototype._doAnimate = function _doAnimate() {
   this.progress = Math.min(1, this.delta / this.duration);
 
   let mod = this.easing(this.progress);
@@ -225,6 +240,9 @@ Timeline.prototype._doAnimate = function _doAnimate(delta) {
       case 0:
         this.context[key] = this.before[i] + this.change[i] * mod;
         break;
+      case 1:
+        this.context[key] = this.interpolation(this.change[i], mod);
+        break;
     }
   }
 
@@ -233,7 +251,7 @@ Timeline.prototype._doAnimate = function _doAnimate(delta) {
   }
 };
 
-Timeline.prototype._doWait = function _doWait(delta) {
+Timeline.prototype._doWait = function _doWait() {
   if (this.delta >= this.duration) {
     this._next();
   }
