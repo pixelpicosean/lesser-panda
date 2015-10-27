@@ -29,6 +29,7 @@ function LoadingScene() {
     });
     this.container.addChild(t);
 
+    let c = 0;
     this.addTimeline(t)
       .to({ x: 300, y: 0 }, 1000)
       .to({ x: 300, y: 160 }, 1000)
@@ -37,8 +38,21 @@ function LoadingScene() {
       .to({
         x: [100, 100, 0, 0],
         y: [0, 100, 100, 0]
-      }, 4000, 'Quadratic.InOut', 'Bezier')
+      }, 4000, 'Quadratic.InOut')
       .repeat(3)
+      .on('repeat', function(t) {
+        c++;
+        if (c === 1) {
+          t.interpolation = Timeline.Interpolation.Bezier;
+        }
+        else if (c === 2) {
+          t.interpolation = Timeline.Interpolation.CatmullRom;
+        }
+        else if (c === 3) {
+          c = 0;
+          t.interpolation = Timeline.Interpolation.Linear;
+        }
+      })
       .on('finish', function() {
         console.log('action finished');
       });
