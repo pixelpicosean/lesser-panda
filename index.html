@@ -7,6 +7,30 @@
     html, body {
       margin: 0;
       padding: 0;
+
+      overflow: hidden;
+    }
+    #game {
+      /* No touch action */
+      ms-touch-action: none;
+      touch-action: none;
+
+      /* No user select */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+      /* Pixelated, remove these lines for smooth scaling */
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: -o-crisp-edges;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
     }
   </style>
 </head>
