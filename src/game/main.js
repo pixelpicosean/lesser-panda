@@ -33,7 +33,6 @@ function LoadingScene() {
     let anim = PIXI.extras.Animation.fromSpriteSheet('meter', 28, 7, 6)
       .addTo(this.container);
     anim.anchor.set(0.5);
-    anim.scale.set(2);
     anim.position.set(160, 100);
     anim.play();
 
