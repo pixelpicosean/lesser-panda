@@ -7,6 +7,7 @@ import keyboard from 'engine/keyboard';
 import storage from 'engine/storage';
 import Timer from 'engine/timer';
 import Timeline from 'engine/timeline';
+import physics from 'engine/physics';
 import device from 'engine/device';
 
 import PIXI from 'engine/pixi';
@@ -15,6 +16,23 @@ loader.addAsset('KenPixel.fnt');
 loader.addAsset('meter.png', 'meter');
 
 audio.addSound('tune2.mp3');
+
+function Box(x, y, container) {
+  let sprite = new PIXI.extras.BitmapText('BODY', {
+    font: '48px KenPixel',
+  }).addTo(container);
+  sprite.pivot.set(sprite.width * 0.5, sprite.height * 0.5);
+  sprite.position.set(x, y);
+
+  let body = new physics.Body({
+    mass: 0.4,
+    shape: new physics.Rectangle(sprite.width, sprite.height),
+    collisionGroup: 1,
+    collideAgainst: [2],
+  }).addTo(engine.scene.world);
+
+  body.position = sprite.position;
+}
 
 function LoadingScene() {
   Scene.call(this);
@@ -35,6 +53,13 @@ function LoadingScene() {
     anim.anchor.set(0.5);
     anim.position.set(160, 100);
     anim.play();
+
+    let b = new Box(260, 10, this.container);
+    let ground = new physics.Body({
+      shape: new physics.Rectangle(320, 20),
+      collisionGroup: 2,
+    }).addTo(this.world);
+    ground.position.set(160, 180);
 
     let c = 0;
     this.addTimeline(t)
@@ -82,6 +107,8 @@ LoadingScene.prototype.awake = function awake() {
   this.addTimer(1000, function() {
     console.log('Log after 1000ms.');
   }, this, false);
+
+  console.log(`world.gravity = (${this.world.gravity.x}, ${this.world.gravity.y})`);
 };
 
 engine.addScene('LoadingScene', LoadingScene);
