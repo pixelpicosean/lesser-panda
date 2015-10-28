@@ -14,6 +14,7 @@ import PIXI from 'engine/pixi';
 
 loader.addAsset('KenPixel.fnt');
 loader.addAsset('meter.png', 'meter');
+loader.addAsset('sprites.json');
 
 audio.addSound('tune2.mp3');
 
@@ -88,6 +89,11 @@ function LoadingScene() {
       .on('finish', function() {
         console.log('action finished');
       });
+
+    let atlasSpr = new PIXI.Sprite(PIXI.Texture.fromFrame('head_09'))
+      .addTo(this.container);
+    atlasSpr.anchor.set(0.5);
+    atlasSpr.position.set(160, 50);
   });
   loader.start();
 
