@@ -19,7 +19,7 @@ Object.assign(Scene.prototype, {
   },
   _updateRenderer: function _updateRenderer() {
     this.emit('draw');
-    this.draw();
+    this.draw(this.layer);
   },
 });
 
