@@ -116,13 +116,15 @@ World.prototype.collide = function collide(body) {
   @method update
 **/
 World.prototype.update = function update() {
+  let delta = Timer.delta / 1000;
+
   var i, j;
   for (i = this.bodies.length - 1; i >= 0; i--) {
     if (this.bodies[i]._remove) {
       this.removeBodyCollision(this.bodies[i]);
       this.bodies.splice(i, 1);
     } else {
-      this.bodies[i].update();
+      this.bodies[i].update(delta);
     }
   }
 
@@ -261,9 +263,9 @@ function Body(properties) {
   /**
     Body's maximum velocity.
     @property {Vector} velocityLimit
-    @default 0,0
+    @default 400, 400
   **/
-  this.velocityLimit = new Vector();
+  this.velocityLimit = new Vector(400, 400);
   /**
     Body's mass.
     @property {Number} mass
@@ -379,23 +381,23 @@ Body.prototype.removeCollision = function removeCollision() {
 /**
   @method update
 **/
-Body.prototype.update = function update() {
+Body.prototype.update = function update(delta) {
   this.last.copy(this.position);
 
   if (this.mass !== 0) {
     this.velocity.add(
-      this.world.gravity.x * this.mass * Timer.delta,
-      this.world.gravity.y * this.mass * Timer.delta
+      this.world.gravity.x * this.mass * delta,
+      this.world.gravity.y * this.mass * delta
     );
   }
 
-  this.velocity.add(this.force.x * Timer.delta, this.force.y * Timer.delta);
-  if (this.damping > 0 && this.damping < 1) this.velocity.scale(Math.pow(1 - this.damping, Timer.delta));
+  this.velocity.add(this.force.x * delta, this.force.y * delta);
+  if (this.damping > 0 && this.damping < 1) this.velocity.scale(Math.pow(1 - this.damping, delta));
 
-  if (this.velocityLimit.x > 0) this.velocity.x = this.velocity.x.limit(-this.velocityLimit.x, this.velocityLimit.x);
-  if (this.velocityLimit.y > 0) this.velocity.y = this.velocity.y.limit(-this.velocityLimit.y, this.velocityLimit.y);
+  if (this.velocityLimit.x > 0) this.velocity.x = Math.clamp(this.velocity.x, -this.velocityLimit.x, this.velocityLimit.x);
+  if (this.velocityLimit.y > 0) this.velocity.y = Math.clamp(this.velocity.y, -this.velocityLimit.y, this.velocityLimit.y);
 
-  this.position.add(this.velocity.x * Timer.delta, this.velocity.y * Timer.delta);
+  this.position.add(this.velocity.x * delta, this.velocity.y * delta);
 };
 
 /**
