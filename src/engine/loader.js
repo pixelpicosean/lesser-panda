@@ -56,7 +56,7 @@ loader.start = function start() {
   }
 
   if (!resourceLoader) {
-    resourceLoader = new loader.ResourceLoader(loader.baseURL);
+    resourceLoader = new loader.ResourceLoader();
     // Use middlewares
     for (let m of middlewares) {
       resourceLoader.use(m());
@@ -93,7 +93,15 @@ loader.start = function start() {
  * Add assets to be loaded by ResourceLoader instance
  */
 loader.addAsset = function addAsset(url, key) {
-  assetsQueue.push({ url, key })
+  if (key) {
+    assetsQueue.push({
+      url: loader.baseURL + '/' + url,
+      key
+    });
+  }
+  else {
+    assetsQueue.push(loader.baseURL + '/' + url);
+  }
 };
 
 loader.addMiddleware = function addMiddleware(fn) {
