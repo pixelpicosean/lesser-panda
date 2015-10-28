@@ -26,3 +26,5 @@ Object.assign(Scene.prototype, {
 if (Scene.systems.indexOf('Renderer') === -1) {
   Scene.systems.push('Renderer');
 }
+
+export default cq;
