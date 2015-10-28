@@ -6,6 +6,23 @@ import Renderer from 'engine/renderer';
 import Timer from 'engine/timer';
 import config from 'game/config';
 
+// Math extensions
+Object.assign(Math, {
+  /**
+   * Force a value within the boundaries by clamping `x` to the range `[a, b]`.
+   *
+   * @method Math.clamp
+   * @param {number} x
+   * @param {number} a
+   * @param {number} b
+   * @return {number}
+   */
+  clamp: function (x, a, b) {
+    return (x < a) ? a : ((x > b) ? b : x);
+  },
+});
+
+// Engine core
 let core = Object.assign(new EventEmitter(), {
   scenes: {},
   scene: null,
