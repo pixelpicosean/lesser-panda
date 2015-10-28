@@ -30,8 +30,7 @@ function LoadingScene() {
     });
     this.container.addChild(t);
 
-    // console.log(PIXI.utils.TextureCache);
-    let anim = PIXI.extras.Animation.fromSpriteSheet('media/meter.png', 28, 7, 6)
+    let anim = PIXI.extras.Animation.fromSpriteSheet('meter', 28, 7, 6)
       .addTo(this.container);
     anim.anchor.set(0.5);
     anim.scale.set(2);

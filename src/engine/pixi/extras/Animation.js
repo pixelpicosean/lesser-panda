@@ -63,7 +63,7 @@ function Animation(textures) {
   for (var i = 0; i < this.textures.length; i++) {
     var texture = this.textures[i];
     if (!(texture instanceof core.Texture)) {
-      texture = core.Texture.fromFrame(texture);
+      texture = core.Texture.fromAsset(texture);
     }
 
     newTextures.push(texture);
@@ -221,7 +221,7 @@ Object.assign(Animation, {
   fromSpriteSheet: function fromSpriteSheet(sheet, width, height, frameNum) {
     var sheetTexture = sheet;
     if (!(sheetTexture instanceof core.Texture)) {
-      sheetTexture = core.Texture.fromFrame(sheetTexture);
+      sheetTexture = core.Texture.fromAsset(sheetTexture);
     }
 
     var crop = sheetTexture.crop;
