@@ -1,120 +1,55 @@
 import engine from 'engine/core';
 import Scene from 'engine/scene';
 
-import loader from 'engine/loader';
-import audio from 'engine/audio';
-import keyboard from 'engine/keyboard';
-import storage from 'engine/storage';
-import Timer from 'engine/timer';
+import Vector from 'engine/vector';
 import Timeline from 'engine/timeline';
 import physics from 'engine/physics';
-import device from 'engine/device';
 
-import PIXI from 'engine/pixi';
+import 'engine/canvasquery';
 
-loader.addAsset('KenPixel.fnt');
-loader.addAsset('meter.png', 'meter');
-loader.addAsset('sprites.json');
-
-audio.addSound('tune2.mp3');
-
-function Box(x, y, container) {
-  let sprite = new PIXI.extras.BitmapText('BODY', {
-    font: '48px KenPixel',
-  }).addTo(container);
-  sprite.pivot.set(sprite.width * 0.5, sprite.height * 0.5);
-  sprite.position.set(x, y);
-
-  let body = new physics.Body({
+function Box(x, y, world) {
+  this.body = new physics.Body({
     mass: 0.4,
-    shape: new physics.Rectangle(sprite.width, sprite.height),
+    shape: new physics.Rectangle(20, 20),
     collisionGroup: 1,
     collideAgainst: [2],
-  }).addTo(engine.scene.world);
+  }).addTo(world);
 
-  body.position = sprite.position;
+  this.body.position.set(x, y);
 }
+Box.prototype.draw = function draw(gl) {
+  gl.fillStyle('#c04')
+    .fillRect(this.body.position.x - 10, this.body.position.y - 10, 20, 20);
+};
+
+function Wall(x, y, w, h, world) {
+  this.body = new physics.Body({
+    shape: new physics.Rectangle(w, h),
+    collisionGroup: 2,
+  }).addTo(world);
+
+  this.position = this.body.position.set(x, y);
+  this.size = Vector.create(w, h);
+}
+Wall.prototype.draw = function draw(gl) {
+  gl.fillStyle('#0af')
+    .fillRect(this.position.x - this.size.x * 0.5, this.position.y - this.size.y * 0.5, this.size.x, this.size.y);
+};
 
 function LoadingScene() {
   Scene.call(this);
 
-  loader.on('progress', (progress) => {
-    console.log(`Load ${Math.floor(progress * 100)}%`);
-  });
-  loader.once('complete', () => {
-    console.log('Assets loaded!');
-
-    let t = new PIXI.extras.BitmapText('#', {
-      font: '32px KenPixel',
-    });
-    this.container.addChild(t);
-
-    let anim = PIXI.extras.Animation.fromSpriteSheet('meter', 28, 7, 6)
-      .addTo(this.container);
-    anim.anchor.set(0.5);
-    anim.position.set(160, 100);
-    anim.play();
-
-    let b = new Box(260, 10, this.container);
-    let ground = new physics.Body({
-      shape: new physics.Rectangle(320, 20),
-      collisionGroup: 2,
-    }).addTo(this.world);
-    ground.position.set(160, 180);
-
-    let c = 0;
-    this.addTimeline(t)
-      .to({ x: 300, y: 0 }, 1000)
-      .to({ x: 300, y: 160 }, 1000)
-      .to({ x: 0, y: 160 }, 1000)
-      .to({ x: 0, y: 0 }, 1000)
-      .to({
-        x: [100, 100, 0, 0],
-        y: [0, 100, 100, 0]
-      }, 4000, 'Quadratic.InOut')
-      .repeat(3)
-      .on('repeat', function(t) {
-        c++;
-        if (c === 1) {
-          t.interpolation = Timeline.Interpolation.Bezier;
-        }
-        else if (c === 2) {
-          t.interpolation = Timeline.Interpolation.CatmullRom;
-        }
-        else if (c === 3) {
-          c = 0;
-          t.interpolation = Timeline.Interpolation.Linear;
-        }
-      })
-      .on('finish', function() {
-        console.log('action finished');
-      });
-
-    let atlasSpr = new PIXI.Sprite(PIXI.Texture.fromFrame('head_09'))
-      .addTo(this.container);
-    atlasSpr.anchor.set(0.5);
-    atlasSpr.position.set(160, 50);
-  });
-  loader.start();
-
-  keyboard.once('keydown', function(key) {
-    console.log(`${key} is pressed.`);
-  });
-
-  storage.set('name', 'Sean');
-  console.log(`get data from storage, name = ${storage.get('name')}`);
-
-  console.log(device);
+  this.box = new Box(160, 100, this.world);
+  this.ground = new Wall(160, 180, 320, 20, this.world);
 }
 LoadingScene.prototype = Object.create(Scene.prototype);
 LoadingScene.prototype.constructor = LoadingScene;
 
-LoadingScene.prototype.awake = function awake() {
-  this.addTimer(1000, function() {
-    console.log('Log after 1000ms.');
-  }, this, false);
+LoadingScene.prototype.draw = function draw(gl) {
+  gl.clear('#203');
 
-  console.log(`world.gravity = (${this.world.gravity.x}, ${this.world.gravity.y})`);
+  this.box.draw(gl);
+  this.ground.draw(gl);
 };
 
 engine.addScene('LoadingScene', LoadingScene);
