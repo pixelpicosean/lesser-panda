@@ -113,12 +113,12 @@ Timeline.prototype.to = function to(properties, duration, easing = Timeline.Easi
 };
 
 /**
- * Repeat last action for times
- * @param  {Number} times How many times to repeat the action
+ * Repeat the timeline for times
+ * @param  {Number} times How many times to repeat
  * @chainable
  */
 Timeline.prototype.repeat = function repeat(times) {
-  this.actions.push(['repeat', times - 1]);
+  this.actions.push(['repeat', times]);
   return this;
 };
 
@@ -162,19 +162,26 @@ Timeline.prototype._next = function _next() {
     this.currentAction = 'wait';
   }
   else if (this.current[0] === 'repeat') {
-    this.current[1]--;
-    if (this.current[1] > 0) {
-      this.index--;
-      this._step(0);
-
+    if (!this.current.counter) {
+      this.current.counter = this.current[1];
+    }
+    this.current.counter--;
+    if (this.current.counter > 0) {
       this.emit('repeat', this);
 
-      return;
+      // Restart from beginning
+      this.index = -1;
+      this.current = null;
+      this._step(0);
     }
     else {
-      this._step(0);
+      // Reset counter for next repeat if exists
+      this.current.counter = this.current[1];
 
-      return;
+      // Clear for next action
+      this.current = null;
+      this.currentAction = null;
+      this._step(0);
     }
   }
   else {
