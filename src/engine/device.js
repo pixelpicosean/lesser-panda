@@ -1,5 +1,5 @@
-let hasDeviceInfo = false;
-let device = {};
+var hasDeviceInfo = false;
+var device = {};
 
 function fetchDeviceInfo() {
   if (!document.body) {
@@ -9,7 +9,7 @@ function fetchDeviceInfo() {
     window.removeEventListener('load', fetchDeviceInfo);
     document.removeEventListener('DOMContentLoaded', fetchDeviceInfo);
 
-    let ua = navigator.userAgent;
+    var ua = navigator.userAgent;
 
     // Desktop
     device.linux = /Linux/.test(ua);
@@ -38,7 +38,7 @@ function fetchDeviceInfo() {
 
     // Android
     device.android = /Android/.test(ua);
-    let androidVer = ua.match(/Android.*AppleWebKit\/([\d.]+)/);
+    var androidVer = ua.match(/Android.*AppleWebKit\/([\d.]+)/);
     device.androidStock = !!(androidVer && androidVer[1] < 537);
 
     // Internet Explorer
@@ -74,4 +74,4 @@ function fetchDeviceInfo() {
 window.addEventListener('load', fetchDeviceInfo);
 document.addEventListener('DOMContentLoaded', fetchDeviceInfo);
 
-export default device;
+module.exports = device;

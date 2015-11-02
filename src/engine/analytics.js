@@ -1,5 +1,5 @@
-import device from 'engine/device';
-import config from 'game/config';
+var device = require('engine/device');
+var config = require('game/config');
 
 /**
   Google Analytics tracking.
@@ -63,6 +63,6 @@ Analytics.prototype.send = function send(category, action, label, value) {
   }
 };
 
-let analytics = new Analytics(Object.assign({
+module.exports = new Analytics(Object.assign({
   id: '',
 }, config.analytics));

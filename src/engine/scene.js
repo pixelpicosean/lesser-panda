@@ -1,5 +1,5 @@
-import EventEmitter from 'engine/eventemitter3';
-import engine from 'engine/core';
+var EventEmitter = require('engine/eventemitter3');
+var engine = require('engine/core');
 
 /**
   Game scene.
@@ -14,11 +14,13 @@ function Scene() {
   **/
   this.systems = [];
 
-  for (let i of Scene.systems) {
-    this.systems.push(i);
+  var i, s;
+  for (i in Scene.systems) {
+    s = Scene.systems[i];
+    this.systems.push(s);
 
-    if (this['_init' + i]) {
-      this['_init' + i]();
+    if (this['_init' + s]) {
+      this['_init' + s]();
     }
   }
 
@@ -35,9 +37,9 @@ Scene.prototype._awake = function() {
   this.emit('awake');
   this.awake();
 
-  for (let i of this.systems) {
-    if (this['_awake' + i]) {
-      this['_awake' + i]();
+  for (var i in this.systems) {
+    if (this['_awake' + this.systems[i]]) {
+      this['_awake' + this.systems[i]]();
     }
   }
 };
@@ -49,9 +51,9 @@ Scene.prototype._freeze = function _freeze() {
   this.emit('freeze');
   this.freeze();
 
-  for (let i of this.systems) {
-    if (this['_freeze' + i]) {
-      this['_freeze' + i]();
+  for (var i in this.systems) {
+    if (this['_freeze' + this.systems[i]]) {
+      this['_freeze' + this.systems[i]]();
     }
   }
 };
@@ -67,9 +69,9 @@ Scene.prototype.tickAndRun = function tickAndRun() {
   this.emit('update');
   this.update();
 
-  for (let i of this.systems) {
-    if (this['_update' + i]) {
-      this['_update' + i]();
+  for (var i in this.systems) {
+    if (this['_update' + this.systems[i]]) {
+      this['_update' + this.systems[i]]();
     }
   }
 };
@@ -131,4 +133,4 @@ Object.assign(Scene, {
   ],
 });
 
-export default Scene;
+module.exports = Scene;

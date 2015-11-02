@@ -1,16 +1,16 @@
-import Vector from 'engine/vector';
-import Timer from 'engine/timer';
-import Scene from 'engine/scene';
+var Vector = require('engine/vector');
+var Timer = require('engine/timer');
+var Scene = require('engine/scene');
 
 // Array Remove - By John Resig (MIT Licensed)
 function remove(arr, from, to) {
-  let rest = arr.slice((to || from) + 1 || arr.length);
+  var rest = arr.slice((to || from) + 1 || arr.length);
   arr.length = from < 0 ? arr.length + from : from;
   return arr.push.apply(arr, rest);
 };
 
 function erase(arr, obj) {
-  let idx = arr.indexOf(obj);
+  var idx = arr.indexOf(obj);
   if (idx !== -1) {
     remove(arr, idx);
   }
@@ -23,14 +23,14 @@ function erase(arr, obj) {
   @param {Number} [x] Gravity x
   @param {Number} [y] Gravity y
 **/
-function World(x = 0, y = 980) {
+function World(x, y) {
   /**
     Gravity of physics world.
     @property {Vector} gravity
     @default 0, 980
   **/
-  this.gravity = new Vector(x, y);
-  /**
+  this.gravity = new Vector(x || 0, y || 980);
+  /**:
     @property {CollisionSolver} solver
   **/
   this.solver = new CollisionSolver();
@@ -130,7 +130,7 @@ World.prototype.collide = function collide(body) {
   @method update
 **/
 World.prototype.update = function update() {
-  let delta = Timer.delta / 1000;
+  var delta = Timer.delta / 1000;
 
   var i, j;
   for (i = this.bodies.length - 1; i >= 0; i--) {
@@ -421,19 +421,19 @@ Body.prototype.update = function update(delta) {
   @param {Number} [width]
   @param {Number} [height]
 **/
-function Rectangle(width = 50, height = 50) {
+function Rectangle(width, height) {
   /**
     Width of rectangle.
     @property {Number} width
     @default 50
   **/
-  this.width = width;
+  this.width = width || 50;
   /**
     Height of rectangle.
     @property {Number} height
     @default 50
   **/
-  this.height = height;
+  this.height = height || 50;
 }
 
 /**
@@ -442,13 +442,13 @@ function Rectangle(width = 50, height = 50) {
   @constructor
   @param {Number} [radius]
 **/
-function Circle(radius = 50) {
+function Circle(radius) {
   /**
     Radius of circle.
     @property {Number} radius
     @default 50
   **/
-  this.radius = radius;
+  this.radius = radius || 50;
 }
 
 Object.assign(Scene.prototype, {
@@ -467,7 +467,7 @@ if (Scene.systems.indexOf('Physics') === -1) {
   Scene.systems.push('Physics');
 }
 
-export default {
+module.exports = {
   World,
   Body,
   Rectangle,

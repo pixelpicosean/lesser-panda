@@ -3,11 +3,11 @@
  * Thanks to author of playground.js: [Rezoner](https://twitter.com/rezoner)
  */
 
-import EventEmitter from 'engine/eventemitter3';
-import Timer from 'engine/timer';
-import Scene from 'engine/scene';
+var EventEmitter = require('engine/eventemitter3');
+var Timer = require('engine/timer');
+var Scene = require('engine/scene');
 
-let pool = [];
+var pool = [];
 
 // TODO: better easing support (https://github.com/rezoner/ease)
 
@@ -95,8 +95,8 @@ Timeline.prototype.constructor = Timeline;
  * @chainable
  */
 Timeline.prototype.to = function to(properties, duration, easing = Timeline.Easing.Linear.None, interpolation = Timeline.Interpolation.Linear) {
-  let easingFn = easing;
-  let interpolationFn = interpolation;
+  var easingFn = easing;
+  var interpolationFn = interpolation;
 
   if (typeof easing === 'string') {
     easing = easing.split('.');
@@ -185,7 +185,7 @@ Timeline.prototype._next = function _next() {
     }
   }
   else {
-    let properties = this.current[0];
+    var properties = this.current[0];
 
     this.keys = Object.keys(properties);
 
@@ -193,9 +193,9 @@ Timeline.prototype._next = function _next() {
     this.before = [];
     this.types = [];
 
-    for (let i = 0; i < this.keys.length; i++) {
-      let key = this.keys[i];
-      let value = this.context[key];
+    for (var i = 0; i < this.keys.length; i++) {
+      var key = this.keys[i];
+      var value = this.context[key];
 
       if (typeof properties[key] === 'number') {
         this.before.push(value);
@@ -240,10 +240,10 @@ Timeline.prototype._step = function _step(delta) {
 Timeline.prototype._doAnimate = function _doAnimate() {
   this.progress = Math.min(1, this.delta / this.duration);
 
-  let mod = this.easing(this.progress);
+  var mod = this.easing(this.progress);
 
-  for (let i = 0; i < this.keys.length; i++) {
-    let key = this.keys[i];
+  for (var i = 0; i < this.keys.length; i++) {
+    var key = this.keys[i];
 
     switch (this.types[i]) {
       case 0:
@@ -268,7 +268,7 @@ Timeline.prototype._doWait = function _doWait() {
 
 Object.assign(Timeline, {
   create: function create(context) {
-    let t = pool.pop();
+    var t = pool.pop();
     if (!t) {
       t = new Timeline(context);
     }
@@ -290,7 +290,7 @@ Object.assign(Scene.prototype, {
     @return {Timeline}
   **/
   addTimeline: function addTimeline(context) {
-    let timeline = Timeline.create(context);
+    var timeline = Timeline.create(context);
     this.timelines.push(timeline);
 
     return timeline;
@@ -311,8 +311,8 @@ Object.assign(Scene.prototype, {
   },
   _updateTimelines: function _updateTimelines() {
     this.delta = Timer.delta;
-    let t;
-    for (let i = 0; i < this.timelines.length; i++) {
+    var t;
+    for (var i = 0; i < this.timelines.length; i++) {
       t = this.timelines[i];
       if (!t.removed) {
         t._step(Timer.delta);
@@ -604,4 +604,4 @@ Object.assign(Timeline, {
   },
 });
 
-export default Timeline;
+module.exports = Timeline;

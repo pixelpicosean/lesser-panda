@@ -1,20 +1,20 @@
-import { Howl } from './howler.core';
-import loader from './loader';
+var Howl = require('./howler.core').Howl;
+var loader = require('./loader');
 
-let sounds = {};
-let soundsToLoadCount = 0;
-let soundsLoadedCount = 0;
+var sounds = {};
+var soundsToLoadCount = 0;
+var soundsLoadedCount = 0;
 
 // Callbacks
-let progressCB;
-let completeCB;
+var progressCB;
+var completeCB;
 
 function addSound(src, id) {
   if (sounds[id || src] || sounds[src]) {
     return;
   }
 
-  let snd = new Howl({
+  var snd = new Howl({
     src: loader.baseURL + '/' + src,
     preload: false,
     onload: onload.bind(undefined, snd),
@@ -43,14 +43,14 @@ loader.registerLoader({
     progressCB = onProgress;
     completeCB = onComplete;
 
-    for (let s in sounds) sounds[s].load();
+    for (var s in sounds) sounds[s].load();
   },
   getAssetsLength: function() {
     return soundsToLoadCount;
   },
 });
 
-export default {
+module.exports = {
   sounds,
   addSound,
 };

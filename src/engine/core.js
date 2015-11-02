@@ -1,10 +1,10 @@
-import 'engine/polyfill';
+require('engine/polyfill');
 
-import EventEmitter from 'engine/eventemitter3';
-import Scene from 'engine/scene';
-import Renderer from 'engine/renderer';
-import Timer from 'engine/timer';
-import config from 'game/config';
+var EventEmitter = require('engine/eventemitter3');
+var Scene = require('engine/scene');
+var Renderer = require('engine/renderer');
+var Timer = require('engine/timer');
+var config = require('game/config');
 
 // Math extensions
 Object.assign(Math, {
@@ -23,7 +23,7 @@ Object.assign(Math, {
 });
 
 // Engine core
-let core = Object.assign(new EventEmitter(), {
+var core = Object.assign(new EventEmitter(), {
   scenes: {},
   scene: null,
 
@@ -35,18 +35,18 @@ let core = Object.assign(new EventEmitter(), {
 
   addScene(name, ctor) {
     if (core.scenes[name]) {
-      console.log(`Scene [${name}] is already defined!`);
+      console.log('Scene [' + name + '] is already defined!');
       return;
     }
 
-    let pair = { ctor: ctor, inst: null };
+    var pair = { ctor: ctor, inst: null };
     core.scenes[name] = pair;
   },
   setScene(name) {
-    let pair = core.scenes[name];
+    var pair = core.scenes[name];
 
     if (!pair) {
-      console.log(`Scene [${name}] is not defined!`);
+      console.log('Scene [' + name + '] is not defined!');
       return;
     }
 
@@ -69,7 +69,7 @@ let core = Object.assign(new EventEmitter(), {
     Timer.update(timestamp);
 
     if (core._nextScene) {
-      let pair = core._nextScene;
+      var pair = core._nextScene;
       core._nextScene = null;
 
       core.scene && core.scene._freeze();
@@ -99,4 +99,4 @@ let core = Object.assign(new EventEmitter(), {
   },
 });
 
-export default core;
+module.exports = core;

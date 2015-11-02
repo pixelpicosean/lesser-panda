@@ -1,6 +1,6 @@
-import Scene from 'engine/scene';
+var Scene = require('engine/scene');
 
-let pool = [];
+var pool = [];
 
 /**
   @class Timer
@@ -142,7 +142,7 @@ Object.assign(Timer, {
   },
 
   create: function create(ms) {
-    let t = pool.pop();
+    var t = pool.pop();
     if (!t) {
       t = new Timer(ms);
     }
@@ -167,7 +167,7 @@ Object.assign(Scene.prototype, {
     @return {Timer}
   **/
   addTimer: function addTimer(time, callback, context, repeat) {
-    let timer = Timer.create(time);
+    var timer = Timer.create(time);
 
     timer.repeat = !!repeat;
     timer.callback = callback;
@@ -196,8 +196,8 @@ Object.assign(Scene.prototype, {
     this.timers = [];
   },
   _updateTimers: function _updateTimers() {
-    let timer;
-    for (let i = this.timers.length - 1; i >= 0; i--) {
+    var timer;
+    for (var i = this.timers.length - 1; i >= 0; i--) {
       timer = this.timers[i];
       if (timer.time() >= 0) {
         if (typeof timer.callback === 'function') {
@@ -206,7 +206,8 @@ Object.assign(Scene.prototype, {
 
         if (timer.repeat) {
           timer.reset();
-        } else {
+        }
+        else {
           this.timers.splice(i, 1);
         }
       }
@@ -221,4 +222,4 @@ if (Scene.systems.indexOf('Timers') === -1) {
   Scene.systems.push('Timers');
 }
 
-export default Timer;
+module.exports = Timer;

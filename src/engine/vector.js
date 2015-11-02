@@ -1,4 +1,4 @@
-let pool = [];
+var pool = [];
 
 /**
   Vector class.
@@ -256,7 +256,7 @@ Vector.prototype.equals = function equals(vector) {
 
 Object.assign(Vector, {
   create: function create(x, y) {
-    let v = pool.pop();
+    var v = pool.pop();
     if (!v) {
       v = new Vector(x, y);
     }
@@ -270,4 +270,4 @@ Object.assign(Vector, {
   },
 });
 
-export default Vector;
+module.exports = Vector;

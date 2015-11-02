@@ -1,10 +1,10 @@
-import EventEmitter from 'engine/eventemitter3';
-import ResourceLoader from 'engine/resource-loader';
-import config from 'game/config';
+var EventEmitter = require('engine/eventemitter3');
+var ResourceLoader = require('engine/resource-loader');
+var config = require('game/config');
 
 // Loader instance
 // TODO: add dymanic loading support
-const loader = new EventEmitter();
+var loader = new EventEmitter();
 
 loader.ResourceLoader = ResourceLoader;
 
@@ -12,15 +12,15 @@ Object.assign(loader, {
   baseURL: 'media',
 }, config.loader);
 
-let assetsQueue = [];
+var assetsQueue = [];
 
-let loaders = [];
-let middlewares = [];
+var loaders = [];
+var middlewares = [];
 
-let loaderIdx = 0;
-let loadedCount = 0;
+var loaderIdx = 0;
+var loadedCount = 0;
 
-let resourceLoader = null;
+var resourceLoader = null;
 
 function next() {
   loaderIdx += 1;
@@ -35,9 +35,9 @@ function next() {
 function progress(res, err) {
   loadedCount += 1;
 
-  let assetsLength = 0;
-  for (let l of loaders) {
-    assetsLength += l.getAssetsLength();
+  var assetsLength = 0;
+  for (var i in loaders) {
+    assetsLength += loaders[i].getAssetsLength();
   }
 
   err && loader.emit('error', err);
@@ -58,8 +58,8 @@ loader.start = function start() {
   if (!resourceLoader) {
     resourceLoader = new loader.ResourceLoader();
     // Use middlewares
-    for (let m of middlewares) {
-      resourceLoader.use(m());
+    for (var m in middlewares) {
+      resourceLoader.use(middlewares[m]());
     }
 
     // Load assets
@@ -71,7 +71,7 @@ loader.start = function start() {
     // Register it as a loader
     loader.registerLoader({
       start(onComplete, onProgress) {
-        let mapper = (resLoader, res) => {
+        var mapper = (resLoader, res) => {
           onProgress(res, res.error);
         };
         resourceLoader.on('progress', mapper);
@@ -108,4 +108,4 @@ loader.addMiddleware = function addMiddleware(fn) {
   middlewares.push(fn);
 };
 
-export default loader;
+module.exports = loader;

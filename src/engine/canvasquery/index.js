@@ -1,10 +1,10 @@
-import Renderer from 'engine/renderer';
-import Scene from 'engine/scene';
+var Renderer = require('engine/renderer');
+var Scene = require('engine/scene');
 
-import cq from './canvasquery';
+var cq = require('./canvasquery');
 
 Renderer.init = function init(width, height, settings) {
-  let canvas = document.getElementById(settings.canvasId);
+  var canvas = document.getElementById(settings.canvasId);
   canvas.width = width;
   canvas.height = height;
 

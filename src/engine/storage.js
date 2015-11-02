@@ -1,4 +1,4 @@
-import config from 'game/config';
+var config = require('game/config');
 
 /**
   Local storage.
@@ -36,7 +36,7 @@ Storage.prototype.set = function set(key, value) {
   @return {*} value
 **/
 Storage.prototype.get = function get(key, defaultValue) {
-  let raw = localStorage.getItem(this.id + '.' + key);
+  var raw = localStorage.getItem(this.id + '.' + key);
   if (raw === null) return defaultValue;
   try {
     return this._decode(raw);
@@ -70,8 +70,8 @@ Storage.prototype.remove = function remove(key) {
   @method reset
 **/
 Storage.prototype.reset = function reset() {
-  for (let i = localStorage.length - 1; i >= 0; i--) {
-    let key = localStorage.key(i);
+  for (var i = localStorage.length - 1; i >= 0; i--) {
+    var key = localStorage.key(i);
     if (key.indexOf(this.id + '.') !== -1) localStorage.removeItem(key);
   }
 };
@@ -109,8 +109,6 @@ Storage.prototype._isSupported = function _isSupported() {
   return true;
 };
 
-let storage = new Storage(Object.assign({
+module.exports = new Storage(Object.assign({
   id: 'lpanda-debug',
 }, config.storage));
-
-export default storage;

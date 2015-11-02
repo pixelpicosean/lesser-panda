@@ -1,4 +1,4 @@
-import EventEmitter from 'engine/eventemitter3';
+var EventEmitter = require('engine/eventemitter3');
 
 /**
   @class Keyboard
@@ -164,5 +164,4 @@ Object.assign(Keyboard, {
   },
 });
 
-let keyboard = new Keyboard();
-export default keyboard;
+module.exports = new Keyboard();
