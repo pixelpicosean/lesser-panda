@@ -76,7 +76,7 @@ let core = Object.assign(new EventEmitter(), {
         pair.inst = new pair.ctor();
       }
 
-      core.scene && core.scene._exit();
+      core.scene && core.scene._freeze();
       core.scene = pair.inst;
       core.scene._awake();
     }
