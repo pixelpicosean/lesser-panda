@@ -27,6 +27,9 @@ let core = Object.assign(new EventEmitter(), {
   scenes: {},
   scene: null,
 
+  width: config.width || 640,
+  height: config.height || 400,
+
   _nextScene: null,
   _loopId: 0,
 
@@ -88,7 +91,7 @@ let core = Object.assign(new EventEmitter(), {
     window.removeEventListener('load', core.boot);
     document.removeEventListener('DOMContentLoaded', core.boot);
 
-    Renderer.init(config.width || 640, config.height || 400, Object.assign({
+    Renderer.init(core.width, core.height, Object.assign({
       canvasId: 'game',
     }, config.renderer));
     core.startLoop();
