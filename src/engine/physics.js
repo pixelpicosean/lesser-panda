@@ -2,6 +2,20 @@ import Vector from 'engine/vector';
 import Timer from 'engine/timer';
 import Scene from 'engine/scene';
 
+// Array Remove - By John Resig (MIT Licensed)
+function remove(arr, from, to) {
+  let rest = arr.slice((to || from) + 1 || arr.length);
+  arr.length = from < 0 ? arr.length + from : from;
+  return arr.push.apply(arr, rest);
+};
+
+function erase(arr, obj) {
+  let idx = arr.indexOf(obj);
+  if (idx !== -1) {
+    remove(arr, idx);
+  }
+};
+
 /**
   Physics world.
   @class World
@@ -76,7 +90,7 @@ World.prototype.removeBodyCollision = function removeBodyCollision(body) {
   if (typeof body.collisionGroup !== 'number') return;
   if (!this.collisionGroups[body.collisionGroup]) return;
   if (this.collisionGroups[body.collisionGroup].indexOf(body) === -1) return;
-  this.collisionGroups[body.collisionGroup].erase(body);
+  erase(this.collisionGroups[body.collisionGroup], body);
 };
 
 /**
