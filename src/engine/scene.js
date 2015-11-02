@@ -1,4 +1,5 @@
 import EventEmitter from 'engine/eventemitter3';
+import engine from 'engine/core';
 
 /**
   Game scene.
@@ -20,6 +21,8 @@ function Scene() {
       this['_init' + i]();
     }
   }
+
+  engine.scene = this;
 }
 
 Scene.prototype = Object.create(EventEmitter.prototype);

@@ -72,11 +72,12 @@ let core = Object.assign(new EventEmitter(), {
       let pair = core._nextScene;
       core._nextScene = null;
 
+      core.scene && core.scene._freeze();
+
       if (!pair.inst) {
         pair.inst = new pair.ctor();
       }
 
-      core.scene && core.scene._freeze();
       core.scene = pair.inst;
       core.scene._awake();
     }
