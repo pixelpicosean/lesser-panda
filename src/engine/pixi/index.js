@@ -65,12 +65,25 @@ Renderer.init = function init(width, height, settings) {
 var Scene = require('engine/scene');
 
 Object.assign(Scene.prototype, {
+  _backgroundColor: 0x220033,
   _initRenderer: function _initRenderer() {
     this.container = new core.Container();
+  },
+  _awakeRenderer: function _awakeRenderer() {
+    Renderer.core.backgroundColor = this._backgroundColor;
   },
   _updateRenderer: function _updateRenderer() {
     Renderer.core.render(this.container);
   }
+});
+
+Object.defineProperty(Scene.prototype, 'backgroundColor', {
+  get: function() {
+    return this._backgroundColor;
+  },
+  set: function(color) {
+    Renderer.core.backgroundColor = this._backgroundColor = color;
+  },
 });
 
 if (Scene.systems.indexOf('Renderer') === -1) {
