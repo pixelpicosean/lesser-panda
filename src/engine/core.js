@@ -99,4 +99,4 @@ var core = Object.assign(new EventEmitter(), {
   },
 });
 
-module.exports = core;
+Object.assign(exports, core);
