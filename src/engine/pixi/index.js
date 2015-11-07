@@ -37,8 +37,9 @@ Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
 Object.assign(core.Texture, {
   fromAsset: function fromAsset(key) {
-    var t = loader.resources[key].texture;
-    t = t || core.Texture.fromFrame(key);
+    var t = loader.resources[key];
+    t = (t ? t.texture : null);
+    t = (t ? t : core.Texture.fromFrame(key));
     if (!t) {
       throw 'Texture with key [' + key + '] is not found!';
     }
