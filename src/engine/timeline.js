@@ -94,9 +94,9 @@ Timeline.prototype.constructor = Timeline;
  * @param  {String|Function} interpolation  Interpolation function
  * @chainable
  */
-Timeline.prototype.to = function to(properties, duration, easing = Timeline.Easing.Linear.None, interpolation = Timeline.Interpolation.Linear) {
-  var easingFn = easing;
-  var interpolationFn = interpolation;
+Timeline.prototype.to = function to(properties, duration, easing, interpolation) {
+  var easingFn = easing || Timeline.Easing.Linear.None;
+  var interpolationFn = interpolation || Timeline.Interpolation.Linear;
 
   if (typeof easing === 'string') {
     easing = easing.split('.');
