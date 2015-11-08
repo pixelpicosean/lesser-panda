@@ -27,4 +27,4 @@ if (Scene.systems.indexOf('Renderer') === -1) {
   Scene.systems.push('Renderer');
 }
 
-export default cq;
+module.exports = cq;
