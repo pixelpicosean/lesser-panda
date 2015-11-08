@@ -31,7 +31,7 @@ Vector.prototype.set = function set(x, y) {
   @return {game.Vector}
 **/
 Vector.prototype.clone = function clone() {
-  return new Vector(this.x, this.y);
+  return Vector.create(this.x, this.y);
 };
 
 /**
