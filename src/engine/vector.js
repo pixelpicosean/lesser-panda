@@ -261,7 +261,7 @@ Object.assign(Vector, {
       v = new Vector(x, y);
     }
     else {
-      Vector.set(x, y);
+      v.set(x, y);
     }
     return v;
   },
