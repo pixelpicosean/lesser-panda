@@ -53,7 +53,7 @@ Keyboard.prototype._keydown = function _keydown(event) {
 **/
 Keyboard.prototype._keyup = function _keyup(event) {
   this._keysDown[Keyboard.keys[event.keyCode]] = false;
-  this.emit('keydown', Keyboard.keys[event.keyCode]);
+  this.emit('keyup', Keyboard.keys[event.keyCode]);
 };
 
 /**
