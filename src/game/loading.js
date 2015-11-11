@@ -3,6 +3,8 @@ import Scene from 'engine/scene';
 import loader from 'engine/loader';
 import PIXI from 'engine/pixi';
 
+import config from 'game/config';
+
 const BAR_WIDTH = 200;
 const BAR_HEIGHT = 20;
 
@@ -37,7 +39,7 @@ Object.assign(Loading.prototype, {
       loader.off('progress', redraw);
 
       // Start "Main" scene when assets loaded
-      engine.setScene('Main');
+      engine.setScene(config.firstScene || 'Main');
     }, this);
 
     loader.start();
