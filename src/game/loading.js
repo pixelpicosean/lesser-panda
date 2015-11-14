@@ -8,24 +8,23 @@ import config from 'game/config';
 const BAR_WIDTH = 200;
 const BAR_HEIGHT = 20;
 
-function Loading() {
-  Scene.call(this);
+class Loading extends Scene {
+  constructor() {
+    super();
 
-  this.barBg = new PIXI.Graphics().addTo(this.container);
-  this.barBg.beginFill(0x5f574f);
-  this.barBg.drawRect(0, -BAR_HEIGHT * 0.5, BAR_WIDTH, BAR_HEIGHT);
-  this.barBg.endFill();
+    this.barBg = new PIXI.Graphics().addTo(this.container);
+    this.barBg.beginFill(0x5f574f);
+    this.barBg.drawRect(0, -BAR_HEIGHT * 0.5, BAR_WIDTH, BAR_HEIGHT);
+    this.barBg.endFill();
 
-  this.bar = new PIXI.Graphics().addTo(this.container);
-  this.bar.beginFill(0xffffff);
-  this.bar.drawRect(0, -BAR_HEIGHT * 0.5, 1, BAR_HEIGHT);
-  this.bar.endFill();
+    this.bar = new PIXI.Graphics().addTo(this.container);
+    this.bar.beginFill(0xffffff);
+    this.bar.drawRect(0, -BAR_HEIGHT * 0.5, 1, BAR_HEIGHT);
+    this.bar.endFill();
 
-  this.barBg.position = this.bar.position.set(engine.width * 0.5 - BAR_WIDTH * 0.5, engine.height * 0.5);
-}
-Loading.prototype = Object.create(Scene.prototype);
-Object.assign(Loading.prototype, {
-  constructor: Loading,
+    this.barBg.position = this.bar.position.set(engine.width * 0.5 - BAR_WIDTH * 0.5, engine.height * 0.5);
+  }
+
   awake() {
     let redraw = (p) => {
       this.bar.clear();
@@ -43,7 +42,7 @@ Object.assign(Loading.prototype, {
     }, this);
 
     loader.start();
-  },
-});
+  }
+};
 
 engine.addScene('Loading', Loading);
