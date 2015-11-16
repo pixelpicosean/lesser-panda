@@ -23,12 +23,18 @@ Object.assign(Math, {
 });
 
 // Engine core
-var core = Object.assign(new EventEmitter(), {
+var core = new EventEmitter();
+Object.assign(core, {
   scenes: {},
   scene: null,
 
+  /* Size of game content */
   width: config.width || 640,
   height: config.height || 400,
+
+  /* Size of view (devicePixelRatio independent) */
+  viewWidth: config.width || 640,
+  viewHeight: config.height || 400,
 
   _nextScene: null,
   _loopId: 0,
@@ -99,10 +105,18 @@ var core = Object.assign(new EventEmitter(), {
 
     // Listen to the resizing event
     window.addEventListener('resize', core.resize, false);
+
+    // Manually resize for the first time
+    core.resize();
   },
   resize: function resize() {
     Renderer.resize(window.innerWidth, window.innerHeight);
+
+    core.viewWidth = window.innerWidth;
+    core.viewHeight = window.innerHeight;
+
+    core.emit('resize', core.viewWidth, core.viewHeight);
   },
 });
 
-Object.assign(exports, core);
+module.exports = exports = core;
