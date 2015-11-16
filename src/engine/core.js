@@ -33,7 +33,7 @@ var core = Object.assign(new EventEmitter(), {
   _nextScene: null,
   _loopId: 0,
 
-  addScene(name, ctor) {
+  addScene: function addScene(name, ctor) {
     if (core.scenes[name]) {
       console.log('Scene [' + name + '] is already defined!');
       return;
@@ -42,7 +42,7 @@ var core = Object.assign(new EventEmitter(), {
     var pair = { ctor: ctor, inst: null };
     core.scenes[name] = pair;
   },
-  setScene(name) {
+  setScene: function setScene(name) {
     var pair = core.scenes[name];
 
     if (!pair) {
@@ -53,17 +53,17 @@ var core = Object.assign(new EventEmitter(), {
     core._nextScene = pair;
   },
 
-  startWithScene(sceneName) {
+  startWithScene: function startWithScene(sceneName) {
     core.setScene(sceneName);
 
     window.addEventListener('load', core.boot, false);
     document.addEventListener('DOMContentLoaded', core.boot, false);
   },
 
-  startLoop() {
+  startLoop: function startLoop() {
     core._loopId = requestAnimationFrame(core.loop);
   },
-  loop(timestamp) {
+  loop: function loop(timestamp) {
     core._loopId = requestAnimationFrame(core.loop);
 
     Timer.update(timestamp);
@@ -84,11 +84,11 @@ var core = Object.assign(new EventEmitter(), {
 
     core.scene && core.scene.tickAndRun();
   },
-  endLoop() {
+  endLoop: function endLoop() {
     cancelAnimationFrame(core._loopId);
   },
 
-  boot() {
+  boot: function boot() {
     window.removeEventListener('load', core.boot);
     document.removeEventListener('DOMContentLoaded', core.boot);
 
@@ -96,6 +96,12 @@ var core = Object.assign(new EventEmitter(), {
       canvasId: 'game',
     }, config.renderer));
     core.startLoop();
+
+    // Listen to the resizing event
+    window.addEventListener('resize', core.resize, false);
+  },
+  resize: function resize() {
+    Renderer.resize(window.innerWidth, window.innerHeight);
   },
 });
 

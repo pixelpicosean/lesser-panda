@@ -51,15 +51,20 @@ Object.assign(core.Texture, {
 var Renderer = require('engine/renderer');
 
 Renderer.init = function init(width, height, settings) {
-  var canvas = document.getElementById(settings.canvasId);
-  settings.view = canvas;
+  settings.view = document.getElementById(settings.canvasId);
+  settings.autoResize = true;
+  settings.resolution = window.devicePixelRatio;
 
   if (settings.webGL) {
-    this.core = core.autoDetectRenderer(width, height, settings);
+    this.core = core.autoDetectRenderer(window.innerWidth, window.innerHeight, settings);
   }
   else {
-    this.core = new core.CanvasRenderer(width, height, settings);
+    this.core = new core.CanvasRenderer(window.innerWidth, window.innerHeight, settings);
   }
+};
+
+Renderer.resize = function resize(w, h) {
+  this.core.resize(w, h);
 };
 
 // Inject as sub-system of scene

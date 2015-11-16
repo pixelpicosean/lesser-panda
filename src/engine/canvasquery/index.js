@@ -11,6 +11,8 @@ Renderer.init = function init(width, height, settings) {
   this.layer = cq(canvas);
 };
 
+// TODO: override resize method
+
 Object.assign(Scene.prototype, {
   draw: function draw() {},
 
