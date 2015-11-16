@@ -4,6 +4,7 @@ var EventEmitter = require('engine/eventemitter3');
 var Scene = require('engine/scene');
 var Renderer = require('engine/renderer');
 var Timer = require('engine/timer');
+var Vector = require('engine/vector');
 var resize = require('engine/resize');
 var config = require('game/config');
 
@@ -42,14 +43,20 @@ function loop(timestamp) {
     var pair = nextScene;
     nextScene = null;
 
+    // Freeze current scene before switching
     core.scene && core.scene._freeze();
 
+    // Create instance of scene if not exist
     if (!pair.inst) {
       pair.inst = new pair.ctor();
     }
 
+    // Awake the scene
     core.scene = pair.inst;
     core.scene._awake();
+
+    // Resize container of the scene
+    resizeFunc();
   }
 
   core.scene && core.scene.tickAndRun();
@@ -75,8 +82,14 @@ function boot() {
     case 'letter-box':
       resizeFunc = _letterBoxResize;
       break;
-    case 'fill':
-      resizeFunc = _fillResize;
+    case 'crop':
+      resizeFunc = _cropResize;
+      break;
+    case 'scale-inner':
+      resizeFunc = _scaleInnerResize;
+      break;
+    case 'scale-outer':
+      resizeFunc = _scaleOuterResize;
       break;
   }
 
@@ -95,12 +108,10 @@ Object.assign(core, {
   view: null,
 
   /* Size of game content */
-  width: config.width || 640,
-  height: config.height || 400,
+  size: Vector.create(config.width || 640, config.height || 400),
 
   /* Size of view (devicePixelRatio independent) */
-  viewWidth: config.width || 640,
-  viewHeight: config.height || 400,
+  viewSize: Vector.create(config.width || 640, config.height || 400),
 
   addScene: function addScene(name, ctor) {
     if (core.scenes[name]) {
@@ -129,41 +140,93 @@ Object.assign(core, {
   },
 });
 
+Object.defineProperty(core, 'width', {
+  get: function() {
+    return this.size.x;
+  },
+});
+Object.defineProperty(core, 'height', {
+  get: function() {
+    return this.size.y;
+  },
+});
+Object.defineProperty(core, 'viewWidth', {
+  get: function() {
+    return this.viewSize.x;
+  },
+});
+Object.defineProperty(core, 'viewHeight', {
+  get: function() {
+    return this.viewSize.y;
+  },
+});
+
 // Resize functions
 var windowSize = { x: 1, y: 1 };
-var viewSize = { x: 1, y: 1 };
-var result;
+var result, container;
 function _letterBoxResize(first) {
   // Update sizes
   windowSize.x = window.innerWidth;
   windowSize.y = window.innerHeight;
 
-  viewSize.x = core.width;
-  viewSize.y = core.height;
-
   // Use inner box scaling function to calculate correct size
-  result = resize.innerBoxResize(windowSize, viewSize);
+  result = resize.innerBoxResize(windowSize, core.viewSize);
 
   // Resize the renderer once
-  first && Renderer.resize(viewSize.x, viewSize.y);
+  first && Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   // Resize the view
-  core.view.style.width = (viewSize.x * result.scale) + 'px';
-  core.view.style.height = (viewSize.y * result.scale) + 'px';
+  core.view.style.width = (core.viewSize.x * result.scale) + 'px';
+  core.view.style.height = (core.viewSize.y * result.scale) + 'px';
 
   // Broadcast resize events
-  core.emit('resize', core.viewWidth, core.viewHeight);
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
-function _fillResize() {
+function _cropResize() {
   // Update sizes
-  core.viewWidth = window.innerWidth;
-  core.viewHeight = window.innerHeight;
+  core.viewSize.set(window.innerWidth, window.innerHeight);
 
   // Resize the renderer
-  Renderer.resize(window.innerWidth, window.innerHeight);
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   // Broadcast resize events
-  core.emit('resize', core.viewWidth, core.viewHeight);
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _scaleInnerResize() {
+  // Update sizes
+  core.viewSize.set(window.innerWidth, window.innerHeight);
+
+  // Resize the renderer
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  // Resize container of current scene
+  if (core.scene) {
+    container = core.scene.container;
+    result = resize.innerBoxResize(core.viewSize, core.size);
+    container.scale.set(result.scale);
+    container.position.set(result.left, result.top);
+  }
+
+  // Broadcast resize events
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _scaleOuterResize() {
+  // Update sizes
+  core.viewSize.set(window.innerWidth, window.innerHeight);
+
+  // Resize the renderer
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  // Resize container of current scene
+  if (core.scene) {
+    container = core.scene.container;
+    result = resize.outerBoxResize(core.viewSize, core.size);
+    container.scale.set(result.scale);
+    container.position.set(result.left, result.top);
+  }
+
+  // Broadcast resize events
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
 
 module.exports = exports = core;
