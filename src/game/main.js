@@ -11,7 +11,8 @@ class Main extends Scene {
     console.log(`engine.size = (${engine.width}, ${engine.height})`);
     console.log(`engine.viewSize = (${engine.viewWidth}, ${engine.viewHeight})`);
 
-    let text = new PIXI.Text('It Works!', {
+    // Use the better Text instead
+    let text = new PIXI.extras.Text('It Works!', {
       font: '24px Verdana',
       fill: 'white',
     }, window.devicePixelRatio).addTo(this.container);

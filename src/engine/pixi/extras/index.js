@@ -16,4 +16,5 @@ module.exports = {
     Animation:      require('./Animation'),
     TilingSprite:   require('./TilingSprite'),
     BitmapText:     require('./BitmapText'),
+    Text:           require('./CocoonText'),
 };
