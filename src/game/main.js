@@ -1,30 +1,24 @@
-game.module(
-  'game.main'
-)
-.body(function() {
-  'use strict';
+import engine from 'engine/core';
+import Scene from 'engine/scene';
+import PIXI from 'engine/pixi';
 
-  game.addAsset('KenPixel.fnt');
+import 'game/loading';
 
-  function Main() {
-    game.Scene.call(this);
+class Main extends Scene {
+  constructor() {
+    super();
 
-    var text = new game.BitmapText('Lesser Panda', {
-        font: '50px KenPixel',
-      })
-      .addTo(this.stage);
-    text.position.set(
-      game.system.width * 0.5 - text.width * 0.5,
-      game.system.height * 0.5 - text.height * 0.5
-    );
-  };
+    console.log(`engine.size = (${engine.width}, ${engine.height})`);
+    console.log(`engine.viewSize = (${engine.viewWidth}, ${engine.viewHeight})`);
 
-  Main.prototype = Object.create(game.Scene.prototype);
-  Object.assign(Main.prototype, {
-    backgroundColor: 0xb9bec7,
-    constructor: Main,
-  });
+    // Use the better Text instead
+    let text = new PIXI.extras.Text('It Works!', {
+      font: '24px Verdana',
+      fill: 'white',
+    }, window.devicePixelRatio).addTo(this.container);
+    text.position.set(engine.width * 0.5 - text.width * 0.5, engine.height * 0.5 - text.height * 0.5);
+  }
+};
+engine.addScene('Main', Main);
 
-  game.s['Main'] = Main;
-
-});
+engine.startWithScene('Loading');

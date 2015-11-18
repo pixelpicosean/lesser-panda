@@ -1,12 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>LesserPanda</title>
-  <script type="text/javascript" src="src/engine/core.js"></script>
-  <script type="text/javascript" src="src/game/config.js"></script>
-  <script type="text/javascript" src="src/game/main.js"></script>
+  <meta charset="UTF-8">
+  <title>LesserPanda v3</title>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+
+      overflow: hidden;
+
+      /* Full window page */
+      width: 100%;
+      height: 100%;
+
+      /* Center align the canvas */
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+    }
+    #game {
+      /* No touch action */
+      ms-touch-action: none;
+      touch-action: none;
+
+      /* No user select */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+      /* Pixelated, remove these lines for smooth scaling */
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: -o-crisp-edges;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
+    }
+  </style>
 </head>
 <body>
+  <canvas id="game"></canvas>
 </body>
 </html>
