@@ -37,6 +37,9 @@ function startLoop() {
 function loop(timestamp) {
   loopId = requestAnimationFrame(loop);
 
+  // Do not update anything when paused
+  if (core.paused) return;
+
   Timer.update(timestamp);
 
   if (nextScene) {
@@ -99,6 +102,36 @@ function boot() {
 
   // Manually resize for the first time
   resizeFunc(true);
+
+  // Listen to visibilit change events
+  var visibilityChange;
+  if (typeof document.hidden !== 'undefined') {
+    visibilityChange = 'visibilitychange';
+  }
+  else if (typeof document.mozHidden !== 'undefined') {
+    visibilityChange = 'mozvisibilitychange';
+  }
+  else if (typeof document.msHidden !== 'undefined') {
+    visibilityChange = 'msvisibilitychange';
+  }
+  else if (typeof document.webkitHidden !== 'undefined') {
+    visibilityChange = 'webkitvisibilitychange';
+  }
+  document.addEventListener(visibilityChange, function() {
+    if (config.pauseOnHide) {
+      var hidden = !!getVendorAttribute(document, 'hidden');
+      if (hidden) {
+        core.pause();
+      }
+      else {
+        core.resume();
+      }
+    }
+  }, false);
+}
+function getVendorAttribute(el, attr) {
+  var uc = attr.ucfirst();
+  return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
 }
 
 // Public properties and methods
@@ -106,6 +139,8 @@ Object.assign(core, {
   scenes: {},
   scene: null,
   view: null,
+
+  paused: false,
 
   /* Size of game content */
   size: Vector.create(config.width || 640, config.height || 400),
@@ -137,6 +172,15 @@ Object.assign(core, {
 
     window.addEventListener('load', boot, false);
     document.addEventListener('DOMContentLoaded', boot, false);
+  },
+
+  pause: function pause() {
+    if (core.paused) return;
+  },
+  resume: function resume() {
+    if (!core.paused) return;
+
+    Timer.last = performance.now();
   },
 });
 

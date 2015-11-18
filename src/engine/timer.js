@@ -110,7 +110,6 @@ function recycleTimer(timer) {
 }
 
 // Timer static properties and functions
-var _last = 0;
 var _realDelta = 0;
 Object.assign(Timer, {
   /**
@@ -118,6 +117,11 @@ Object.assign(Timer, {
     @attribute {Number} time
   **/
   time: 0,
+  /**
+   * Time of last frame
+   * @attribute {Number} last
+   */
+  last: 0,
   /**
     Main timer's speed factor.
     @attribute {Number} speed
@@ -147,11 +151,11 @@ Object.assign(Timer, {
   update: function update(timestamp) {
     // Update system timer
     var now = timestamp ? timestamp : Date.now();
-    if (!_last) _last = now;
-    _realDelta = now - _last;
+    if (!Timer.last) Timer.last = now;
+    _realDelta = now - Timer.last;
     this.delta = Math.min(_realDelta, 1000 / this.minFPS) * this.speed;
     this.time += this.delta;
-    _last = now;
+    Timer.last = now;
 
     // Update timers
     var timer;

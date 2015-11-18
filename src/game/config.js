@@ -15,6 +15,12 @@ export default {
    */
   resizeMode: 'letter-box',
 
+  /**
+   * Whether pause the game (timer and scene)
+   * when page is hidden
+   */
+  pauseOnHide: false,
+
   renderer: {
     webGL: true,
   },
