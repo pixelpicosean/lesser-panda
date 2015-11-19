@@ -48,6 +48,7 @@ function loop(timestamp) {
 
     // Freeze current scene before switching
     core.scene && core.scene._freeze();
+    core.scene = null;
 
     // Create instance of scene if not exist
     if (!pair.inst) {

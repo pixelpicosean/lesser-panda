@@ -23,8 +23,6 @@ function Scene() {
       this['_init' + s]();
     }
   }
-
-  engine.scene = this;
 }
 
 Scene.prototype = Object.create(EventEmitter.prototype);
