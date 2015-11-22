@@ -81,8 +81,6 @@ function Camera() {
   this._shakeDelay = 0;
   this._shakeCount = 0;
   this._startShake = this._startShake.bind(this);
-
-  engine.scene.addObject(this);
 }
 
 /**
@@ -91,10 +89,7 @@ function Camera() {
  * @param {PIXI.Container} container
  */
 Camera.prototype.addTo = function addTo(container) {
-  // Request updates if not added to any containers yet
-  if (!this.container) {
-    engine.scene.addObject(this);
-  }
+  engine.scene.addObject(this);
 
   this.container = container;
 
