@@ -2,6 +2,10 @@ var Vector = require('engine/vector');
 var Timer = require('engine/timer');
 var Scene = require('engine/scene');
 
+// Shapes
+var RECT = 0;
+var CIRC = 1;
+
 // Array Remove - By John Resig (MIT Licensed)
 function remove(arr, from, to) {
   var rest = arr.slice((to || from) + 1 || arr.length);
@@ -174,7 +178,7 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
   // Skip when shape is not available
   if (!a.shape || !b.shape) return false;
 
-  if (a.shape.width && b.shape.width) {
+  if (a.shape.type === RECT && b.shape.type === RECT) {
     return !(
       a._bottom <= b._top ||
       a._top >= b._bottom ||
@@ -183,13 +187,13 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
     );
   }
 
-  if (a.shape.radius && b.shape.radius) {
+  if (a.shape.type === CIRC && b.shape.type === CIRC) {
     return (a.shape.radius + b.shape.radius > a.position.distance(b.position));
   }
 
-  if ((a.shape.width && b.shape.radius) || (a.shape.radius && b.shape.width)) {
-    var rect = a.shape.width ? a : b;
-    var circle = a.shape.radius ? a : b;
+  if ((a.shape.type === RECT && b.shape.type === CIRC) || (a.shape.type === CIRC && b.shape.type === RECT)) {
+    var rect = (a.shape.type === RECT) ? a : b;
+    var circle = (a.shape.type === CIRC) ? a : b;
 
     var x = Math.max(rect._left, Math.min(rect._right, circle.position.x));
     var y = Math.max(rect._top, Math.min(rect._bottom, circle.position.y));
@@ -209,7 +213,7 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
   @return {Boolean}
 **/
 CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
-  if (a.shape.width && b.shape.width) {
+  if (a.shape.type === RECT && b.shape.type === RECT) {
     if (a.last.y + a.shape.height * (1 - a.anchor.y) <= b.last.y - b.shape.height * b.anchor.y) {
       if (a.collide(b, 'DOWN')) {
         a.position.y = b.position.y - b.shape.height * b.anchor.y - a.shape.height * (1 - a.anchor.y);
@@ -239,7 +243,7 @@ CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
       if (a.collide(b)) return true;
     }
   }
-  else if (a.shape.radius && b.shape.radius) {
+  else if (a.shape.type === CIRC && b.shape.type === CIRC) {
     var angle = b.position.angle(a.position);
     if (a.collide(b, angle)) {
       var dist = a.shape.radius + b.shape.radius;
@@ -424,7 +428,7 @@ Body.prototype.update = function update(delta) {
 
   this.position.add(this.velocity.x * delta, this.velocity.y * delta);
 
-  if (this.shape) {
+  if (this.shape && this.shape.type === RECT) {
     this._left = this.position.x - this.shape.width * this.anchor.x;
     this._right = this.position.x + this.shape.width * (1 - this.anchor.x);
     this._top = this.position.y - this.shape.height * this.anchor.y;
@@ -452,6 +456,8 @@ function Rectangle(width, height) {
     @default 50
   **/
   this.height = height || 50;
+
+  this.type = RECT;
 }
 
 /**
@@ -467,6 +473,8 @@ function Circle(radius) {
     @default 50
   **/
   this.radius = radius || 50;
+
+  this.type = CIRC;
 }
 
 Object.assign(Scene.prototype, {
