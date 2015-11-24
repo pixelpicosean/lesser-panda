@@ -29,7 +29,7 @@ function World(x, y) {
     @property {Vector} gravity
     @default 0, 980
   **/
-  this.gravity = new Vector(x || 0, y || 980);
+  this.gravity = Vector.create(x || 0, y || 980);
   /**:
     @property {CollisionSolver} solver
   **/
@@ -171,12 +171,15 @@ function CollisionSolver() {}
   @return {Boolean} return true, if bodies hit.
 **/
 CollisionSolver.prototype.hitTest = function hitTest(a, b) {
+  // Skip when shape is not available
+  if (!a.shape || !b.shape) return false;
+
   if (a.shape.width && b.shape.width) {
     return !(
-      a.position.y + a.shape.height / 2 <= b.position.y - b.shape.height / 2 ||
-      a.position.y - a.shape.height / 2 >= b.position.y + b.shape.height / 2 ||
-      a.position.x - a.shape.width / 2 >= b.position.x + b.shape.width / 2 ||
-      a.position.x + a.shape.width / 2 <= b.position.x - b.shape.width / 2
+      a._bottom <= b._top ||
+      a._top >= b._bottom ||
+      a._left >= b._right ||
+      a._right <= b._left
     );
   }
 
@@ -184,12 +187,12 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
     return (a.shape.radius + b.shape.radius > a.position.distance(b.position));
   }
 
-  if (a.shape.width && b.shape.radius || a.shape.radius && b.shape.width) {
+  if ((a.shape.width && b.shape.radius) || (a.shape.radius && b.shape.width)) {
     var rect = a.shape.width ? a : b;
     var circle = a.shape.radius ? a : b;
 
-    var x = Math.max(rect.position.x - rect.shape.width / 2, Math.min(rect.position.x + rect.shape.width / 2, circle.position.x));
-    var y = Math.max(rect.position.y - rect.shape.height / 2, Math.min(rect.position.y + rect.shape.height / 2, circle.position.y));
+    var x = Math.max(rect._left, Math.min(rect._right, circle.position.x));
+    var y = Math.max(rect._top, Math.min(rect._bottom, circle.position.y));
 
     var dist = Math.pow(circle.position.x - x, 2) + Math.pow(circle.position.y - y, 2);
     return dist < (circle.shape.radius * circle.shape.radius);
@@ -207,31 +210,36 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
 **/
 CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
   if (a.shape.width && b.shape.width) {
-    if (a.last.y + a.shape.height / 2 <= b.last.y - b.shape.height / 2) {
+    if (a.last.y + a.shape.height * (1 - a.anchor.y) <= b.last.y - b.shape.height * b.anchor.y) {
       if (a.collide(b, 'DOWN')) {
-        a.position.y = b.position.y - b.shape.height / 2 - a.shape.height / 2;
+        a.position.y = b.position.y - b.shape.height * b.anchor.y - a.shape.height * (1 - a.anchor.y);
         return true;
       }
-    } else if (a.last.y - a.shape.height / 2 >= b.last.y + b.shape.height / 2) {
+    }
+    else if (a.last.y - a.shape.height * a.anchor.y >= b.last.y + b.shape.height * (1 - b.anchor.y)) {
       if (a.collide(b, 'UP')) {
-        a.position.y = b.position.y + b.shape.height / 2 + a.shape.height / 2;
+        a.position.y = b.position.y + b.shape.height * (1 - b.anchor.y) + a.shape.height * a.anchor.y;
         return true;
       }
-    } else if (a.last.x + a.shape.width / 2 <= b.last.x - b.shape.width / 2) {
+    }
+    else if (a.last.x + a.shape.width * (1 - a.anchor.x) <= b.last.x - b.shape.width * (1 - b.anchor.x)) {
       if (a.collide(b, 'RIGHT')) {
-        a.position.x = b.position.x - b.shape.width / 2 - a.shape.width / 2;
+        a.position.x = b.position.x - b.shape.width * b.anchor.x - a.shape.width * (1 - a.anchor.x);
         return true;
       }
-    } else if (a.last.x - a.shape.width / 2 >= b.last.x + b.shape.width / 2) {
+    }
+    else if (a.last.x - a.shape.width * a.anchor.x >= b.last.x + b.shape.width * (1 - b.anchor.x)) {
       if (a.collide(b, 'LEFT')) {
-        a.position.x = b.position.x + b.shape.width / 2 + a.shape.width / 2;
+        a.position.x = b.position.x + b.shape.width * (1 - b.anchor.x) + a.shape.width * a.anchor.x;
         return true;
       }
-    } else {
+    }
+    else {
       // Inside
       if (a.collide(b)) return true;
     }
-  } else if (a.shape.radius && b.shape.radius) {
+  }
+  else if (a.shape.radius && b.shape.radius) {
     var angle = b.position.angle(a.position);
     if (a.collide(b, angle)) {
       var dist = a.shape.radius + b.shape.radius;
@@ -240,6 +248,7 @@ CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
       return true;
     }
   }
+  // TODO: Circle vs Rectangle
 };
 
 /**
@@ -263,23 +272,29 @@ function Body(properties) {
     Position of body.
     @property {Vector} position
   **/
-  this.position = new Vector();
+  this.position = Vector.create();
+  /**
+   * Anchor of the shape.
+   * @type {Vector} anchor
+   * @default (0.5, 0.5)
+   */
+  this.anchor = Vector.create(0.5);
   /**
     Last position of body.
     @property {Vector} last
   **/
-  this.last = new Vector();
+  this.last = Vector.create();
   /**
     Body's velocity.
     @property {Vector} velocity
   **/
-  this.velocity = new Vector();
+  this.velocity = Vector.create();
   /**
     Body's maximum velocity.
     @property {Vector} velocityLimit
     @default 400, 400
   **/
-  this.velocityLimit = new Vector(400, 400);
+  this.velocityLimit = Vector.create(400, 400);
   /**
     Body's mass.
     @property {Number} mass
@@ -303,27 +318,23 @@ function Body(properties) {
     @property {Vector} force
     @default 0,0
   **/
-  this.force = new Vector();
+  this.force = Vector.create();
   /**
     Body's damping. Should be number between 0 and 1.
     @property {Number} damping
     @default 0
   **/
   this.damping = 0;
+
+  // Internal caches
   this._collides = [];
+  this._left = 0;
+  this._right = 0;
+  this._top = 0;
+  this._bottom = 0;
 
   Object.assign(this, properties);
 }
-
-/**
-  Add shape to body.
-  @method addShape
-  @param {Rectangle|Circle} shape
-**/
-Body.prototype.addShape = function addShape(shape) {
-  this.shape = shape;
-  return this;
-};
 
 /**
   This is called, when body collides with another body.
@@ -412,6 +423,13 @@ Body.prototype.update = function update(delta) {
   if (this.velocityLimit.y > 0) this.velocity.y = Math.clamp(this.velocity.y, -this.velocityLimit.y, this.velocityLimit.y);
 
   this.position.add(this.velocity.x * delta, this.velocity.y * delta);
+
+  if (this.shape) {
+    this._left = this.position.x - this.shape.width * this.anchor.x;
+    this._right = this.position.x + this.shape.width * (1 - this.anchor.x);
+    this._top = this.position.y - this.shape.height * this.anchor.y;
+    this._bottom = this.position.y + this.shape.height * (1 - this.anchor.y);
+  }
 };
 
 /**
