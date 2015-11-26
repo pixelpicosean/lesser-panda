@@ -70,17 +70,17 @@ loader.start = function start() {
 
     // Register it as a loader
     loader.registerLoader({
-      start(onComplete, onProgress) {
-        var mapper = (resLoader, res) => {
+      start: function(onComplete, onProgress) {
+        var mapper = function mapper(resLoader, res) {
           onProgress(res, res.error);
         };
         resourceLoader.on('progress', mapper);
-        resourceLoader.load(() => {
+        resourceLoader.load(function() {
           setTimeout(onComplete, 0);
           resourceLoader.off('progress', mapper);
         });
       },
-      getAssetsLength() {
+      getAssetsLength: function() {
         return Object.keys(resourceLoader.resources).length;
       },
     });
@@ -96,7 +96,7 @@ loader.addAsset = function addAsset(url, key) {
   if (key) {
     assetsQueue.push({
       url: loader.baseURL + '/' + url,
-      key
+      key: key,
     });
   }
   else {

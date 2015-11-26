@@ -19,7 +19,7 @@ Object.assign(Math, {
    * @param {number} b
    * @return {number}
    */
-  clamp: function (x, a, b) {
+  clamp: function clamp(x, a, b) {
     return (x < a) ? a : ((x > b) ? b : x);
   },
 });

@@ -198,7 +198,7 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
     var x = Math.max(rect._left, Math.min(rect._right, circle.position.x));
     var y = Math.max(rect._top, Math.min(rect._bottom, circle.position.y));
 
-    var dist = Math.pow(circle.position.x - x, 2) + Math.pow(circle.position.y - y, 2);
+    var dist = (circle.position.x - x) * (circle.position.x - x) + (circle.position.y - y) * (circle.position.y - y);
     return dist < (circle.shape.radius * circle.shape.radius);
   }
 
@@ -253,6 +253,8 @@ CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
     }
   }
   // TODO: Circle vs Rectangle
+  else if ((a.shape.type === CIRC && b.shape.type === RECT) || (a.shape.type === RECT && b.shape.type === CIRC)) {
+  }
 };
 
 /**
@@ -494,8 +496,8 @@ if (Scene.systems.indexOf('Physics') === -1) {
 }
 
 module.exports = {
-  World,
-  Body,
-  Rectangle,
-  Circle,
+  World: World,
+  Body: Body,
+  Rectangle: Rectangle,
+  Circle: Circle,
 };

@@ -18,7 +18,7 @@ function addSound(src, id) {
     src: loader.baseURL + '/' + src,
     preload: false,
     onload: onload.bind(undefined, snd),
-    onloaderror: onload.bind(undefined, snd, `Failed to load sound[${src}]`),
+    onloaderror: onload.bind(undefined, snd, 'Failed to load sound[' + src + ']'),
   });
   sounds[id || src] = snd;
 
@@ -51,6 +51,6 @@ loader.registerLoader({
 });
 
 module.exports = {
-  sounds,
-  addSound,
+  sounds: sounds,
+  addSound: addSound,
 };
