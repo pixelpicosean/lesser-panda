@@ -20,6 +20,18 @@ function erase(arr, obj) {
   }
 };
 
+// Fix bounds of a Rectangle body on last frame
+function fixLastBounds(body) {
+  if (body._lastLeft === body._lastRight) {
+    body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
+    body._lastRight = body.last.x + body.shape.width * (1 - body.anchor.x);
+  }
+  if (body._lastTop === body._lastBottom) {
+    body._lastTop = body.last.y - body.shape.height * body.anchor.y;
+    body._lastBottom = body.last.y + body.shape.height * (1 - body.anchor.y);
+  }
+}
+
 /**
   Physics world.
   @class World
@@ -213,26 +225,34 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
   @return {Boolean}
 **/
 CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
+  // Make sure last bounds are correctly calculated
+  if (a.shape.type === RECT) {
+    fixLastBounds(a);
+  }
+  if (b.shape.type === RECT) {
+    fixLastBounds(b);
+  }
+
   if (a.shape.type === RECT && b.shape.type === RECT) {
-    if (a.last.y + a.shape.height * (1 - a.anchor.y) <= b.last.y - b.shape.height * b.anchor.y) {
+    if (a._lastBottom <= b._lastTop) {
       if (a.collide(b, 'DOWN')) {
         a.position.y = b.position.y - b.shape.height * b.anchor.y - a.shape.height * (1 - a.anchor.y);
         return true;
       }
     }
-    else if (a.last.y - a.shape.height * a.anchor.y >= b.last.y + b.shape.height * (1 - b.anchor.y)) {
+    else if (a._lastTop >= b._lastBottom) {
       if (a.collide(b, 'UP')) {
         a.position.y = b.position.y + b.shape.height * (1 - b.anchor.y) + a.shape.height * a.anchor.y;
         return true;
       }
     }
-    else if (a.last.x + a.shape.width * (1 - a.anchor.x) <= b.last.x - b.shape.width * (1 - b.anchor.x)) {
+    else if (a._lastRight <= b._lastLeft) {
       if (a.collide(b, 'RIGHT')) {
         a.position.x = b.position.x - b.shape.width * b.anchor.x - a.shape.width * (1 - a.anchor.x);
         return true;
       }
     }
-    else if (a.last.x - a.shape.width * a.anchor.x >= b.last.x + b.shape.width * (1 - b.anchor.x)) {
+    else if (a._lastLeft >= b._lastRight) {
       if (a.collide(b, 'LEFT')) {
         a.position.x = b.position.x + b.shape.width * (1 - b.anchor.x) + a.shape.width * a.anchor.x;
         return true;
@@ -334,10 +354,16 @@ function Body(properties) {
 
   // Internal caches
   this._collides = [];
+
   this._left = 0;
   this._right = 0;
   this._top = 0;
   this._bottom = 0;
+
+  this._lastLeft = 0;
+  this._lastRight = 0;
+  this._lastTop = 0;
+  this._lastBottom = 0;
 
   Object.assign(this, properties);
 }
