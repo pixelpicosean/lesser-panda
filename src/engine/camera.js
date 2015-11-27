@@ -39,6 +39,7 @@ function Camera() {
    */
   this.rounding = false;
   this.rotation = 0;
+  this.scene = null;
   /**
    * Current speed of camera.
    * @property {Vector} speed
@@ -86,12 +87,14 @@ function Camera() {
 /**
  * Add camera to container.
  * @method addTo
- * @param {PIXI.Container} container
+ * @param {Scene}           scene
+ * @param {PIXI.Container}  container
  */
-Camera.prototype.addTo = function addTo(container) {
-  engine.scene.addObject(this);
-
+Camera.prototype.addTo = function addTo(scene, container) {
+  this.scene = scene;
   this.container = container;
+
+  scene.addObject(this);
 
   this.position.set(engine.width, engine.height)
     .multiply(this.anchor);
@@ -258,7 +261,7 @@ Camera.prototype.moveCamera = function moveCamera() {
 };
 
 Camera.prototype.remove = function remove() {
-  engine.scene.removeObject(this);
+  this.scene.removeObject(this);
   this.container = null;
 };
 
