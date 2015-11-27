@@ -20,16 +20,17 @@ function erase(arr, obj) {
   }
 };
 
-// Fix bounds of a Rectangle body on last frame
-function fixLastBounds(body) {
-  if (body._lastLeft === body._lastRight) {
-    body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
-    body._lastRight = body.last.x + body.shape.width * (1 - body.anchor.x);
-  }
-  if (body._lastTop === body._lastBottom) {
-    body._lastTop = body.last.y - body.shape.height * body.anchor.y;
-    body._lastBottom = body.last.y + body.shape.height * (1 - body.anchor.y);
-  }
+// Update bounds of a Rectangle body on last frame
+function updateBounds(body) {
+  body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
+  body._lastRight = body.last.x + body.shape.width * (1 - body.anchor.x);
+  body._lastTop = body.last.y - body.shape.height * body.anchor.y;
+  body._lastBottom = body.last.y + body.shape.height * (1 - body.anchor.y);
+
+  body._left = body.position.x - body.shape.width * body.anchor.x;
+  body._right = body.position.x + body.shape.width * (1 - body.anchor.x);
+  body._top = body.position.y - body.shape.height * body.anchor.y;
+  body._bottom = body.position.y + body.shape.height * (1 - body.anchor.y);
 }
 
 /**
@@ -225,14 +226,6 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
   @return {Boolean}
 **/
 CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
-  // Make sure last bounds are correctly calculated
-  if (a.shape.type === RECT) {
-    fixLastBounds(a);
-  }
-  if (b.shape.type === RECT) {
-    fixLastBounds(b);
-  }
-
   if (a.shape.type === RECT && b.shape.type === RECT) {
     if (a._lastBottom <= b._lastTop) {
       if (a.collide(b, 'DOWN')) {
@@ -259,7 +252,7 @@ CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
       }
     }
     else {
-      // Inside
+      // Overlap
       if (a.collide(b)) return true;
     }
   }
@@ -457,10 +450,7 @@ Body.prototype.update = function update(delta) {
   this.position.add(this.velocity.x * delta, this.velocity.y * delta);
 
   if (this.shape && this.shape.type === RECT) {
-    this._left = this.position.x - this.shape.width * this.anchor.x;
-    this._right = this.position.x + this.shape.width * (1 - this.anchor.x);
-    this._top = this.position.y - this.shape.height * this.anchor.y;
-    this._bottom = this.position.y + this.shape.height * (1 - this.anchor.y);
+    updateBounds(this);
   }
 };
 
