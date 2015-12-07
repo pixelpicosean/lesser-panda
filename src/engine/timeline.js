@@ -324,9 +324,6 @@ Object.assign(Scene.prototype, {
       }
     }
   },
-  _freezeTimelines: function _freezeTimelines() {
-    this.timelines.length = 0;
-  },
 });
 
 if (Scene.systems.indexOf('Timelines') === -1) {
