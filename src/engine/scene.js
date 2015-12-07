@@ -116,10 +116,6 @@ Scene.prototype._updateObjects = function _updateObjects() {
   }
 };
 
-Scene.prototype._freezeObjects = function _freezeObjects() {
-  this.objects.length = 0;
-};
-
 Object.assign(Scene, {
   /**
     Sub-systems of scene.
