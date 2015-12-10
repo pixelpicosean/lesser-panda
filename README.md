@@ -2,21 +2,26 @@
 
 ## ChangeLog
 
-### 3.0.0-rc1
+### 0.3.1-rc1
+
+- Upgrade PIXI to (dev/97b7553)
+- Rename base container of Scene to `stage` instead of `container`
+
+### 0.3.0-rc1
 
 - Completely module based structure
 
-### 2.0.1
+### 0.2.1
 
 - Add camera shake support.
 - Let Scene emit input events just like what PIXI does.
 
-### 2.0.0
+### 0.2.0
 
 - Add support for module imports/exports, so you do not need to expose everything to global namespaces (like `game`).
 - Remove `Class` system due to performance and capabilities.
 
-### 1.0.0
+### 0.1.0
 
 - Update renderer to PIXI.js latest stable version (v3.0.7).
 
