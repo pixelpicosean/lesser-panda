@@ -12,12 +12,12 @@ class Loading extends Scene {
   constructor() {
     super();
 
-    this.barBg = new PIXI.Graphics().addTo(this.container);
+    this.barBg = new PIXI.Graphics().addTo(this.stage);
     this.barBg.beginFill(0x5f574f);
     this.barBg.drawRect(0, -BAR_HEIGHT * 0.5, BAR_WIDTH, BAR_HEIGHT);
     this.barBg.endFill();
 
-    this.bar = new PIXI.Graphics().addTo(this.container);
+    this.bar = new PIXI.Graphics().addTo(this.stage);
     this.bar.beginFill(0xffffff);
     this.bar.drawRect(0, -BAR_HEIGHT * 0.5, 1, BAR_HEIGHT);
     this.bar.endFill();

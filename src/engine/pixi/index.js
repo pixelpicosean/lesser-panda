@@ -73,13 +73,13 @@ var Scene = require('engine/scene');
 Object.assign(Scene.prototype, {
   _backgroundColor: 0x220033,
   _initRenderer: function _initRenderer() {
-    this.container = new core.Container();
+    this.stage = new core.Container();
   },
   _awakeRenderer: function _awakeRenderer() {
     Renderer.core.backgroundColor = this._backgroundColor;
   },
   _updateRenderer: function _updateRenderer() {
-    Renderer.core.render(this.container);
+    Renderer.core.render(this.stage);
   }
 });
 
