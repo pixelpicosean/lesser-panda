@@ -1,5 +1,8 @@
-var Howl = require('./howler.core').Howl;
+var howler = require('./howler.core');
 var loader = require('./loader');
+
+var Howl = howler.Howl;
+var Howle = howler.Howle;
 
 var sounds = {};
 var soundsToLoadCount = 0;
@@ -44,6 +47,10 @@ loader.registerLoader({
     completeCB = onComplete;
 
     for (var s in sounds) sounds[s].load();
+
+    if (Object.keys(sounds).length === 0) {
+      onComplete();
+    }
   },
   getAssetsLength: function() {
     return soundsToLoadCount;
@@ -53,4 +60,6 @@ loader.registerLoader({
 module.exports = {
   sounds: sounds,
   addSound: addSound,
+  mute: Howler.mute,
+  unmute: Howler.unmute,
 };
