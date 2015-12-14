@@ -12,18 +12,22 @@ var soundsLoadedCount = 0;
 var progressCB;
 var completeCB;
 
+function prefix(path) {
+  return loader.baseURL + '/' + path;
+}
+
 function addSound(src, id) {
-  if (sounds[id || src] || sounds[src]) {
+  if (sounds[id]) {
     return;
   }
 
   var snd = new Howl({
-    src: loader.baseURL + '/' + src,
+    src: src.map(prefix),
     preload: false,
     onload: onload.bind(undefined, snd),
     onloaderror: onload.bind(undefined, snd, 'Failed to load sound[' + src + ']'),
   });
-  sounds[id || src] = snd;
+  sounds[id] = snd;
 
   soundsToLoadCount += 1;
 }
