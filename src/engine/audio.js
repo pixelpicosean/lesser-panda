@@ -63,13 +63,23 @@ loader.registerLoader({
   },
 });
 
+var _snd_cache = null;
+
 var audio = Object.assign(new EventEmitter(), {
-  muted: false,
   sounds: sounds,
   addSound: addSound,
+
+  muted: false,
   mute: function() { Howler.mute(true); audio.muted = true; audio.emit('mute', true); },
   unmute: function() { Howler.mute(false); audio.muted = false; audio.emit('mute', false); },
+
   volume: function(v) { Howler.volume(v) },
+
+  play: function(id) {
+    _snd_cache = sounds[id];
+    _snd_cache && _snd_cache.play();
+    return _snd_cache;
+  },
 });
 
 module.exports = audio;
