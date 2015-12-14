@@ -2,7 +2,9 @@ var howler = require('./howler.core');
 var loader = require('./loader');
 
 var Howl = howler.Howl;
-var Howle = howler.Howle;
+var Howler = howler.Howler;
+
+var EventEmitter = require('./eventemitter3');
 
 var sounds = {};
 var soundsToLoadCount = 0;
@@ -61,9 +63,13 @@ loader.registerLoader({
   },
 });
 
-module.exports = {
+var audio = Object.assign(new EventEmitter(), {
+  muted: false,
   sounds: sounds,
   addSound: addSound,
-  mute: Howler.mute,
-  unmute: Howler.unmute,
-};
+  mute: function() { Howler.mute(true); audio.muted = true; audio.emit('mute', true); },
+  unmute: function() { Howler.mute(false); audio.muted = false; audio.emit('mute', false); },
+  volume: function(v) { Howler.volume(v) },
+});
+
+module.exports = audio;
