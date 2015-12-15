@@ -221,6 +221,8 @@ Timeline.prototype._next = function _next() {
 };
 
 Timeline.prototype._step = function _step(delta) {
+  if (this.removed) return;
+
   this.delta += delta;
 
   if (!this.current) {
