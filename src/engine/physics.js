@@ -23,14 +23,14 @@ function erase(arr, obj) {
 // Update bounds of a Rectangle body on last frame
 function updateBounds(body) {
   body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
-  body._lastRight = body.last.x + body.shape.width * (1 - body.anchor.x);
+  body._lastRight = body._lastLeft + body.shape.width;
   body._lastTop = body.last.y - body.shape.height * body.anchor.y;
-  body._lastBottom = body.last.y + body.shape.height * (1 - body.anchor.y);
+  body._lastBottom = body._lastTop + body.shape.height;
 
   body._left = body.position.x - body.shape.width * body.anchor.x;
-  body._right = body.position.x + body.shape.width * (1 - body.anchor.x);
+  body._right = body._left + body.shape.width;
   body._top = body.position.y - body.shape.height * body.anchor.y;
-  body._bottom = body.position.y + body.shape.height * (1 - body.anchor.y);
+  body._bottom = body._top + body.shape.height;
 }
 
 /**
