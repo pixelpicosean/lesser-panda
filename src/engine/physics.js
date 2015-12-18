@@ -2,6 +2,25 @@ var Vector = require('engine/vector');
 var Timer = require('engine/timer');
 var Scene = require('engine/scene');
 
+// Constants
+var ESP = 0.000001;
+
+var UP = 'UP';
+var DOWN = 'DOWN';
+var LEFT = 'LEFT';
+var RIGHT = 'RIGHT';
+var OVERLAP = 'OVERLAP';
+
+function eq(a, b) {
+  return (a < b) ? (b - a < ESP) : (a - b < ESP);
+}
+function lte(a, b) {
+  return (a < b) || eq(a, b);
+}
+function gte(a, b) {
+  return (a > b) || eq(b, a);
+}
+
 // Shapes
 var RECT = 0;
 var CIRC = 1;
@@ -147,7 +166,7 @@ World.prototype.collide = function collide(body) {
   @method update
 **/
 World.prototype.update = function update() {
-  var delta = Timer.delta / 1000;
+  var delta = Timer.delta * 0.001;
 
   var i, j;
   for (i = this.bodies.length - 1; i >= 0; i--) {
@@ -227,34 +246,36 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
 **/
 CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
   if (a.shape.type === RECT && b.shape.type === RECT) {
-    if (a._lastBottom <= b._lastTop) {
-      if (a.collide(b, 'DOWN')) {
+    if (lte(a._lastBottom, b._lastTop)) {
+      if (a.collide(b, DOWN)) {
         a.position.y = b.position.y - b.shape.height * b.anchor.y - a.shape.height * (1 - a.anchor.y);
         return true;
       }
     }
-    else if (a._lastTop >= b._lastBottom) {
-      if (a.collide(b, 'UP')) {
+    else if (gte(a._lastTop, b._lastBottom)) {
+      if (a.collide(b, UP)) {
         a.position.y = b.position.y + b.shape.height * (1 - b.anchor.y) + a.shape.height * a.anchor.y;
         return true;
       }
     }
-    else if (a._lastRight <= b._lastLeft) {
-      if (a.collide(b, 'RIGHT')) {
+    else if (lte(a._lastRight, b._lastLeft)) {
+      if (a.collide(b, RIGHT)) {
         a.position.x = b.position.x - b.shape.width * b.anchor.x - a.shape.width * (1 - a.anchor.x);
         return true;
       }
     }
-    else if (a._lastLeft >= b._lastRight) {
-      if (a.collide(b, 'LEFT')) {
+    else if (gte(a._lastLeft, b._lastRight)) {
+      if (a.collide(b, LEFT)) {
         a.position.x = b.position.x + b.shape.width * (1 - b.anchor.x) + a.shape.width * a.anchor.x;
         return true;
       }
     }
     else {
       // Overlap
-      if (a.collide(b)) return true;
+      if (a.collide(b, OVERLAP)) return true;
     }
+
+    return false;
   }
   else if (a.shape.type === CIRC && b.shape.type === CIRC) {
     var angle = b.position.angle(a.position);
