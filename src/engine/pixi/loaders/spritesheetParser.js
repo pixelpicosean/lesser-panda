@@ -14,7 +14,8 @@ module.exports = function ()
 
         var loadOptions = {
             crossOrigin: resource.crossOrigin,
-            loadType: Resource.LOAD_TYPE.IMAGE
+            loadType: Resource.LOAD_TYPE.IMAGE,
+            metadata: resource.metadata.imageMetadata,
         };
 
         var route = dirname(resource.url.replace(this.baseUrl, ''));
