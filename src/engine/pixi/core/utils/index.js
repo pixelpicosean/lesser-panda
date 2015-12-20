@@ -9,7 +9,7 @@ var utils = module.exports = {
 
     EventEmitter:   require('engine/eventemitter3'),
     pluginTarget:   require('./pluginTarget'),
-    async:          require('engine/async'),
+    async:          require('engine/resource-loader/async'),
 
     /**
      * Gets the next unique identifier

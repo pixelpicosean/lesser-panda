@@ -1,10 +1,10 @@
 var howler = require('./howler.core');
-var loader = require('./loader');
+var loader = require('engine/loader');
 
 var Howl = howler.Howl;
 var Howler = howler.Howler;
 
-var EventEmitter = require('./eventemitter3');
+var EventEmitter = require('engine/eventemitter3');
 
 var sounds = {};
 var soundsToLoadCount = 0;
@@ -62,6 +62,7 @@ loader.registerLoader({
     return soundsToLoadCount;
   },
 });
+loader.addSound = addSound;
 
 var _snd_cache = null;
 

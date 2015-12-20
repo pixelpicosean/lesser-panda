@@ -1,4 +1,4 @@
-var async       = require('engine/async'),
+var async       = require('./async'),
     urlParser   = require('./url'),
     Resource    = require('./Resource'),
     EventEmitter = require('engine/eventemitter3');
