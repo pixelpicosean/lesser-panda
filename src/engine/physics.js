@@ -193,6 +193,11 @@ World.prototype.update = function update() {
   }
 };
 
+World.prototype.cleanup = function() {
+  this.bodies.length = 0;
+  this.collisionGroups = {};
+};
+
 /**
   Physics collision solver.
   @class CollisionSolver
@@ -522,9 +527,6 @@ Object.assign(Scene.prototype, {
   },
   _updatePhysics: function _updatePhysics() {
     this.world.update();
-  },
-  _freezePhysics: function _freezePhysics() {
-    this.world.bodies.length = 0;
   },
 });
 
