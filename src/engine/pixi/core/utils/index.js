@@ -1,4 +1,5 @@
 var CONST = require('../const');
+var lpUtils = require('engine/utils');
 
 /**
  * @namespace PIXI.utils
@@ -28,16 +29,7 @@ var utils = module.exports = {
      * @param  {number[]} [out=[]]
      * @return {number[]} An array representing the [R, G, B] of the color.
      */
-    hex2rgb: function (hex, out)
-    {
-        out = out || [];
-
-        out[0] = (hex >> 16 & 0xFF) / 255;
-        out[1] = (hex >> 8 & 0xFF) / 255;
-        out[2] = (hex & 0xFF) / 255;
-
-        return out;
-    },
+    hex2rgb: lpUtils.hex2rgb,
 
     /**
      * Converts a hex color number to a string.
@@ -45,13 +37,7 @@ var utils = module.exports = {
      * @param hex {number}
      * @return {string} The string color.
      */
-    hex2string: function (hex)
-    {
-        hex = hex.toString(16);
-        hex = '000000'.substr(0, 6 - hex.length) + hex;
-
-        return '#' + hex;
-    },
+    hex2string: lpUtils.hex2string,
 
     /**
      * Converts a color as an [R, G, B] array to a hex number
@@ -59,10 +45,7 @@ var utils = module.exports = {
      * @param rgb {number[]}
      * @return {number} The color number
      */
-    rgb2hex: function (rgb)
-    {
-        return ((rgb[0]*255 << 16) + (rgb[1]*255 << 8) + rgb[2]*255);
-    },
+    rgb2hex: lpUtils.rgb2hex,
 
     /**
      * Checks whether the Canvas BlendModes are supported by the current browser
@@ -243,23 +226,7 @@ var utils = module.exports = {
      * @param {number} startIdx The index to begin removing from (inclusive)
      * @param {number} removeCount How many items to remove
      */
-    removeItems: function (arr, startIdx, removeCount)
-    {
-        var length = arr.length;
-
-        if (startIdx >= length || removeCount === 0)
-        {
-            return;
-        }
-
-        removeCount = (startIdx+removeCount > length ? length-startIdx : removeCount);
-        for (var i = startIdx, len = length-removeCount; i < len; ++i)
-        {
-            arr[i] = arr[i + removeCount];
-        }
-
-        arr.length = len;
-    },
+    removeItems: lpUtils.removeItems,
 
     /**
      * @todo Describe property usage
