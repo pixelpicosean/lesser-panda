@@ -178,8 +178,8 @@ Animation.prototype.update = function update(delta) {
     this._frameTime += anim.speed * (delta / 1000.0);
   }
 
-  if (this._frameTime >= 1) {
-    this._frameTime = 0;
+  if (this._frameTime > 1) {
+    this._frameTime -= 1;
 
     if (anim.random && anim.frames.length > 1) {
       var nextFrame = this.currentFrame;
