@@ -8,22 +8,6 @@ var Vector = require('engine/vector');
 var resize = require('engine/resize');
 var config = require('game/config');
 
-// Math extensions
-Object.assign(Math, {
-  /**
-   * Force a value within the boundaries by clamping `x` to the range `[a, b]`.
-   *
-   * @method Math.clamp
-   * @param {number} x
-   * @param {number} a
-   * @param {number} b
-   * @return {number}
-   */
-  clamp: function clamp(x, a, b) {
-    return (x < a) ? a : ((x > b) ? b : x);
-  },
-});
-
 // Engine core
 var core = new EventEmitter();
 

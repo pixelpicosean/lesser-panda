@@ -1,6 +1,7 @@
 var engine = require('engine/core');
 var Vector = require('engine/vector');
 var Timer = require('engine/timer');
+var utils = require('engine/utils');
 
 function Camera() {
   /**
@@ -238,8 +239,8 @@ Camera.prototype.moveSensor = function moveSensor() {
 Camera.prototype.moveCamera = function moveCamera() {
   var dt = Timer.delta * 0.001;
 
-  this.speed.x = Math.clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
-  this.speed.y = Math.clamp(this.position.y - (this.sensor.y + this.sensor.height * 0.5), -this.maxSpeed, this.maxSpeed);
+  this.speed.x = utils.clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
+  this.speed.y = utils.clamp(this.position.y - (this.sensor.y + this.sensor.height * 0.5), -this.maxSpeed, this.maxSpeed);
 
   if (this.speed.x > this.threshold ||
     this.speed.x < -this.threshold ||

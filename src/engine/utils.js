@@ -10,6 +10,18 @@ exports.PI_2 = Math.PI * 2;
 exports.PI_HALF = Math.PI * 0.5;
 
 /**
+ * Force a value within the boundaries by clamping `x` to the range `[a, b]`.
+ *
+ * @param {number} x
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+exports.clamp = function(x, a, b) {
+  return (x < a) ? a : ((x > b) ? b : x);
+};
+
+/**
  * Bring the value between min and max.
  *
  * Values larger than `max` are wrapped back to `min`
