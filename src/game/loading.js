@@ -37,9 +37,13 @@ class Loading extends Scene {
     loader.once('complete', function() {
       loader.off('progress', redraw);
 
+      // Do any assets post process
+      // (such as saving textures, creating spritesheet textures...)
+      // before switch to the "firstScene"
+
       // Start "Main" scene when assets loaded
       engine.setScene(config.firstScene || 'Main');
-    }, this);
+    });
 
     loader.start();
   }
