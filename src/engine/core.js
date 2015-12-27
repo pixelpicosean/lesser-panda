@@ -47,7 +47,7 @@ function loop(timestamp) {
     resizeFunc();
   }
 
-  core.scene && core.scene.tickAndRun();
+  core.scene && update(core.scene, timestamp);
 }
 function endLoop() {
   cancelAnimationFrame(loopId);
@@ -117,6 +117,15 @@ function boot() {
 function getVendorAttribute(el, attr) {
   var uc = attr.ucfirst();
   return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
+}
+
+/**
+ * Update scene in fixed/variable mode based on its setting
+ * @param  {Scene} scene      Scene to be updated
+ * @param  {Number} timestamp Current time stamp
+ */
+function update(scene, timestamp) {
+  Renderer.render(scene);
 }
 
 // Public properties and methods

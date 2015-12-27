@@ -50,21 +50,25 @@ Object.assign(core.Texture, {
 // Register PIXI as the renderer of choice
 var Renderer = require('engine/renderer');
 
-Renderer.init = function init(width, height, settings) {
+Renderer.init = function(width, height, settings) {
   settings.view = document.getElementById(settings.canvasId);
   settings.autoResize = true;
   settings.resolution = window.devicePixelRatio;
 
   if (settings.webGL) {
-    this.core = core.autoDetectRenderer(window.innerWidth, window.innerHeight, settings);
+    this.instance = core.autoDetectRenderer(window.innerWidth, window.innerHeight, settings);
   }
   else {
-    this.core = new core.CanvasRenderer(window.innerWidth, window.innerHeight, settings);
+    this.instance = new core.CanvasRenderer(window.innerWidth, window.innerHeight, settings);
   }
 };
 
-Renderer.resize = function resize(w, h) {
-  this.core.resize(w, h);
+Renderer.resize = function(w, h) {
+  this.instance.resize(w, h);
+};
+
+Renderer.render = function(scene) {
+  this.instance.render(scene.stage);
 };
 
 // Inject as sub-system of scene
@@ -72,15 +76,12 @@ var Scene = require('engine/scene');
 
 Object.assign(Scene.prototype, {
   _backgroundColor: 0x220033,
-  _initRenderer: function _initRenderer() {
+  _initRenderer: function() {
     this.stage = new core.Container();
   },
-  _awakeRenderer: function _awakeRenderer() {
-    Renderer.core.backgroundColor = this._backgroundColor;
+  _awakeRenderer: function() {
+    Renderer.instance.backgroundColor = this._backgroundColor;
   },
-  _updateRenderer: function _updateRenderer() {
-    Renderer.core.render(this.stage);
-  }
 });
 
 Object.defineProperty(Scene.prototype, 'backgroundColor', {
@@ -88,7 +89,7 @@ Object.defineProperty(Scene.prototype, 'backgroundColor', {
     return this._backgroundColor;
   },
   set: function(color) {
-    Renderer.core.backgroundColor = this._backgroundColor = color;
+    Renderer.instance.backgroundColor = this._backgroundColor = color;
   },
 });
 

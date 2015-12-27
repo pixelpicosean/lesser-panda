@@ -1,9 +1,13 @@
 var Renderer = {
-  init: function init(width, height, settings) {
+  instance: undefined,
+  init: function(width, height, settings) {
     console.log('[Warning]: No working renderer!');
   },
-  resize: function resize(w, h) {
-    console.log('[Warning]: Renderer can not be rendered!');
+  resize: function(w, h) {
+    console.log('[Warning]: Renderer can not be resized!');
+  },
+  render: function(scene) {
+    console.log('[Warning]: Renderer does not render!');
   },
 };
 
