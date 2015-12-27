@@ -53,6 +53,7 @@ function Animation(textures) {
   this.playing = false;
   this.finished = false;
 
+  this._willTick = false;
   this._finishEvtEmit = false;
   this._frameTime = 0;
 
@@ -82,7 +83,10 @@ Animation.prototype.constructor = Animation;
 
 Animation.prototype.remove = function remove() {
   core.Sprite.prototype.remove.call(this);
-  core.removeObject(this);
+  if (this._willTick) {
+    this._willTick = false;
+    core.removeObject(this);
+  }
 };
 
 /**
@@ -129,7 +133,10 @@ Animation.prototype.play = function play(name, frame) {
   this.gotoFrame(frame || 0);
 
   // Request updates
-  core.addObject(this);
+  if (!this._willTick) {
+    this._willTick = true;
+    core.addObject(this);
+  }
 
   return this;
 };
@@ -145,7 +152,10 @@ Animation.prototype.stop = function stop(frame) {
   if (typeof frame === 'number') this.gotoFrame(frame);
 
   // No more updates
-  core.removeObject(this);
+  if (this._willTick) {
+    this._willTick = false;
+    core.removeObject(this);
+  }
 
   return this;
 };
@@ -173,7 +183,10 @@ Animation.prototype.update = function update(delta) {
 
   if (this.finished) {
     if (!this._finishEvtEmit) {
-      core.removeObject(this);
+      if (this._willTick) {
+        this._willTick = false;
+        core.removeObject(this);
+      }
       this.emit('finish', this.currentAnim);
     }
 
