@@ -119,12 +119,63 @@ function getVendorAttribute(el, attr) {
   return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
 }
 
+// Update (fixed update implementation from Phaser by @photonstorm)
+var spiraling = 0;
+var deltaTime = 0;
+var currentUpdateID = 0;
+var lastCount = 0;
+var slowStep = 0;
+var count = 0;
 /**
  * Update scene in fixed/variable mode based on its setting
  * @param  {Scene} scene      Scene to be updated
  * @param  {Number} timestamp Current time stamp
  */
 function update(scene, timestamp) {
+  // If the logic time is spiraling upwards, skip a frame entirely
+  if (spiraling > 1) {
+    // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
+    deltaTime = 0;
+    spiraling = 0;
+
+    render(scene);
+  }
+  else {
+    // Step size that takes the speed of Timer into account
+    slowStep = Timer.speed * 1000.0 / scene.desiredFPS;
+
+    // Accumulate time until the slowStep threshold is met or exceeded... up to a limit of 3 catch-up frames at slowStep intervals
+    deltaTime += Math.max(Math.min(slowStep * 3, Timer.delta), 0);
+
+    // Call the game update logic multiple times if necessary to "catch up" with dropped frames
+    // unless forceSingleUpdate is true
+    count = 0;
+
+    while (deltaTime >= slowStep) {
+      deltaTime -= slowStep;
+      currentUpdateID = count;
+
+      // Fixed update with the timestep
+      scene._update(slowStep);
+
+      count += 1;
+    }
+
+    // Detect spiraling (if the catch-up loop isn't fast enough, the number of iterations will increase constantly)
+    if (count > lastCount) {
+      spiraling += 1;
+    }
+    else if (count < lastCount) {
+      // Looks like it caught up successfully, reset the spiral alert counter
+      spiraling = 0;
+    }
+
+    lastCount = count;
+
+    render(scene);
+  }
+}
+function render(scene) {
   Renderer.render(scene);
 }
 

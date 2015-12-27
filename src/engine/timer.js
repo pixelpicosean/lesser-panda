@@ -129,7 +129,7 @@ Object.assign(Timer, {
   **/
   speed: 1,
   /**
-    Main timer's minimum fps.
+    Timer's minimum fps.
     @attribute {Number} minFPS
     @default 20
   **/

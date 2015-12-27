@@ -1,5 +1,6 @@
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
+var config = require('game/config');
 
 /**
   Game scene.
@@ -7,6 +8,13 @@ var engine = require('engine/core');
 **/
 function Scene() {
   EventEmitter.call(this);
+
+  /**
+    Desired FPS this scene should run
+    @attribute {Number} desiredFPS
+    @default 30
+  **/
+  this.desiredFPS = config.desiredFPS || 30;
 
   /**
     @property {Array} systems
@@ -43,6 +51,20 @@ Scene.prototype._awake = function() {
 };
 
 /**
+ * Called each single frame once or more
+ */
+Scene.prototype._update = function _update(delta) {
+  this.emit('update', delta);
+  this.update(delta);
+
+  for (var i in this.systems) {
+    if (this['_update' + this.systems[i]]) {
+      this['_update' + this.systems[i]](delta);
+    }
+  }
+};
+
+/**
  * Called before deactivating this scene
  */
 Scene.prototype._freeze = function _freeze() {
@@ -62,17 +84,6 @@ Scene.prototype.freeze = function freeze() {};
 
 Scene.prototype.pause = function pause() {};
 Scene.prototype.resume = function resume() {};
-
-Scene.prototype.tickAndRun = function tickAndRun() {
-  this.emit('update');
-  this.update();
-
-  for (var i in this.systems) {
-    if (this['_update' + this.systems[i]]) {
-      this['_update' + this.systems[i]]();
-    }
-  }
-};
 
 // Objects API --------------------------------------------
 

@@ -4,7 +4,6 @@
  */
 
 var EventEmitter = require('engine/eventemitter3');
-var Timer = require('engine/timer');
 var Scene = require('engine/scene');
 
 var pool = [];
@@ -311,13 +310,13 @@ Object.assign(Scene.prototype, {
   _initTimelines: function _initTimelines() {
     this.timelines = [];
   },
-  _updateTimelines: function _updateTimelines() {
-    this.delta = Timer.delta;
+  _updateTimelines: function _updateTimelines(delta) {
+    this.delta = delta;
     var t;
     for (var i = 0; i < this.timelines.length; i++) {
       t = this.timelines[i];
       if (!t.removed) {
-        t._step(Timer.delta);
+        t._step(delta);
       }
 
       if (t.removed) {

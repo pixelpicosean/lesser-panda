@@ -5,6 +5,8 @@ export default {
   width: 320,
   height: 200,
 
+  desiredFPS: 30,
+
   /**
    * How does the game resize?
    * available values:
