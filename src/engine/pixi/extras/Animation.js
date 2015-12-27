@@ -1,5 +1,4 @@
 var core = require('../core');
-var Timer = require('engine/timer');
 
 /**
   @class AnimationData
@@ -123,6 +122,10 @@ Animation.prototype.play = function play(name, frame) {
   }
 
   this.gotoFrame(frame || 0);
+
+  // Request updates
+  core.addObject(this);
+
   return this;
 };
 
@@ -135,6 +138,10 @@ Animation.prototype.play = function play(name, frame) {
 Animation.prototype.stop = function stop(frame) {
   this.playing = false;
   if (typeof frame === 'number') this.gotoFrame(frame);
+
+  // No more updates
+  core.removeObject(this);
+
   return this;
 };
 
@@ -156,18 +163,19 @@ Animation.prototype.gotoFrame = function gotoFrame(frame) {
 /**
   @method updateAnimation
 **/
-Animation.prototype.updateAnimation = function updateAnimation() {
+Animation.prototype.update = function update(delta) {
   var anim = this.anims[this.currentAnim];
 
   if (this.finished) {
     if (!this._finishEvtEmit) {
-      this.emit('finish', this);
+      core.removeObject(this);
+      this.emit('finish', this.currentAnim);
     }
 
     return;
   }
   else if (this.playing) {
-    this._frameTime += anim.speed * (Timer.delta / 1000);
+    this._frameTime += anim.speed * (delta / 1000.0);
   }
 
   if (this._frameTime >= 1) {
@@ -190,30 +198,29 @@ Animation.prototype.updateAnimation = function updateAnimation() {
       if (anim.loop) {
         this.currentFrame = 0;
         this.texture = this.textures[anim.frames[0]];
-      } else {
+      }
+      else {
         this.playing = false;
         this.finished = true;
         this._finishEvtEmit = false;
       }
-    } else if (nextFrame < 0) {
+    }
+    else if (nextFrame < 0) {
       if (anim.loop) {
         this.currentFrame = anim.frames.length - 1;
         this.texture = this.textures[anim.frames.last()];
-      } else {
+      }
+      else {
         this.playing = false;
         this.finished = true;
         this._finishEvtEmit = false;
       }
-    } else {
+    }
+    else {
       this.currentFrame = nextFrame;
       this.texture = this.textures[anim.frames[nextFrame]];
     }
   }
-};
-
-Animation.prototype.updateTransform = function updateTransform() {
-  if (this.currentAnim) this.updateAnimation();
-  core.Sprite.prototype.updateTransform.call(this);
 };
 
 Object.assign(Animation, {

@@ -1,4 +1,5 @@
 require('engine/polyfill');
+var utils = require('engine/utils');
 
 var core = module.exports = require('./core');
 
@@ -7,6 +8,15 @@ core.extras         = require('./extras');
 core.interaction    = require('./interaction');
 // core.filters        = require('./filters');
 // core.mesh           = require('./mesh');
+
+// Add some helpers
+var objects = [];
+core.addObject = function(obj) {
+  objects.push(obj);
+};
+core.removeObject = function(obj) {
+  utils.removeItems(objects, objects.indexOf(obj), 1)
+};
 
 // Extend core objects
 Object.assign(core.DisplayObject.prototype, {
@@ -62,11 +72,9 @@ Renderer.init = function(width, height, settings) {
     this.instance = new core.CanvasRenderer(window.innerWidth, window.innerHeight, settings);
   }
 };
-
 Renderer.resize = function(w, h) {
   this.instance.resize(w, h);
 };
-
 Renderer.render = function(scene) {
   this.instance.render(scene.stage);
 };
@@ -78,9 +86,15 @@ Object.assign(Scene.prototype, {
   _backgroundColor: 0x220033,
   _initRenderer: function() {
     this.stage = new core.Container();
+    this.stage.scene = this;
   },
   _awakeRenderer: function() {
     Renderer.instance.backgroundColor = this._backgroundColor;
+  },
+  _updateRenderer: function(dt) {
+    for (var i = 0; i < objects.length; i++) {
+      objects[i].update(dt);
+    }
   },
 });
 
