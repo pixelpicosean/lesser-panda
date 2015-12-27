@@ -80,6 +80,11 @@ function Animation(textures) {
 Animation.prototype = Object.create(core.Sprite.prototype);
 Animation.prototype.constructor = Animation;
 
+Animation.prototype.remove = function remove() {
+  core.Sprite.prototype.remove.call(this);
+  core.removeObject(this);
+};
+
 /**
   Add new animation.
   @method addAnim
