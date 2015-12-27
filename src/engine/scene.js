@@ -1,5 +1,6 @@
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
+var utils = require('engine/utils');
 var config = require('game/config');
 
 /**
@@ -121,9 +122,13 @@ Scene.prototype._initObjects = function _initObjects() {
   @private
 **/
 Scene.prototype._updateObjects = function _updateObjects() {
-  for (var i = this.objects.length - 1; i >= 0; i--) {
-    if (typeof this.objects[i].update === 'function' && !this.objects[i]._remove) this.objects[i].update();
-    if (this.objects[i]._remove) this.objects.splice(i, 1);
+  for (var i = 0; i < this.objects.length; i++) {
+    if (typeof this.objects[i].update === 'function' && !this.objects[i]._remove) {
+      this.objects[i].update();
+    }
+    if (this.objects[i]._remove) {
+      utils.removeItems(this.objects, i, 1);
+    }
   }
 };
 

@@ -5,6 +5,7 @@
 
 var EventEmitter = require('engine/eventemitter3');
 var Scene = require('engine/scene');
+var utils = require('engine/utils');
 
 var pool = [];
 
@@ -321,7 +322,7 @@ Object.assign(Scene.prototype, {
 
       if (t.removed) {
         Timeline.recycle(t);
-        this.timelines.splice(i--, 1);
+        utils.removeItems(this.timelines, i--, 1);
       }
     }
   },

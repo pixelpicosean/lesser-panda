@@ -1,4 +1,5 @@
 var Scene = require('engine/scene');
+var utils = require('engine/utils');
 
 /**
   @class Timer
@@ -159,7 +160,7 @@ Object.assign(Timer, {
 
     // Update timers
     var timer;
-    for (var i = this.timers.length - 1; i >= 0; i--) {
+    for (var i = 0; i < this.timers.length; i++) {
       timer = this.timers[i];
       if (timer.time() >= 0) {
         if (typeof timer.callback === 'function') {
@@ -170,7 +171,7 @@ Object.assign(Timer, {
           timer.reset();
         }
         else {
-          this.timers.splice(i, 1);
+          utils.removeItems(this.timers, i--, 1);
         }
       }
     }

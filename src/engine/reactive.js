@@ -8,6 +8,7 @@
  */
 
 var Timer = require('engine/timer');
+var utils = require('engine/utils');
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -681,7 +682,7 @@ return /******/ (function(modules) { // webpackBootstrap
         });
         if (handlerIndex !== -1) {
           this.offAny(this._logHandlers[handlerIndex].handler);
-          this._logHandlers.splice(handlerIndex, 1);
+          utils.removeItems(this._logHandlers, handlerIndex, 1);
         }
       }
 
@@ -3754,7 +3755,7 @@ return /******/ (function(modules) { // webpackBootstrap
       });
       if (onEndI !== -1) {
         obs.offEnd(this._$endHandlers[onEndI].handler);
-        this._$endHandlers.splice(onEndI, 1);
+        utils.removeItems(this._$endHandlers, onEndI, 1);
       }
     },
 

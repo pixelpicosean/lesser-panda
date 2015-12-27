@@ -170,11 +170,12 @@ World.prototype.update = function update() {
   var delta = Timer.delta * 0.001;
 
   var i, j;
-  for (i = this.bodies.length - 1; i >= 0; i--) {
+  for (i = 0; i < this.bodies.length; i++) {
     if (this.bodies[i]._remove) {
       this.removeBodyCollision(this.bodies[i]);
-      this.bodies.splice(i, 1);
-    } else {
+      utils.removeItems(this.bodies, i, 1);
+    }
+    else {
       this.bodies[i].update(delta);
     }
   }
