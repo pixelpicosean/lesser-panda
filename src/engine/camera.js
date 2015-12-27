@@ -236,9 +236,7 @@ Camera.prototype.moveSensor = function moveSensor() {
   }
 };
 
-Camera.prototype.moveCamera = function moveCamera() {
-  var dt = Timer.delta * 0.001;
-
+Camera.prototype.moveCamera = function moveCamera(dt) {
   this.speed.x = utils.clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
   this.speed.y = utils.clamp(this.position.y - (this.sensor.y + this.sensor.height * 0.5), -this.maxSpeed, this.maxSpeed);
 
@@ -266,9 +264,9 @@ Camera.prototype.remove = function remove() {
   this.container = null;
 };
 
-Camera.prototype.update = function update() {
-  this.moveSensor();
-  this.moveCamera();
+Camera.prototype.update = function update(dt) {
+  this.moveSensor(dt);
+  this.moveCamera(dt);
   this.container.scale.set(1 / this.zoom.x, 1 / this.zoom.y);
   this.container.rotation = -this.rotation;
 };

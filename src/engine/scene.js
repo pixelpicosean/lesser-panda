@@ -121,10 +121,10 @@ Scene.prototype._initObjects = function _initObjects() {
   @method _updateObjects
   @private
 **/
-Scene.prototype._updateObjects = function _updateObjects() {
+Scene.prototype._updateObjects = function _updateObjects(dt) {
   for (var i = 0; i < this.objects.length; i++) {
     if (typeof this.objects[i].update === 'function' && !this.objects[i]._remove) {
-      this.objects[i].update();
+      this.objects[i].update(dt);
     }
     if (this.objects[i]._remove) {
       utils.removeItems(this.objects, i, 1);

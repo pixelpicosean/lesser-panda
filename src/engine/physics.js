@@ -1,5 +1,4 @@
 var Vector = require('engine/vector');
-var Timer = require('engine/timer');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
@@ -166,9 +165,7 @@ World.prototype.collide = function collide(body) {
   Update physics world.
   @method update
 **/
-World.prototype.update = function update() {
-  var delta = Timer.delta * 0.001;
-
+World.prototype.update = function update(delta) {
   var i, j;
   for (i = 0; i < this.bodies.length; i++) {
     if (this.bodies[i]._remove) {
@@ -527,8 +524,8 @@ Object.assign(Scene.prototype, {
   _initPhysics: function _initPhysics() {
     this.world = new World();
   },
-  _updatePhysics: function _updatePhysics() {
-    this.world.update();
+  _updatePhysics: function _updatePhysics(dt) {
+    this.world.update(dt);
   },
 });
 
