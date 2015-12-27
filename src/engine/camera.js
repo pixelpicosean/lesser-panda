@@ -114,6 +114,8 @@ Camera.prototype.addTo = function addTo(scene, container) {
 Camera.prototype.setTarget = function setTarget(target, lerp) {
   this.target = target;
 
+  if (!this.target) return;
+
   var bounds = target.getBounds();
   this.sensor.x = bounds.x + bounds.width * 0.5 - this.sensor.width * 0.5;
   this.sensor.y = bounds.y + bounds.height * 0.5 - this.sensor.height * 0.5;
