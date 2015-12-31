@@ -2,10 +2,15 @@
 
 ## ChangeLog
 
-### 0.3.1-rc1
+### 0.3.1
 
-- Upgrade PIXI to (dev/97b7553)
+- Upgrade PIXI to (dev/9d7a393)
+- Upgrade resource-loader
 - Rename base container of Scene to `stage` instead of `container`
+- Fixed update support. FPS now can be lock to a constant value
+- Improved `PIXI.extras.Animation` updating logic
+- Improved Array element removing process
+- Create utils module with useful functions and constants
 
 ### 0.3.0-rc1
 
