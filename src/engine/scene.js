@@ -55,6 +55,8 @@ Scene.prototype._awake = function() {
  * Called each single frame once or more
  */
 Scene.prototype._update = function _update(delta) {
+  if (this.world) this.world.preUpdate();
+
   this.emit('update', delta);
   this.update(delta);
 
@@ -134,12 +136,14 @@ Scene.prototype._updateObjects = function _updateObjects(dt) {
 
 Object.assign(Scene, {
   /**
-    Sub-systems of scene.
-    @attribute {Array} systems
-    @default [Objects]
-  **/
+   * Sub-systems to be updated **in order**.
+   * @attribute {Array} systems
+   */
   systems: [
     'Objects',
+    'Timelines',
+    'Physics',
+    'Renderer',
   ],
 });
 

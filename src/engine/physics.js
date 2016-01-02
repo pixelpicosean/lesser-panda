@@ -165,16 +165,27 @@ World.prototype.collide = function collide(body) {
   Update physics world.
   @method update
 **/
-World.prototype.update = function update(delta) {
-  var i, j;
+World.prototype.preUpdate = function preUpdate(delta) {
+  var i;
   for (i = 0; i < this.bodies.length; i++) {
     if (this.bodies[i]._remove) {
       this.removeBodyCollision(this.bodies[i]);
       utils.removeItems(this.bodies, i, 1);
     }
     else {
-      this.bodies[i].update(delta);
+      this.bodies[i].last.copy(this.bodies[i].position);
     }
+  }
+};
+
+/**
+  Update physics world.
+  @method update
+**/
+World.prototype.update = function update(delta) {
+  var i, j;
+  for (i = 0; i < this.bodies.length; i++) {
+    this.bodies[i].update(delta);
   }
 
   for (i in this.collisionGroups) {
@@ -457,7 +468,7 @@ Body.prototype.removeCollision = function removeCollision() {
   @method update
 **/
 Body.prototype.update = function update(delta) {
-  this.last.copy(this.position);
+  // this.last.copy(this.position);
 
   if (this.mass !== 0) {
     this.velocity.add(

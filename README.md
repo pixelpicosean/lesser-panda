@@ -11,6 +11,7 @@
 - Improved `PIXI.extras.Animation` updating logic
 - Improved Array element removing process
 - Create utils module with useful functions and constants
+- Better pre-defined sub-system updating order, now collision works pretty well with Timelined bodies
 
 ### 0.3.0-rc1
 
