@@ -134,12 +134,14 @@ Scene.prototype._updateObjects = function _updateObjects(dt) {
 
 Object.assign(Scene, {
   /**
-    Sub-systems of scene.
-    @attribute {Array} systems
-    @default [Objects]
-  **/
+   * Sub-systems to be updated **in order**.
+   * @attribute {Array} systems
+   */
   systems: [
     'Objects',
+    'Timelines',
+    'Physics',
+    'Renderer',
   ],
 });
 
