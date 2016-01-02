@@ -307,30 +307,27 @@ Object.assign(Scene.prototype, {
     if (!timeline) return;
     timeline.removed = true;
   },
+});
 
-  _initTimelines: function _initTimelines() {
-    this.timelines = [];
+Scene.registerSystem('Timeline', {
+  init: function init(scene) {
+    scene.timelines = [];
   },
-  _updateTimelines: function _updateTimelines(delta) {
-    this.delta = delta;
+  update: function update(scene, delta) {
     var t;
-    for (var i = 0; i < this.timelines.length; i++) {
-      t = this.timelines[i];
+    for (var i = 0; i < scene.timelines.length; i++) {
+      t = scene.timelines[i];
       if (!t.removed) {
         t._step(delta);
       }
 
       if (t.removed) {
         Timeline.recycle(t);
-        utils.removeItems(this.timelines, i--, 1);
+        utils.removeItems(scene.timelines, i--, 1);
       }
     }
   },
 });
-
-if (Scene.systems.indexOf('Timelines') === -1) {
-  Scene.systems.push('Timelines');
-}
 
 Object.assign(Timeline, {
   /**

@@ -18,18 +18,19 @@ function Scene() {
   this.desiredFPS = config.desiredFPS || 30;
 
   /**
-    @property {Array} systems
+    @property {Array} updateOrder
     @private
   **/
-  this.systems = [];
+  this.updateOrder = [];
 
-  var i, s;
-  for (i in Scene.systems) {
-    s = Scene.systems[i];
-    this.systems.push(s);
+  var i, name, sys;
+  for (i in Scene.updateOrder) {
+    name = Scene.updateOrder[i];
+    sys = Scene.systems[name];
 
-    if (this['_init' + s]) {
-      this['_init' + s]();
+    if (sys) {
+      this.updateOrder.push(name);
+      sys.init && sys.init(this);
     }
   }
 }
@@ -41,110 +42,134 @@ Scene.prototype.constructor = Scene;
  * Called before activating this scene
  */
 Scene.prototype._awake = function() {
+  for (var i in this.updateOrder) {
+    sys = Scene.systems[this.updateOrder[i]];
+    sys.awake && sys.awake(this);
+  }
+
   this.emit('awake');
   this.awake();
-
-  for (var i in this.systems) {
-    if (this['_awake' + this.systems[i]]) {
-      this['_awake' + this.systems[i]]();
-    }
-  }
 };
 
 /**
  * Called each single frame once or more
  */
 Scene.prototype._update = function _update(delta) {
-  if (this.world) this.world.preUpdate();
+  var i;
+
+  // Pre-update
+  for (i in this.updateOrder) {
+    sys = Scene.systems[this.updateOrder[i]];
+    sys.preUpdate && sys.preUpdate(this, delta);
+  }
+
+  this.emit('preUpdate', delta);
+  this.preUpdate(delta);
+
+  // Update
+  for (i in this.updateOrder) {
+    sys = Scene.systems[this.updateOrder[i]];
+    sys.update && sys.update(this, delta);
+  }
 
   this.emit('update', delta);
   this.update(delta);
 
-  for (var i in this.systems) {
-    if (this['_update' + this.systems[i]]) {
-      this['_update' + this.systems[i]](delta);
-    }
+  // Post-update
+  for (i in this.updateOrder) {
+    sys = Scene.systems[this.updateOrder[i]];
+    sys.postUpdate && sys.postUpdate(this, delta);
   }
+
+  this.emit('postUpdate', delta);
+  this.postUpdate(delta);
 };
 
 /**
  * Called before deactivating this scene
  */
 Scene.prototype._freeze = function _freeze() {
+  for (i in this.updateOrder) {
+    sys = Scene.systems[this.updateOrder[i]];
+    sys.freeze && sys.freeze(this);
+  }
+
   this.emit('freeze');
   this.freeze();
-
-  for (var i in this.systems) {
-    if (this['_freeze' + this.systems[i]]) {
-      this['_freeze' + this.systems[i]]();
-    }
-  }
 };
 
 Scene.prototype.awake = function awake() {};
+Scene.prototype.preUpdate = function preUpdate() {};
 Scene.prototype.update = function update() {};
+Scene.prototype.postUpdate = function postUpdate() {};
 Scene.prototype.freeze = function freeze() {};
 
 Scene.prototype.pause = function pause() {};
 Scene.prototype.resume = function resume() {};
 
-// Objects API --------------------------------------------
-
-/**
-  Add object to scene, so it's `update()` function get's called every frame.
-  @method addObject
-  @param {Object} object
-**/
-Scene.prototype.addObject = function addObject(object) {
-  if (this.objects.indexOf(object) === -1) {
-    object._remove = false;
-    this.objects.push(object);
-  }
-};
-
-/**
-  Remove object from scene.
-  @method removeObject
-  @param {Object} object
-**/
-Scene.prototype.removeObject = function removeObject(object) {
-  object._remove = true;
-};
-
-Scene.prototype._initObjects = function _initObjects() {
-  /**
-    List of objects in scene.
-    @property {Array} objects
-  **/
-  this.objects = [];
-};
-
-/**
-  @method _updateObjects
-  @private
-**/
-Scene.prototype._updateObjects = function _updateObjects(dt) {
-  for (var i = 0; i < this.objects.length; i++) {
-    if (typeof this.objects[i].update === 'function' && !this.objects[i]._remove) {
-      this.objects[i].update(dt);
-    }
-    if (this.objects[i]._remove) {
-      utils.removeItems(this.objects, i, 1);
-    }
-  }
-};
-
 Object.assign(Scene, {
+  systems: {},
+
   /**
-   * Sub-systems to be updated **in order**.
-   * @attribute {Array} systems
+   * System updating order
+   * @attribute {Array} updateOrder
    */
-  systems: [
-    'Objects',
-    'Timelines',
+  updateOrder: [
+    'Object',
+    'Timeline',
     'Physics',
     'Renderer',
   ],
+
+  registerSystem: function registerSystem(name, system) {
+    if (Scene.systems[name]) throw 'System [' + name + '] is already defined!';
+
+    Scene.systems[name] = system;
+  },
+});
+
+// Object system --------------------------------------------
+Object.assign(Scene.prototype, {
+  /**
+   * Add object to scene, so it's `update()` function get's called every frame.
+   * @method addObject
+   * @param {Object} object
+   */
+  addObject: function addObject(object) {
+    if (this.objects.indexOf(object) === -1) {
+      object._remove = false;
+      this.objects.push(object);
+    }
+  },
+
+  /**
+   * Remove object from scene.
+   * @method removeObject
+   * @param {Object} object
+   */
+  removeObject: function removeObject(object) {
+    object._remove = true;
+  },
+});
+
+Scene.registerSystem('Object', {
+  init: function init(scene) {
+    /**
+     * List of objects in scene.
+     * @property {Array} objects
+     */
+    scene.objects = [];
+  },
+  update: function update(scene, dt) {
+    for (var i = 0; i < scene.objects.length; i++) {
+      if (typeof scene.objects[i].update === 'function' && !scene.objects[i]._remove) {
+        scene.objects[i].update(dt);
+      }
+      if (scene.objects[i]._remove) {
+        utils.removeItems(scene.objects, i, 1);
+      }
+    }
+  },
 });
 
 module.exports = Scene;

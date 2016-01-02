@@ -531,18 +531,17 @@ function Circle(radius) {
   this.type = CIRC;
 }
 
-Object.assign(Scene.prototype, {
-  _initPhysics: function _initPhysics() {
-    this.world = new World();
+Scene.registerSystem('Physics', {
+  init: function init(scene) {
+    scene.world = new World();
   },
-  _updatePhysics: function _updatePhysics(dt) {
-    this.world.update(dt);
+  preUpdate: function preUpdate(scene, dt) {
+    scene.world.preUpdate(dt);
+  },
+  update: function update(scene, dt) {
+    scene.world.update(dt);
   },
 });
-
-if (Scene.systems.indexOf('Physics') === -1) {
-  Scene.systems.push('Physics');
-}
 
 module.exports = {
   World: World,

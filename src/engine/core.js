@@ -1,7 +1,6 @@
 require('engine/polyfill');
 
 var EventEmitter = require('engine/eventemitter3');
-var Scene = require('engine/scene');
 var Renderer = require('engine/renderer');
 var Timer = require('engine/timer');
 var Vector = require('engine/vector');

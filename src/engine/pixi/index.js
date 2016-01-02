@@ -10,12 +10,16 @@ core.interaction    = require('./interaction');
 // core.mesh           = require('./mesh');
 
 // Add some helpers
-var objects = [];
-core.addObject = function(obj) {
-  objects.push(obj);
+var activeScene = null;
+core.addObject = function addObject(obj) {
+  if (activeScene && activeScene.displayObjects.indexOf(obj) < 0) {
+    activeScene.displayObjects.push(obj);
+  }
 };
-core.removeObject = function(obj) {
-  utils.removeItems(objects, objects.indexOf(obj), 1)
+core.removeObject = function removeObject(obj) {
+  if (activeScene) {
+    utils.removeItems(activeScene.displayObjects, activeScene.displayObjects.indexOf(obj), 1)
+  }
 };
 
 // Extend core objects
@@ -82,18 +86,24 @@ Renderer.render = function(scene) {
 // Inject as sub-system of scene
 var Scene = require('engine/scene');
 
-Object.assign(Scene.prototype, {
-  _backgroundColor: 0x220033,
-  _initRenderer: function() {
-    this.stage = new core.Container();
-    this.stage.scene = this;
+Scene.registerSystem('Renderer', {
+  init: function init(scene) {
+    scene.stage = new core.Container();
+    scene.displayObjects = [];
+
+    activeScene = scene;
   },
-  _awakeRenderer: function() {
-    Renderer.instance.backgroundColor = this._backgroundColor;
+  awake: function awake(scene) {
+    if (typeof scene._backgroundColor === 'undefined') {
+      scene._backgroundColor = 0x220033;
+    }
+    Renderer.instance.backgroundColor = scene._backgroundColor;
+
+    activeScene = scene;
   },
-  _updateRenderer: function(dt) {
-    for (var i = 0; i < objects.length; i++) {
-      objects[i].update(dt);
+  update: function update(scene, dt) {
+    for (var i = 0; i < scene.displayObjects.length; i++) {
+      scene.displayObjects[i].update(dt);
     }
   },
 });
@@ -106,7 +116,3 @@ Object.defineProperty(Scene.prototype, 'backgroundColor', {
     Renderer.instance.backgroundColor = this._backgroundColor = color;
   },
 });
-
-if (Scene.systems.indexOf('Renderer') === -1) {
-  Scene.systems.push('Renderer');
-}
