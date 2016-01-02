@@ -269,8 +269,11 @@ Camera.prototype.remove = function remove() {
 Camera.prototype.update = function update(dt) {
   this.moveSensor(dt);
   this.moveCamera(dt);
-  this.container.scale.set(1 / this.zoom.x, 1 / this.zoom.y);
-  this.container.rotation = -this.rotation;
+
+  if (this.container) {
+    this.container.scale.set(1 / this.zoom.x, 1 / this.zoom.y);
+    this.container.rotation = -this.rotation;
+  }
 };
 
 Object.defineProperty(Camera.prototype, 'left', {
