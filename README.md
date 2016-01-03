@@ -2,7 +2,7 @@
 
 ## ChangeLog
 
-### 0.3.2
+### 0.3.1
 
 - Upgrade PIXI to (dev/9d7a393)
 - Upgrade resource-loader
