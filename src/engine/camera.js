@@ -46,6 +46,7 @@ function Camera() {
    * @property {Vector} speed
    */
   this.speed = new Vector();
+  this.delta = 0;
   /**
    * Sprite, that camera follows.
    * @property {PIXI.Sprite} target
@@ -266,9 +267,11 @@ Camera.prototype.remove = function remove() {
   this.container = null;
 };
 
-Camera.prototype.update = function update(dt) {
-  this.moveSensor(dt);
-  this.moveCamera(dt);
+Camera.prototype.update = function update(delta) {
+  this.delta = delta * 0.001;
+
+  this.moveSensor(this.delta);
+  this.moveCamera(this.delta);
 
   if (this.container) {
     this.container.scale.set(1 / this.zoom.x, 1 / this.zoom.y);
