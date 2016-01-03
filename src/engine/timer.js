@@ -111,7 +111,6 @@ function recycleTimer(timer) {
 }
 
 // Timer static properties and functions
-var _realDelta = 0;
 Object.assign(Timer, {
   /**
     Current time.
@@ -119,24 +118,7 @@ Object.assign(Timer, {
   **/
   time: 0,
   /**
-   * Time of last frame
-   * @attribute {Number} last
-   */
-  last: 0,
-  /**
-    Main timer's speed factor.
-    @attribute {Number} speed
-    @default 1
-  **/
-  speed: 1,
-  /**
-    Timer's minimum fps.
-    @attribute {Number} minFPS
-    @default 20
-  **/
-  minFPS: 20,
-  /**
-    Main timer's delta (ms).
+    Delta since last frame (ms).
     @attribute {Number} delta
   **/
   delta: 0,
@@ -146,23 +128,18 @@ Object.assign(Timer, {
    */
   timers: [],
   /**
-    Update main timer.
-    @attribute {Function} update
-  **/
-  update: function update(timestamp) {
-    // Update system timer
-    var now = timestamp ? timestamp : Date.now();
-    if (!Timer.last) Timer.last = now;
-    _realDelta = now - Timer.last;
-    this.delta = Math.min(_realDelta, 1000 / this.minFPS) * this.speed;
+   * Update timer system.
+   * @attribute {Function} update
+   */
+  update: function update(delta) {
+    this.delta = delta;
     this.time += this.delta;
-    Timer.last = now;
 
     // Update timers
     var timer;
     for (var i = 0; i < this.timers.length; i++) {
       timer = this.timers[i];
-      if (timer.time() >= 0) {
+      if (timer.time() > 0) {
         if (typeof timer.callback === 'function') {
           timer.callback.call(timer.callbackCtx);
         }

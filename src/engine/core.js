@@ -23,8 +23,6 @@ function loop(timestamp) {
   // Do not update anything when paused
   if (core.paused) return;
 
-  Timer.update(timestamp);
-
   if (nextScene) {
     var pair = nextScene;
     nextScene = null;
@@ -46,7 +44,7 @@ function loop(timestamp) {
     resizeFunc();
   }
 
-  core.scene && update(core.scene, timestamp);
+  update(core.scene, timestamp);
 }
 function endLoop() {
   cancelAnimationFrame(loopId);
@@ -120,7 +118,10 @@ function getVendorAttribute(el, attr) {
 
 // Update (fixed update implementation from Phaser by @photonstorm)
 var spiraling = 0;
+var last = -1;
+var realDelta = 0;
 var deltaTime = 0;
+var desiredFPS = 30;
 var currentUpdateID = 0;
 var lastCount = 0;
 var slowStep = 0;
@@ -131,20 +132,27 @@ var count = 0;
  * @param  {Number} timestamp Current time stamp
  */
 function update(scene, timestamp) {
+  if (last > 0) {
+    realDelta = timestamp - last;
+  }
+  last = timestamp;
+
   // If the logic time is spiraling upwards, skip a frame entirely
   if (spiraling > 1) {
     // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
     deltaTime = 0;
     spiraling = 0;
 
-    render(scene);
+    scene && render(scene);
   }
   else {
-    // Step size that takes the speed of Timer into account
-    slowStep = Timer.speed * 1000.0 / scene.desiredFPS;
+    desiredFPS = scene ? scene.desiredFPS : Scene.desiredFPS;
+
+    // Step size that takes the speed of game into account
+    slowStep = core.speed * 1000.0 / desiredFPS;
 
     // Accumulate time until the slowStep threshold is met or exceeded... up to a limit of 3 catch-up frames at slowStep intervals
-    deltaTime += Math.max(Math.min(slowStep * 3, Timer.delta), 0);
+    deltaTime += Math.max(Math.min(slowStep * 3, realDelta), 0);
 
     // Call the game update logic multiple times if necessary to "catch up" with dropped frames
     // unless forceSingleUpdate is true
@@ -156,7 +164,8 @@ function update(scene, timestamp) {
 
       // Fixed update with the timestep
       core.delta = slowStep;
-      scene._update(slowStep);
+      Timer.update(slowStep);
+      scene && scene._update(slowStep);
 
       count += 1;
     }
@@ -172,7 +181,7 @@ function update(scene, timestamp) {
 
     lastCount = count;
 
-    render(scene);
+    scene && render(scene);
   }
 }
 function render(scene) {
@@ -214,6 +223,12 @@ Object.assign(core, {
    * @type {Boolean}
    */
   paused: false,
+
+  /**
+   * Speed
+   * @type {Number}
+   */
+  speed: 1,
   /**
    * Delta time since last **update**
    * This can be useful for time based updating
@@ -271,8 +286,6 @@ Object.assign(core, {
    */
   resume: function resume() {
     if (!core.paused) return;
-
-    Timer.last = performance.now();
   },
 });
 

@@ -108,8 +108,9 @@ Scene.prototype.pause = function pause() {};
 Scene.prototype.resume = function resume() {};
 
 Object.assign(Scene, {
-  systems: {},
+  desiredFPS: config.desiredFPS || 30,
 
+  systems: {},
   /**
    * System updating order
    * @attribute {Array} updateOrder
@@ -120,7 +121,6 @@ Object.assign(Scene, {
     'Physics',
     'Renderer',
   ],
-
   registerSystem: function registerSystem(name, system) {
     if (Scene.systems[name]) throw 'System [' + name + '] is already defined!';
 
