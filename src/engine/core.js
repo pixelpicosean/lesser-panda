@@ -155,6 +155,7 @@ function update(scene, timestamp) {
       currentUpdateID = count;
 
       // Fixed update with the timestep
+      core.delta = slowStep;
       scene._update(slowStep);
 
       count += 1;
@@ -180,18 +181,51 @@ function render(scene) {
 
 // Public properties and methods
 Object.assign(core, {
-  scenes: {},
-  scene: null,
+  /**
+   * Main Canvas element
+   */
   view: null,
 
-  paused: false,
-
-  /* Size of game content */
+  /**
+   * Size of game content
+   * @type {Number}
+   */
   size: Vector.create(config.width || 640, config.height || 400),
-
-  /* Size of view (devicePixelRatio independent) */
+  /**
+   * Size of view (devicePixelRatio independent)
+   * @type {Number}
+   */
   viewSize: Vector.create(config.width || 640, config.height || 400),
 
+  /**
+   * Map of registered scenes
+   * @type {Object}
+   */
+  scenes: {},
+  /**
+   * Current activated scene.
+   * Note: this can be undefined during switching
+   * @type {Scene}
+   */
+  scene: null,
+
+  /**
+   * Whether the engine itself is paused
+   * @type {Boolean}
+   */
+  paused: false,
+  /**
+   * Delta time since last **update**
+   * This can be useful for time based updating
+   * @type {Number}
+   */
+  delta: 0,
+
+  /**
+   * Register a scene
+   * @param {String}    name  Name of this scene
+   * @param {Function}  ctor  Constructor of the scene
+   */
   addScene: function addScene(name, ctor) {
     if (core.scenes[name]) {
       console.log('Scene [' + name + '] is already defined!');
@@ -201,6 +235,10 @@ Object.assign(core, {
     var pair = { ctor: ctor, inst: null };
     core.scenes[name] = pair;
   },
+  /**
+   * Switch to a scene by its name
+   * @param {String} name Name of the target scene
+   */
   setScene: function setScene(name) {
     var pair = core.scenes[name];
 
@@ -211,6 +249,10 @@ Object.assign(core, {
 
     nextScene = pair;
   },
+  /**
+   * Entrance of the game, set the first scene to boot with
+   * @param  {String} sceneName Name of the start scene
+   */
   startWithScene: function startWithScene(sceneName) {
     core.setScene(sceneName);
 
@@ -218,9 +260,15 @@ Object.assign(core, {
     document.addEventListener('DOMContentLoaded', boot, false);
   },
 
+  /**
+   * Pause the engine
+   */
   pause: function pause() {
     if (core.paused) return;
   },
+  /**
+   * Unpause the engine
+   */
   resume: function resume() {
     if (!core.paused) return;
 
