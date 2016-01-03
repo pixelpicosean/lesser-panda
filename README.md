@@ -2,7 +2,7 @@
 
 ## ChangeLog
 
-### 0.3.1
+### 0.3.2
 
 - Upgrade PIXI to (dev/9d7a393)
 - Upgrade resource-loader
@@ -13,6 +13,7 @@
 - Create utils module with useful functions and constants
 - Better pre-defined sub-system updating order, now collision works pretty well with Timelined bodies
 - New component system. The "Object", "Physics", "Timeline" and "Renderer" are just predefined sub-systems.
+- Timer is also updated at fixed steps now, but act as a *engine-level* system instead of *Scene*
 - Fix camera update error when it's not added to any containers
 
 ### 0.3.0-rc1
