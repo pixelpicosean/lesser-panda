@@ -313,17 +313,23 @@ Scene.registerSystem('Timeline', {
   init: function init(scene) {
     scene.timelines = [];
   },
-  update: function update(scene, delta) {
-    var t;
-    for (var i = 0; i < scene.timelines.length; i++) {
+  preUpdate: function preUpdate(scene) {
+    var i, t;
+    for (i = 0; i < scene.timelines.length; i++) {
       t = scene.timelines[i];
-      if (!t.removed) {
-        t._step(delta);
-      }
-
       if (t.removed) {
         Timeline.recycle(t);
         utils.removeItems(scene.timelines, i--, 1);
+      }
+    }
+  },
+  update: function update(scene, delta) {
+    var i, t;
+    for (i = 0; i < scene.timelines.length; i++) {
+      t = scene.timelines[i];
+
+      if (!t.removed) {
+        t._step(delta);
       }
     }
   },
