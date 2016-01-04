@@ -270,7 +270,7 @@ Timeline.prototype._doWait = function _doWait() {
 
 Object.assign(Timeline, {
   create: function create(context) {
-    var t = pool.pop();
+    var t = pool.shift();
     if (!t) {
       t = new Timeline(context);
     }
