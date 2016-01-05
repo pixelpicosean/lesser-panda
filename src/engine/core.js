@@ -21,30 +21,9 @@ function loop(timestamp) {
   loopId = requestAnimationFrame(loop);
 
   // Do not update anything when paused
-  if (core.paused) return;
-
-  if (nextScene) {
-    var pair = nextScene;
-    nextScene = null;
-
-    // Freeze current scene before switching
-    core.scene && core.scene._freeze();
-    core.scene = null;
-
-    // Create instance of scene if not exist
-    if (!pair.inst) {
-      pair.inst = new pair.ctor();
-    }
-
-    // Awake the scene
-    core.scene = pair.inst;
-    core.scene._awake();
-
-    // Resize container of the scene
-    resizeFunc();
+  if (!core.paused) {
+    update(core.scene, timestamp);
   }
-
-  update(core.scene, timestamp);
 }
 function endLoop() {
   cancelAnimationFrame(loopId);
@@ -143,10 +122,10 @@ function update(scene, timestamp) {
     deltaTime = 0;
     spiraling = 0;
 
-    scene && render(scene);
+    renderScene(scene);
   }
   else {
-    desiredFPS = scene ? scene.desiredFPS : Scene.desiredFPS;
+    desiredFPS = scene ? scene.desiredFPS : 30;
 
     // Step size that takes the speed of game into account
     slowStep = core.speed * 1000.0 / desiredFPS;
@@ -165,7 +144,7 @@ function update(scene, timestamp) {
       // Fixed update with the timestep
       core.delta = slowStep;
       Timer.update(slowStep);
-      scene && scene._update(slowStep);
+      updateScene(scene);
 
       count += 1;
     }
@@ -181,11 +160,41 @@ function update(scene, timestamp) {
 
     lastCount = count;
 
-    scene && render(scene);
+    renderScene(scene);
   }
 }
-function render(scene) {
-  Renderer.render(scene);
+function updateScene(scene) {
+  // Switch to new scene
+  if (nextScene) {
+    var pair = nextScene;
+    nextScene = null;
+
+    // Freeze current scene before switching
+    core.scene && core.scene._freeze();
+    core.scene = null;
+
+    // Create instance of scene if not exist
+    if (!pair.inst) {
+      pair.inst = new pair.ctor();
+    }
+
+    // Awake the scene
+    core.scene = pair.inst;
+    core.scene._awake();
+
+    // Resize container of the scene
+    resizeFunc();
+  }
+
+  // Update current scene
+  if (scene) {
+    scene._update(slowStep);
+  }
+}
+function renderScene(scene) {
+  if (scene) {
+    Renderer.render(scene);
+  }
 }
 
 // Public properties and methods
