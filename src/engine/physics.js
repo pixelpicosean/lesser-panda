@@ -535,11 +535,11 @@ Scene.registerSystem('Physics', {
   init: function init(scene) {
     scene.world = new World();
   },
-  preUpdate: function preUpdate(scene, dt) {
-    scene.world.preUpdate(dt);
+  preUpdate: function preUpdate(scene, delta) {
+    scene.world.preUpdate(delta * 0.001);
   },
-  update: function update(scene, dt) {
-    scene.world.update(dt);
+  update: function update(scene, delta) {
+    scene.world.update(delta * 0.001);
   },
 });
 
