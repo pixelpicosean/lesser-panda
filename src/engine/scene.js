@@ -89,13 +89,13 @@ Scene.prototype._update = function _update(delta) {
  * Called before deactivating this scene
  */
 Scene.prototype._freeze = function _freeze() {
+  this.emit('freeze');
+  this.freeze();
+
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
     sys.freeze && sys.freeze(this);
   }
-
-  this.emit('freeze');
-  this.freeze();
 };
 
 Scene.prototype.awake = function awake() {};
@@ -166,6 +166,14 @@ Scene.registerSystem('Object', {
         scene.objects[i].update(dt);
       }
       if (scene.objects[i]._remove) {
+        utils.removeItems(scene.objects, i, 1);
+      }
+    }
+  },
+  freeze: function freeze(scene) {
+    for (var i = 0; i < scene.objects.length; i++) {
+      if (scene.objects[i]._remove) {
+        console.log(scene.objects[i]);
         utils.removeItems(scene.objects, i, 1);
       }
     }
