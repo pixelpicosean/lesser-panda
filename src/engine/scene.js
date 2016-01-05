@@ -173,7 +173,6 @@ Scene.registerSystem('Object', {
   freeze: function freeze(scene) {
     for (var i = 0; i < scene.objects.length; i++) {
       if (scene.objects[i]._remove) {
-        console.log(scene.objects[i]);
         utils.removeItems(scene.objects, i, 1);
       }
     }
