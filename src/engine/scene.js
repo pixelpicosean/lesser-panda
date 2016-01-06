@@ -41,7 +41,7 @@ Scene.prototype.constructor = Scene;
 /**
  * Called before activating this scene
  */
-Scene.prototype._awake = function() {
+Scene.prototype._awake = function _awake() {
   for (var i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
     sys.awake && sys.awake(this);

@@ -17,7 +17,7 @@ exports.PI_HALF = Math.PI * 0.5;
  * @param {number} b
  * @return {number}
  */
-exports.clamp = function(x, a, b) {
+exports.clamp = function clamp(x, a, b) {
   return (x < a) ? a : ((x > b) ? b : x);
 };
 
@@ -32,7 +32,7 @@ exports.clamp = function(x, a, b) {
  * @param {Number}  max largest valid value
  * @return {Number} result
  */
-exports.wrap = function(value, min, max) {
+exports.wrap = function wrap(value, min, max) {
   if (value < min) return max + (value % max);
   if (value >= max) return value % max;
   return value;
@@ -47,7 +47,7 @@ exports.wrap = function(value, min, max) {
  * @param {Number}  val value to process
  * @return {Number} a value in 0..2*PI interval
  */
-exports.circWrap = function(val) {
+exports.circWrap = function circWrap(val) {
   return wrap(val, 0, PI_2);
 };
 
@@ -58,7 +58,7 @@ exports.circWrap = function(val) {
  * @param  {Number[]} [out=[]]
  * @return {Number[]} An array representing the [R, G, B] of the color.
  */
-exports.hex2rgb = function(hex, out) {
+exports.hex2rgb = function hex2rgb(hex, out) {
   out = out || [];
 
   out[0] = (hex >> 16 & 0xFF) / 255;
@@ -74,7 +74,7 @@ exports.hex2rgb = function(hex, out) {
  * @param hex {Number}
  * @return {String} The string color.
  */
-exports.hex2string = function(hex) {
+exports.hex2string = function hex2string(hex) {
   hex = hex.toString(16);
   hex = '000000'.substr(0, 6 - hex.length) + hex;
 
@@ -87,7 +87,7 @@ exports.hex2string = function(hex) {
  * @param rgb {Number[]}
  * @return {Number} The color number
  */
-exports.rgb2hex = function(rgb) {
+exports.rgb2hex = function rgb2hex(rgb) {
   return ((rgb[0]*255 << 16) + (rgb[1]*255 << 8) + rgb[2]*255);
 };
 
@@ -107,7 +107,7 @@ exports.rgb2hex = function(rgb) {
  *     merge({ a: { var_1: 1 } }, { a: { var_1: 2 } });
  *     // returns { a: { var_1: 2 } }
  */
-exports.merge = function(a) {
+exports.merge = function merge(a) {
   var a = 0, b, key, value;
   for (i = 1; i < arguments.length; i++) {
     b = arguments[i];
@@ -138,7 +138,7 @@ exports.merge = function(a) {
  * @param {Number} startIdx The index to begin removing from (inclusive)
  * @param {Number} removeCount How many items to remove
  */
-exports.removeItems = function(arr, startIdx, removeCount) {
+exports.removeItems = function removeItems(arr, startIdx, removeCount) {
   var length = arr.length;
 
   if (startIdx >= length || removeCount === 0) {

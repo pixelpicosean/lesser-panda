@@ -203,7 +203,7 @@ World.prototype.update = function update(delta) {
   }
 };
 
-World.prototype.cleanup = function() {
+World.prototype.cleanup = function cleanup() {
   this.bodies.length = 0;
   this.collisionGroups = {};
 };
