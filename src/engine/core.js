@@ -89,6 +89,9 @@ function boot() {
       }
     }
   }, false);
+
+  core.emit('boot');
+  core.emit('booted');
 }
 function getVendorAttribute(el, attr) {
   var uc = attr.ucfirst();
