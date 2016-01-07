@@ -4838,4 +4838,29 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ }
 /******/ ])
 });
-;
+
+
+// Extensions
+var kefir = module.exports;
+
+kefir.emitter = function emitter(value) {
+  var emitter;
+  var stream = kefir.stream(function(_emitter) {
+    emitter = _emitter;
+    return function() {
+      emitter = null;
+    };
+  });
+
+  stream.emit = function emit(x) {
+    emitter && emitter.emit(x);
+  };
+  stream.error = function error(x) {
+    emitter && emitter.error(x);
+  };
+  stream.end = function end() {
+    emitter && emitter.end();
+  };
+
+  return stream;
+};
