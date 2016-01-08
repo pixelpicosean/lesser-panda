@@ -144,7 +144,7 @@ PersistentData.prototype.load = function() {
 
   var data = storage.get('savedata', this.defaultVal);
 
-  for (i = 0; i < this.keys; i++) {
+  for (i = 0; i < this.keys.length; i++) {
     key = this.keys[i];
     value = data[key];
 
@@ -157,9 +157,9 @@ PersistentData.prototype.load = function() {
       valid = true;
     }
     else if (
-      (typeof(this.defaultVal[key]) === 'boolean' && typeof(value) === 'boolean') ||
-      (typeof(this.defaultVal[key]) === 'number' && typeof(value) === 'number') ||
-      (typeof(this.defaultVal[key]) === 'string' && typeof(value) === 'string')
+      ((typeof(this.defaultVal[key]) === 'boolean') && (typeof(value) === 'boolean')) ||
+      ((typeof(this.defaultVal[key]) === 'number') && (typeof(value) === 'number')) ||
+      ((typeof(this.defaultVal[key]) === 'string') && (typeof(value) === 'string'))
     ) {
       valid = true;
     }
