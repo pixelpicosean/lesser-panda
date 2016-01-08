@@ -1,5 +1,5 @@
-var storage = require('./storage');
-var Eventemitter = rquire('engine/eventemitter3');
+var storage = require('./index');
+var Eventemitter = require('engine/eventemitter3');
 
 function Data() {
   Eventemitter.call(this);
@@ -128,6 +128,8 @@ Data.prototype.getArrayItem = function(key, idx) {
   return undefined;
 };
 
+module.exports.Data = Data;
+
 function PersistentData() {
   Data.call(this);
 }
@@ -166,8 +168,7 @@ PersistentData.prototype.load = function() {
   }
 };
 
-// Session data
-module.exports = {
-  session: new Data(),
-  persistent: new PersistentData(),
-};
+module.exports.PersistentData = PersistentData;
+
+module.exports.session = new Data();
+module.exports.persistent = new PersistentData();
