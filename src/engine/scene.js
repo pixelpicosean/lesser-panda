@@ -60,7 +60,7 @@ Scene.prototype._update = function _update(delta) {
   // Pre-update
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys.preUpdate && sys.preUpdate(this, delta);
+    sys && sys.preUpdate && sys.preUpdate(this, delta);
   }
 
   this.emit('preUpdate', delta);
@@ -69,7 +69,7 @@ Scene.prototype._update = function _update(delta) {
   // Update
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys.update && sys.update(this, delta);
+    sys && sys.update && sys.update(this, delta);
   }
 
   this.emit('update', delta);
@@ -78,7 +78,7 @@ Scene.prototype._update = function _update(delta) {
   // Post-update
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys.postUpdate && sys.postUpdate(this, delta);
+    sys && sys.postUpdate && sys.postUpdate(this, delta);
   }
 
   this.emit('postUpdate', delta);
@@ -94,7 +94,7 @@ Scene.prototype._freeze = function _freeze() {
 
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys.freeze && sys.freeze(this);
+    sys && sys.freeze && sys.freeze(this);
   }
 };
 
