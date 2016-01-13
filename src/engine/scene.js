@@ -164,11 +164,13 @@ Object.assign(Scene.prototype, {
   pauseObjects: function pauseObjects(tag) {
     if (this.objects[tag]) {
       utils.removeItems(this.objects.activeTags, this.objects.activeTags.indexOf(tag), 1);
+      this.objects.deactiveTags.push(tag);
     }
   },
 
   resumeObjects: function pauseObjects(tag) {
     if (this.objects[tag]) {
+      utils.removeItems(this.objects.deactiveTags, this.objects.deactiveTags.indexOf(tag), 1);
       this.objects.activeTags.push(tag);
     }
   },
