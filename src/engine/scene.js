@@ -134,15 +134,19 @@ Object.assign(Scene.prototype, {
    * Add object to scene, so it's `update()` function get's called every frame.
    * @method addObject
    * @param {Object} object Object you want to add
-   * @param {Number} tag    Number to tag to this object
+   * @param {String} tag    Tag of this object, default is '0'
    */
   addObject: function addObject(object, tag) {
-    var t = tag || 0;
+    var t = tag || '0';
 
     if (this.objects.indexOf(object) === -1) {
       object._remove = false;
       if (!this.objects[t]) {
+        // Create a new object list
         this.objects[t] = [];
+
+        // Active by default
+        this.activeTags.push(t);
       }
       this.objects[t].push(object);
     }
@@ -156,6 +160,18 @@ Object.assign(Scene.prototype, {
   removeObject: function removeObject(object) {
     object._remove = true;
   },
+
+  pauseObjects: function pauseObjects(tag) {
+    if (this.objects[tag]) {
+      utils.removeItems(this.objects.activeTags, this.objects.activeTags.indexOf(tag), 1);
+    }
+  },
+
+  resumeObjects: function pauseObjects(tag) {
+    if (this.objects[tag]) {
+      this.objects.activeTags.push(tag);
+    }
+  },
 });
 
 Scene.registerSystem('Object', {
@@ -165,20 +181,24 @@ Scene.registerSystem('Object', {
      * @property {Object} objects
      */
     scene.objects = {
-      0: [],
+      activeTags: ['0'],
+      deactiveTags: [],
+
+      '0': [],
     };
   },
   update: function update(scene, dt) {
     var i, key, objects;
     for (key in scene.objects) {
-      objects = scene.objects[key];
+      if (scene.objects.activeTags.indexOf(key) < 0) continue;
 
+      objects = scene.objects[key];
       for (i = 0; i < objects.length; i++) {
         if (!objects[i]._remove) {
           objects[i].update(dt);
         }
         if (objects[i]._remove) {
-          utils.removeItems(scene.objects, i, 1);
+          utils.removeItems(objects, i, 1);
         }
       }
     }
