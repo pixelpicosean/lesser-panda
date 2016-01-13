@@ -133,12 +133,18 @@ Object.assign(Scene.prototype, {
   /**
    * Add object to scene, so it's `update()` function get's called every frame.
    * @method addObject
-   * @param {Object} object
+   * @param {Object} object Object you want to add
+   * @param {Number} tag    Number to tag to this object
    */
-  addObject: function addObject(object) {
+  addObject: function addObject(object, tag) {
+    var t = tag || 0;
+
     if (this.objects.indexOf(object) === -1) {
       object._remove = false;
-      this.objects.push(object);
+      if (!this.objects[t]) {
+        this.objects[t] = [];
+      }
+      this.objects[t].push(object);
     }
   },
 
@@ -155,25 +161,25 @@ Object.assign(Scene.prototype, {
 Scene.registerSystem('Object', {
   init: function init(scene) {
     /**
-     * List of objects in scene.
-     * @property {Array} objects
+     * Map of object lists.
+     * @property {Object} objects
      */
-    scene.objects = [];
+    scene.objects = {
+      0: [],
+    };
   },
   update: function update(scene, dt) {
-    for (var i = 0; i < scene.objects.length; i++) {
-      if (typeof scene.objects[i].update === 'function' && !scene.objects[i]._remove) {
-        scene.objects[i].update(dt);
-      }
-      if (scene.objects[i]._remove) {
-        utils.removeItems(scene.objects, i, 1);
-      }
-    }
-  },
-  freeze: function freeze(scene) {
-    for (var i = 0; i < scene.objects.length; i++) {
-      if (scene.objects[i]._remove) {
-        utils.removeItems(scene.objects, i, 1);
+    var i, key, objects;
+    for (key in scene.objects) {
+      objects = scene.objects[key];
+
+      for (i = 0; i < objects.length; i++) {
+        if (!objects[i]._remove) {
+          objects[i].update(dt);
+        }
+        if (objects[i]._remove) {
+          utils.removeItems(scene.objects, i, 1);
+        }
       }
     }
   },
