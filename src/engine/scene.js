@@ -166,6 +166,8 @@ Object.assign(Scene.prototype, {
       utils.removeItems(this.objects.activeTags, this.objects.activeTags.indexOf(tag), 1);
       this.objects.deactiveTags.push(tag);
     }
+
+    return this;
   },
 
   resumeObjects: function pauseObjects(tag) {
@@ -173,6 +175,8 @@ Object.assign(Scene.prototype, {
       utils.removeItems(this.objects.deactiveTags, this.objects.deactiveTags.indexOf(tag), 1);
       this.objects.activeTags.push(tag);
     }
+
+    return this;
   },
 });
 
