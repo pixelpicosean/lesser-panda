@@ -289,11 +289,22 @@ Object.assign(Scene.prototype, {
     Create a new timeline
     @method addTimeline
     @param {Object}     context Context of this timeline
+    @param {String}     tag     Tag of this timeline (default is '0')
     @return {Timeline}
   **/
-  addTimeline: function addTimeline(context) {
+  addTimeline: function addTimeline(context, tag) {
+    var t = tag || '0';
+
+    if (!this.timelines[t]) {
+      // Create a new timeline list
+      this.timelines[t] = [];
+
+      // Active new tag by default
+      this.timelines.activeTags.push(t);
+    }
+
     var timeline = Timeline.create(context);
-    this.timelines.push(timeline);
+    this.timelines[t].push(timeline);
 
     return timeline;
   },
@@ -307,29 +318,66 @@ Object.assign(Scene.prototype, {
     if (!timeline) return;
     timeline.removed = true;
   },
+
+  pauseTimelines: function pauseTimelines(tag) {
+    if (this.timelines[tag]) {
+      utils.removeItems(this.timelines.activeTags, this.timelines.activeTags.indexOf(tag), 1);
+      this.timelines.deactiveTags.push(tag);
+    }
+
+    return this;
+  },
+
+  resumeTimelines: function resumeTimelines(tag) {
+    if (this.timelines[tag]) {
+      utils.removeItems(this.timelines.deactiveTags, this.timelines.deactiveTags.indexOf(tag), 1);
+      this.timelines.activeTags.push(tag);
+    }
+
+    return this;
+  },
 });
 
 Scene.registerSystem('Timeline', {
   init: function init(scene) {
-    scene.timelines = [];
+    /**
+     * Map of timeline lists.
+     * @property {Object} timelines
+     */
+    scene.timelines = {
+      activeTags: ['0'],
+      deactiveTags: [],
+
+      '0': [],
+    };
   },
   preUpdate: function preUpdate(scene) {
-    var i, t;
-    for (i = 0; i < scene.timelines.length; i++) {
-      t = scene.timelines[i];
-      if (t.removed) {
-        Timeline.recycle(t);
-        utils.removeItems(scene.timelines, i--, 1);
+    var i, key, timelines, t;
+    for (key in scene.timelines) {
+      if (scene.timelines.activeTags.indexOf(key) < 0) continue;
+
+      timelines = scene.timelines[key];
+      for (i = 0; i < timelines.length; i++) {
+        t = timelines[i];
+        if (t.removed) {
+          Timeline.recycle(t);
+          utils.removeItems(timelines, i--, 1);
+        }
       }
     }
   },
   update: function update(scene, delta) {
-    var i, t;
-    for (i = 0; i < scene.timelines.length; i++) {
-      t = scene.timelines[i];
+    var i, key, timelines, t;
+    for (key in scene.timelines) {
+      if (scene.timelines.activeTags.indexOf(key) < 0) continue;
 
-      if (!t.removed) {
-        t._step(delta);
+      timelines = scene.timelines[key];
+      for (i = 0; i < timelines.length; i++) {
+        t = timelines[i];
+
+        if (!t.removed) {
+          t._step(delta);
+        }
       }
     }
   },
