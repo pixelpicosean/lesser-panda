@@ -8,25 +8,28 @@ var utils = require('engine/utils');
 **/
 function Timer(ms) {
   /**
-    Timer's target time.
-    @property {Number} target
-  **/
-  this.target = 0;
+   * @property {Number} _count
+   * @private
+   */
+  this._count = 0;
+
   /**
-    Timer's base time.
-    @property {Number} base
-  **/
-  this.base = 0;
+   * Duration of this timer
+   * @property {Number} duration
+   */
+  this.duration = 0;
+
   /**
-    @property {Number} _last
-    @private
-  **/
-  this._last = Timer.time;
+   * Whether this timer should repeat
+   * @type {Boolean}
+   */
+  this.repeat = false;
+
   /**
-    @property {Number} _pauseTime
-    @private
-  **/
-  this._pauseTime = 0;
+   * Whether this timer is already removed
+   * @type {Boolean}
+   */
+  this.removed = false;
 
   this.callback = null;
   this.callbackCtx = null;
@@ -35,64 +38,88 @@ function Timer(ms) {
 }
 
 /**
-  Set time for timer.
-  @method set
-  @param {Number} ms
-**/
+ * Set duration for timer.
+ * @param {Number} ms
+ * @chainable
+ */
 Timer.prototype.set = function set(ms) {
-  if (typeof ms !== 'number') ms = 0;
-  this.target = ms;
-  this.reset();
+  if (typeof ms !== 'number') {
+    this.duration = 0;
+  }
+  else {
+    this.duration = ms;
+  }
+  return this.reset();
 };
 
 /**
-  Reset timer.
-  @method reset
-**/
+ * Reset timer to current duration.
+ * @method reset
+ * @chainable
+ */
 Timer.prototype.reset = function reset() {
-  this.base = Timer.time;
-  this._pauseTime = 0;
+  this.removed = false;
+  this._count = this.duration;
+  return this;
 };
 
 /**
-  Get time since last delta.
-  @method delta
-  @return {Number} delta
-**/
-Timer.prototype.delta = function delta() {
-  var delta = Timer.time - this._last;
-  this._last = Timer.time;
-  return this._pauseTime ? 0 : delta;
-};
-
-/**
-  Get time since start.
-  @method time
-  @return {Number} time
-**/
-Timer.prototype.time = function time() {
-  var time = (this._pauseTime || Timer.time) - this.base - this.target;
-  return time;
-};
-
-/**
-  Pause timer.
-  @method pause
-**/
+ * Pause timer.
+ * @method pause
+ * @chainable
+ */
 Timer.prototype.pause = function pause() {
-  if (!this._pauseTime) this._pauseTime = Timer.time;
+  this.paused = true;
+  return this;
 };
 
 /**
-  Resume paused timer.
-  @method resume
-**/
+ * Resume paused timer.
+ * @method resume
+ * @chainable
+ */
 Timer.prototype.resume = function resume() {
-  if (this._pauseTime) {
-    this.base += Timer.time - this._pauseTime;
-    this._pauseTime = 0;
+  this.paused = false;
+  return this;
+};
+
+Timer.prototype.update = function update(delta) {
+  if (this.removed || this.paused) return;
+
+  this._count -= delta;
+  if (this._count < 0) {
+    this._count = 0;
+
+    if (typeof this.callback === 'function') {
+      this.callback.call(this.callbackCtx);
+    }
+
+    if (this.repeat) {
+      this.reset();
+    }
+    else {
+      this.removed = true;
+    }
   }
 };
+
+/**
+ * @property {Number} elapsed Time elapsed since start.
+ */
+Object.defineProperty(Timer.prototype, 'elapsed', {
+  get: function() {
+    return this.duration - this._count;
+  },
+});
+
+/**
+ * @property {Number} left Time left till the end.
+ */
+Object.defineProperty(Timer.prototype, 'left', {
+  get: function() {
+    return this._count;
+  },
+});
 
 // Pool timer instances
 var pool = [];
@@ -113,42 +140,38 @@ function recycleTimer(timer) {
 // Timer static properties and functions
 Object.assign(Timer, {
   /**
-    Current time.
-    @attribute {Number} time
-  **/
-  time: 0,
-  /**
-    Delta since last frame (ms).
-    @attribute {Number} delta
-  **/
+   * Delta since last frame (ms).
+   * @attribute {Number} delta
+   */
   delta: 0,
   /**
-   * List of current running timer instances
-   * @type {Array<Timer>}
+   * Map of timers
+   * @type {Object}
    */
-  timers: [],
+  timers: {
+    '0': [],
+  },
+  activeTags: ['0'],
+  deactiveTags: [],
   /**
    * Update timer system.
-   * @attribute {Function} update
+   * @attribute {Number} update
    */
   update: function update(delta) {
     this.delta = delta;
-    this.time += this.delta;
 
-    // Update timers
-    var timer;
-    for (var i = 0; i < this.timers.length; i++) {
-      timer = this.timers[i];
-      if (timer.time() > 0) {
-        if (typeof timer.callback === 'function') {
-          timer.callback.call(timer.callbackCtx);
-        }
+    var i, key, timers;
+    for (key in this.timers) {
+      if (this.activeTags.indexOf(key) < 0) continue;
 
-        if (timer.repeat) {
-          timer.reset();
+      timers = this.timers[key];
+      for (i = 0; i < timers.length; i++) {
+        if (!timers[i].removed) {
+          timers[i].update(delta);
         }
-        else {
-          utils.removeItems(this.timers, i--, 1);
+        if (timers[i].removed) {
+          recycleTimer(timers[i]);
+          utils.removeItems(timers, i--, 1);
         }
       }
     }
@@ -157,17 +180,30 @@ Object.assign(Timer, {
   /**
    * Create a not repeat timer.
    * @param {Number} wait        Time in milliseconds
-   * @param {Function} callback  Callback function to run, when timer ends
-   * @param {Object}   context   Context of the callback to be invoked
+   * @param {Function}  callback  Callback function to run, when timer ends
+   * @param {Object}    context   Context of the callback to be invoked
+   * @param {String}    tag       Tag of this timer, default is '0'
    * @return {Timer}
    */
-  later: function later(wait, callback, context) {
+  later: function later(wait, callback, context, tag) {
+    var t = tag || '0';
     var timer = createTimer(wait);
 
     timer.repeat = false;
     timer.callback = callback;
     timer.callbackCtx = context;
-    this.timers.push(timer);
+
+    if (!this.timers[t]) {
+      // Create a new timer list
+      this.timers[t] = [];
+
+      // Active new tag by default
+      this.activeTags.push(t);
+    }
+
+    if (this.timers[t].indexOf(timer) < 0) {
+      this.timers[t].push(timer);
+    }
 
     return timer;
   },
@@ -175,32 +211,57 @@ Object.assign(Timer, {
   /**
    * Create a repeat timer.
    * @param {Number} interval    Time in milliseconds
-   * @param {Function} callback  Callback function to run, when timer ends
-   * @param {Object}   context   Context of the callback to be invoked
+   * @param {Function}  callback  Callback function to run, when timer ends
+   * @param {Object}    context   Context of the callback to be invoked
+   * @param {String}    tag       Tag of this timer, default is '0'
    * @return {Timer}
    */
-  interval: function interval(interval, callback, context) {
-    var timer = createTimer(interval);
+  interval: function interval(interval, callback, context, tag) {
+    var t = tag || '0';
+    var timer = createTimer(wait);
 
     timer.repeat = true;
     timer.callback = callback;
     timer.callbackCtx = context;
-    this.timers.push(timer);
+
+    if (!this.timers[t]) {
+      // Create a new timer list
+      this.timers[t] = [];
+
+      // Active new tag by default
+      this.activeTags.push(t);
+    }
+
+    if (this.timers[t].indexOf(timer) < 0) {
+      this.timers[t].push(timer);
+    }
 
     return timer;
   },
   /**
-    Remove a running timer.
-    @param {Timer} timer
-  **/
+   * Remove a timer.
+   * @param {Timer} timer
+   */
   remove: function remove(timer) {
-    if (!timer) return;
-    timer.callback = null;
-    timer.callbackCtx = null;
-    timer.repeat = false;
-    timer.set(0);
+    timer.removed = true;
+  },
 
-    recycleTimer(timer);
+  pauseTimersTagged: function pauseTimersTagged(tag) {
+    if (this.timers[tag]) {
+      utils.removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
+      this.deactiveTags.push(tag);
+    }
+
+    return this;
+  },
+
+  resumeTimersTagged: function resumeTimersTagged(tag) {
+    if (this.timers[tag]) {
+      utils.removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);
+      this.activeTags.push(tag);
+    }
+
+    return this;
   },
 });
 
