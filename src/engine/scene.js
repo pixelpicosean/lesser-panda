@@ -139,17 +139,17 @@ Object.assign(Scene.prototype, {
   addObject: function addObject(object, tag) {
     var t = tag || '0';
 
-    if (!this.objects[t]) {
+    if (!this.objectSystem[t]) {
       // Create a new object list
-      this.objects[t] = [];
+      this.objectSystem.objects[t] = [];
 
       // Active new tag by default
-      this.objects.activeTags.push(t);
+      this.objectSystem.activeTags.push(t);
     }
 
-    if (this.objects[t].indexOf(object) < 0) {
-      object._remove = false;
-      this.objects[t].push(object);
+    if (this.objectSystem.objects[t].indexOf(object) < 0) {
+      object.removed = false;
+      this.objectSystem.objects[t].push(object);
     }
   },
 
@@ -159,22 +159,22 @@ Object.assign(Scene.prototype, {
    * @param {Object} object
    */
   removeObject: function removeObject(object) {
-    object._remove = true;
+    object.removed = true;
   },
 
   pauseObjectsTagged: function pauseObjectsTagged(tag) {
-    if (this.objects[tag]) {
-      utils.removeItems(this.objects.activeTags, this.objects.activeTags.indexOf(tag), 1);
-      this.objects.deactiveTags.push(tag);
+    if (this.objectSystem.objects[tag]) {
+      utils.removeItems(this.objectSystem.activeTags, this.objectSystem.activeTags.indexOf(tag), 1);
+      this.objectSystem.deactiveTags.push(tag);
     }
 
     return this;
   },
 
   resumeObjectsTagged: function resumeObjectsTagged(tag) {
-    if (this.objects[tag]) {
-      utils.removeItems(this.objects.deactiveTags, this.objects.deactiveTags.indexOf(tag), 1);
-      this.objects.activeTags.push(tag);
+    if (this.objectSystem.objects[tag]) {
+      utils.removeItems(this.objectSystem.deactiveTags, this.objectSystem.deactiveTags.indexOf(tag), 1);
+      this.objectSystem.activeTags.push(tag);
     }
 
     return this;
@@ -184,28 +184,28 @@ Object.assign(Scene.prototype, {
 Scene.registerSystem('Object', {
   init: function init(scene) {
     /**
-     * Map of object lists.
-     * @property {Object} objects
+     * Object system runtime data storage
      */
-    scene.objects = {
+    scene.objectSystem = {
       activeTags: ['0'],
       deactiveTags: [],
-
-      '0': [],
+      objects: {
+        '0': [],
+      },
     };
   },
   update: function update(scene, dt) {
     var i, key, objects;
-    for (key in scene.objects) {
-      if (scene.objects.activeTags.indexOf(key) < 0) continue;
+    for (key in scene.objectSystem.objects) {
+      if (scene.objectSystem.activeTags.indexOf(key) < 0) continue;
 
-      objects = scene.objects[key];
+      objects = scene.objectSystem.objects[key];
       for (i = 0; i < objects.length; i++) {
-        if (!objects[i]._remove) {
+        if (!objects[i].removed) {
           objects[i].update(dt);
         }
-        if (objects[i]._remove) {
-          utils.removeItems(objects, i, 1);
+        if (objects[i].removed) {
+          utils.removeItems(objects, i--, 1);
         }
       }
     }
