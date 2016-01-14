@@ -319,7 +319,7 @@ Object.assign(Scene.prototype, {
     timeline.removed = true;
   },
 
-  pauseTimelines: function pauseTimelines(tag) {
+  pauseTimelinesTagged: function pauseTimelinesTagged(tag) {
     if (this.timelines[tag]) {
       utils.removeItems(this.timelines.activeTags, this.timelines.activeTags.indexOf(tag), 1);
       this.timelines.deactiveTags.push(tag);
@@ -328,7 +328,7 @@ Object.assign(Scene.prototype, {
     return this;
   },
 
-  resumeTimelines: function resumeTimelines(tag) {
+  resumeTimelinesTagged: function resumeTimelinesTagged(tag) {
     if (this.timelines[tag]) {
       utils.removeItems(this.timelines.deactiveTags, this.timelines.deactiveTags.indexOf(tag), 1);
       this.timelines.activeTags.push(tag);

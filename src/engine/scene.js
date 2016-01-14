@@ -162,7 +162,7 @@ Object.assign(Scene.prototype, {
     object._remove = true;
   },
 
-  pauseObjects: function pauseObjects(tag) {
+  pauseObjectsTagged: function pauseObjectsTagged(tag) {
     if (this.objects[tag]) {
       utils.removeItems(this.objects.activeTags, this.objects.activeTags.indexOf(tag), 1);
       this.objects.deactiveTags.push(tag);
@@ -171,7 +171,7 @@ Object.assign(Scene.prototype, {
     return this;
   },
 
-  resumeObjects: function resumeObjects(tag) {
+  resumeObjectsTagged: function resumeObjectsTagged(tag) {
     if (this.objects[tag]) {
       utils.removeItems(this.objects.deactiveTags, this.objects.deactiveTags.indexOf(tag), 1);
       this.objects.activeTags.push(tag);
