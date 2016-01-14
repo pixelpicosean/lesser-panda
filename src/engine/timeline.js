@@ -79,6 +79,12 @@ function Timeline(context) {
    */
   this.removed = false;
 
+  /**
+   * Whether this timeline is paused
+   * @type {Boolean}
+   */
+  this.paused = false;
+
   // Interal variables
   this.keys = null;
   this.repeatCount = 0;
@@ -138,6 +144,24 @@ Timeline.prototype.wait = function wait(time) {
  */
 Timeline.prototype.stop = function stop() {
   this.removed = true;
+  return this;
+};
+
+/**
+ * Pause this timeline
+ * @chainable
+ */
+Timeline.prototype.pause = function pause() {
+  this.paused = true;
+  return this;
+};
+
+/**
+ * Resume this timeline from pausing
+ * @chainable
+ */
+Timeline.prototype.resume = function resume() {
+  this.paused = false;
   return this;
 };
 
@@ -221,7 +245,7 @@ Timeline.prototype._next = function _next() {
 };
 
 Timeline.prototype._step = function _step(delta) {
-  if (this.removed) return;
+  if (this.removed || this.paused) return;
 
   this.delta += delta;
 
