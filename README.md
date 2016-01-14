@@ -2,6 +2,13 @@
 
 ## ChangeLog
 
+### 0.3.2
+
+- Add `tag` support to `Object`, `Timeline` and `Timer` sub-systems, now it is possible to pause/resume any *tagged* components. For example you can easily pause the timelines tagged *object* and keep the *ui* when game is paused.
+- Emit `boot` and `booted` events when engine is started.
+- Upgrade `Kefir` and add a `emitter` function to create self emittable streams for convenience.
+- Create `session` and `persistent` data manager for easier data saving without touching low-level `storage` and `localStorage`.
+
 ### 0.3.1
 
 - Upgrade PIXI to (dev/9d7a393)
