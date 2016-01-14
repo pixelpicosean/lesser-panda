@@ -310,52 +310,51 @@ Object.assign(Timeline, {
 
 Object.assign(Scene.prototype, {
   /**
-    Create a new timeline
-    @method addTimeline
-    @param {Object}     context Context of this timeline
-    @param {String}     tag     Tag of this timeline (default is '0')
-    @return {Timeline}
-  **/
+   * Create a new timeline
+   * @method addTimeline
+   * @param {Object}     context Context of this timeline
+   * @param {String}     tag     Tag of this timeline (default is '0')
+   * @return {Timeline}
+   */
   addTimeline: function addTimeline(context, tag) {
     var t = tag || '0';
 
-    if (!this.timelines[t]) {
+    if (!this.timelineSystem.timelines[t]) {
       // Create a new timeline list
-      this.timelines[t] = [];
+      this.timelineSystem.timelines[t] = [];
 
       // Active new tag by default
-      this.timelines.activeTags.push(t);
+      this.timelineSystem.activeTags.push(t);
     }
 
     var timeline = Timeline.create(context);
-    this.timelines[t].push(timeline);
+    this.timelineSystem.timelines[t].push(timeline);
 
     return timeline;
   },
 
   /**
-    Remove timeline.
-    @method removeTimeline
-    @param {Timeline} timeline
-  **/
+   * Remove timeline.
+   * @method removeTimeline
+   * @param {Timeline} timeline
+   */
   removeTimeline: function removeTimeline(timeline) {
-    if (!timeline) return;
     timeline.removed = true;
   },
 
   pauseTimelinesTagged: function pauseTimelinesTagged(tag) {
-    if (this.timelines[tag]) {
-      utils.removeItems(this.timelines.activeTags, this.timelines.activeTags.indexOf(tag), 1);
-      this.timelines.deactiveTags.push(tag);
+    if (this.timelineSystem.timelines[tag]) {
+      utils.removeItems(this.timelineSystem.activeTags, this.timelineSystem.activeTags.indexOf(tag), 1);
+      this.timelineSystem.deactiveTags.push(tag);
     }
 
     return this;
   },
 
   resumeTimelinesTagged: function resumeTimelinesTagged(tag) {
-    if (this.timelines[tag]) {
-      utils.removeItems(this.timelines.deactiveTags, this.timelines.deactiveTags.indexOf(tag), 1);
-      this.timelines.activeTags.push(tag);
+    if (this.timelineSystem.timelines[tag]) {
+      utils.removeItems(this.timelineSystem.deactiveTags, this.timelineSystem.deactiveTags.indexOf(tag), 1);
+      this.timelineSystem.activeTags.push(tag);
     }
 
     return this;
@@ -368,19 +367,20 @@ Scene.registerSystem('Timeline', {
      * Map of timeline lists.
      * @property {Object} timelines
      */
-    scene.timelines = {
+    scene.timelineSystem = {
       activeTags: ['0'],
       deactiveTags: [],
-
-      '0': [],
+      timelines: {
+        '0': [],
+      },
     };
   },
   preUpdate: function preUpdate(scene) {
     var i, key, timelines, t;
-    for (key in scene.timelines) {
-      if (scene.timelines.activeTags.indexOf(key) < 0) continue;
+    for (key in scene.timelineSystem.timelines) {
+      if (scene.timelineSystem.activeTags.indexOf(key) < 0) continue;
 
-      timelines = scene.timelines[key];
+      timelines = scene.timelineSystem.timelines[key];
       for (i = 0; i < timelines.length; i++) {
         t = timelines[i];
         if (t.removed) {
@@ -392,10 +392,10 @@ Scene.registerSystem('Timeline', {
   },
   update: function update(scene, delta) {
     var i, key, timelines, t;
-    for (key in scene.timelines) {
-      if (scene.timelines.activeTags.indexOf(key) < 0) continue;
+    for (key in scene.timelineSystem.timelines) {
+      if (scene.timelineSystem.activeTags.indexOf(key) < 0) continue;
 
-      timelines = scene.timelines[key];
+      timelines = scene.timelineSystem.timelines[key];
       for (i = 0; i < timelines.length; i++) {
         t = timelines[i];
 
