@@ -139,15 +139,16 @@ Object.assign(Scene.prototype, {
   addObject: function addObject(object, tag) {
     var t = tag || '0';
 
-    if (this.objects.indexOf(object) === -1) {
-      object._remove = false;
-      if (!this.objects[t]) {
-        // Create a new object list
-        this.objects[t] = [];
+    if (!this.objects[t]) {
+      // Create a new object list
+      this.objects[t] = [];
 
-        // Active by default
-        this.activeTags.push(t);
-      }
+      // Active new tag by default
+      this.objects.activeTags.push(t);
+    }
+
+    if (this.objects[t].indexOf(object) < 0) {
+      object._remove = false;
       this.objects[t].push(object);
     }
   },
@@ -170,7 +171,7 @@ Object.assign(Scene.prototype, {
     return this;
   },
 
-  resumeObjects: function pauseObjects(tag) {
+  resumeObjects: function resumeObjects(tag) {
     if (this.objects[tag]) {
       utils.removeItems(this.objects.deactiveTags, this.objects.deactiveTags.indexOf(tag), 1);
       this.objects.activeTags.push(tag);
