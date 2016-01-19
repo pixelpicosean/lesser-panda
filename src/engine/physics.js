@@ -468,7 +468,7 @@ Body.prototype.removeCollision = function removeCollision() {
   @method update
 **/
 Body.prototype.update = function update(delta) {
-  // this.last.copy(this.position);
+  if (!this.world) return;
 
   if (this.mass !== 0) {
     this.velocity.add(
