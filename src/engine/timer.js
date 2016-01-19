@@ -218,7 +218,7 @@ Object.assign(Timer, {
    */
   interval: function interval(interval, callback, context, tag) {
     var t = tag || '0';
-    var timer = createTimer(wait);
+    var timer = createTimer(interval);
 
     timer.repeat = true;
     timer.callback = callback;
