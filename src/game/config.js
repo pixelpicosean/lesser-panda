@@ -13,6 +13,9 @@ export default {
   desiredFPS: 30,
   /**
    * How many RAFs to skip before each rendering?
+   *
+   * Note: This setting does not affect update frequency!
+   *
    * @type {Number}
    * @default 0
    */

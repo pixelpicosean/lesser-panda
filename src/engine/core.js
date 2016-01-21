@@ -22,7 +22,7 @@ function loop(timestamp) {
 
   // Do not update anything when paused
   if (!core.paused) {
-    update(core.scene, timestamp);
+    tickAndRender(core.scene, timestamp);
   }
 }
 function endLoop() {
@@ -109,11 +109,11 @@ var lastCount = 0;
 var slowStep = 0;
 var count = 0;
 /**
- * Update scene in fixed/variable mode based on its setting
+ * Update and render a scene
  * @param  {Scene} scene      Scene to be updated
  * @param  {Number} timestamp Current time stamp
  */
-function update(scene, timestamp) {
+function tickAndRender(scene, timestamp) {
   if (last > 0) {
     realDelta = timestamp - last;
   }
@@ -194,9 +194,15 @@ function updateScene(scene) {
     scene._update(slowStep);
   }
 }
+var skipFrameCounter = 0;
 function renderScene(scene) {
-  if (scene) {
-    Renderer.render(scene);
+  skipFrameCounter -= 1;
+  if (skipFrameCounter < 0) {
+    skipFrameCounter = config.skipFrame;
+
+    if (scene) {
+      Renderer.render(scene);
+    }
   }
 }
 
