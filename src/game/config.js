@@ -5,7 +5,18 @@ export default {
   width: 320,
   height: 200,
 
+  /**
+   * Logic update FPS
+   * @type {Number}
+   * @default 30
+   */
   desiredFPS: 30,
+  /**
+   * How many RAFs to skip before each rendering?
+   * @type {Number}
+   * @default 0
+   */
+  skipFrame: 0,
 
   /**
    * How does the game resize?
