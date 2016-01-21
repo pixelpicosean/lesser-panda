@@ -198,7 +198,7 @@ var skipFrameCounter = 0;
 function renderScene(scene) {
   skipFrameCounter -= 1;
   if (skipFrameCounter < 0) {
-    skipFrameCounter = config.skipFrame;
+    skipFrameCounter = (config.skipFrame || 0);
 
     if (scene) {
       Renderer.render(scene);
