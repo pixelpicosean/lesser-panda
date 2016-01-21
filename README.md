@@ -8,6 +8,7 @@
 - Emit `boot` and `booted` events when engine is started.
 - Upgrade `Kefir` and add a `emitter` function to create self emittable streams for convenience.
 - Create `session` and `persistent` data manager for easier data saving without touching low-level `storage` and `localStorage`.
+- Add "skipFrame" setting to constantly skip render frames, which may be used to increase performance but may also sacrifice the accuracy of input.
 
 ### 0.3.1
 
