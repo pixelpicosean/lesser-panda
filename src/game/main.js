@@ -27,8 +27,29 @@ class Main extends Scene {
     let text = new PIXI.extras.BitmapText('It Works!', {
       font: '32px KenPixel',
     }).addTo(this.stage);
-    text.pivot.set(text.width * 0.5, text.height * 0.5);
-    text.position.set(engine.width * 0.5, engine.height * 0.5);
+    text.y = engine.height * 0.5;
+    this.info = text;
+
+    this.addTimeline(text)
+      .wait(2000)
+      .to({ text: 'A' }, 100)
+      .to({ text: 'A ' }, 100)
+      .to({ text: 'A S' }, 100)
+      .to({ text: 'A Se' }, 100)
+      .to({ text: 'A Sea' }, 100)
+      .to({ text: 'A Sean' }, 100)
+      .to({ text: 'A Sean ' }, 100)
+      .to({ text: 'A Sean P' }, 100)
+      .to({ text: 'A Sean Pr' }, 100)
+      .to({ text: 'A Sean Pro' }, 100)
+      .to({ text: 'A Sean Prod' }, 100)
+      .to({ text: 'A Sean Produ' }, 100)
+      .to({ text: 'A Sean Produc' }, 100)
+      .to({ text: 'A Sean Product' }, 100)
+      .to({ text: 'A Sean Producti' }, 100)
+      .to({ text: 'A Sean Productio' }, 100)
+      .to({ text: 'A Sean Production' }, 100)
+      .to({ text: 'A Sean Production!' }, 100);
 
     this.addTimeline(text.scale)
       .to({ x: [1.2, 1.0], y: [1.2, 1.0] }, 200)
@@ -46,6 +67,9 @@ class Main extends Scene {
     anim.anchor.set(0.5);
     anim.addAnim('rotate', [0, 1, 2, 3, 2, 1], { speed: 12 });
     anim.play('rotate');
+  }
+  update() {
+    this.info.x = engine.width * 0.5 - this.info.width * 0.5;
   }
 };
 engine.addScene('Main', Main);
