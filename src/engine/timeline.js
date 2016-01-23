@@ -227,16 +227,22 @@ Timeline.prototype._next = function _next() {
         if (Array.isArray(properties[key])) {
           this.before.push(value);
           this.change.push([value].concat(properties[key]));
-          this.types.push(2);
+          this.types.push(3);
         }
-        // Single number
+        // Number
         else {
           this.before.push(value);
           this.change.push(properties[key] - value);
           this.types.push(0);
         }
       }
-      // Boolean, string or object
+      // String
+      else if (typeof(value) === 'string') {
+        this.before.push(value);
+        this.change.push(properties[key]);
+        this.types.push(2);
+      }
+      // Boolean or object
       else {
         this.before.push(value);
         this.change.push(properties[key]);
@@ -284,12 +290,16 @@ Timeline.prototype._doAnimate = function _doAnimate() {
       case 0:
         this.context[key] = this.before[i] + this.change[i] * mod;
         break;
-      // Instantly value changing for boolean, string and objects
+      // Instantly value changing for boolean and objects
       case 1:
         if (this.progress >= 1) this.context[key] = this.change[i];
         break;
-      // Tweening of an array of numbered keys
+      // Tweening text content of the target context
       case 2:
+        this.context[key] = this.change[i].slice(0, Math.floor(this.change[i].length * mod));
+        break;
+      // Tweening of an array of numbered keys
+      case 3:
         this.context[key] = this.interpolation(this.change[i], mod);
         break;
     }
