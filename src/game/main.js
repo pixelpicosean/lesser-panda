@@ -32,24 +32,7 @@ class Main extends Scene {
 
     this.addTimeline(text)
       .wait(2000)
-      .to({ text: 'A' }, 100)
-      .to({ text: 'A ' }, 100)
-      .to({ text: 'A S' }, 100)
-      .to({ text: 'A Se' }, 100)
-      .to({ text: 'A Sea' }, 100)
-      .to({ text: 'A Sean' }, 100)
-      .to({ text: 'A Sean ' }, 100)
-      .to({ text: 'A Sean P' }, 100)
-      .to({ text: 'A Sean Pr' }, 100)
-      .to({ text: 'A Sean Pro' }, 100)
-      .to({ text: 'A Sean Prod' }, 100)
-      .to({ text: 'A Sean Produ' }, 100)
-      .to({ text: 'A Sean Produc' }, 100)
-      .to({ text: 'A Sean Product' }, 100)
-      .to({ text: 'A Sean Producti' }, 100)
-      .to({ text: 'A Sean Productio' }, 100)
-      .to({ text: 'A Sean Production' }, 100)
-      .to({ text: 'A Sean Production!' }, 100);
+      .to({ text: 'A Sean Production!' }, 2000);
 
     this.addTimeline(text.scale)
       .to({ x: [1.2, 1.0], y: [1.2, 1.0] }, 200)
