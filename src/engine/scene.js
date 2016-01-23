@@ -139,7 +139,7 @@ Object.assign(Scene.prototype, {
   addObject: function addObject(object, tag) {
     var t = tag || '0';
 
-    if (!this.objectSystem[t]) {
+    if (!this.objectSystem.objects[t]) {
       // Create a new object list
       this.objectSystem.objects[t] = [];
 
@@ -159,7 +159,7 @@ Object.assign(Scene.prototype, {
    * @param {Object} object
    */
   removeObject: function removeObject(object) {
-    object.removed = true;
+    if (object) object.removed = true;
   },
 
   pauseObjectsTagged: function pauseObjectsTagged(tag) {
