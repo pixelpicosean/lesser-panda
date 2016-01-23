@@ -363,7 +363,7 @@ Object.assign(Scene.prototype, {
    * @param {Timeline} timeline
    */
   removeTimeline: function removeTimeline(timeline) {
-    timeline.removed = true;
+    if (timeline) timeline.removed = true;
   },
 
   pauseTimelinesTagged: function pauseTimelinesTagged(tag) {

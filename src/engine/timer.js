@@ -243,7 +243,7 @@ Object.assign(Timer, {
    * @param {Timer} timer
    */
   remove: function remove(timer) {
-    timer.removed = true;
+    if (timer) timer.removed = true;
   },
 
   pauseTimersTagged: function pauseTimersTagged(tag) {
