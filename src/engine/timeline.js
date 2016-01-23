@@ -221,18 +221,26 @@ Timeline.prototype._next = function _next() {
       var key = this.keys[i];
       var value = this.context[key];
 
-      if (typeof properties[key] === 'number') {
-        this.before.push(value);
-        this.change.push(properties[key] - value);
-        this.types.push(0);
+      // Number keys
+      if (typeof(value) === 'number') {
+        // Array of keys
+        if (Array.isArray(properties[key])) {
+          this.before.push(value);
+          this.change.push([value].concat(properties[key]));
+          this.types.push(2);
+        }
+        // Single number
+        else {
+          this.before.push(value);
+          this.change.push(properties[key] - value);
+          this.types.push(0);
+        }
       }
-      else if (Array.isArray(properties[key])) {
-        this.before.push(value);
-        this.change.push([value].concat(properties[key]));
-        this.types.push(1);
-      }
+      // Boolean, string or object
       else {
-        console.log('This type of action is not supported yet!');
+        this.before.push(value);
+        this.change.push(properties[key]);
+        this.types.push(1);
       }
     }
 
@@ -272,10 +280,16 @@ Timeline.prototype._doAnimate = function _doAnimate() {
     var key = this.keys[i];
 
     switch (this.types[i]) {
+      // Number tweening
       case 0:
         this.context[key] = this.before[i] + this.change[i] * mod;
         break;
+      // Instantly value changing for boolean, string and objects
       case 1:
+        if (this.progress >= 1) this.context[key] = this.change[i];
+        break;
+      // Tweening of an array of numbered keys
+      case 2:
         this.context[key] = this.interpolation(this.change[i], mod);
         break;
     }
