@@ -2,6 +2,11 @@
 
 ## ChangeLog
 
+### 0.3.3
+
+- Add animation support to boolean and object (instantly changes value at the end of duration, ignore its easing setting).
+- Add animation support to string text (from empty to full content).
+
 ### 0.3.2
 
 - Add `tag` support to `Object`, `Timeline` and `Timer` sub-systems, now it is possible to pause/resume any *tagged* components. For example you can easily pause the timelines tagged *object* and keep the *ui* when game is paused.
