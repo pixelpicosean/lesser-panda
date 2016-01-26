@@ -2,6 +2,10 @@
 
 ## ChangeLog
 
+### 0.3.4
+
+- Upgrade PIXI to `dev/de69aca`
+
 ### 0.3.3
 
 - Add animation support to boolean and object (instantly changes value at the end of duration, ignore its easing setting).
