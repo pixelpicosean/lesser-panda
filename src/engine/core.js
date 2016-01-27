@@ -64,31 +64,67 @@ function boot() {
   // Manually resize for the first time
   resizeFunc(true);
 
-  // Listen to visibilit change events
-  var visibilityChange;
-  if (typeof document.hidden !== 'undefined') {
-    visibilityChange = 'visibilitychange';
-  }
-  else if (typeof document.mozHidden !== 'undefined') {
-    visibilityChange = 'mozvisibilitychange';
-  }
-  else if (typeof document.msHidden !== 'undefined') {
-    visibilityChange = 'msvisibilitychange';
-  }
-  else if (typeof document.webkitHidden !== 'undefined') {
-    visibilityChange = 'webkitvisibilitychange';
-  }
-  document.addEventListener(visibilityChange, function() {
-    if (config.pauseOnHide) {
-      var hidden = !!getVendorAttribute(document, 'hidden');
-      if (hidden) {
-        core.pause();
-      }
-      else {
-        core.resume();
+  // Setup visibility change API
+  var visibleResume = function() {
+    config.pauseOnHide && core.resume();
+  };
+  var visiblePause = function() {
+    config.pauseOnHide && core.pause();
+  };
+
+  // Main visibility API function
+  var vis = (function() {
+    var stateKey, eventKey;
+    var keys = {
+      hidden: "visibilitychange",
+      webkitHidden: "webkitvisibilitychange",
+      mozHidden: "mozvisibilitychange",
+      msHidden: "msvisibilitychange"
+    };
+    for (stateKey in keys) {
+      if (stateKey in document) {
+        eventKey = keys[stateKey];
+        break;
       }
     }
-  }, false);
+    return function(c) {
+      if (c) document.addEventListener(eventKey, c);
+      return !document[stateKey];
+    }
+  })();
+
+  // Check if current tab is active or not
+  vis(function() {
+    if (vis()) {
+      // The setTimeout() is used due to a delay
+      // before the tab gains focus again, very important!
+      setTimeout(visibleResume, 300);
+    }
+    else {
+      visiblePause();
+    }
+  });
+
+  // Check if browser window has focus
+  var notIE = (document.documentMode === undefined),
+    isChromium = window.chrome;
+
+  if (notIE && !isChromium) {}
+  else {
+    // Checks for IE and Chromium versions
+    if (window.addEventListener) {
+      window.addEventListener('focus', function() {
+        setTimeout(visibleResume, 300);
+      }, false);
+      window.addEventListener('blur', visiblePause, false);
+    }
+    else {
+      window.attachEvent("focus", function() {
+        setTimeout(visibleResume, 300);
+      });
+      window.attachEvent('blur', visiblePause);
+    }
+  }
 
   core.emit('boot');
   core.emit('booted');
@@ -297,13 +333,13 @@ Object.assign(core, {
    * Pause the engine
    */
   pause: function pause() {
-    if (core.paused) return;
+    core.paused = true;
   },
   /**
    * Unpause the engine
    */
   resume: function resume() {
-    if (!core.paused) return;
+    core.paused = false;
   },
 });
 
