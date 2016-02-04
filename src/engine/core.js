@@ -55,6 +55,14 @@ function boot() {
     case 'scale-outer':
       resizeFunc = _scaleOuterResize;
       break;
+    case 'dom':
+      resizeFunc = _domResize;
+      break;
+    case 'never':
+      resizeFunc = _neverResize;
+      break;
+    default:
+      resizeFunc = _letterBoxResize;
   }
 
   // Listen to the resiz and orientation events
@@ -431,5 +439,14 @@ function _scaleOuterResize() {
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
+function _domResize() {
+  var box = core.view.getBoundingClientRect();
+  core.viewSize.set(box.width, box.height);
+
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _neverResize() {}
 
 module.exports = exports = core;

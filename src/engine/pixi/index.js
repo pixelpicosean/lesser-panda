@@ -63,17 +63,18 @@ Object.assign(core.Texture, {
 
 // Register PIXI as the renderer of choice
 var Renderer = require('engine/renderer');
+var config = require('game/config');
 
 Renderer.init = function(width, height, settings) {
   settings.view = document.getElementById(settings.canvasId);
-  settings.autoResize = true;
+  settings.autoResize = (config.resizeMode === 'never' || config.resizeMode === 'dom') ? false : true;
   settings.resolution = window.devicePixelRatio;
 
   if (settings.webGL) {
-    this.instance = core.autoDetectRenderer(window.innerWidth, window.innerHeight, settings);
+    this.instance = core.autoDetectRenderer(width, height, settings);
   }
   else {
-    this.instance = new core.CanvasRenderer(window.innerWidth, window.innerHeight, settings);
+    this.instance = new core.CanvasRenderer(width, height, settings);
   }
 };
 Renderer.resize = function(w, h) {
