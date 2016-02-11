@@ -64,6 +64,7 @@ function boot() {
     default:
       resizeFunc = _letterBoxResize;
   }
+  core.resizeFunc = resizeFunc;
 
   // Listen to the resiz and orientation events
   window.addEventListener('resize', resizeFunc, false);
@@ -267,6 +268,7 @@ Object.assign(core, {
    * @type {Number}
    */
   viewSize: Vector.create(config.width || 640, config.height || 400),
+  resizeFunc: null,
 
   /**
    * Map of registered scenes
@@ -442,6 +444,7 @@ function _scaleOuterResize() {
 function _domResize() {
   var box = core.view.getBoundingClientRect();
   core.viewSize.set(box.width, box.height);
+  core.size.copy(core.viewSize);
 
   Renderer.resize(core.viewSize.x, core.viewSize.y);
 

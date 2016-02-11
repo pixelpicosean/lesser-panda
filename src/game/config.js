@@ -28,6 +28,8 @@ export default {
    *  + crop          Resize the canvas to size of window
    *  + scale-inner   Resize the canvas and scale `container` of scene to show more
    *  + scale-outer   Resize the canvas and scale `container` of scene to show less
+   *  + dom           Resize the canvas to its DOM size
+   *  + never         Never resize
    */
   resizeMode: 'letter-box',
 
