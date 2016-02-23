@@ -19,6 +19,8 @@ var middlewares = [];
 
 var loaderIdx = 0;
 var loadedCount = 0;
+/* Whether the first loading is already started */
+var started = false;
 
 var resourceLoader = null;
 
@@ -50,6 +52,8 @@ loader.registerLoader = function registerLoader(loader) {
 };
 
 loader.start = function start() {
+  started = true;
+
   if (assetsQueue.length === 0) {
     loader.emit('complete');
     return;
@@ -92,15 +96,22 @@ loader.start = function start() {
 /**
  * Add assets to be loaded by ResourceLoader instance
  */
-loader.addAsset = function addAsset(url, key) {
-  if (key) {
-    assetsQueue.push({
-      url: loader.baseURL + '/' + url,
-      key: key,
-    });
+loader.addAsset = function addAsset(url, key, settings) {
+  var url = loader.baseURL + '/' + url;
+  var resInfo = Object.assign({
+    url: url,
+    key: key || url,
+  }, settings);
+
+  // Add res info to assets queue before first loading
+  // started. Most assets are going to be loaded from here.
+  if (!started) {
+    assetsQueue.push(resInfo);
   }
+  // Add res info directly to resource loader
+  // when first loading is already started.
   else {
-    assetsQueue.push(loader.baseURL + '/' + url);
+    resourceLoader.add(resInfo);
   }
 };
 
