@@ -94,7 +94,7 @@ Timer.prototype.update = function update(delta) {
       this.callback.call(this.callbackCtx);
     }
 
-    if (this.repeat) {
+    if (this.repeat && !this.removed) {
       this.reset();
     }
     else {
