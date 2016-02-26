@@ -151,6 +151,7 @@ var deltaTime = 0;
 var desiredFPS = 30;
 var currentUpdateID = 0;
 var lastCount = 0;
+var step = 0;
 var slowStep = 0;
 var count = 0;
 /**
@@ -175,22 +176,23 @@ function tickAndRender(scene, timestamp) {
   else {
     desiredFPS = scene ? scene.desiredFPS : 30;
 
-    // Step size that takes the speed of game into account
-    slowStep = core.speed * 1000.0 / desiredFPS;
+    // Step size
+    step = 1000.0 / desiredFPS;
+    slowStep = step * core.speed;
 
-    // Accumulate time until the slowStep threshold is met or exceeded... up to a limit of 3 catch-up frames at slowStep intervals
-    deltaTime += Math.max(Math.min(slowStep * 3, realDelta), 0);
+    // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
+    deltaTime += Math.max(Math.min(step * 3, realDelta), 0);
 
     // Call the game update logic multiple times if necessary to "catch up" with dropped frames
     // unless forceSingleUpdate is true
     count = 0;
 
-    while (deltaTime >= slowStep) {
-      deltaTime -= slowStep;
+    while (deltaTime >= step) {
+      deltaTime -= step;
       currentUpdateID = count;
 
       // Fixed update with the timestep
-      core.delta = slowStep;
+      core.delta = step;
       Timer.update(slowStep);
       updateScene(scene);
 
