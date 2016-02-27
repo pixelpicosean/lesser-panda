@@ -4,7 +4,7 @@
 
 ### 0.3.4
 
-- Upgrade PIXI to `dev/de69aca`
+- Upgrade PIXI to `master/3.0.10`
 - [Changes] Accept an object as third parameter of `loader.addAsset` function
 
 ### 0.3.3

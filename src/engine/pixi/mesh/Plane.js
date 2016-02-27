@@ -58,9 +58,6 @@ Plane.prototype.refresh = function()
     var indices = [];
     var texture = this.texture;
 
-  //  texture.width = 800 texture.width || 800;
- //   texture.height = 800//texture.height || 800;
-
     var segmentsXSub = this.segmentsX - 1;
     var segmentsYSub = this.segmentsY - 1;
     var i = 0;

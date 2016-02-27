@@ -17,9 +17,9 @@ Object.assign(
  */
 function AccessibilityManager(renderer)
 {
-	// first we create a div that will sit over the pixi element. This is where the div overlays will go.
+  // first we create a div that will sit over the pixi element. This is where the div overlays will go.
     var div = document.createElement('div');
-    
+
     div.style.width = 100 + 'px';
     div.style.height = 100 + 'px';
     div.style.position = 'absolute';
@@ -27,70 +27,70 @@ function AccessibilityManager(renderer)
     div.style.left = 0;
    //
     div.style.zIndex = 2;
-   	
-   	/**
-   	 * This is the dom element that will sit over the pixi element. This is where the div overlays will go.
-   	 * 
-   	 * @type {HTMLElement}
-   	 * @private
-   	 */
-   	this.div = div;
 
-   	/**
-   	 * A simple pool for storing divs.
-   	 * 
-   	 * @type {Array}
-   	 * @private
-   	 */
- 	this.pool = [];
+    /**
+     * This is the dom element that will sit over the pixi element. This is where the div overlays will go.
+     *
+     * @type {HTMLElement}
+     * @private
+     */
+    this.div = div;
 
- 	/**
- 	 * This is a tick used to check if an object is no longer being rendered.
- 	 * 
- 	 * @type {Number}
- 	 * @private
- 	 */
-   	this.renderId = 0;
+    /**
+     * A simple pool for storing divs.
+     *
+     * @type {Array}
+     * @private
+     */
+  this.pool = [];
 
-   	/**
-   	 * Setting this to true will visually show the divs
-   	 * 
-   	 * @type {Boolean}
-   	 */
-   	this.debug = false;
+  /**
+   * This is a tick used to check if an object is no longer being rendered.
+   *
+   * @type {Number}
+   * @private
+   */
+    this.renderId = 0;
 
-  	/**
+    /**
+     * Setting this to true will visually show the divs
+     *
+     * @type {Boolean}
+     */
+    this.debug = false;
+
+    /**
      * The renderer this accessibility manager works for.
      *
      * @member {PIXI.SystemRenderer}
      */
-   	this.renderer = renderer;
+    this.renderer = renderer;
 
-   	/**
+    /**
      * The array of currently active accessible items.
      *
      * @member {Array}
      * @private
      */
-   	this.children = [];
-   	
-   	/**
+    this.children = [];
+
+    /**
      * pre bind the functions..
      */
-   	this._onKeyDown = this._onKeyDown.bind(this);
-   	this._onMouseMove = this._onMouseMove.bind(this);
-   	
-   	/**
+    this._onKeyDown = this._onKeyDown.bind(this);
+    this._onMouseMove = this._onMouseMove.bind(this);
+
+    /**
      * stores the state of the manager. If there are no accessible objects or the mouse is moving the will be false.
      *
      * @member {Array}
      * @private
      */
-   	this.isActive = false;
+    this.isActive = false;
 
 
-   	// let listen for tab.. once pressed we can fire up and show the accessibility layer
-   	window.addEventListener('keydown', this._onKeyDown, false);
+    // let listen for tab.. once pressed we can fire up and show the accessibility layer
+    window.addEventListener('keydown', this._onKeyDown, false);
 }
 
 
@@ -103,19 +103,19 @@ module.exports = AccessibilityManager;
  */
 AccessibilityManager.prototype.activate = function()
 {
-	if(this.isActive)
-	{
-		return;
-	}
+  if(this.isActive)
+  {
+    return;
+  }
 
-	this.isActive = true;
+  this.isActive = true;
 
-	window.document.addEventListener('mousemove', this._onMouseMove, true);
-	window.removeEventListener('keydown', this._onKeyDown, false);
+  window.document.addEventListener('mousemove', this._onMouseMove, true);
+  window.removeEventListener('keydown', this._onKeyDown, false);
 
-	this.renderer.on('postrender', this.update, this);
+  this.renderer.on('postrender', this.update, this);
 
-	this.renderer.view.parentNode.appendChild(this.div);	
+  this.renderer.view.parentNode.appendChild(this.div);
 };
 
 /**
@@ -124,19 +124,19 @@ AccessibilityManager.prototype.activate = function()
  */
 AccessibilityManager.prototype.deactivate = function()
 {
-	if(!this.isActive)
-	{
-		return;
-	}
+  if(!this.isActive)
+  {
+    return;
+  }
 
-	this.isActive = false;
+  this.isActive = false;
 
-	window.document.removeEventListener('mousemove', this._onMouseMove);
-	window.addEventListener('keydown', this._onKeyDown, false);
+  window.document.removeEventListener('mousemove', this._onMouseMove);
+  window.addEventListener('keydown', this._onKeyDown, false);
 
-	this.renderer.off('postrender', this.update);
+  this.renderer.off('postrender', this.update);
 
-	this.div.parentNode.removeChild(this.div);
+  this.div.parentNode.removeChild(this.div);
 
 };
 
@@ -147,27 +147,32 @@ AccessibilityManager.prototype.deactivate = function()
  */
 AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject)
 {
-	if(!displayObject.visible)
-	{
-		return;
-	}
+  if(!displayObject.visible)
+  {
+    return;
+  }
 
-	if(displayObject.accessible && displayObject.interactive)
-	{
-		if(!displayObject._accessibleActive)
-		{
-			this.addChild(displayObject);
-		}
-	   	
-	   	displayObject.renderId = this.renderId;
-	}
+  if(displayObject.accessible && displayObject.interactive)
+  {
+    if(!displayObject._accessibleActive)
+    {
+      this.addChild(displayObject);
+    }
 
-	var children = displayObject.children;
+      displayObject.renderId = this.renderId;
+  }
 
-	for (var i = children.length - 1; i >= 0; i--) {
-		
-		this.updateAccessibleObjects(children[i]);
-	}
+
+  if(displayObject.interactiveChildren)
+  {
+
+    var children = displayObject.children;
+
+    for (var i = children.length - 1; i >= 0; i--) {
+
+      this.updateAccessibleObjects(children[i]);
+    }
+  }
 };
 
 
@@ -178,74 +183,74 @@ AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject)
 AccessibilityManager.prototype.update = function()
 {
 
-	// update children...
-	this.updateAccessibleObjects(this.renderer._lastObjectRendered);
+  // update children...
+  this.updateAccessibleObjects(this.renderer._lastObjectRendered);
 
-	var rect = this.renderer.view.getBoundingClientRect();
-	var sx = rect.width  / this.renderer.width;
-	var sy = rect.height / this.renderer.height;
+  var rect = this.renderer.view.getBoundingClientRect();
+  var sx = rect.width  / this.renderer.width;
+  var sy = rect.height / this.renderer.height;
 
-	var div = this.div;
+  var div = this.div;
 
-	div.style.left = rect.left + 'px';
-	div.style.top = rect.top + 'px';
-	div.style.width = this.renderer.width + 'px';
-	div.style.height = this.renderer.height + 'px';
+  div.style.left = rect.left + 'px';
+  div.style.top = rect.top + 'px';
+  div.style.width = this.renderer.width + 'px';
+  div.style.height = this.renderer.height + 'px';
 
-	for (var i = 0; i < this.children.length; i++)
-	{
+  for (var i = 0; i < this.children.length; i++)
+  {
 
-		var child = this.children[i];
+    var child = this.children[i];
 
-		if(child.renderId !== this.renderId)
-		{
-			child._accessibleActive = false;
+    if(child.renderId !== this.renderId)
+    {
+      child._accessibleActive = false;
 
             core.utils.removeItems(this.children, i, 1);
-			this.div.removeChild( child._accessibleDiv );
-			this.pool.push(child._accessibleDiv);
-			child._accessibleDiv = null;
+      this.div.removeChild( child._accessibleDiv );
+      this.pool.push(child._accessibleDiv);
+      child._accessibleDiv = null;
 
-			i--;
+      i--;
 
-			if(this.children.length === 0)
-			{
-				this.deactivate();
-			}
-		}
-		else
-		{
-			// map div to display..
-			div = child._accessibleDiv;
-			var hitArea = child.hitArea;
-			var wt = child.worldTransform;
+      if(this.children.length === 0)
+      {
+        this.deactivate();
+      }
+    }
+    else
+    {
+      // map div to display..
+      div = child._accessibleDiv;
+      var hitArea = child.hitArea;
+      var wt = child.worldTransform;
 
-			if(child.hitArea)
-			{
-				div.style.left = ((wt.tx + (hitArea.x * wt.a)) * sx) + 'px';
-				div.style.top =  ((wt.ty + (hitArea.y * wt.d)) * sy) +  'px';
+      if(child.hitArea)
+      {
+        div.style.left = ((wt.tx + (hitArea.x * wt.a)) * sx) + 'px';
+        div.style.top =  ((wt.ty + (hitArea.y * wt.d)) * sy) +  'px';
 
-				div.style.width = (hitArea.width * wt.a * sx) + 'px';
-				div.style.height = (hitArea.height * wt.d * sy) + 'px';
-			
-			}
-			else
-			{
-				hitArea = child.getBounds();
+        div.style.width = (hitArea.width * wt.a * sx) + 'px';
+        div.style.height = (hitArea.height * wt.d * sy) + 'px';
 
-				this.capHitArea(hitArea);
+      }
+      else
+      {
+        hitArea = child.getBounds();
 
-				div.style.left = (hitArea.x * sx) + 'px';
-				div.style.top =  (hitArea.y * sy) +  'px';
+        this.capHitArea(hitArea);
 
-				div.style.width = (hitArea.width * sx) + 'px';
-				div.style.height = (hitArea.height * sy) + 'px';
-			}		
-		}
-	}
+        div.style.left = (hitArea.x * sx) + 'px';
+        div.style.top =  (hitArea.y * sy) +  'px';
 
-	// increment the render id..
-	this.renderId++;
+        div.style.width = (hitArea.width * sx) + 'px';
+        div.style.height = (hitArea.height * sy) + 'px';
+      }
+    }
+  }
+
+  // increment the render id..
+  this.renderId++;
 };
 
 AccessibilityManager.prototype.capHitArea = function (hitArea)
@@ -280,42 +285,42 @@ AccessibilityManager.prototype.capHitArea = function (hitArea)
  */
 AccessibilityManager.prototype.addChild = function(displayObject)
 {
-//	this.activate();
-	
-	var div = this.pool.pop();
+//  this.activate();
 
-	if(!div)
-	{
-		div = document.createElement('button'); 
+  var div = this.pool.pop();
 
-	    div.style.width = 100 + 'px';
-	    div.style.height = 100 + 'px';
-	    div.style.backgroundColor = this.debug ? 'rgba(255,0,0,0.5)' : 'transparent';
-	    div.style.position = 'absolute';
-	    div.style.zIndex = 2;
-	    div.style.borderStyle = 'none';
+  if(!div)
+  {
+    div = document.createElement('button');
 
-	    
-	    div.addEventListener('click', this._onClick.bind(this));
-	    div.addEventListener('focus', this._onFocus.bind(this));
-	    div.addEventListener('focusout', this._onFocusOut.bind(this));
-	}
-	   	
+      div.style.width = 100 + 'px';
+      div.style.height = 100 + 'px';
+      div.style.backgroundColor = this.debug ? 'rgba(255,0,0,0.5)' : 'transparent';
+      div.style.position = 'absolute';
+      div.style.zIndex = 2;
+      div.style.borderStyle = 'none';
 
 
-
-	div.title = displayObject.accessibleTitle || 'displayObject ' + this.tabIndex;
-
-	//
-	
-	displayObject._accessibleActive = true;
-	displayObject._accessibleDiv = div;
-	div.displayObject = displayObject;
+      div.addEventListener('click', this._onClick.bind(this));
+      div.addEventListener('focus', this._onFocus.bind(this));
+      div.addEventListener('focusout', this._onFocusOut.bind(this));
+  }
 
 
-	this.children.push(displayObject);
-	this.div.appendChild( displayObject._accessibleDiv );
-	displayObject._accessibleDiv.tabIndex = displayObject.tabIndex;
+
+
+  div.title = displayObject.accessibleTitle || 'displayObject ' + this.tabIndex;
+
+  //
+
+  displayObject._accessibleActive = true;
+  displayObject._accessibleDiv = div;
+  div.displayObject = displayObject;
+
+
+  this.children.push(displayObject);
+  this.div.appendChild( displayObject._accessibleDiv );
+  displayObject._accessibleDiv.tabIndex = displayObject.tabIndex;
 };
 
 
@@ -325,8 +330,8 @@ AccessibilityManager.prototype.addChild = function(displayObject)
  */
 AccessibilityManager.prototype._onClick = function(e)
 {
-	var interactionManager = this.renderer.plugins.interaction;
-	interactionManager.dispatchEvent(e.target.displayObject, 'click', interactionManager.eventData);
+  var interactionManager = this.renderer.plugins.interaction;
+  interactionManager.dispatchEvent(e.target.displayObject, 'click', interactionManager.eventData);
 };
 
 /**
@@ -335,8 +340,8 @@ AccessibilityManager.prototype._onClick = function(e)
  */
 AccessibilityManager.prototype._onFocus = function(e)
 {
-	var interactionManager = this.renderer.plugins.interaction;
-	interactionManager.dispatchEvent(e.target.displayObject, 'mouseover', interactionManager.eventData);
+  var interactionManager = this.renderer.plugins.interaction;
+  interactionManager.dispatchEvent(e.target.displayObject, 'mouseover', interactionManager.eventData);
 };
 
 /**
@@ -345,8 +350,8 @@ AccessibilityManager.prototype._onFocus = function(e)
  */
 AccessibilityManager.prototype._onFocusOut = function(e)
 {
-	var interactionManager = this.renderer.plugins.interaction;
-	interactionManager.dispatchEvent(e.target.displayObject, 'mouseout', interactionManager.eventData);
+  var interactionManager = this.renderer.plugins.interaction;
+  interactionManager.dispatchEvent(e.target.displayObject, 'mouseout', interactionManager.eventData);
 };
 
 /**
@@ -356,12 +361,12 @@ AccessibilityManager.prototype._onFocusOut = function(e)
  */
 AccessibilityManager.prototype._onKeyDown = function(e)
 {
-	if(e.keyCode !== 9)
-	{
-		return;
-	}
+  if(e.keyCode !== 9)
+  {
+    return;
+  }
 
-	this.activate();
+  this.activate();
 };
 
 /**
@@ -371,7 +376,7 @@ AccessibilityManager.prototype._onKeyDown = function(e)
  */
 AccessibilityManager.prototype._onMouseMove = function()
 {
-	this.deactivate();
+  this.deactivate();
 };
 
 
@@ -379,25 +384,24 @@ AccessibilityManager.prototype._onMouseMove = function()
  * Destroys the accessibility manager
  *
  */
-AccessibilityManager.prototype.destroy = function () 
+AccessibilityManager.prototype.destroy = function ()
 {
-	this.div = null;
+  this.div = null;
 
-	for (var i = 0; i < this.children.length; i++)
-	{
-		this.children[i].div = null;
-	}
+  for (var i = 0; i < this.children.length; i++)
+  {
+    this.children[i].div = null;
+  }
 
-	
-	window.document.removeEventListener('mousemove', this._onMouseMove);
-	window.removeEventListener('keydown', this._onKeyDown);
-		
-	this.pool = null;
-	this.children = null;
-	this.renderer = null;
+
+  window.document.removeEventListener('mousemove', this._onMouseMove);
+  window.removeEventListener('keydown', this._onKeyDown);
+
+  this.pool = null;
+  this.children = null;
+  this.renderer = null;
 
 };
 
 core.WebGLRenderer.registerPlugin('accessibility', AccessibilityManager);
 core.CanvasRenderer.registerPlugin('accessibility', AccessibilityManager);
-
