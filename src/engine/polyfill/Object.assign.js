@@ -1,47 +1,39 @@
-// References:
-// https://github.com/sindresorhus/object-assign
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+/* eslint-disable no-unused-vars */
+'use strict';
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
-if (!Object.assign)
-{
-    'use strict';
-    var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+function toObject(val) {
+  if (val === null || val === undefined) {
+    throw new TypeError('Object.assign cannot be called with null or undefined');
+  }
 
-    function ToObject(val) {
-        if (val == null) {
-            throw new TypeError('Object.assign cannot be called with null or undefined');
-        }
-
-        return Object(val);
-    }
-
-    function ownEnumerableKeys(obj) {
-        var keys = Object.getOwnPropertyNames(obj);
-
-        if (Object.getOwnPropertySymbols) {
-            keys = keys.concat(Object.getOwnPropertySymbols(obj));
-        }
-
-        return keys.filter(function (key) {
-            return propIsEnumerable.call(obj, key);
-        });
-    }
-
-    Object.assign = function assign(target, source) {
-        var from;
-        var keys;
-        var to = ToObject(target);
-
-        for (var s = 1; s < arguments.length; s++) {
-            from = arguments[s];
-            keys = ownEnumerableKeys(Object(from));
-
-            for (var i = 0; i < keys.length; i++) {
-                to[keys[i]] = from[keys[i]];
-            }
-        }
-
-        return to;
-    };
-
+  return Object(val);
 }
+
+module.exports = Object.assign || function (target, source) {
+  var from;
+  var to = toObject(target);
+  var symbols;
+
+  for (var s = 1; s < arguments.length; s++) {
+    from = Object(arguments[s]);
+
+    for (var key in from) {
+      if (hasOwnProperty.call(from, key)) {
+        to[key] = from[key];
+      }
+    }
+
+    if (Object.getOwnPropertySymbols) {
+      symbols = Object.getOwnPropertySymbols(from);
+      for (var i = 0; i < symbols.length; i++) {
+        if (propIsEnumerable.call(from, symbols[i])) {
+          to[symbols[i]] = from[symbols[i]];
+        }
+      }
+    }
+  }
+
+  return to;
+};
