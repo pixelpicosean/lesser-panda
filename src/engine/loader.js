@@ -113,6 +113,7 @@ loader.addAsset = function addAsset(url, key, settings) {
   else {
     resourceLoader.add(resInfo);
   }
+  return loader;
 };
 
 loader.addMiddleware = function addMiddleware(fn) {
