@@ -1,3 +1,4 @@
+var core = require('engine/core');
 var howler = require('./howler.core');
 var loader = require('engine/loader');
 
@@ -81,6 +82,14 @@ var audio = Object.assign(new EventEmitter(), {
     _snd_cache && _snd_cache.play();
     return _snd_cache;
   },
+});
+core.on('pause', function() {
+  // TODO: pause audio instead of mute
+  audio.mute();
+});
+core.on('resume', function() {
+  // TODO: resume audio instead of unmute
+  audio.unmute();
 });
 
 module.exports = audio;
