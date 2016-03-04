@@ -345,13 +345,19 @@ Object.assign(core, {
    * Pause the engine
    */
   pause: function pause() {
-    core.paused = true;
+    if (!core.paused) {
+      core.paused = true;
+      core.emit('pause');
+    }
   },
   /**
    * Unpause the engine
    */
   resume: function resume() {
-    core.paused = false;
+    if (core.paused) {
+      core.paused = false;
+      core.emit('resume');
+    }
   },
 });
 
