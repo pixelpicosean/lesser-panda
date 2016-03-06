@@ -1,5 +1,6 @@
 var Renderer = {
   instance: undefined,
+  resolution: 1,
   init: function init(width, height, settings) {
     console.log('[Warning]: No working renderer!');
   },

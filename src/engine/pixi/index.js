@@ -68,7 +68,6 @@ var config = require('game/config');
 Renderer.init = function(width, height, settings) {
   settings.view = document.getElementById(settings.canvasId);
   settings.autoResize = (config.resizeMode === 'never' || config.resizeMode === 'dom') ? false : true;
-  settings.resolution = window.devicePixelRatio;
 
   if (settings.webGL) {
     this.instance = core.autoDetectRenderer(width, height, settings);

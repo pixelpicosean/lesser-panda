@@ -38,6 +38,9 @@ function boot() {
 
   core.view = document.getElementById(rendererConfig.canvasId);
 
+  Renderer.resolution = rendererConfig.resolution =
+    chooseProperResolution(rendererConfig.resolution);
+
   Renderer.init(core.width, core.height, rendererConfig);
   startLoop();
 
@@ -141,6 +144,34 @@ function boot() {
 function getVendorAttribute(el, attr) {
   var uc = attr.ucfirst();
   return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
+}
+function chooseProperResolution(res) {
+  // Default value
+  if (!res) {
+    return 1;
+  }
+  // Numerical value
+  else if (typeof(res) === 'number') {
+    return res;
+  }
+  // Calculate based on window size and device pixel ratio
+  else {
+    res.values.sort(function(a, b) { return a - b });
+    var gameRatio = core.width / core.height;
+    var windowRatio = window.innerWidth / window.innerHeight;
+    var scale = res.retina ? window.devicePixelRatio : 1;
+    var result = res.values[0];
+    for (var i = 0; i < res.values.length; i++) {
+      result = res.values[i];
+
+      if ((gameRatio >= windowRatio && window.innerWidth * scale <= core.width * result) ||
+        (gameRatio < windowRatio && window.innerHeight * scale <= core.height * result)) {
+        break;
+      }
+    }
+
+    return result;
+  }
 }
 
 // Update (fixed update implementation from Phaser by @photonstorm)

@@ -41,6 +41,21 @@ export default {
 
   renderer: {
     webGL: true,
+    /**
+     * The resolution of the renderer, used for hi-resolution
+     * textures and better text rendering.
+     *
+     * The value can be numbers, which will be directly used
+     *   by the renderer
+     * Or an object with some fields:
+     *   - retina {Boolean} Whether take retina into account
+     *   - values {Array}   Available resolutions
+     * @type {Number|Object}
+     */
+    resolution: {
+      retina: true,
+      values: [1, 2],
+    },
   },
 
   storage: {
