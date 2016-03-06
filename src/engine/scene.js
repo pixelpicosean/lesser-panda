@@ -122,7 +122,7 @@ Object.assign(Scene, {
     'Renderer',
   ],
   registerSystem: function registerSystem(name, system) {
-    if (Scene.systems[name]) throw 'System [' + name + '] is already defined!';
+    if (Scene.systems[name]) console.log('Warning: override [' + name + '] system!');
 
     Scene.systems[name] = system;
   },
