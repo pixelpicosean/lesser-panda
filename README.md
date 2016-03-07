@@ -73,6 +73,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 
 - Emit `pause` and `resume` events from `core`
 - Add resolution config
+- Rename `PIXI.extras.Animation` to `PIXI.extras.AnimatedSprite` and the origional is just an alias which will be deprecated in the future versions.
 
 ### 0.3.4
 
