@@ -45,6 +45,11 @@ export default {
      * The resolution of the renderer, used for hi-resolution
      * textures and better text rendering.
      *
+     * You only need higher resolutions while using hi-res
+     * textures(i.e. image@2x.png), or better Text renderering.
+     * Higher resolution means larger Canvas, which may cause
+     * performance issues, especially on mobile devices.
+     *
      * The value can be numbers, which will be directly used
      *   by the renderer
      * Or an object with some fields:

@@ -7,6 +7,7 @@ A module based HTML5 game engine designed to be flexible and powerful.
 LesserPanda has a lot of features, and the list is still growing:
 
 - Super fast Canvas and WebGL rendering powered by PIXI.js.
+- Automatically choose the best resolution based on configs.
 - Fixed game loop with customizable `FPS` and `frame skips`.
 - ECS(Entity Component System) like sub-systems.
 - Tag is supported by sub-systems.
@@ -71,6 +72,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 ### 0.3.5-dev
 
 - Emit `pause` and `resume` events from `core`
+- Add resolution config
 
 ### 0.3.4
 
