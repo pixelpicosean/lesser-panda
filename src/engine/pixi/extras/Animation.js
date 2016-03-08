@@ -1,3 +1,1 @@
-import AnimatedSprite from './AnimatedSprite';
-
-export default AnimatedSprite;
+module.exports = require('./AnimatedSprite');
