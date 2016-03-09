@@ -10,7 +10,15 @@ var easing = require('./easing');
 var Easing = easing.Easing;
 var Interpolation = easing.Interpolation;
 
-var pool = [];
+/**
+ * Action type enums
+ * @const
+ */
+var ACTION_TYPES = {
+  REPEAT:   0,
+  WAIT:     1,
+  ANIMATE:  2,
+};
 
 // TODO: better easing support (https://github.com/rezoner/ease)
 
@@ -136,7 +144,7 @@ Tween.prototype.to = function to(properties, duration, easing, interpolation) {
  * @chainable
  */
 Tween.prototype.repeat = function repeat(times) {
-  this.actions.push(['repeat', times]);
+  this.actions.push([ACTION_TYPES.REPEAT, times]);
   return this;
 };
 
@@ -146,7 +154,7 @@ Tween.prototype.repeat = function repeat(times) {
  * @chainable
  */
 Tween.prototype.wait = function wait(time) {
-  this.actions.push(['wait', time]);
+  this.actions.push([ACTION_TYPES.WAIT, time]);
   return this;
 };
 
@@ -193,11 +201,11 @@ Tween.prototype._next = function _next() {
 
   this.current = this.actions[this.index];
 
-  if (this.current[0] === 'wait') {
+  if (this.current[0] === ACTION_TYPES.WAIT) {
     this.duration = this.current[1];
-    this.currentAction = 'wait';
+    this.currentAction = ACTION_TYPES.WAIT;
   }
-  else if (this.current[0] === 'repeat') {
+  else if (this.current[0] === ACTION_TYPES.REPEAT) {
     if (!this.current.counter) {
       this.current.counter = this.current[1];
     }
@@ -263,7 +271,7 @@ Tween.prototype._next = function _next() {
       }
     }
 
-    this.currentAction = 'animate';
+    this.currentAction = ACTION_TYPES.ANIMATE;
 
     this.duration = this.current[1];
     this.easing = this.current[2];
@@ -281,10 +289,10 @@ Tween.prototype._step = function _step(delta) {
   }
 
   switch (this.currentAction) {
-    case 'animate':
+    case ACTION_TYPES.ANIMATE:
       this._doAnimate();
       break;
-    case 'wait':
+    case ACTION_TYPES.WAIT:
       this._doWait();
       break;
   }
@@ -292,7 +300,6 @@ Tween.prototype._step = function _step(delta) {
 
 Tween.prototype._doAnimate = function _doAnimate() {
   this.progress = Math.min(1, this.delta / this.duration);
-
   var mod = this.easing(this.progress);
 
   var i, key;
@@ -325,6 +332,8 @@ Tween.prototype._doWait = function _doWait() {
   }
 };
 
+// Object recycle
+var pool = [];
 Object.assign(Tween, {
   create: function create(context) {
     var t = pool.shift();
