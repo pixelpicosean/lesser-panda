@@ -117,7 +117,7 @@ Object.assign(Scene, {
    */
   updateOrder: [
     'Object',
-    'Timeline',
+    'Animation',
     'Physics',
     'Renderer',
   ],
