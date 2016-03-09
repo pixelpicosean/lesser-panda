@@ -1,0 +1,100 @@
+/**
+ * Animation system is consist of two powerful sub-systems:
+ * 1. Tween : a classic but better tween engine
+ * 2. Action: a Blender/Flash like, keyframe based
+ *            timeline animation system.
+ */
+
+var Scene = require('engine/scene');
+
+var Tween = require('./tween');
+
+Object.assign(Scene.prototype, {
+  /**
+   * Create a new tween
+   * @method tween
+   * @param {Object}     context Context of this tween
+   * @param {String}     tag     Tag of this tween (default is '0')
+   * @return {Tween}
+   */
+  tween: function tween(context, tag) {
+    var t = tag || '0';
+
+    if (!this.animationSystem.anims[t]) {
+      // Create a new tween list
+      this.animationSystem.anims[t] = [];
+
+      // Active new tag by default
+      this.animationSystem.activeTags.push(t);
+    }
+
+    var tween = Tween.create(context);
+    this.animationSystem.anims[t].push(tween);
+
+    return tween;
+  },
+
+  pauseAnimationsTagged: function pauseAnimationsTagged(tag) {
+    if (this.animationSystem.anims[tag]) {
+      utils.removeItems(this.animationSystem.activeTags, this.animationSystem.activeTags.indexOf(tag), 1);
+      this.animationSystem.deactiveTags.push(tag);
+    }
+
+    return this;
+  },
+
+  resumeAnimationsTagged: function resumeAnimationsTagged(tag) {
+    if (this.animationSystem.anims[tag]) {
+      utils.removeItems(this.animationSystem.deactiveTags, this.animationSystem.deactiveTags.indexOf(tag), 1);
+      this.animationSystem.activeTags.push(tag);
+    }
+
+    return this;
+  },
+});
+
+Scene.registerSystem('Animation', {
+  init: function init(scene) {
+    /**
+     * Map of animation lists.
+     * @property {Object} anims
+     */
+    scene.animationSystem = {
+      activeTags: ['0'],
+      deactiveTags: [],
+      anims: {
+        '0': [],
+      },
+    };
+  },
+  preUpdate: function preUpdate(scene) {
+    var i, key, anims, t;
+    for (key in scene.animationSystem.anims) {
+      if (scene.animationSystem.activeTags.indexOf(key) < 0) continue;
+
+      anims = scene.animationSystem.anims[key];
+      for (i = 0; i < anims.length; i++) {
+        t = anims[i];
+        if (t.removed) {
+          Tween.recycle(t);
+          utils.removeItems(anims, i--, 1);
+        }
+      }
+    }
+  },
+  update: function update(scene, delta) {
+    var i, key, anims, t;
+    for (key in scene.animationSystem.anims) {
+      if (scene.animationSystem.activeTags.indexOf(key) < 0) continue;
+
+      anims = scene.animationSystem.anims[key];
+      for (i = 0; i < anims.length; i++) {
+        t = anims[i];
+
+        if (!t.removed) {
+          t._step(delta);
+        }
+      }
+    }
+  },
+});
