@@ -3,7 +3,9 @@
  */
 
 var EventEmitter = require('engine/eventemitter3');
+var Scene = require('engine/scene');
 var utils = require('engine/utils');
+
 var animUtils = require('./utils');
 var getTargetAndKey = animUtils.getTargetAndKey;
 var easing = require('./easing');
@@ -332,6 +334,10 @@ Tween.prototype._doWait = function _doWait() {
   }
 };
 
+Tween.prototype.recycle = function recycle() {
+  pool.push(this);
+};
+
 // Object recycle
 var pool = [];
 Object.assign(Tween, {
@@ -345,8 +351,32 @@ Object.assign(Tween, {
     }
     return t;
   },
-  recycle: function recycle(tween) {
-    pool.push(tween);
+});
+
+// Inject tween factory method
+Object.assign(Scene.prototype, {
+  /**
+   * Create a new tween
+   * @method tween
+   * @param {Object}     context Context of this tween
+   * @param {String}     tag     Tag of this tween (default is '0')
+   * @return {Tween}
+   */
+  tween: function tween(context, tag) {
+    var t = tag || '0';
+
+    if (!this.animationSystem.anims[t]) {
+      // Create a new tween list
+      this.animationSystem.anims[t] = [];
+
+      // Active new tag by default
+      this.animationSystem.activeTags.push(t);
+    }
+
+    var tween = Tween.create(context);
+    this.animationSystem.anims[t].push(tween);
+
+    return tween;
   },
 });
 

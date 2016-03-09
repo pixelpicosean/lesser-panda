@@ -11,30 +11,6 @@ var utils = require('engine/utils');
 var Tween = require('./tween');
 
 Object.assign(Scene.prototype, {
-  /**
-   * Create a new tween
-   * @method tween
-   * @param {Object}     context Context of this tween
-   * @param {String}     tag     Tag of this tween (default is '0')
-   * @return {Tween}
-   */
-  tween: function tween(context, tag) {
-    var t = tag || '0';
-
-    if (!this.animationSystem.anims[t]) {
-      // Create a new tween list
-      this.animationSystem.anims[t] = [];
-
-      // Active new tag by default
-      this.animationSystem.activeTags.push(t);
-    }
-
-    var tween = Tween.create(context);
-    this.animationSystem.anims[t].push(tween);
-
-    return tween;
-  },
-
   pauseAnimationsTagged: function pauseAnimationsTagged(tag) {
     if (this.animationSystem.anims[tag]) {
       utils.removeItems(this.animationSystem.activeTags, this.animationSystem.activeTags.indexOf(tag), 1);
@@ -77,7 +53,7 @@ Scene.registerSystem('Animation', {
       for (i = 0; i < anims.length; i++) {
         t = anims[i];
         if (t.removed) {
-          Tween.recycle(t);
+          t.recycle();
           utils.removeItems(anims, i--, 1);
         }
       }
