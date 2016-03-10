@@ -69,12 +69,13 @@ The engine itself contains both engine sources and a folder called `game` for yo
 
 ## ChangeLog
 
-### 0.3.5-dev
+### 0.4.0-dev
 
-- Emit `pause` and `resume` events from `core`
-- Add resolution config
-- Rename `PIXI.extras.Animation` to `PIXI.extras.AnimatedSprite` and the origional is just an alias which will be deprecated in the future versions.
-- Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
+- Emit `pause` and `resume` events from `core`.
+- Add resolution config, and renderer will pick the most suited resolution base on your configs.
+- [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
+- [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
+- Add Blender/Flash like keyframe based animation.
 
 ### 0.3.4
 
