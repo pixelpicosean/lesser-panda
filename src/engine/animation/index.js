@@ -9,6 +9,7 @@ var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
 var Tween = require('./tween');
+var Action = require('./action').Action;
 
 Object.assign(Scene.prototype, {
   pauseAnimationsTagged: function pauseAnimationsTagged(tag) {
@@ -75,3 +76,8 @@ Scene.registerSystem('Animation', {
     }
   },
 });
+
+module.exports = {
+  Tween: Tween,
+  Action: Action,
+};
