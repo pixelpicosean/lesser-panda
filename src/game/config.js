@@ -10,7 +10,7 @@ export default {
    * @type {Number}
    * @default 30
    */
-  desiredFPS: 30,
+  desiredFPS: 60,
   /**
    * How many RAFs to skip before each rendering?
    *
