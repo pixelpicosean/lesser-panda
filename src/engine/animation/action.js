@@ -159,6 +159,13 @@ function ActionPlayer(action, target) {
    */
   this.isForward = true;
 
+  /**
+   * Loop the action or not
+   * @type {Boolean}
+   * @default false
+   */
+  this.looped = true;
+
   var channel, props = [], channels = this.action.channels;
   for (var i = 0; i < channels.length; i++) {
     // Channel: [propContext, propKey]
@@ -174,38 +181,41 @@ ActionPlayer.prototype._step = function _step(delta) {
     this.time += delta;
     // Reached the end?
     if (this.time >= this.action.duration) {
-      this.time = this.action.duration;
-      this.finished = true;
-
-      // TODO: loop
-      return;
-    }
-    else {
-      var c, channel, keys, keyIdx, key, nextKey;
-      var length, progress, mod, change;
-      for (c = 0; c < this.channelCache.length; c++) {
-        channel = this.channelCache[c];
-        keys = channel[2];
-        keyIdx = channel[3];
-
-        // Reached next key?
-        if (keyIdx < channel[2].length - 1 && this.time >= channel[2][keyIdx + 1].time) {
-          channel[3] = keyIdx + 1;
-        }
-
-        // Calculate progress of current key
-        key = keys[keyIdx];
-        nextKey = keys[keyIdx + 1];
-        length = nextKey.time - key.time;
-        change = nextKey.value - key.value;
-        progress = (this.time - key.time) / length;
-        mod = key.easing(progress);
-
-        // Update action target
-        channel[0][channel[1]] = key.value + change * mod;
-
-        // TODO: event keys
+      if (this.looped) {
+        this.time = this.time % this.action.duration;
+        // TODO: reset channels to the first key
       }
+      else {
+        this.time = this.action.duration;
+        this.finished = true;
+        return;
+      }
+    }
+
+    var c, channel, keys, keyIdx, key, nextKey;
+    var length, progress, mod, change;
+    for (c = 0; c < this.channelCache.length; c++) {
+      channel = this.channelCache[c];
+      keys = channel[2];
+      keyIdx = channel[3];
+
+      // Reached next key?
+      if (keyIdx < channel[2].length - 1 && this.time >= channel[2][keyIdx + 1].time) {
+        channel[3] = keyIdx + 1;
+      }
+
+      // Calculate progress of current key
+      key = keys[keyIdx];
+      nextKey = keys[keyIdx + 1];
+      length = nextKey.time - key.time;
+      change = nextKey.value - key.value;
+      progress = (this.time - key.time) / length;
+      mod = key.easing(progress);
+
+      // Update action target
+      channel[0][channel[1]] = key.value + change * mod;
+
+      // TODO: event keys
     }
   }
 };
