@@ -176,6 +176,8 @@ function ActionPlayer(action, target) {
   }
 }
 ActionPlayer.prototype._step = function _step(delta) {
+  var c, channel;
+
   // Play forward
   if (this.isForward) {
     this.time += delta;
@@ -183,7 +185,11 @@ ActionPlayer.prototype._step = function _step(delta) {
     if (this.time >= this.action.duration) {
       if (this.looped) {
         this.time = this.time % this.action.duration;
-        // TODO: reset channels to the first key
+        // Reset channels to their first keys
+        for (c = 0; c < this.channelCache.length; c++) {
+          channel = this.channelCache[c];
+          channel[3] = 0;
+        }
       }
       else {
         this.time = this.action.duration;
@@ -192,7 +198,7 @@ ActionPlayer.prototype._step = function _step(delta) {
       }
     }
 
-    var c, channel, keys, keyIdx, key, nextKey;
+    var keys, keyIdx, key, nextKey;
     var length, progress, mod, change;
     for (c = 0; c < this.channelCache.length; c++) {
       channel = this.channelCache[c];
