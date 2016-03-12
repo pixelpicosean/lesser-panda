@@ -60,7 +60,10 @@ class Main extends Scene {
         .key(1000, engine.width * 0.8)
         .key(3000, engine.width * 0.2)
         .key(4000, engine.width * 0.5);
-    this.runAction(moveAct, anim);
+
+    let count = 0;
+    this.runAction(moveAct, anim)
+      .on('loop', () => console.log(`loop ${++count} times`));
   }
   update() {
     this.info.x = engine.width * 0.5 - this.info.width * 0.5;
