@@ -1,4 +1,5 @@
 var Scene = require('engine/scene');
+var EventEmitter = require('engine/eventemitter3');
 
 var animUtils = require('./utils');
 var getTargetAndKey = animUtils.getTargetAndKey;
@@ -133,6 +134,8 @@ Action.create = function create() {
 };
 
 function ActionPlayer(action, target) {
+  EventEmitter.call(this);
+
   this.action = action;
   this.context = target;
 
@@ -175,6 +178,9 @@ function ActionPlayer(action, target) {
     this.channelCache.push(channel);
   }
 }
+ActionPlayer.prototype = Object.create(EventEmitter.prototype);
+ActionPlayer.prototype.constructor = ActionPlayer;
+
 ActionPlayer.prototype._step = function _step(delta) {
   var c, channel;
 
@@ -190,10 +196,15 @@ ActionPlayer.prototype._step = function _step(delta) {
           channel = this.channelCache[c];
           channel[3] = 0;
         }
+
+        this.emit('loop', this);
       }
       else {
         this.time = this.action.duration;
         this.finished = true;
+
+        this.emit('finish', this);
+
         return;
       }
     }
