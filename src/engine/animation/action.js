@@ -142,6 +142,13 @@ function ActionPlayer(action, target) {
   this.channelCache = [];
 
   /**
+   * Play speed (-1: reverse, 0: stop, 1: forward)
+   * @type {Number}
+   * @default 1
+   */
+  this.speed = 1;
+
+  /**
    * Current time
    * @type {Number}
    * @default 0
@@ -154,13 +161,6 @@ function ActionPlayer(action, target) {
    * @default false
    */
   this.finished = false;
-
-  /**
-   * Whether the action is running forward
-   * @type {Boolean}
-   * @default true
-   */
-  this.isForward = true;
 
   /**
    * Loop the action or not
@@ -183,11 +183,15 @@ ActionPlayer.prototype.constructor = ActionPlayer;
 
 ActionPlayer.prototype._step = function _step(delta) {
   var c, channel;
+  var keys, keyIdx, key, nextKey;
+  var length, progress, mod, change;
 
-  // Play forward
-  if (this.isForward) {
-    this.time += delta;
-    // Reached the end?
+  // Update time
+  this.time += delta * this.speed;
+
+  // Forward
+  if (this.speed > 0) {
+    // Reached the last frame?
     if (this.time >= this.action.duration) {
       if (this.looped) {
         this.time = this.time % this.action.duration;
@@ -209,8 +213,7 @@ ActionPlayer.prototype._step = function _step(delta) {
       }
     }
 
-    var keys, keyIdx, key, nextKey;
-    var length, progress, mod, change;
+    // Update animated channels
     for (c = 0; c < this.channelCache.length; c++) {
       channel = this.channelCache[c];
       keys = channel[2];
@@ -221,6 +224,55 @@ ActionPlayer.prototype._step = function _step(delta) {
         keyIdx += 1;
         channel[3] = keyIdx;
       }
+
+      // Calculate progress of current key
+      key = keys[keyIdx];
+      nextKey = keys[keyIdx + 1];
+      length = nextKey.time - key.time;
+      change = nextKey.value - key.value;
+      progress = (this.time - key.time) / length;
+      mod = key.easing(progress);
+
+      // Update action target
+      channel[0][channel[1]] = key.value + change * mod;
+
+      // TODO: event keys
+    }
+  }
+  // Backward
+  else if (this.speed < 0) {
+    // Reached the first frame?
+    if (this.time < 0) {
+      if (this.looped) {
+        this.time += this.action.duration;
+        // Reset channels to their last keys
+        for (c = 0; c < this.channelCache.length; c++) {
+          channel = this.channelCache[c];
+          channel[3] = Math.max(channel[2].length - 2, 0);
+        }
+
+        this.emit('loop', this);
+      }
+      else {
+        this.time = 0;
+        this.finished = true;
+
+        this.emit('finish', this);
+
+        return;
+      }
+    }
+
+    // Update animated channels
+    for (c = 0; c < this.channelCache.length; c++) {
+      channel = this.channelCache[c];
+      keys = channel[2];
+      keyIdx = channel[3];
+
+      // Reached previous key?
+      if (keyIdx > 0 && this.time < channel[2][keyIdx].time) {
+        keyIdx -= 1;
+        channel[3] = keyIdx;
       }
 
       // Calculate progress of current key
