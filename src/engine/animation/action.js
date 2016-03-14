@@ -217,8 +217,10 @@ ActionPlayer.prototype._step = function _step(delta) {
       keyIdx = channel[3];
 
       // Reached next key?
-      if (keyIdx < channel[2].length - 1 && this.time >= channel[2][keyIdx + 1].time) {
-        channel[3] = keyIdx + 1;
+      if (keyIdx < channel[2].length - 2 && this.time >= channel[2][keyIdx + 1].time) {
+        keyIdx += 1;
+        channel[3] = keyIdx;
+      }
       }
 
       // Calculate progress of current key
