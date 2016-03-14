@@ -62,8 +62,9 @@ class Main extends Scene {
         .key(4000, engine.width * 0.5);
 
     let count = 0;
-    this.runAction(moveAct, anim)
-      .on('loop', () => console.log(`loop ${++count} times`));
+    const animPlayer = this.runAction(moveAct, anim);
+    animPlayer.speed = -1;
+    animPlayer.on('loop', () => console.log(`loop ${++count} times`));
   }
   update() {
     this.info.x = engine.width * 0.5 - this.info.width * 0.5;
