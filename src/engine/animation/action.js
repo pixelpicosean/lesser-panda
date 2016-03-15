@@ -63,6 +63,12 @@ function Channel(path, type) {
    * @type {Array.<Key>}
    */
   this.keys = [];
+
+  /**
+   * Time between the first and last key
+   * @type {Number}
+   */
+  this.duration = 0;
 }
 Channel.prototype.insert = function insert(key) {
   this.keys.push(key);
@@ -79,6 +85,9 @@ Channel.prototype.insert = function insert(key) {
       break;
     }
   }
+
+  // Update duration
+  this.duration = this.keys[this.keys.length - 1].time;
 };
 
 function Action(id) {
@@ -121,10 +130,10 @@ Action.prototype.key = function(time, value, easing) {
     return this;
   }
 
-  var key = new Key(time, value, easing);
-  this._latestChannel.insert(key);
+  this._latestChannel.insert(new Key(time, value, easing));
 
-  this.duration = Math.max(this.duration, key.time);
+  // Update duration since duration of a channel is changed
+  this.duration = Math.max(this.duration, this._latestChannel.duration);
 
   return this;
 };
