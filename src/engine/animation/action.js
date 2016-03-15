@@ -39,7 +39,13 @@ function Key(time, value, easing) {
   this.easing = easingFn;
 }
 
-function Channel(path, type) {
+function Channel(path, owner, type) {
+  /**
+   * Which action is this channel belongs to
+   * @type {Action}
+   */
+  this.owner = owner;
+
   /**
    * Full path to the property
    * @type {String}
@@ -88,6 +94,9 @@ Channel.prototype.insert = function insert(key) {
 
   // Update duration
   this.duration = this.keys[this.keys.length - 1].time;
+
+  // Update duration of owner Action
+  this.owner.duration = Math.max(this.owner.duration, this.duration);
 };
 
 function Action(id) {
@@ -115,7 +124,7 @@ function Action(id) {
   this._latestChannel = null;
 }
 Action.prototype.channel = function(path, type) {
-  var channel = new Channel(path, type);
+  var channel = new Channel(path, this, type);
 
   this.channels.push(channel);
   this.channelMap[path] = channel;
@@ -131,9 +140,6 @@ Action.prototype.key = function(time, value, easing) {
   }
 
   this._latestChannel.insert(new Key(time, value, easing));
-
-  // Update duration since duration of a channel is changed
-  this.duration = Math.max(this.duration, this._latestChannel.duration);
 
   return this;
 };
