@@ -98,6 +98,30 @@ Channel.prototype.insert = function insert(key) {
   // Update duration of owner Action
   this.owner.duration = Math.max(this.owner.duration, this.duration);
 };
+Channel.prototype.findKey = function(time) {
+  // Empty channel
+  if (this.keys.length === 0) {
+    return undefined;
+  }
+
+  // Return the last key if time is
+  // larger than channel duration
+  if (time > this.duration) {
+    return this.keys[this.keys.length - 1];
+  }
+
+  // Find the key and return
+  var i, key = this.keys[0];
+  for (i = 0; i < this.keys.length - 1; i++) {
+    key = this.keys[i];
+    if (this.keys[i + 1].time > time) {
+      return key;
+    }
+  }
+
+  // Return the last key
+  return key;
+};
 
 function Action(id) {
   /**
@@ -142,6 +166,9 @@ Action.prototype.key = function(time, value, easing) {
   this._latestChannel.insert(new Key(time, value, easing));
 
   return this;
+};
+Action.prototype.findChannel = function(path) {
+  return this.channelMap[path];
 };
 var ActionUID = 0;
 Action.create = function create() {
