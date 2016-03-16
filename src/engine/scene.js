@@ -1,7 +1,7 @@
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
 var utils = require('engine/utils');
-var config = require('game/config');
+var config = require('game/config').default;
 
 /**
   Game scene.

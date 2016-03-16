@@ -5,7 +5,7 @@ var Renderer = require('engine/renderer');
 var Timer = require('engine/timer');
 var Vector = require('engine/vector');
 var resize = require('engine/resize');
-var config = require('game/config');
+var config = require('game/config').default;
 
 // Engine core
 var core = new EventEmitter();

@@ -1,4 +1,4 @@
-var config = require('game/config');
+var config = require('game/config').default;
 
 /**
   Local storage.

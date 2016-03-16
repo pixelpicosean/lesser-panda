@@ -1,5 +1,5 @@
 var device = require('engine/device');
-var config = require('game/config');
+var config = require('game/config').default;
 
 /**
   Google Analytics tracking.

@@ -1,6 +1,6 @@
 var EventEmitter = require('engine/eventemitter3');
 var ResourceLoader = require('engine/resource-loader');
-var config = require('game/config');
+var config = require('game/config').default;
 
 // Loader instance
 // TODO: add dymanic loading support

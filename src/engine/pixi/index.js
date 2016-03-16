@@ -63,7 +63,7 @@ Object.assign(core.Texture, {
 
 // Register PIXI as the renderer of choice
 var Renderer = require('engine/renderer');
-var config = require('game/config');
+var config = require('game/config').default;
 
 Renderer.init = function(width, height, settings) {
   settings.view = document.getElementById(settings.canvasId);
