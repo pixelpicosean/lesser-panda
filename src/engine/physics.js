@@ -137,6 +137,9 @@ World.prototype.removeBodyCollision = function removeBodyCollision(body) {
 World.prototype.collide = function collide(body) {
   var g, i, b, group;
 
+  // Before each collision detection
+  body.beforeCollide();
+
   for (g = 0; g < body.collideAgainst.length; g++) {
     body._collides.length = 0;
     group = this.collisionGroups[body.collideAgainst[g]];
@@ -406,6 +409,12 @@ function Body(properties) {
 Body.prototype.collide = function collide() {
   return true;
 };
+
+/**
+ * This will be called before collision checking.
+ * You can clean up collision related flags here.
+ */
+Body.prototype.beforeCollide = function beforeCollide() {};
 
 /**
   This is called after hit response.
