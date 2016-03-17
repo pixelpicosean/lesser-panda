@@ -258,6 +258,11 @@ ActionPlayer.prototype._step = function _step(delta) {
     // Update animated channels
     for (c = 0; c < this.channelCache.length; c++) {
       channel = this.channelCache[c];
+
+      // Already passed the last key?
+      if (this.time > channel.duration)
+        continue;
+
       keys = channel[2];
       keyIdx = channel[3];
 
