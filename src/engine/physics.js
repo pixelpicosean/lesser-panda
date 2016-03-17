@@ -39,7 +39,7 @@ function erase(arr, obj) {
   }
 };
 
-// Update bounds of a Rectangle body on last frame
+// Update bounds of a Box body on last frame
 function updateBounds(body) {
   body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
   body._lastRight = body._lastLeft + body.shape.width;
@@ -304,7 +304,7 @@ CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
       return true;
     }
   }
-  // TODO: Circle vs Rectangle
+  // TODO: Circle vs Box
   else if ((a.shape.type === CIRC && b.shape.type === RECT) || (a.shape.type === RECT && b.shape.type === CIRC)) {
   }
 };
@@ -323,7 +323,7 @@ function Body(properties) {
   this.world = null;
   /**
     Body's shape.
-    @property {Rectangle|Circle} shape
+    @property {Box|Circle} shape
   **/
   this.shape = null;
   /**
@@ -500,13 +500,13 @@ Body.prototype.update = function update(delta) {
 };
 
 /**
-  Rectangle shape for physic body.
-  @class Rectangle
+  Box shape for physic body.
+  @class Box
   @constructor
   @param {Number} [width]
   @param {Number} [height]
 **/
-function Rectangle(width, height) {
+function Box(width, height) {
   /**
     Width of rectangle.
     @property {Number} width
@@ -555,6 +555,6 @@ Scene.registerSystem('Physics', {
 module.exports = {
   World: World,
   Body: Body,
-  Rectangle: Rectangle,
+  Box: Box,
   Circle: Circle,
 };
