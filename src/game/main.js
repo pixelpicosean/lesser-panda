@@ -4,6 +4,7 @@ import PIXI from 'engine/pixi';
 import Timer from 'engine/timer';
 import audio from 'engine/audio';
 import loader from 'engine/loader';
+import physics from 'engine/physics';
 import { Action } from 'engine/animation';
 
 import 'game/loading';
@@ -65,6 +66,40 @@ class Main extends Scene {
     const animPlayer = this.runAction(moveAct, anim);
     animPlayer.speed = -1;
     animPlayer.on('loop', () => console.log(`loop ${++count} times`));
+
+    // Add a solid box at the bottom for collision
+    const plane = new PIXI.Graphics().addTo(this.stage);
+    plane.beginFill(0x39bdfd);
+    plane.drawRect(-120, -6, 240, 12);
+    plane.endFill();
+    plane.position.set(engine.width * 0.5, engine.height - 10);
+
+    const planeBody = new physics.Body({
+      collisionGroup: 0,
+      shape: new physics.Box(240, 12),
+    }).addTo(this.world);
+    planeBody.anchor.set(0.5);  // Set the anchor to meet the one of plane
+    planeBody.position = plane.position;  // Trick: sync their position
+
+    // Add another box bounce off it
+    const box = new PIXI.Graphics().addTo(this.stage);
+    box.beginFill(0xcdced1);
+    box.drawRect(-8, -8, 16, 16);
+    box.endFill();
+    box.position.set(engine.width * 0.5, engine.height - 50);
+
+    const boxBody = new physics.Body({
+      mass: 1,
+      collisionGroup: 1,
+      collideAgainst: [0],
+      shape: new physics.Box(16, 16),
+      collide: (other) => {
+        boxBody.velocity.y = -boxBody.velocity.y;
+        return true;
+      },
+    }).addTo(this.world);
+    boxBody.anchor.set(0.5);  // Set the anchor to meet the one of plane
+    boxBody.position = box.position;  // Trick: sync their position
   }
   update() {
     this.info.x = engine.width * 0.5 - this.info.width * 0.5;
