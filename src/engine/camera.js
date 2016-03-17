@@ -6,16 +6,16 @@ var utils = require('engine/utils');
 function Camera() {
   /**
    * Camera acceleration speed.
-   * @property {Number} acceleration
-   * @default 3
+   * @property {Vector} acceleration
+   * @default (3, 3)
    */
-  this.acceleration = 3;
+  this.acceleration = Vector.create(3, 3);
   /**
    * Anchor
    * @property {Vector} anchor
    * @default (0.5, 0.5)
    */
-  this.anchor = new Vector(0.5, 0.5);
+  this.anchor = Vector.create(0.5, 0.5);
   /**
    * Container, that the camera is moving.
    * @property {PIXI.Container} container
@@ -32,7 +32,7 @@ function Camera() {
   this.maxY = null;
   this.minX = null;
   this.minY = null;
-  this.position = new Vector();
+  this.position = Vector.create();
   /**
    * Use rounding on container position.
    * @property {Boolean} rounding
@@ -45,7 +45,7 @@ function Camera() {
    * Current speed of camera.
    * @property {Vector} speed
    */
-  this.speed = new Vector();
+  this.speed = Vector.create();
   this.delta = 0;
   /**
    * Sprite, that camera follows.
@@ -66,7 +66,7 @@ function Camera() {
    * @property {Vector} zoom
    * @default (1, 1)
    */
-  this.zoom = new Vector(1, 1);
+  this.zoom = Vector.create(1, 1);
 
   // internal caches
   this._targetLeft = 0;
@@ -78,12 +78,14 @@ function Camera() {
   this._sensorTop = 0;
   this._sensorBottom = 0;
 
-  this._shakeOffset = new Vector();
-  this._shakeForce = new Vector();
+  this._shakeOffset = Vector.create();
+  this._shakeForce = Vector.create();
   this._shakeForward = false;
   this._shakeDelay = 0;
   this._shakeCount = 0;
   this._startShake = this._startShake.bind(this);
+
+  this._numCache = 0;
 }
 
 /**
@@ -135,18 +137,31 @@ Camera.prototype.setPosition = function setPosition(x, y) {
 Camera.prototype._setPosition = function _setPosition(x, y) {
   this.position.set(x, y);
 
-  if (typeof this.minX === 'number' && this.position.x < this.minX) {
+  // Make sure position constrains are correct
+  if (Number.isFinite(this.minX) && Number.isFinite(this.maxX) && this.minX > this.maxX) {
+    this._numCache = this.maxX;
+    this.maxX = this.minX;
+    this.minX = this._numCache;
+  }
+  if (Number.isFinite(this.minY) && Number.isFinite(this.maxY) && this.minY > this.maxY) {
+    this._numCache = this.maxY;
+    this.maxY = this.minY;
+    this.minY = this._numCache;
+  }
+
+  // Apply constrains
+  if (Number.isFinite(this.minX) && this.position.x < this.minX) {
     this.position.x = this.minX;
     this.speed.x = 0;
-  } else if (typeof this.maxX === 'number' && this.position.x > this.maxX) {
+  } else if (Number.isFinite(this.maxX) && this.position.x > this.maxX) {
     this.position.x = this.maxX;
     this.speed.x = 0;
   }
 
-  if (typeof this.minY === 'number' && this.position.y < this.minY) {
+  if (Number.isFinite(this.minY) && this.position.y < this.minY) {
     this.position.y = this.minY;
     this.speed.y = 0;
-  } else if (typeof this.maxY === 'number' && this.position.y > this.maxY) {
+  } else if (Number.isFinite(this.maxY) && this.position.y > this.maxY) {
     this.position.y = this.maxY;
     this.speed.y = 0;
   }
@@ -166,7 +181,7 @@ Camera.prototype._setPosition = function _setPosition(x, y) {
  * @param {Boolean} forward ONLY shake forward or not
  */
 Camera.prototype.shake = function shake(force, duration, count, forward) {
-  if (typeof force === 'number') {
+  if (Number.isFinite(force)) {
     this._shakeForce = this._shakeForce.set(force, force);
   } else {
     this._shakeForce = this._shakeForce.set(force.x, force.y);
@@ -249,8 +264,8 @@ Camera.prototype.moveCamera = function moveCamera(dt) {
     this.speed.y < -this.threshold
   ) {
     this._setPosition(
-      this.position.x - this.speed.x * this.acceleration * dt,
-      this.position.y - this.speed.y * this.acceleration * dt
+      this.position.x - this.speed.x * this.acceleration.x * dt,
+      this.position.y - this.speed.y * this.acceleration.y * dt
     );
   } else {
     this.speed.set(0, 0);
