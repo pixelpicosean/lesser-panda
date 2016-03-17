@@ -66,4 +66,14 @@ export default {
   storage: {
     id: 'lpanda',
   },
+
+  physics: {
+    /**
+     * Collision solver, available settings:
+     * - AABB   Fast but only Box and Circle shapes are supported
+     * - SAT    Powerful SAT based, provide Polygon and rotation support
+     * @default AABB
+     */
+    solver: 'SAT',
+  },
 };
