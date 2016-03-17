@@ -499,6 +499,131 @@ Body.prototype.update = function update(delta) {
   }
 };
 
+function Polygon(points) {
+  this.points = [];
+  this.calcPoints = [];
+  this.edges = [];
+  this.normals = [];
+  this._rotation = 0;
+  this.offset = new Vector();
+  this.setPoints(points || []);
+}
+/**
+ * Set the points of the polygon.
+ * @param {Array<Vector>=} points An array of vectors representing the points in the polygon,
+ *   in clockwise order
+ * @return {Polygon} This for chaining
+ */
+Polygon.prototype.setPoints = function setPoints(points) {
+  // Only re-allocate if this is a new polygon or the number of points has changed.
+  var lengthChanged = !this.points || this.points.length !== points.length;
+  if (lengthChanged) {
+    var calcPoints = this.calcPoints = [];
+    var edges = this.edges = [];
+    var normals = this.normals = [];
+    // Allocate the vector arrays for the calculated properties
+    for (var i = 0, len = points.length; i < len; i++) {
+      calcPoints.push(new Vector());
+      edges.push(new Vector());
+      normals.push(new Vector());
+    }
+  }
+  this.points = points;
+  this._recalc();
+  return this;
+};
+/**
+ * Set the current offset to apply to the `points` before applying the `rotation` rotation.
+ * @param {Vector} offset The new offset vector
+ * @return {Polygon} This for chaining
+ */
+Polygon.prototype.setOffset = function setOffset(offset) {
+  this.offset = offset;
+  this._recalc();
+  return this;
+};
+/**Rotates this polygon counter-clockwise around the origin of *its local coordinate system* (i.e. `pos`).
+ * Note: This changes the **original** points (so any `rotation` will be applied on top of this rotation).
+ * @param {Number} rotation The rotation to rotate (in radians)
+ * @return {Polygon} This for chaining
+ */
+Polygon.prototype.rotate = function rotate(rotation) {
+  var points = this.points;
+  for (var i = 0, len = points.length; i < len; i++) {
+    points[i].rotate(rotation);
+  }
+  this._recalc();
+  return this;
+};
+/**
+ * Translates the points of this polygon by a specified amount relative to the origin of *its own coordinate
+ * system* (i.e. `body.position`)
+ * This is most useful to change the "center point" of a polygon. If you just want to move the whole polygon, change
+ * the coordinates of `body.position`.
+ * Note: This changes the **original** points (so any `offset` will be applied on top of this translation)
+ * @param {Number} x The horizontal amount to translate
+ * @param {Number} y The vertical amount to translate
+ * @return {Polygon} This for chaining
+ */
+Polygon.prototype.translate = function translate(x, y) {
+  var points = this.points;
+  for (var i = 0, len = points.length; i < len; i++) {
+    points[i].x += x;
+    points[i].y += y;
+  }
+  this._recalc();
+  return this;
+};
+/**
+ * Computes the calculated collision polygon. Applies the `rotation` and `offset` to the original points then recalculates the
+ * edges and normals of the collision polygon.
+ * @return {Polygon} This for chaining
+ */
+Polygon.prototype._recalc = function _recalc() {
+  // Calculated points - this is what is used for underlying collisions and takes into account
+  // the rotation/offset set on the polygon.
+  var calcPoints = this.calcPoints;
+  // The edges here are the direction of the `n`th edge of the polygon, relative to
+  // the `n`th point. If you want to draw a given edge from the edge value, you must
+  // first translate to the position of the starting point.
+  var edges = this.edges;
+  // The normals here are the direction of the normal for the `n`th edge of the polygon, relative
+  // to the position of the `n`th point. If you want to draw an edge normal, you must first
+  // translate to the position of the starting point.
+  var normals = this.normals;
+  // Copy the original points array and apply the offset/rotation
+  var points = this.points;
+  var offset = this.offset;
+  var rotation = this._rotation;
+  var len = points.length;
+  var i;
+  for (i = 0; i < len; i++) {
+    var calcPoint = calcPoints[i].copy(points[i]);
+    calcPoint.x += offset.x;
+    calcPoint.y += offset.y;
+    if (rotation !== 0) {
+      calcPoint.rotate(rotation);
+    }
+  }
+  // Calculate the edges/normals
+  for (i = 0; i < len; i++) {
+    var p1 = calcPoints[i];
+    var p2 = i < len - 1 ? calcPoints[i + 1] : calcPoints[0];
+    var e = edges[i].copy(p2).subtract(p1);
+    normals[i].copy(e).perp().normalize();
+  }
+  return this;
+};
+Object.defineProperty(Polygon.prototype, 'rotation', {
+  get: function() {
+    return this._rotation;
+  },
+  set: function(rotation) {
+    this._rotation = rotation;
+    this._recalc();
+  },
+});
+
 /**
   Box shape for physic body.
   @class Box
@@ -520,8 +645,18 @@ function Box(width, height) {
   **/
   this.height = height || 50;
 
+  this.rotation = 0;
+
   this.type = RECT;
 }
+Box.prototype.toPolygon = function toPolygon() {
+  var halfWidth = this.width * 0.5;
+  var halfHeight = this.height * 0.5;
+  return new Polygon([
+    new Vector(-halfWidth, -halfHeight), new Vector(halfWidth, -halfHeight),
+    new Vector(halfWidth, halfHeight), new Vector(-halfWidth, halfHeight)
+  ]);
+};
 
 /**
   Circle shape for physic body.
@@ -537,8 +672,109 @@ function Circle(radius) {
   **/
   this.radius = radius || 50;
 
+  this.rotation = 0;
+
   this.type = CIRC;
 }
+
+/**
+ * Response
+ * An object representing the result of an intersection. Contains:
+ * - The two objects participating in the intersection
+ * - The vector representing the minimum change necessary to extract the first object
+ *   from the second one (as well as a unit vector in that direction and the magnitude
+ *   of the overlap)
+ * - Whether the first object is entirely inside the second, and vice versa.
+ */
+function Response () {
+  this.a = null;
+  this.b = null;
+  this.aInB = true;
+  this.bInA = true;
+  this.overlap = Number.MAX_VALUE;
+  this.overlapN = new Vector();
+  this.overlapV = new Vector();
+}
+/**
+ * Set some values of the response back to their defaults.  Call this between tests if
+ * you are going to reuse a single Response object for multiple intersection tests (recommented
+ * as it will avoid allcating extra memory)
+ * @return {Response} This for chaining
+ */
+Response.prototype.clear = function clear() {
+  this.aInB = true;
+  this.bInA = true;
+  this.overlap = Number.MAX_VALUE;
+  return this;
+};
+
+/**
+ * SAT based collision solver
+ */
+function SATSolver() {}
+/**
+ * Hit test a versus b.
+ * @method hitTest
+ * @param {Body} a
+ * @param {Body} b
+ * @return {Boolean} return true, if bodies hit.
+ */
+SATSolver.prototype.hitTest = function hitTest(a, b, response) {
+  // Polygon vs polygon
+  if (a.shape.points && b.shape.points) {
+    return testPolygonPolygon(a, b, response);
+  }
+  if (a.shape.radius && b.shape.radius) {
+    return testCircleCircle(a, b, response);
+  }
+  if (a.shape.points && b.shape.radius) {
+    return testPolygonCircle(a, b, response);
+  }
+  else if (a.shape.radius && b.shape.points) {
+    return testCirclePolygon(a, b, response);
+  }
+
+  throw 'Hit test should not go so far!';
+
+  return false;
+};
+SATSolver.prototype.hitResponse = function hitResponse(a, b, AvsB, BvsA, response) {
+  // Make sure a and b are not reversed
+  var uniqueA = (a === response.a ? a : b),
+    uniqueB = (b === response.b ? b : a);
+  var responseToA = false,
+    responseToB = false;
+  // Check to see which one or two finally get the response
+  if (AvsB && !BvsA) {
+    responseToA = uniqueA.collide(uniqueB, response);
+  }
+  else if (!AvsB && BvsA) {
+    responseToB = uniqueB.collide(uniqueA, response);
+  }
+  else if (AvsB && BvsA) {
+    responseToA = uniqueA.collide(uniqueB, response);
+    responseToB = uniqueB.collide(uniqueA, response);
+  }
+
+  // Only apply response to A if it wants to
+  if (responseToA && !responseToB) {
+    uniqueA.position.subtract(response.overlapV);
+    uniqueA.afterCollide(uniqueB);
+  }
+  // Only apply response to B if it wants to
+  else if (!responseToA && responseToB) {
+    uniqueB.position.add(response.overlapV);
+    uniqueB.afterCollide(uniqueA);
+  }
+  // Apply response to both A and B
+  else if (responseToA && responseToB) {
+    response.overlapV.multiply(0.5);
+    uniqueA.position.subtract(response.overlapV);
+    uniqueB.position.add(response.overlapV);
+    uniqueA.afterCollide(uniqueB);
+    uniqueB.afterCollide(uniqueA);
+  }
+};
 
 Scene.registerSystem('Physics', {
   init: function init(scene) {
