@@ -2,6 +2,8 @@ var Vector = require('engine/vector');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
+var config = require('game/config').default;
+
 // Constants
 var ESP = 0.000001;
 
@@ -66,10 +68,10 @@ function World(x, y) {
     @default 0, 980
   **/
   this.gravity = Vector.create(x || 0, y || 980);
-  /**:
-    @property {CollisionSolver} solver
-  **/
-  this.solver = new CollisionSolver();
+  /**
+   * Collision solver instance
+   */
+  this.solver = (config.solver === 'SAT') ? new SATSolver() : new AABBSolver();
   /**
     List of bodies in world.
     @property {Array} bodies
@@ -213,9 +215,9 @@ World.prototype.cleanup = function cleanup() {
 
 /**
   Physics collision solver.
-  @class CollisionSolver
+  @class AABBSolver
 **/
-function CollisionSolver() {}
+function AABBSolver() {}
 
 /**
   Hit test a versus b.
@@ -224,7 +226,7 @@ function CollisionSolver() {}
   @param {Body} b
   @return {Boolean} return true, if bodies hit.
 **/
-CollisionSolver.prototype.hitTest = function hitTest(a, b) {
+AABBSolver.prototype.hitTest = function hitTest(a, b) {
   // Skip when shape is not available
   if (!a.shape || !b.shape) return false;
 
@@ -262,7 +264,7 @@ CollisionSolver.prototype.hitTest = function hitTest(a, b) {
   @param {Body} b
   @return {Boolean}
 **/
-CollisionSolver.prototype.hitResponse = function hitResponse(a, b) {
+AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
   if (a.shape.type === RECT && b.shape.type === RECT) {
     if (lte(a._lastBottom, b._lastTop)) {
       if (a.collide(b, DOWN)) {
