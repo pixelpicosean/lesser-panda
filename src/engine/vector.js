@@ -254,6 +254,90 @@ Vector.prototype.equals = function equals(vector) {
   return (vector.x === this.x) && (vector.y === this.y);
 };
 
+/**
+ * Change this vector to be perpendicular to what it was before. (Effectively
+ * roatates it 90 degrees in a clockwise direction)
+ * @return {Vector} This for chaining
+ */
+Vector.prototype.perp = function perp() {
+  var x = this.x;
+  this.x = this.y;
+  this.y = -x;
+  return this;
+};
+
+/**
+ * Reverse this vector
+ * @return {Vector} This for chaining
+ */
+Vector.prototype.reverse = function reverse() {
+  this.x = -this.x;
+  this.y = -this.y;
+  return this;
+};
+
+/**
+ * Project this vector on to another vector.
+ * @param {Vector} other The vector to project onto
+ * @return {Vector} This for chaining
+ */
+Vector.prototype.project = function project(other) {
+  var amt = this.dot(other) / other.squaredLength();
+  this.x = amt * other.x;
+  this.y = amt * other.y;
+  return this;
+};
+
+/**
+ * Project this vector onto a vector of unit length. This is slightly more efficient
+ * than `project` when dealing with unit vectors.
+ * @param {Vector} other The unit vector to project onto
+ * @return {Vector} This for chaining
+ */
+Vector.prototype.projectN = function projectN(other) {
+  var amt = this.dot(other);
+  this.x = amt * other.x;
+  this.y = amt * other.y;
+  return this;
+};
+
+/**
+ * Reflect this vector on an arbitrary axis.
+ * @param {Vector} axis The vector representing the axis
+ * @return {Vector} This for chaining
+ */
+Vector.prototype.reflect = function reflect(axis) {
+  var x = this.x;
+  var y = this.y;
+  this.project(axis).multiply(2);
+  this.x -= x;
+  this.y -= y;
+  return this;
+};
+
+/**
+ * Reflect this vector on an arbitrary axis (represented by a unit vector). This is
+ * slightly more efficient than `reflect` when dealing with an axis that is a unit vector.
+ * @param {Vector} axis The unit vector representing the axis
+ * @return {Vector} This for chaining
+ */
+Vector.prototype.reflectN = function reflectN(axis) {
+  var x = this.x;
+  var y = this.y;
+  this.projectN(axis).multiply(2);
+  this.x -= x;
+  this.y -= y;
+  return this;
+};
+
+/**
+ * Returns positive if vector is clockwise of this vector
+ * @return {Number} 1: CW, -1: CCW
+ */
+Vector.prototype.sign = function sign(vector) {
+  return (this.y * vector.x > this.x * vector.y) ? -1 : 1;
+};
+
 Object.assign(Vector, {
   create: function create(x, y) {
     var v = pool.pop();
