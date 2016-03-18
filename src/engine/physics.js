@@ -43,15 +43,19 @@ function erase(arr, obj) {
 
 // Update bounds of a Box body on last frame
 function updateBounds(body) {
-  body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
-  body._lastRight = body._lastLeft + body.shape.width;
-  body._lastTop = body.last.y - body.shape.height * body.anchor.y;
-  body._lastBottom = body._lastTop + body.shape.height;
+  if (body.shape.type === BOX || body.shape.type === CIRC) {
+    body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
+    body._lastRight = body._lastLeft + body.shape.width;
+    body._lastTop = body.last.y - body.shape.height * body.anchor.y;
+    body._lastBottom = body._lastTop + body.shape.height;
 
-  body._left = body.position.x - body.shape.width * body.anchor.x;
-  body._right = body._left + body.shape.width;
-  body._top = body.position.y - body.shape.height * body.anchor.y;
-  body._bottom = body._top + body.shape.height;
+    body._left = body.position.x - body.shape.width * body.anchor.x;
+    body._right = body._left + body.shape.width;
+    body._top = body.position.y - body.shape.height * body.anchor.y;
+    body._bottom = body._top + body.shape.height;
+
+    body._center.set(body.position.x + body.shape.width * (0.5 - body.anchor.x), body.position.y + body.shape.height * (0.5 - body.anchor.y));
+  }
 }
 
 /**
@@ -387,6 +391,8 @@ function Body(properties) {
   this.damping = 0;
 
   // Internal caches
+  this._center = Vector.create();
+
   this._left = 0;
   this._right = 0;
   this._top = 0;
@@ -689,6 +695,16 @@ function Circle(radius) {
 
   this.type = CIRC;
 }
+Object.defineProperty(Circle.prototype, 'width', {
+  get: function() {
+    return this.radius * 2;
+  },
+});
+Object.defineProperty(Circle.prototype, 'height', {
+  get: function() {
+    return this.radius * 2;
+  },
+});
 
 /**
  * Response
