@@ -730,12 +730,45 @@ Object.defineProperty(Circle.prototype, 'height', {
  * - Whether the first object is entirely inside the second, and vice versa.
  */
 function Response () {
+  /**
+   * The first object in the collision.
+   * It will be **self body** when passed to `collide` method.
+   * @type {Body}
+   */
   this.a = null;
+  /**
+   * The second object in the collision.
+   * @type {Body}
+   */
   this.b = null;
+  /**
+   * Whether the first object is completely inside the second.
+   * Self inside another one?
+   * @type {Boolean}
+   */
   this.aInB = true;
+  /**
+   * Whether the second object is completely inside the first
+   * @type {Boolean}
+   */
   this.bInA = true;
+  /**
+   * Magnitude of the overlap on the shortest colliding axis
+   * @type {Number}
+   */
   this.overlap = Number.MAX_VALUE;
+  /**
+   * The shortest colliding axis (unit-vector).
+   * This vector points from **self body** to the overlapped one.
+   * @type {Vector}
+   */
   this.overlapN = new Vector();
+  /**
+   *  The overlap vector (i.e. overlapN.multiply(overlap, overlap)).
+   *  If this vector is subtracted from the position of a,
+   *  a and b will no longer be colliding.
+   * @type {Vector}
+   */
   this.overlapV = new Vector();
 }
 /**
