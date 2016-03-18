@@ -414,6 +414,12 @@ Object.defineProperty(Body.prototype, 'rotation', {
 });
 
 /**
+ * This will be called before collision checking.
+ * You can clean up collision related flags here.
+ */
+Body.prototype.beforeCollide = function beforeCollide() {};
+
+/**
   This is called, when body collides with another body.
   @method collide
   @param {Body} body body that it collided with.
@@ -422,12 +428,6 @@ Object.defineProperty(Body.prototype, 'rotation', {
 Body.prototype.collide = function collide() {
   return true;
 };
-
-/**
- * This will be called before collision checking.
- * You can clean up collision related flags here.
- */
-Body.prototype.beforeCollide = function beforeCollide() {};
 
 /**
   This is called after hit response.
