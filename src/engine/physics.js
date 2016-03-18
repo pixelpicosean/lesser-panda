@@ -513,7 +513,7 @@ Body.prototype.update = function update(delta) {
 
   this.position.add(this.velocity.x * delta, this.velocity.y * delta);
 
-  if (this.shape && this.shape.type === BOX) {
+  if (this.shape) {
     updateBounds(this);
   }
 };
