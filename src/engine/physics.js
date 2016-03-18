@@ -7,11 +7,11 @@ var config = require('game/config').default.physics || {};
 // Constants
 var ESP = 0.000001;
 
-var UP = 'UP';
-var DOWN = 'DOWN';
-var LEFT = 'LEFT';
-var RIGHT = 'RIGHT';
-var OVERLAP = 'OVERLAP';
+var UP =      1;
+var DOWN =    2;
+var LEFT =    4;
+var RIGHT =   8;
+var OVERLAP = UP | DOWN | LEFT | RIGHT;
 
 function eq(a, b) {
   return (a < b) ? (b - a < ESP) : (a - b < ESP);
@@ -1247,6 +1247,13 @@ Scene.registerSystem('Physics', {
 module.exports = {
   World: World,
   Body: Body,
+
   Box: Box,
   Circle: Circle,
+
+  UP: UP,
+  DOWN: DOWN,
+  LEFT: LEFT,
+  RIGHT: RIGHT,
+  OVERLAP: OVERLAP,
 };
