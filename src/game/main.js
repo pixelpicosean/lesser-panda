@@ -10,6 +10,13 @@ import { Action } from 'engine/animation';
 import config from 'game/config';
 import 'game/loading';
 
+// Constants
+const GROUPS = {
+  SOLID:  0,
+  BOX:    1,
+  CIRCLE: 2,
+};
+
 // Load textures
 loader.addAsset('gold_1.png', 'gold_1');
 loader.addAsset('gold_2.png', 'gold_2');
@@ -70,13 +77,17 @@ class Main extends Scene {
 
     // Add some solid boxes to construct a manger
     this.addSolidBox(engine.width * 0.5, engine.height - 10, 240, 12, { color: 0x39bdfd });
-    this.addSolidBox(42, engine.height - 20, 12, 32, { color: 0x39bdfd });
-    this.addSolidBox(engine.width - 42, engine.height - 20, 12, 32, { color: 0x39bdfd });
+    this.addSolidBox(42, engine.height - 28, 12, 40, { color: 0x39bdfd });
+    this.addSolidBox(engine.width - 42, engine.height - 28, 12, 40, { color: 0x39bdfd });
 
     // Add a box that bouncing off the manger
-    this.box = this.addBox(engine.width * 0.5, engine.height - 50, 16, 16, { color: 0xcdced1, mass: 0.2 });
+    this.box = this.addBox(80, engine.height - 50, 16, 16, { color: 0xcdced1, mass: 0.2 });
     this.box.rotation = Math.PI * 0.25;
     this.box.body.velocity.x = 30;
+
+    // Add a circle that bouncing off the manger
+    this.circle = this.addCircle(engine.width - 80, engine.height - 50, 8, { color: 0xff91b7, mass: 0.2 });
+    this.circle.body.velocity.x = -30;
   }
   update(dt) {
     this.info.x = engine.width * 0.5 - this.info.width * 0.5;
@@ -95,28 +106,34 @@ class Main extends Scene {
     const body = new physics.Body({
       mass: mass, // 0 mass makes it not affected by gravity
       shape: new physics.Box(w, h),
-      collisionGroup: 1,
-      collideAgainst: [0],
+      collisionGroup: GROUPS.BOX,
+      collideAgainst: [GROUPS.SOLID, GROUPS.CIRCLE],
       collide: (other, response) => {
-        // Always bounce back
-        if (config.physics.solver === 'SAT') {
-          body.velocity
-            .subtract(response.overlapN.multiply(
-              Math.abs(body.velocity.x * 2),
-              Math.abs(body.velocity.y * 2)
-            ));
-        }
-        else {
-          if (response & physics.DOWN) {
-            body.velocity.y = -body.velocity.y;
+        // Always bounce back the solid
+        if (other.collisionGroup === GROUPS.SOLID) {
+          if (config.physics.solver === 'SAT') {
+            body.velocity
+              .subtract(response.overlapN.multiply(
+                Math.abs(body.velocity.x * 2),
+                Math.abs(body.velocity.y * 2)
+              ));
           }
-          else if (response & (physics.RIGHT | physics.LEFT)) {
-            body.velocity.x = -body.velocity.x;
+          else {
+            if (response & physics.DOWN) {
+              body.velocity.y = -body.velocity.y;
+            }
+            else if (response & (physics.RIGHT | physics.LEFT)) {
+              body.velocity.x = -body.velocity.x;
+            }
           }
-        }
 
-        // Apply collision response to self
-        return true;
+          // Apply collision response to self
+          return true;
+        }
+        else if (other.collisionGroup === GROUPS.CIRCLE) {
+          body.velocity.x *= response.overlapN.x;
+          return true;
+        }
       },
     }).addTo(this.world);
     body.anchor.set(0.5);  // Set the anchor to meet the one of graphic
@@ -133,6 +150,55 @@ class Main extends Scene {
 
     return box;
   }
+  addCircle(x, y, r, { color, mass = 0 }) {
+    const graphic = new PIXI.Graphics().addTo(this.stage);
+    graphic.beginFill(color);
+    graphic.drawCircle(0, 0, r);
+    graphic.endFill();
+    graphic.position.set(x, y);
+
+    const body = new physics.Body({
+      mass: mass, // 0 mass makes it not affected by gravity
+      shape: new physics.Circle(r),
+      collisionGroup: GROUPS.CIRCLE,
+      collideAgainst: [GROUPS.SOLID, GROUPS.BOX],
+      collide: (other, response) => {
+        // Always bounce back
+        if (other.collisionGroup === GROUPS.SOLID) {
+          if (config.physics.solver === 'SAT') {
+            body.velocity
+              .subtract(response.overlapN.multiply(
+                Math.abs(body.velocity.x * 2),
+                Math.abs(body.velocity.y * 2)
+              ));
+          }
+          else {
+            if (response & physics.DOWN) {
+              body.velocity.y = -body.velocity.y;
+            }
+            else if (response & (physics.RIGHT | physics.LEFT)) {
+              body.velocity.x = -body.velocity.x;
+            }
+          }
+          // Apply collision response to self
+          return true;
+        }
+        else if (other.collisionGroup === GROUPS.BOX) {
+          body.velocity.x *= response.overlapN.x;
+          return true;
+        }
+      },
+    }).addTo(this.world);
+    body.anchor.set(0.5);  // Set the anchor to meet the one of graphic
+    body.position = graphic.position;  // Trick: sync their position
+
+    let circle = {
+      graphic,
+      body,
+    };
+
+    return circle;
+  }
   addSolidBox(x, y, w, h, { color, mass = 0 }) {
     const graphic = new PIXI.Graphics().addTo(this.stage);
     graphic.beginFill(color);
@@ -142,7 +208,7 @@ class Main extends Scene {
 
     const body = new physics.Body({
       mass: mass, // 0 mass makes it not affected by gravity
-      collisionGroup: 0,
+      collisionGroup: GROUPS.SOLID,
       shape: new physics.Box(w, h),
     }).addTo(this.world);
     body.anchor.set(0.5);  // Set the anchor to meet the one of graphic
