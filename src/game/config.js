@@ -70,8 +70,8 @@ export default {
   physics: {
     /**
      * Collision solver, available settings:
-     * - AABB   Fast but only Box and Circle shapes are supported
-     * - SAT    Powerful SAT based, provide Polygon and rotation support
+     * - AABB: Fast but only Box(not rotated) and Circle shapes are supported
+     * - SAT:  Powerful SAT based, have convex Polygon and rotation support
      */
     solver: 'SAT',
   },

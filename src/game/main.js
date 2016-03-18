@@ -131,7 +131,7 @@ class Main extends Scene {
           return true;
         }
         else if (other.collisionGroup === GROUPS.CIRCLE) {
-          body.velocity.x *= response.overlapN.x;
+          body.velocity.x *= -1;
           return true;
         }
       },
@@ -184,7 +184,7 @@ class Main extends Scene {
           return true;
         }
         else if (other.collisionGroup === GROUPS.BOX) {
-          body.velocity.x *= response.overlapN.x;
+          body.velocity.x *= -1;
           return true;
         }
       },
