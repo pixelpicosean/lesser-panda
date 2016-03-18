@@ -945,37 +945,6 @@ var RIGHT_VORNOI_REGION = 1;
 // Collision Tests ---------------------------------------
 
 /**
- * Check if a point is inside a circle.
- * @param {Vector} p The point to test
- * @param {Circle} c The circle to test
- * @return {Boolean} true if the point is inside the circle, false if it is not
- */
-function pointInCircle(p, c) {
-  var differenceV = T_VECTORS.pop().copy(p).subtract(c.position);
-  var radiusSq = c.shape.radius * c.shape.radius;
-  var distanceSq = differenceV.squaredLength();
-  T_VECTORS.push(differenceV);
-  // If the distance between is smaller than the radius then the point is inside the circle.
-  return distanceSq <= radiusSq;
-}
-
-/**
- * Check if a point is inside a convex polygon.
- * @param {Vector} p The point to test
- * @param {Polygon} poly The polygon to test
- * @return {Boolean} true if the point is inside the polygon, false if it is not
- */
-function pointInPolygon(p, poly) {
-  UNIT_SQUARE.position.copy(p);
-  T_RESPONSE.clear();
-  var result = testPolygonPolygon(UNIT_SQUARE, poly, T_RESPONSE);
-  if (result) {
-    result = T_RESPONSE.aInB;
-  }
-  return result;
-}
-
-/**
  * Check if two circles collide.
  * @param {Body} a The first circle body
  * @param {Body} b The second circle body
