@@ -7,6 +7,7 @@ import loader from 'engine/loader';
 import physics from 'engine/physics';
 import { Action } from 'engine/animation';
 
+import config from 'game/config';
 import 'game/loading';
 
 // Load textures
@@ -97,12 +98,24 @@ class Main extends Scene {
       collisionGroup: 1,
       collideAgainst: [0],
       collide: (other, response) => {
-        // Always bounce back (based on collision direction)
-        body.velocity
-          .subtract(response.overlapN.multiply(
-            Math.abs(body.velocity.x * 2),
-            Math.abs(body.velocity.y * 2)
-          ));
+        // Always bounce back
+        if (config.physics.solver === 'SAT') {
+          body.velocity
+            .subtract(response.overlapN.multiply(
+              Math.abs(body.velocity.x * 2),
+              Math.abs(body.velocity.y * 2)
+            ));
+        }
+        else {
+          if (response & physics.DOWN) {
+            body.velocity.y = -body.velocity.y;
+          }
+          else if (response & (physics.RIGHT | physics.LEFT)) {
+            body.velocity.x = -body.velocity.x;
+          }
+        }
+
+        // Apply collision response to self
         return true;
       },
     }).addTo(this.world);
