@@ -67,42 +67,84 @@ class Main extends Scene {
     animPlayer.speed = -1;
     animPlayer.on('loop', () => console.log(`loop ${++count} times`));
 
-    // Add a solid box at the bottom for collision
-    const plane = new PIXI.Graphics().addTo(this.stage);
-    plane.beginFill(0x39bdfd);
-    plane.drawRect(-120, -6, 240, 12);
-    plane.endFill();
-    plane.position.set(engine.width * 0.5, engine.height - 10);
+    // Add some solid boxes to construct a manger
+    this.addSolidBox(engine.width * 0.5, engine.height - 10, 240, 12, { color: 0x39bdfd });
+    this.addSolidBox(42, engine.height - 20, 12, 32, { color: 0x39bdfd });
+    this.addSolidBox(engine.width - 42, engine.height - 20, 12, 32, { color: 0x39bdfd });
 
-    const planeBody = new physics.Body({
-      collisionGroup: 0,
-      shape: new physics.Box(240, 12),
-    }).addTo(this.world);
-    planeBody.anchor.set(0.5);  // Set the anchor to meet the one of plane
-    planeBody.position = plane.position;  // Trick: sync their position
+    // Add a box that bouncing off the manger
+    this.box = this.addBox(engine.width * 0.5, engine.height - 50, 16, 16, { color: 0xcdced1, mass: 0.2 });
+    this.box.rotation = Math.PI * 0.25;
+    this.box.body.velocity.x = 30;
+  }
+  update(dt) {
+    this.info.x = engine.width * 0.5 - this.info.width * 0.5;
 
-    // Add another box bounce off it
-    const box = new PIXI.Graphics().addTo(this.stage);
-    box.beginFill(0xcdced1);
-    box.drawRect(-8, -8, 16, 16);
-    box.endFill();
-    box.position.set(engine.width * 0.5, engine.height - 50);
+    // Rotation also affects collisions
+    this.box.rotation += Math.PI * (dt * 0.001) * (this.box.body.velocity.x * 0.075);
+  }
 
-    const boxBody = new physics.Body({
-      mass: 1,
+  addBox(x, y, w, h, { color, mass = 0 }) {
+    const graphic = new PIXI.Graphics().addTo(this.stage);
+    graphic.beginFill(color);
+    graphic.drawRect(-w / 2, -h / 2, w, h);
+    graphic.endFill();
+    graphic.position.set(x, y);
+
+    const body = new physics.Body({
+      mass: mass, // 0 mass makes it not affected by gravity
+      shape: new physics.Box(w, h),
       collisionGroup: 1,
       collideAgainst: [0],
-      shape: new physics.Box(16, 16),
-      collide: (other) => {
-        boxBody.velocity.y = -boxBody.velocity.y;
+      collide: (other, response) => {
+        // Always bounce back (based on collision direction)
+        body.velocity
+          .subtract(response.overlapN.multiply(
+            Math.abs(body.velocity.x * 2),
+            Math.abs(body.velocity.y * 2)
+          ));
         return true;
       },
     }).addTo(this.world);
-    boxBody.anchor.set(0.5);  // Set the anchor to meet the one of plane
-    boxBody.position = box.position;  // Trick: sync their position
+    body.anchor.set(0.5);  // Set the anchor to meet the one of graphic
+    body.position = graphic.position;  // Trick: sync their position
+
+    let box = {
+      graphic,
+      body,
+    };
+    Object.defineProperty(box, 'rotation', {
+      get: () => body.rotation,
+      set: (rot) => body.rotation = graphic.rotation = rot,
+    });
+
+    return box;
   }
-  update() {
-    this.info.x = engine.width * 0.5 - this.info.width * 0.5;
+  addSolidBox(x, y, w, h, { color, mass = 0 }) {
+    const graphic = new PIXI.Graphics().addTo(this.stage);
+    graphic.beginFill(color);
+    graphic.drawRect(-w / 2, -h / 2, w, h);
+    graphic.endFill();
+    graphic.position.set(x, y);
+
+    const body = new physics.Body({
+      mass: mass, // 0 mass makes it not affected by gravity
+      collisionGroup: 0,
+      shape: new physics.Box(w, h),
+    }).addTo(this.world);
+    body.anchor.set(0.5);  // Set the anchor to meet the one of graphic
+    body.position = graphic.position;  // Trick: sync their position
+
+    let box = {
+      graphic,
+      body,
+    };
+    Object.defineProperty(box, 'rotation', {
+      get: () => body.rotation,
+      set: (rot) => body.rotation = graphic.rotation = rot,
+    });
+
+    return box;
   }
 };
 engine.addScene('Main', Main);
