@@ -244,18 +244,33 @@ AABBSolver.prototype.hitTest = function hitTest(a, b) {
   }
 
   if (a.shape.type === CIRC && b.shape.type === CIRC) {
-    return (a.shape.radius + b.shape.radius > a.position.distance(b.position));
+    // AABB overlap
+    if (!(
+      a._bottom <= b._top ||
+      a._top >= b._bottom ||
+      a._left >= b._right ||
+      a._right <= b._left)) {
+      return a.position.squaredDistance(b.position) < (a.shape.radius + b.shape.radius) * (a.shape.radius + b.shape.radius);
+    }
+
+    return false;
   }
 
   if ((a.shape.type === BOX && b.shape.type === CIRC) || (a.shape.type === CIRC && b.shape.type === BOX)) {
     var box = (a.shape.type === BOX) ? a : b;
     var circle = (a.shape.type === CIRC) ? a : b;
 
-    var x = Math.max(box._left, Math.min(box._right, circle.position.x));
-    var y = Math.max(box._top, Math.min(box._bottom, circle.position.y));
+    // AABB overlap
+    if (!(a._bottom <= b._top ||
+      a._top >= b._bottom ||
+      a._left >= b._right ||
+      a._right <= b._left)) {
 
-    var dist = (circle.position.x - x) * (circle.position.x - x) + (circle.position.y - y) * (circle.position.y - y);
-    return dist < (circle.shape.radius * circle.shape.radius);
+      var distX = circle._center.x - utils.clamp(circle._center.x, box._left, box._right);
+      var distY = circle._center.y - utils.clamp(circle._center.y, box._top, box._bottom);
+
+      return (distX * distX + distY * distY) < (circle.shape.radius * circle.shape.radius);
+    }
   }
 
   return false;
@@ -269,7 +284,9 @@ AABBSolver.prototype.hitTest = function hitTest(a, b) {
   @return {Boolean}
 **/
 AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
-  if (a.shape.type === BOX && b.shape.type === BOX) {
+  if (a.shape.type === BOX && b.shape.type === BOX ||
+    a.shape.type === BOX && b.shape.type === CIRC ||
+    a.shape.type === CIRC && b.shape.type === BOX) {
     if (lte(a._lastBottom, b._lastTop)) {
       if (a.collide(b, DOWN)) {
         a.position.y = b.position.y - b.shape.height * b.anchor.y - a.shape.height * (1 - a.anchor.y);
@@ -309,9 +326,6 @@ AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
       a.position.y = b.position.y + Math.sin(angle) * dist;
       return true;
     }
-  }
-  // TODO: Circle vs Box
-  else if ((a.shape.type === CIRC && b.shape.type === BOX) || (a.shape.type === BOX && b.shape.type === CIRC)) {
   }
 };
 
