@@ -11,7 +11,7 @@ var UP =      1;
 var DOWN =    2;
 var LEFT =    4;
 var RIGHT =   8;
-var OVERLAP = UP | DOWN | LEFT | RIGHT;
+var OVERLAP = 16;
 
 function eq(a, b) {
   return (a < b) ? (b - a < ESP) : (a - b < ESP);
