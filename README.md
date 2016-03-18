@@ -7,9 +7,11 @@ A module based HTML5 game engine designed to be flexible and powerful.
 LesserPanda has a lot of features, and the list is still growing:
 
 - Super fast Canvas and WebGL rendering powered by PIXI.js.
-- Automatically choose the best resolution based on configs.
 - Fixed game loop with customizable `FPS` and `frame skips`.
+- Fast and powerful physics solution.
+- Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
 - ECS(Entity Component System) like sub-systems.
+- Automatically choose the best resolution based on configs.
 - Tag is supported by sub-systems.
 - Mobile friendly.
 - ES6 based scripting environment.
@@ -76,6 +78,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
 - [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
 - Add Blender/Flash like keyframe based animation.
+- Add SAT based collision solver and a configuration for that.
 
 ### 0.3.4
 
