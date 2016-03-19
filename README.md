@@ -10,6 +10,7 @@ LesserPanda has a lot of features, and the list is still growing:
 - Fixed game loop with customizable `FPS` and `frame skips`.
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
+- Multiply broad phase solution: "Simple" for collision less games and "SpatialHash" for collision heavy ones.
 - ECS(Entity Component System) like sub-systems.
 - Automatically choose the best resolution based on configs.
 - Tag is supported by sub-systems.
@@ -78,7 +79,8 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
 - [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
 - Add Blender/Flash like keyframe based animation.
-- Add SAT based collision solver and a configuration for that.
+- Add SAT based collision solver.
+- Add SpatialHash based broad phase solution for collision heavy games.
 
 ### 0.3.4
 
