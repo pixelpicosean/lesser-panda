@@ -82,6 +82,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Add SAT based collision solver.
 - Add SpatialHash based broad phase solution for collision heavy games.
 - Deprecate `dom` resize mode.
+- Change canvas style during resizing for some resize modes.
 
 ### 0.3.4
 
