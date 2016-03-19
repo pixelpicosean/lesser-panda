@@ -58,9 +58,6 @@ function boot() {
     case 'scale-outer':
       resizeFunc = _scaleOuterResize;
       break;
-    case 'dom':
-      resizeFunc = _domResize;
-      break;
     case 'never':
       resizeFunc = _neverResize;
       break;
@@ -480,12 +477,6 @@ function _scaleOuterResize() {
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
-function _domResize() {
-  var box = core.view.getBoundingClientRect();
-  core.viewSize.set(box.width, box.height);
-  core.size.copy(core.viewSize);
-
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
