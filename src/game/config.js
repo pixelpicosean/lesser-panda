@@ -72,7 +72,22 @@ export default {
      * Collision solver, available settings:
      * - AABB: Fast but only Box(not rotated) and Circle shapes are supported
      * - SAT:  Powerful SAT based, have convex Polygon and rotation support
+     * @default AABB
      */
     solver: 'SAT',
+    /**
+     * Broad phase algorithm to use for collision detection
+     * - Simple: Check collision between every possible pairs, for small amount of bodies
+     * - SpatialHash: Advanced solution that performs best if the objects are sparsely distributed
+     * @default Simple
+     */
+    broadPhase: 'SpatialHash',
+    /**
+     * This only works while using "SpatialHash" broad phase.
+     * Feel free to tweak this number for best performance.
+     * @type {Number}
+     * @default 5
+     */
+    spatialFactor: 5,
   },
 };
