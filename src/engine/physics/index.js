@@ -28,6 +28,7 @@ function gte(a, b) {
 // Shapes
 var BOX = 0;
 var CIRC = 1;
+var POLY = 2;
 
 // Array Remove - By John Resig (MIT Licensed)
 function remove(arr, from, to) {
@@ -45,19 +46,17 @@ function erase(arr, obj) {
 
 // Update bounds of a Box body on last frame
 function updateBounds(body) {
-  if (body.shape.type === BOX || body.shape.type === CIRC) {
-    body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
-    body._lastRight = body._lastLeft + body.shape.width;
-    body._lastTop = body.last.y - body.shape.height * body.anchor.y;
-    body._lastBottom = body._lastTop + body.shape.height;
+  body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
+  body._lastRight = body._lastLeft + body.shape.width;
+  body._lastTop = body.last.y - body.shape.height * body.anchor.y;
+  body._lastBottom = body._lastTop + body.shape.height;
 
-    body._left = body.position.x - body.shape.width * body.anchor.x;
-    body._right = body._left + body.shape.width;
-    body._top = body.position.y - body.shape.height * body.anchor.y;
-    body._bottom = body._top + body.shape.height;
+  body._left = body.position.x - body.shape.width * body.anchor.x;
+  body._right = body._left + body.shape.width;
+  body._top = body.position.y - body.shape.height * body.anchor.y;
+  body._bottom = body._top + body.shape.height;
 
-    body._center.set(body.position.x + body.shape.width * (0.5 - body.anchor.x), body.position.y + body.shape.height * (0.5 - body.anchor.y));
-  }
+  body._center.set(body.position.x + body.shape.width * (0.5 - body.anchor.x), body.position.y + body.shape.height * (0.5 - body.anchor.y));
 }
 
 /**
@@ -599,12 +598,19 @@ Body.prototype.update = function update(delta) {
 };
 
 function Polygon(points) {
+  this.width = 1;
+  this.height = 1;
+
   this.points = [];
   this.calcPoints = [];
+
   this.edges = [];
   this.normals = [];
-  this._rotation = 0;
+
   this.offset = new Vector();
+
+  this._rotation = 0;
+
   this.setPoints(points || []);
 }
 /**
@@ -696,6 +702,10 @@ Polygon.prototype._recalc = function _recalc() {
   var rotation = this._rotation;
   var len = points.length;
   var i;
+  var left = Infinity,
+    top = Infinity,
+    right = -Infinity,
+    bottom = -Infinity;
   for (i = 0; i < len; i++) {
     var calcPoint = calcPoints[i].copy(points[i]);
     calcPoint.x += offset.x;
@@ -703,7 +713,14 @@ Polygon.prototype._recalc = function _recalc() {
     if (rotation !== 0) {
       calcPoint.rotate(rotation);
     }
+
+    // Update AABB info
+    left = Math.min(left, calcPoint.x);
+    top = Math.min(top, calcPoint.y);
+    right = Math.max(right, calcPoint.x);
+    bottom = Math.max(bottom, calcPoint.y);
   }
+
   // Calculate the edges/normals
   for (i = 0; i < len; i++) {
     var p1 = calcPoints[i];
@@ -711,6 +728,11 @@ Polygon.prototype._recalc = function _recalc() {
     var e = edges[i].copy(p2).subtract(p1);
     normals[i].copy(e).perp().normalize();
   }
+
+  // Calculate size
+  this.width = right - left;
+  this.height = bottom - top;
+
   return this;
 };
 Object.defineProperty(Polygon.prototype, 'rotation', {
