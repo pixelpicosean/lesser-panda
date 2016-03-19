@@ -450,7 +450,7 @@ function _scaleInnerResize() {
 
   // Resize container of current scene
   if (core.scene) {
-    container = core.scene.container;
+    container = core.scene.stage;
     result = resize.innerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
@@ -468,7 +468,7 @@ function _scaleOuterResize() {
 
   // Resize container of current scene
   if (core.scene) {
-    container = core.scene.container;
+    container = core.scene.stage;
     result = resize.outerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
