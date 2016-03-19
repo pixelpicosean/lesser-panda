@@ -81,6 +81,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Add Blender/Flash like keyframe based animation.
 - Add SAT based collision solver.
 - Add SpatialHash based broad phase solution for collision heavy games.
+- Deprecate `dom` resize mode.
 
 ### 0.3.4
 
