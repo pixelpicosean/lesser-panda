@@ -428,6 +428,8 @@ function _letterBoxResize(first) {
   core.view.style.width = (core.viewSize.x * result.scale) + 'px';
   core.view.style.height = (core.viewSize.y * result.scale) + 'px';
 
+  _alignToWindowCenter(core.view);
+
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
@@ -437,6 +439,8 @@ function _cropResize() {
 
   // Resize the renderer
   Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  _fullWindowStyle(core.view);
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
@@ -456,6 +460,8 @@ function _scaleInnerResize() {
     container.position.set(result.left, result.top);
   }
 
+  _fullWindowStyle(core.view);
+
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
@@ -474,12 +480,29 @@ function _scaleOuterResize() {
     container.position.set(result.left, result.top);
   }
 
+  _fullWindowStyle(core.view);
+
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 }
-
-  core.emit('resize', core.viewSize.x, core.viewSize.y);
-}
 function _neverResize() {}
+
+// CSS helpers
+function _alignToWindowCenter(el) {
+  el.style.position = 'absolute';
+  el.style.left = '50%';
+  el.style.top = '50%';
+  el.style.transform = 'translate(-50%, -50%)';
+}
+function _fullWindowStyle(el) {
+  el.style.display = 'block';
+  el.style.position = 'absolute';
+  el.style.left = '0';
+  el.style.top = '0';
+  el.style.right = '0';
+  el.style.bottom = '0';
+  el.style.width = '100%';
+  el.style.height = '100%';
+}
 
 module.exports = exports = core;
