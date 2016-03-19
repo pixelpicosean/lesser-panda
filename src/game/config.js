@@ -74,14 +74,14 @@ export default {
      * - SAT:  Powerful SAT based, have convex Polygon and rotation support
      * @default AABB
      */
-    solver: 'SAT',
+    solver: 'AABB',
     /**
      * Broad phase algorithm to use for collision detection
      * - Simple: Check collision between every possible pairs, for small amount of bodies
      * - SpatialHash: Advanced solution that performs best if the objects are sparsely distributed
      * @default Simple
      */
-    broadPhase: 'SpatialHash',
+    broadPhase: 'Simple',
     /**
      * This only works while using "SpatialHash" broad phase.
      * Feel free to tweak this number for best performance.
