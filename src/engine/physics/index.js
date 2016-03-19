@@ -2,7 +2,9 @@ var Vector = require('engine/vector');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
-var config = require('game/config').default.physics || {};
+var SpatialHash = require('./spatial-hash');
+
+var config = require('game/config').default.physics;
 
 // Constants
 var ESP = 0.000001;
@@ -67,33 +69,49 @@ function updateBounds(body) {
 **/
 function World(x, y) {
   /**
-    Gravity of physics world.
-    @property {Vector} gravity
-    @default 0, 980
-  **/
+   * Gravity of physics world.
+   * @property {Vector} gravity
+   * @default 0, 980
+  */
   this.gravity = Vector.create(x || 0, y || 980);
+  /**
+   * Spatial hash instance
+   * @type {SpatialHash}
+   */
+  this.tree = new SpatialHash(config.spatialFactor);
   /**
    * Collision solver instance
    */
   this.solver = (config.solver === 'SAT') ? new SATSolver() : new AABBSolver();
   this.response = new Response();
   /**
-    List of bodies in world.
-    @property {Array} bodies
-  **/
+   * List of bodies in world.
+   * @property {Array} bodies
+   */
   this.bodies = [];
   /**
-    List of collision groups.
-    @property {Object} collisionGroups
-  **/
+   * List of collision groups.
+   * @property {Object} collisionGroups
+   */
   this.collisionGroups = {};
+  /**
+   * Save whether collision of a pair of objects are checked
+   * @type {Object}
+   */
+  this.checks = {};
+
+  /**
+   * How many pair of bodies have been checked in this frame
+   * @type {Number}
+   */
+  this.collisionChecks = 0;
 }
 
 /**
-  Add body to world.
-  @method addBody
-  @param {Body} body
-**/
+ * Add body to world.
+ * @method addBody
+ * @param {Body} body
+ */
 World.prototype.addBody = function addBody(body) {
   body.world = this;
   body._remove = false;
@@ -143,26 +161,62 @@ World.prototype.removeBodyCollision = function removeBodyCollision(body) {
 **/
 World.prototype.collide = function collide(body) {
   var g, i, b, group;
+  var key;
 
   // Before each collision detection
   body.beforeCollide();
 
-  for (g = 0; g < body.collideAgainst.length; g++) {
-    group = this.collisionGroups[body.collideAgainst[g]];
+  // Broad phase using spatial hash?
+  if (config.broadPhase === 'SpatialHash') {
+    group = this.tree.retrieve(body);
 
-    if (!group) continue;
-
-    for (i = group.length - 1; i >= 0; i--) {
-      if (!group) break;
+    for (i = 0; i < group.length; i++) {
       b = group[i];
-      if (body !== b) {
-        // Clearn reponse instance
-        this.response.clear();
-        // Test collision
-        if (this.solver.hitTest(body, b, this.response)) {
-          // Apply response
-          if (this.solver.hitResponse(body, b, true, (b.collideAgainst.indexOf(body.collisionGroup) !== -1), this.response)) {
-            body.afterCollide(b);
+
+      // Should not collide with each other
+      if (b === body || body.collideAgainst.indexOf(b.collisionGroup) < 0)
+        continue;
+
+      // Already checked?
+      key = '' + body.id + ':' + b.id;
+      if (this.checks[key])
+        continue;
+
+      this.collisionChecks++;
+
+      // Now this pair is checked
+      this.checks[key] = true;
+
+      // Clearn reponse instance
+      this.response.clear();
+      // Test collision
+      if (this.solver.hitTest(body, b, this.response)) {
+        // Apply response
+        if (this.solver.hitResponse(body, b, true, (b.collideAgainst.indexOf(body.collisionGroup) !== -1), this.response)) {
+          body.afterCollide(b);
+        }
+      }
+    }
+  }
+  // Or simple brute force
+  else {
+    for (g = 0; g < body.collideAgainst.length; g++) {
+      group = this.collisionGroups[body.collideAgainst[g]];
+
+      if (!group) continue;
+
+      for (i = group.length - 1; i >= 0; i--) {
+        if (!group) break;
+        b = group[i];
+        if (body !== b) {
+          // Clearn reponse instance
+          this.response.clear();
+          // Test collision
+          if (this.solver.hitTest(body, b, this.response)) {
+            // Apply response
+            if (this.solver.hitResponse(body, b, true, (b.collideAgainst.indexOf(body.collisionGroup) !== -1), this.response)) {
+              body.afterCollide(b);
+            }
           }
         }
       }
@@ -185,6 +239,11 @@ World.prototype.preUpdate = function preUpdate(delta) {
       this.bodies[i].last.copy(this.bodies[i].position);
     }
   }
+
+  if (config.broadPhase === 'SpatialHash') {
+    this.tree.clear();
+    this.checks = {};
+  }
 };
 
 /**
@@ -192,9 +251,14 @@ World.prototype.preUpdate = function preUpdate(delta) {
   @method update
 **/
 World.prototype.update = function update(delta) {
-  var i, j;
+  var i, j, body;
   for (i = 0; i < this.bodies.length; i++) {
-    this.bodies[i].update(delta);
+    body = this.bodies[i];
+    body.update(delta);
+
+    if (config.broadPhase === 'SpatialHash') {
+      this.tree.insert(body);
+    }
   }
 
   for (i in this.collisionGroups) {
@@ -336,6 +400,7 @@ AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
   @param {Object} [properties]
 **/
 function Body(properties) {
+  this.id = Body.uid++;
   /**
     Body's physic world.
     @property {World} world
@@ -423,6 +488,7 @@ function Body(properties) {
     this.shape = this.shape.toPolygon();
   }
 }
+Body.uid = 0;
 
 Object.defineProperty(Body.prototype, 'rotation', {
   get: function() {
@@ -1273,6 +1339,9 @@ Scene.registerSystem('Physics', {
   },
   update: function update(scene, delta) {
     scene.world.update(delta * 0.001);
+  },
+  postUpdate: function postUpdate(scene) {
+    scene.world.collisionChecks = 0;
   },
 });
 
