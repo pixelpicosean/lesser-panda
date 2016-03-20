@@ -11,7 +11,7 @@ function toObject(val) {
   return Object(val);
 }
 
-module.exports = Object.assign || function (target, source) {
+Object.assign = Object.assign || function (target, source) {
   var from;
   var to = toObject(target);
   var symbols;
