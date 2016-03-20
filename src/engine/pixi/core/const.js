@@ -11,7 +11,7 @@ var CONST = {
      * @constant
      * @property {string} VERSION
      */
-    VERSION: '3.0.10',
+    VERSION: '3.0.10-dev',
 
     /**
      * @property {number} PI_2 - Two Pi
