@@ -32,6 +32,9 @@ function boot() {
   window.removeEventListener('load', boot);
   document.removeEventListener('DOMContentLoaded', boot);
 
+  // Disable scroll
+  _noPageScroll();
+
   var rendererConfig = Object.assign({
     canvasId: 'game',
   }, config.renderer);
@@ -428,7 +431,7 @@ function _letterBoxResize(first) {
   core.view.style.width = (core.viewSize.x * result.scale) + 'px';
   core.view.style.height = (core.viewSize.y * result.scale) + 'px';
 
-  _alignToWindowCenter(core.view);
+  _alignToWindowCenter(core.view, core.viewSize.x * result.scale, core.viewSize.y * result.scale);
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
@@ -488,11 +491,11 @@ function _scaleOuterResize() {
 function _neverResize() {}
 
 // CSS helpers
-function _alignToWindowCenter(el) {
+function _alignToWindowCenter(el, w, h) {
   el.style.position = 'absolute';
   el.style.left = '50%';
   el.style.top = '50%';
-  el.style.transform = 'translate(-50%, -50%)';
+  el.style.margin = '-' + Math.floor(w / 2) + 'px 0 0 -' + Math.floor(h / 2) + 'px';
 }
 function _fullWindowStyle(el) {
   el.style.display = 'block';
@@ -503,6 +506,11 @@ function _fullWindowStyle(el) {
   el.style.bottom = '0';
   el.style.width = '100%';
   el.style.height = '100%';
+}
+function _noPageScroll() {
+  document.ontouchmove = function(event) {
+    event.preventDefault();
+  }
 }
 
 module.exports = exports = core;
