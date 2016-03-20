@@ -495,7 +495,7 @@ function _alignToWindowCenter(el, w, h) {
   el.style.position = 'absolute';
   el.style.left = '50%';
   el.style.top = '50%';
-  el.style.margin = '-' + Math.floor(w / 2) + 'px 0 0 -' + Math.floor(h / 2) + 'px';
+  el.style.margin = '-' + Math.floor(h / 2) + 'px 0 0 -' + Math.floor(w / 2) + 'px';
 }
 function _fullWindowStyle(el) {
   el.style.display = 'block';
