@@ -74,7 +74,7 @@ function boot() {
   window.addEventListener('orientationchange', resizeFunc, false);
 
   // Manually resize for the first time
-  resizeFunc(true);
+  setTimeout(resizeFunc, 10, true);
 
   // Setup visibility change API
   var visibleResume = function() {
