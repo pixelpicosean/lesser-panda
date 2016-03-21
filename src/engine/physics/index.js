@@ -173,7 +173,7 @@ World.prototype.collide = function collide(body) {
       b = group[i];
 
       // Should not collide with each other
-      if (b === body || body.collideAgainst.indexOf(b.collisionGroup) < 0)
+      if (b === body || (body.collideAgainst & b.collisionGroup === 0))
         continue;
 
       // Already checked?
@@ -191,7 +191,7 @@ World.prototype.collide = function collide(body) {
       // Test collision
       if (this.solver.hitTest(body, b, this.response)) {
         // Apply response
-        if (this.solver.hitResponse(body, b, true, (b.collideAgainst.indexOf(body.collisionGroup) !== -1), this.response)) {
+        if (this.solver.hitResponse(body, b, true, (b.collideAgainst & body.collisionGroup !== 0), this.response)) {
           body.afterCollide(b);
         }
       }
@@ -251,11 +251,12 @@ World.prototype.preUpdate = function preUpdate(delta) {
 **/
 World.prototype.update = function update(delta) {
   var i, j, body;
+  var useSpatialHash = config.broadPhase === 'SpatialHash';
   for (i = 0; i < this.bodies.length; i++) {
     body = this.bodies[i];
     body.update(delta);
 
-    if (config.broadPhase === 'SpatialHash') {
+    if (useSpatialHash) {
       this.tree.insert(body);
     }
   }
@@ -268,8 +269,15 @@ World.prototype.update = function update(delta) {
     }
 
     for (j = this.collisionGroups[i].length - 1; j >= 0; j--) {
-      if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst.length > 0) {
-        this.collide(this.collisionGroups[i][j]);
+      if (useSpatialHash) {
+        if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst > 0) {
+          this.collide(this.collisionGroups[i][j]);
+        }
+      }
+      else {
+        if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst.length > 0) {
+          this.collide(this.collisionGroups[i][j]);
+        }
       }
     }
   }
@@ -450,11 +458,12 @@ function Body(properties) {
   **/
   this.collisionGroup = null;
   /**
-    Group numbers that body collides against.
-    @property {Array} collideAgainst
-    @default []
-  **/
-  this.collideAgainst = [];
+   * Collision groups that this body collides against.
+   * Note: this will be a Number when broadPhase is "SpatialHash",
+   *   but will be an Array while using "Simple".
+   * @property {Array|Number} collideAgainst
+   */
+  this.collideAgainst = 0;
   /**
     Body's force.
     @property {Vector} force
@@ -485,6 +494,14 @@ function Body(properties) {
 
   if (config.solver === 'SAT' && this.shape.type === BOX) {
     this.shape = this.shape.toPolygon();
+  }
+  if (config.broadPhase === 'SpatialHash') {
+    if (Array.isArray(this.collideAgainst)) {
+      this.setCollideAgainst(this.collideAgainst);
+    }
+  }
+  else {
+    this.collideAgainst = this.collideAgainst || [];
   }
 }
 Body.uid = 0;
@@ -533,14 +550,20 @@ Body.prototype.setCollisionGroup = function setCollisionGroup(group) {
 };
 
 /**
-  Set body's collideAgainst groups.
-  @method setCollideAgainst
-  @param {Number} groups
-**/
-Body.prototype.setCollideAgainst = function setCollideAgainst() {
-  this.collideAgainst.length = 0;
-  for (var i = 0; i < arguments.length; i++) {
-    this.collideAgainst.push(arguments[i]);
+ * Set body's collideAgainst groups.
+ * @method setCollideAgainst
+ * @param {Array} groups
+ */
+Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
+  // TODO: warning when groups are not array
+  if (config.broadPhase === 'SpatialHash') {
+    this.collideAgainst = 0;
+    for (var i = 0; i < groups.length; i++) {
+      this.collideAgainst |= groups[i];
+    }
+  }
+  else {
+    this.collideAgainst = groups;
   }
 };
 
@@ -1367,7 +1390,20 @@ Scene.registerSystem('Physics', {
   },
 });
 
+// Collision group helpers
+function getGroupMask(idx) {
+  if (idx < 31) {
+    return 1 << idx;
+  }
+  else {
+    console.log('Warning: only 0-30 indexed collisionGroups are supported!');
+    return 0;
+  }
+}
+
 module.exports = {
+  getGroupMask: getGroupMask,
+
   World: World,
   Body: Body,
 

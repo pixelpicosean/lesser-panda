@@ -12,9 +12,9 @@ import 'game/loading';
 
 // Constants
 const GROUPS = {
-  SOLID:  0,
-  BOX:    1,
-  CIRCLE: 2,
+  SOLID:  physics.getGroupMask(0),
+  BOX:    physics.getGroupMask(1),
+  CIRCLE: physics.getGroupMask(2),
 };
 
 // Load textures
