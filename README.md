@@ -83,6 +83,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Add SpatialHash based broad phase solution for collision heavy games.
 - Deprecate `dom` resize mode.
 - Change canvas style during resizing for some resize modes.
+- Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
 
 ### 0.3.4
 
