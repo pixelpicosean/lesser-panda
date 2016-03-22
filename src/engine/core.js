@@ -118,24 +118,17 @@ function boot() {
   });
 
   // Check if browser window has focus
-  var notIE = (document.documentMode === undefined),
-    isChromium = window.chrome;
-
-  if (notIE && !isChromium) {}
+  if (window.addEventListener) {
+    window.addEventListener('focus', function() {
+      setTimeout(visibleResume, 300);
+    }, false);
+    window.addEventListener('blur', visiblePause, false);
+  }
   else {
-    // Checks for IE and Chromium versions
-    if (window.addEventListener) {
-      window.addEventListener('focus', function() {
-        setTimeout(visibleResume, 300);
-      }, false);
-      window.addEventListener('blur', visiblePause, false);
-    }
-    else {
-      window.attachEvent("focus", function() {
-        setTimeout(visibleResume, 300);
-      });
-      window.attachEvent('blur', visiblePause);
-    }
+    window.attachEvent("focus", function() {
+      setTimeout(visibleResume, 300);
+    });
+    window.attachEvent('blur', visiblePause);
   }
 
   core.emit('boot');
