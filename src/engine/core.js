@@ -78,10 +78,10 @@ function boot() {
 
   // Setup visibility change API
   var visibleResume = function() {
-    config.pauseOnHide && core.resume();
+    config.pauseOnHide && core.resume('visibility');
   };
   var visiblePause = function() {
-    config.pauseOnHide && core.pause();
+    config.pauseOnHide && core.pause('visibility');
   };
 
   // Main visibility API function
@@ -309,10 +309,10 @@ Object.assign(core, {
   scene: null,
 
   /**
-   * Whether the engine itself is paused
-   * @type {Boolean}
+   * Hash that contains pause state of all kinds of reasons
+   * @type {Object}
    */
-  paused: false,
+  pauses: {},
 
   /**
    * Speed
@@ -367,20 +367,57 @@ Object.assign(core, {
 
   /**
    * Pause the engine
+   * @param {String} reasonP The reason to pause, you have to pass
+   *                         the same reason when resume from this
+   *                         pause.
    */
-  pause: function pause() {
-    if (!core.paused) {
-      core.paused = true;
-      core.emit('pause');
+  pause: function pause(reasonP) {
+    var i,
+      reason = reasonP || 'untitled',
+      alreadyPaused = false;
+
+    for (i in core.pauses) {
+      if (!core.pauses.hasOwnProperty(i)) continue;
+      // Do not pause again if game is paused by other reasons
+      if (core.pauses[i]) {
+        alreadyPaused = true;
+        break;
+      }
+    }
+
+    core.pauses[reason] = true;
+
+    if (!alreadyPaused) {
+      core.emit('pause', reason);
     }
   },
   /**
    * Unpause the engine
+   * @param {String} reasonP Resume from pause tagged with this reason
+   * @param {Boolean} force Whether force to resume
    */
-  resume: function resume() {
-    if (core.paused) {
-      core.paused = false;
+  resume: function resume(reasonP, force) {
+    var i, reason = reasonP || 'untitled';
+
+    if (force) {
+      // Resume everything
+      for (i in core.pauses) {
+        if (!core.pauses.hasOwnProperty(i)) continue;
+        core.pauses[i] = false;
+      }
       core.emit('resume');
+    }
+    else if (typeof(core.pauses[reason]) === 'boolean') {
+      core.pauses[reason] = false;
+      for (i in core.pauses) {
+        if (!core.pauses.hasOwnProperty(i)) continue;
+        // Do not resume if game is still paused by other reasons
+        if (core.pauses[i]) {
+          return;
+        }
+      }
+
+      core.emit('resume', reason);
     }
   },
 });
@@ -403,6 +440,19 @@ Object.defineProperty(core, 'viewWidth', {
 Object.defineProperty(core, 'viewHeight', {
   get: function() {
     return this.viewSize.y;
+  },
+});
+Object.defineProperty(core, 'paused', {
+  get: function() {
+    // Paused by any reason?
+    for (var i in core.pauses) {
+      if (core.pauses[i]) {
+        return true;
+      }
+    }
+
+    // Totally unpaused
+    return false;
   },
 });
 
