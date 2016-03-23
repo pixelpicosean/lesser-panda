@@ -38,6 +38,17 @@ export default {
    */
   pauseOnHide: false,
 
+  /**
+   * Whether show a image or text to tell players to rotate device
+   * Only available on "mobile device".
+   * @type {Boolean}
+   */
+  showRotatePrompt: true,
+  rotatePromptBGColor: 'black',
+  rotatePromptFontColor: 'white',
+  rotatePromptImg: undefined,
+  rotatePromptMsg: 'Please Rotate Your Device!',
+
   renderer: {
     webGL: true,
     /**

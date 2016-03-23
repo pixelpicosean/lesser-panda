@@ -5,6 +5,7 @@ var Renderer = require('engine/renderer');
 var Timer = require('engine/timer');
 var Vector = require('engine/vector');
 var resize = require('engine/resize');
+var device = require('engine/device');
 var config = require('game/config').default;
 
 // Engine core
@@ -131,6 +132,71 @@ function boot() {
     window.attachEvent('blur', visiblePause);
   }
 
+  // Create rotate prompt if required
+  if (device.mobile && config.showRotatePrompt) {
+    var div = document.createElement('div');
+    div.innerHTML = config.rotatePromptImg ? '' : config.rotatePromptMsg;
+    div.style.position = 'absolute';
+    div.style.height = '12px';
+    div.style.textAlign = 'center';
+    div.style.left = 0;
+    div.style.right = 0;
+    div.style.top = 0;
+    div.style.bottom = 0;
+    div.style.margin = 'auto';
+    div.style.display = 'none';
+    div.style.color = config.rotatePromptFontColor || 'black';
+    div.id = 'lp-rotate';
+    core.rotatePromptElm = div;
+    document.body.appendChild(div);
+
+    if (config.rotatePromptImg) {
+      var img = new Image();
+      var me = this;
+      img.onload = function() {
+        div.image = img;
+        div.style.height = img.height + 'px';
+        div.appendChild(img);
+        resizeRotatePrompt();
+      };
+      img.src = config.rotatePromptImg;
+      img.style.position = 'relative';
+      img.style.maxWidth = '100%';
+    }
+
+    // Check orientation and display the rotate prompt if required
+    var isLandscape = (core.width / core.height >= 1);
+    core.on('resize', function() {
+      if (window.innerWidth < window.innerHeight && isLandscape) {
+        core.rotatePromptVisible = true;
+      }
+      else if (window.innerWidth > window.innerHeight && !isLandscape) {
+        core.rotatePromptVisible = true;
+      }
+      else {
+        core.rotatePromptVisible = false;
+      }
+
+      // Hide game view
+      core.view.style.display = core.rotatePromptVisible ? 'none' : 'block';
+      // Show rotate view
+      core.rotatePromptElm.style.backgroundColor = config.rotatePromptBGColor || 'black';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-box' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-flex' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-ms-flexbox' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? 'flex' : 'none';
+      resizeRotatePrompt();
+
+      // Pause the game if orientation is not correct
+      if (core.rotatePromptVisible) {
+        core.pause('rotate');
+      }
+      else {
+        core.resume('rotate');
+      }
+    });
+  }
+
   core.emit('boot');
   core.emit('booted');
 }
@@ -165,6 +231,19 @@ function chooseProperResolution(res) {
 
     return result;
   }
+}
+function resizeRotatePrompt() {
+  _fullWindowStyle(core.rotatePromptElm);
+  _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
+
+  // if (core.rotatePromptElm.image) {
+  //   if (window.innerHeight < core.rotatePromptElm.image.height) {
+  //     core.rotatePromptElm.image.style.height = window.innerHeight + 'px';
+  //     core.rotatePromptElm.image.style.width = 'auto';
+  //     core.rotatePromptElm.style.height = window.innerHeight + 'px';
+  //     core.rotatePromptElm.style.bottom = 'auto';
+  //   }
+  // }
 }
 
 // Update (fixed update implementation from Phaser by @photonstorm)
@@ -325,6 +404,17 @@ Object.assign(core, {
    * @type {Number}
    */
   delta: 0,
+
+  /**
+   * Rotate prompt element for mobile devices
+   * @type {HTMLElement}
+   */
+  rotatePromptElm: null,
+  /**
+   * Whether the rotate prompt is visible
+   * @type {Boolean}
+   */
+  rotatePromptVisible: false,
 
   /**
    * Register a scene
@@ -541,7 +631,6 @@ function _alignToWindowCenter(el, w, h) {
   el.style.margin = '-' + Math.floor(h / 2) + 'px 0 0 -' + Math.floor(w / 2) + 'px';
 }
 function _fullWindowStyle(el) {
-  el.style.display = 'block';
   el.style.position = 'absolute';
   el.style.left = '0';
   el.style.top = '0';
