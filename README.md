@@ -15,6 +15,7 @@ LesserPanda has a lot of features, and the list is still growing:
 - Automatically choose the best resolution based on configs.
 - Tag is supported by sub-systems.
 - Mobile friendly.
+- Rotate prompt for mobile devices with just a few configs.
 - ES6 based scripting environment.
 - CSS style can be imported by using standard ES6 module system.
 - Live-reload browsers after any changes are saved.
@@ -86,6 +87,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Change canvas style during resizing for some resize modes.
 - Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
 - Add a new `device-patch` module to solve device specific issues.
+- Add rotate prompt for mobile devices.
 
 ### 0.3.4
 
