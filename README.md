@@ -56,6 +56,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `camera` 2D camera that can follow targets, zoom, rotate and shake.
 - `core` is the core of lesser-panda, which provides the base functionalities such as "loop" and "resize".
 - `device` tells what device the game is currently running.
+- `device-patch` includes patches to solve issues of specific devices.
 - `eventemitter3` is a fast EventEmitter implementation.
 - `keyboard` emits keyboard events, you need to subscribe to get noticed.
 - `loader` provides assets loading functon `addAsset(path, key, settings)`
@@ -84,6 +85,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Deprecate `dom` resize mode.
 - Change canvas style during resizing for some resize modes.
 - Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
+- Add a new `device-patch` module to solve device specific issues.
 
 ### 0.3.4
 
