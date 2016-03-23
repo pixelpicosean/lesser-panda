@@ -8,6 +8,11 @@ import physics from 'engine/physics';
 import { Action } from 'engine/animation';
 
 import config from 'game/config';
+
+// Include device patches you need
+import 'engine/device-patch';
+
+// Load scenes to use later
 import 'game/loading';
 
 // Constants
