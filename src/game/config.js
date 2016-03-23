@@ -89,4 +89,10 @@ export default {
      */
     spatialFactor: 5,
   },
+
+  /**
+   * First scene to launch after loading.
+   * You can change this behavior from `game/loading.js`
+   */
+  firstScene: 'Main',
 };
