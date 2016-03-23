@@ -1,7 +1,6 @@
-var hasDeviceInfo = false;
-var device = {};
-
 function fetchDeviceInfo() {
+  var device = {};
+
   var ua = navigator.userAgent;
 
   // Facebook mobile app's integrated browser adds a bunch of strings that
@@ -50,6 +49,7 @@ function fetchDeviceInfo() {
   device.iOS7 = (device.iOS && /OS 7/i.test(ua));
   device.iOS71 = (device.iOS && /OS 7_1/i.test(ua));
   device.iOS8 = (device.iOS && /OS 8/i.test(ua));
+  device.iOS9 = (device.iOS && /OS 9/i.test(ua));
 
   // - Android
   device.android = /Android/.test(ua);
@@ -134,9 +134,7 @@ function fetchDeviceInfo() {
 
   device.desktop = (!device.mobile) || device.wiiu;
 
-  hasDeviceInfo = true;
+  return device;
 }
 
-fetchDeviceInfo();
-
-module.exports = device;
+module.exports = fetchDeviceInfo();
