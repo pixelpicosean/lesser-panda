@@ -46,7 +46,7 @@ export default {
   showRotatePrompt: true,
   rotatePromptBGColor: 'black',
   rotatePromptFontColor: 'white',
-  rotatePromptImg: undefined,
+  rotatePromptImg: 'media/rotate.png',
   rotatePromptMsg: 'Please Rotate Your Device!',
 
   renderer: {
