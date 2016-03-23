@@ -1,6 +1,7 @@
 require('./Object.assign');
 require('./requestAnimationFrame');
 require('./Math.sign');
+require('./Number.isFinite');
 
 if(!window.ArrayBuffer){
   window.ArrayBuffer = Array;
