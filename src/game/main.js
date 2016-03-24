@@ -57,10 +57,10 @@ class Main extends Scene {
 
     // AnimatedSprite with frames
     const anim = new PIXI.extras.AnimatedSprite([
-      PIXI.Texture.fromAsset('gold_1'),
-      PIXI.Texture.fromAsset('gold_2'),
-      PIXI.Texture.fromAsset('gold_3'),
-      PIXI.Texture.fromAsset('gold_4'),
+      loader.resources['gold_1'].texture,
+      loader.resources['gold_2'].texture,
+      loader.resources['gold_3'].texture,
+      loader.resources['gold_4'].texture,
     ]).addTo(this.stage);
     anim.position.set(engine.width * 0.5, 50);
     anim.anchor.set(0.5);

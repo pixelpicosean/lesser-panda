@@ -49,18 +49,6 @@ loader.addMiddleware(pixiMiddlewares.bitmapFontParser);
 var Resource = loader.ResourceLoader.Resource;
 Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
-Object.assign(core.Texture, {
-  fromAsset: function fromAsset(key) {
-    var t = loader.resources[key];
-    t = (t ? t.texture : null);
-    t = (t ? t : core.Texture.fromFrame(key));
-    if (!t) {
-      throw 'Texture with key [' + key + '] is not found!';
-    }
-    return t;
-  },
-});
-
 // Register PIXI as the renderer of choice
 var Renderer = require('engine/renderer');
 var config = require('game/config').default;
