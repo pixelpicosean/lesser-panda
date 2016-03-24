@@ -173,7 +173,7 @@ World.prototype.collide = function collide(body) {
       b = group[i];
 
       // Should not collide with each other
-      if (b === body || (body.collideAgainst & b.collisionGroup === 0))
+      if (b === body || ((body.collideAgainst & b.collisionGroup) === 0))
         continue;
 
       // Already checked?
@@ -191,7 +191,7 @@ World.prototype.collide = function collide(body) {
       // Test collision
       if (this.solver.hitTest(body, b, this.response)) {
         // Apply response
-        if (this.solver.hitResponse(body, b, true, (b.collideAgainst & body.collisionGroup !== 0), this.response)) {
+        if (this.solver.hitResponse(body, b, true, ((b.collideAgainst & body.collisionGroup) === body.collisionGroup), this.response)) {
           body.afterCollide(b);
         }
       }
