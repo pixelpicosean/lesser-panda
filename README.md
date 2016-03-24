@@ -88,6 +88,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
 - Add a new `device-patch` module to solve device specific issues.
 - Add rotate prompt for mobile devices.
+- Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
 
 ### 0.3.4
 
