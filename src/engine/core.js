@@ -42,6 +42,12 @@ function boot() {
 
   core.view = document.getElementById(rendererConfig.canvasId);
 
+  // Keep focus when mouse/touch event occurs on the canvas
+  function focus() { window.focus() }
+  core.view.addEventListener('mousedown', focus);
+  core.view.addEventListener('touchstart', focus);
+
+  // Config and create renderer
   Renderer.resolution = rendererConfig.resolution =
     chooseProperResolution(rendererConfig.resolution);
 
@@ -70,7 +76,7 @@ function boot() {
   }
   core.resizeFunc = resizeFunc;
 
-  // Listen to the resiz and orientation events
+  // Listen to the resize and orientation events
   window.addEventListener('resize', resizeFunc, false);
   window.addEventListener('orientationchange', resizeFunc, false);
 
