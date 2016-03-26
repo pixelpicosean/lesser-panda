@@ -2,7 +2,9 @@ var Vector = require('engine/vector');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
-var config = require('game/config').default.physics || {};
+var SpatialHash = require('./spatial-hash');
+
+var config = require('game/config').default.physics;
 
 // Constants
 var ESP = 0.000001;
@@ -26,6 +28,7 @@ function gte(a, b) {
 // Shapes
 var BOX = 0;
 var CIRC = 1;
+var POLY = 2;
 
 // Array Remove - By John Resig (MIT Licensed)
 function remove(arr, from, to) {
@@ -43,19 +46,17 @@ function erase(arr, obj) {
 
 // Update bounds of a Box body on last frame
 function updateBounds(body) {
-  if (body.shape.type === BOX || body.shape.type === CIRC) {
-    body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
-    body._lastRight = body._lastLeft + body.shape.width;
-    body._lastTop = body.last.y - body.shape.height * body.anchor.y;
-    body._lastBottom = body._lastTop + body.shape.height;
+  body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
+  body._lastRight = body._lastLeft + body.shape.width;
+  body._lastTop = body.last.y - body.shape.height * body.anchor.y;
+  body._lastBottom = body._lastTop + body.shape.height;
 
-    body._left = body.position.x - body.shape.width * body.anchor.x;
-    body._right = body._left + body.shape.width;
-    body._top = body.position.y - body.shape.height * body.anchor.y;
-    body._bottom = body._top + body.shape.height;
+  body._left = body.position.x - body.shape.width * body.anchor.x;
+  body._right = body._left + body.shape.width;
+  body._top = body.position.y - body.shape.height * body.anchor.y;
+  body._bottom = body._top + body.shape.height;
 
-    body._center.set(body.position.x + body.shape.width * (0.5 - body.anchor.x), body.position.y + body.shape.height * (0.5 - body.anchor.y));
-  }
+  body._center.set(body.position.x + body.shape.width * (0.5 - body.anchor.x), body.position.y + body.shape.height * (0.5 - body.anchor.y));
 }
 
 /**
@@ -67,33 +68,49 @@ function updateBounds(body) {
 **/
 function World(x, y) {
   /**
-    Gravity of physics world.
-    @property {Vector} gravity
-    @default 0, 980
-  **/
+   * Gravity of physics world.
+   * @property {Vector} gravity
+   * @default 0, 980
+  */
   this.gravity = Vector.create(x || 0, y || 980);
+  /**
+   * Spatial hash instance
+   * @type {SpatialHash}
+   */
+  this.tree = new SpatialHash(config.spatialFactor);
   /**
    * Collision solver instance
    */
   this.solver = (config.solver === 'SAT') ? new SATSolver() : new AABBSolver();
   this.response = new Response();
   /**
-    List of bodies in world.
-    @property {Array} bodies
-  **/
+   * List of bodies in world.
+   * @property {Array} bodies
+   */
   this.bodies = [];
   /**
-    List of collision groups.
-    @property {Object} collisionGroups
-  **/
+   * List of collision groups.
+   * @property {Object} collisionGroups
+   */
   this.collisionGroups = {};
+  /**
+   * Save whether collision of a pair of objects are checked
+   * @type {Object}
+   */
+  this.checks = {};
+
+  /**
+   * How many pair of bodies have been checked in this frame
+   * @type {Number}
+   */
+  this.collisionChecks = 0;
 }
 
 /**
-  Add body to world.
-  @method addBody
-  @param {Body} body
-**/
+ * Add body to world.
+ * @method addBody
+ * @param {Body} body
+ */
 World.prototype.addBody = function addBody(body) {
   body.world = this;
   body._remove = false;
@@ -143,26 +160,62 @@ World.prototype.removeBodyCollision = function removeBodyCollision(body) {
 **/
 World.prototype.collide = function collide(body) {
   var g, i, b, group;
+  var key;
 
   // Before each collision detection
   body.beforeCollide();
 
-  for (g = 0; g < body.collideAgainst.length; g++) {
-    group = this.collisionGroups[body.collideAgainst[g]];
+  // Broad phase using spatial hash?
+  if (config.broadPhase === 'SpatialHash') {
+    group = this.tree.retrieve(body);
 
-    if (!group) continue;
-
-    for (i = group.length - 1; i >= 0; i--) {
-      if (!group) break;
+    for (i = 0; i < group.length; i++) {
       b = group[i];
-      if (body !== b) {
-        // Clearn reponse instance
-        this.response.clear();
-        // Test collision
-        if (this.solver.hitTest(body, b, this.response)) {
-          // Apply response
-          if (this.solver.hitResponse(body, b, true, (b.collideAgainst.indexOf(body.collisionGroup) !== -1), this.response)) {
-            body.afterCollide(b);
+
+      // Should not collide with each other
+      if (b === body || ((body.collideAgainst & b.collisionGroup) === 0))
+        continue;
+
+      // Already checked?
+      key = '' + body.id + ':' + b.id;
+      if (this.checks[key])
+        continue;
+
+      this.collisionChecks++;
+
+      // Now this pair is checked
+      this.checks[key] = true;
+
+      // Clearn reponse instance
+      this.response.clear();
+      // Test collision
+      if (this.solver.hitTest(body, b, this.response)) {
+        // Apply response
+        if (this.solver.hitResponse(body, b, true, ((b.collideAgainst & body.collisionGroup) === body.collisionGroup), this.response)) {
+          body.afterCollide(b);
+        }
+      }
+    }
+  }
+  // Or simple brute force
+  else {
+    for (g = 0; g < body.collideAgainst.length; g++) {
+      group = this.collisionGroups[body.collideAgainst[g]];
+
+      if (!group) continue;
+
+      for (i = group.length - 1; i >= 0; i--) {
+        if (!group) break;
+        b = group[i];
+        if (body !== b) {
+          // Clearn reponse instance
+          this.response.clear();
+          // Test collision
+          if (this.solver.hitTest(body, b, this.response)) {
+            // Apply response
+            if (this.solver.hitResponse(body, b, true, (b.collideAgainst.indexOf(body.collisionGroup) !== -1), this.response)) {
+              body.afterCollide(b);
+            }
           }
         }
       }
@@ -185,6 +238,11 @@ World.prototype.preUpdate = function preUpdate(delta) {
       this.bodies[i].last.copy(this.bodies[i].position);
     }
   }
+
+  if (config.broadPhase === 'SpatialHash') {
+    this.tree.clear();
+    this.checks = {};
+  }
 };
 
 /**
@@ -192,9 +250,15 @@ World.prototype.preUpdate = function preUpdate(delta) {
   @method update
 **/
 World.prototype.update = function update(delta) {
-  var i, j;
+  var i, j, body;
+  var useSpatialHash = config.broadPhase === 'SpatialHash';
   for (i = 0; i < this.bodies.length; i++) {
-    this.bodies[i].update(delta);
+    body = this.bodies[i];
+    body.update(delta);
+
+    if (useSpatialHash) {
+      this.tree.insert(body);
+    }
   }
 
   for (i in this.collisionGroups) {
@@ -205,8 +269,15 @@ World.prototype.update = function update(delta) {
     }
 
     for (j = this.collisionGroups[i].length - 1; j >= 0; j--) {
-      if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst.length > 0) {
-        this.collide(this.collisionGroups[i][j]);
+      if (useSpatialHash) {
+        if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst > 0) {
+          this.collide(this.collisionGroups[i][j]);
+        }
+      }
+      else {
+        if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst.length > 0) {
+          this.collide(this.collisionGroups[i][j]);
+        }
       }
     }
   }
@@ -336,6 +407,7 @@ AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
   @param {Object} [properties]
 **/
 function Body(properties) {
+  this.id = Body.uid++;
   /**
     Body's physic world.
     @property {World} world
@@ -386,11 +458,12 @@ function Body(properties) {
   **/
   this.collisionGroup = null;
   /**
-    Group numbers that body collides against.
-    @property {Array} collideAgainst
-    @default []
-  **/
-  this.collideAgainst = [];
+   * Collision groups that this body collides against.
+   * Note: this will be a Number when broadPhase is "SpatialHash",
+   *   but will be an Array while using "Simple".
+   * @property {Array|Number} collideAgainst
+   */
+  this.collideAgainst = 0;
   /**
     Body's force.
     @property {Vector} force
@@ -422,7 +495,16 @@ function Body(properties) {
   if (config.solver === 'SAT' && this.shape.type === BOX) {
     this.shape = this.shape.toPolygon();
   }
+  if (config.broadPhase === 'SpatialHash') {
+    if (Array.isArray(this.collideAgainst)) {
+      this.setCollideAgainst(this.collideAgainst);
+    }
+  }
+  else {
+    this.collideAgainst = this.collideAgainst || [];
+  }
 }
+Body.uid = 0;
 
 Object.defineProperty(Body.prototype, 'rotation', {
   get: function() {
@@ -468,14 +550,20 @@ Body.prototype.setCollisionGroup = function setCollisionGroup(group) {
 };
 
 /**
-  Set body's collideAgainst groups.
-  @method setCollideAgainst
-  @param {Number} groups
-**/
-Body.prototype.setCollideAgainst = function setCollideAgainst() {
-  this.collideAgainst.length = 0;
-  for (var i = 0; i < arguments.length; i++) {
-    this.collideAgainst.push(arguments[i]);
+ * Set body's collideAgainst groups.
+ * @method setCollideAgainst
+ * @param {Array} groups
+ */
+Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
+  // TODO: warning when groups are not array
+  if (config.broadPhase === 'SpatialHash') {
+    this.collideAgainst = 0;
+    for (var i = 0; i < groups.length; i++) {
+      this.collideAgainst |= groups[i];
+    }
+  }
+  else {
+    this.collideAgainst = groups;
   }
 };
 
@@ -533,12 +621,19 @@ Body.prototype.update = function update(delta) {
 };
 
 function Polygon(points) {
+  this.width = 1;
+  this.height = 1;
+
   this.points = [];
   this.calcPoints = [];
+
   this.edges = [];
   this.normals = [];
-  this._rotation = 0;
+
   this.offset = new Vector();
+
+  this._rotation = 0;
+
   this.setPoints(points || []);
 }
 /**
@@ -630,6 +725,10 @@ Polygon.prototype._recalc = function _recalc() {
   var rotation = this._rotation;
   var len = points.length;
   var i;
+  var left = Infinity,
+    top = Infinity,
+    right = -Infinity,
+    bottom = -Infinity;
   for (i = 0; i < len; i++) {
     var calcPoint = calcPoints[i].copy(points[i]);
     calcPoint.x += offset.x;
@@ -637,7 +736,14 @@ Polygon.prototype._recalc = function _recalc() {
     if (rotation !== 0) {
       calcPoint.rotate(rotation);
     }
+
+    // Update AABB info
+    left = Math.min(left, calcPoint.x);
+    top = Math.min(top, calcPoint.y);
+    right = Math.max(right, calcPoint.x);
+    bottom = Math.max(bottom, calcPoint.y);
   }
+
   // Calculate the edges/normals
   for (i = 0; i < len; i++) {
     var p1 = calcPoints[i];
@@ -645,6 +751,11 @@ Polygon.prototype._recalc = function _recalc() {
     var e = edges[i].copy(p2).subtract(p1);
     normals[i].copy(e).perp().normalize();
   }
+
+  // Calculate size
+  this.width = right - left;
+  this.height = bottom - top;
+
   return this;
 };
 Object.defineProperty(Polygon.prototype, 'rotation', {
@@ -1274,9 +1385,25 @@ Scene.registerSystem('Physics', {
   update: function update(scene, delta) {
     scene.world.update(delta * 0.001);
   },
+  postUpdate: function postUpdate(scene) {
+    scene.world.collisionChecks = 0;
+  },
 });
 
+// Collision group helpers
+function getGroupMask(idx) {
+  if (idx < 31) {
+    return 1 << idx;
+  }
+  else {
+    console.log('Warning: only 0-30 indexed collisionGroups are supported!');
+    return 0;
+  }
+}
+
 module.exports = {
+  getGroupMask: getGroupMask,
+
   World: World,
   Body: Body,
 

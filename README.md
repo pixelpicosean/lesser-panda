@@ -10,10 +10,12 @@ LesserPanda has a lot of features, and the list is still growing:
 - Fixed game loop with customizable `FPS` and `frame skips`.
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
+- Multiply broad phase solution: "Simple" for collision less games and "SpatialHash" for collision heavy ones.
 - ECS(Entity Component System) like sub-systems.
 - Automatically choose the best resolution based on configs.
 - Tag is supported by sub-systems.
 - Mobile friendly.
+- Rotate prompt for mobile devices with just a few configs.
 - ES6 based scripting environment.
 - CSS style can be imported by using standard ES6 module system.
 - Live-reload browsers after any changes are saved.
@@ -55,6 +57,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `camera` 2D camera that can follow targets, zoom, rotate and shake.
 - `core` is the core of lesser-panda, which provides the base functionalities such as "loop" and "resize".
 - `device` tells what device the game is currently running.
+- `device-patch` includes patches to solve issues of specific devices.
 - `eventemitter3` is a fast EventEmitter implementation.
 - `keyboard` emits keyboard events, you need to subscribe to get noticed.
 - `loader` provides assets loading functon `addAsset(path, key, settings)`
@@ -78,7 +81,14 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
 - [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
 - Add Blender/Flash like keyframe based animation.
-- Add SAT based collision solver and a configuration for that.
+- Add SAT based collision solver.
+- Add SpatialHash based broad phase solution for collision heavy games.
+- Deprecate `dom` resize mode.
+- Change canvas style during resizing for some resize modes.
+- Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
+- Add a new `device-patch` module to solve device specific issues.
+- Add rotate prompt for mobile devices.
+- Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
 
 ### 0.3.4
 

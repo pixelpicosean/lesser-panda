@@ -28,7 +28,6 @@ export default {
    *  + crop          Resize the canvas to size of window
    *  + scale-inner   Resize the canvas and scale `container` of scene to show more
    *  + scale-outer   Resize the canvas and scale `container` of scene to show less
-   *  + dom           Resize the canvas to its DOM size
    *  + never         Never resize
    */
   resizeMode: 'letter-box',
@@ -38,6 +37,17 @@ export default {
    * when page is hidden
    */
   pauseOnHide: false,
+
+  /**
+   * Whether show a image or text to tell players to rotate device
+   * Only available on "mobile device".
+   * @type {Boolean}
+   */
+  showRotatePrompt: true,
+  rotatePromptBGColor: 'black',
+  rotatePromptFontColor: 'white',
+  rotatePromptImg: 'media/rotate.png',
+  rotatePromptMsg: 'Please Rotate Your Device!',
 
   renderer: {
     webGL: true,
@@ -72,7 +82,28 @@ export default {
      * Collision solver, available settings:
      * - AABB: Fast but only Box(not rotated) and Circle shapes are supported
      * - SAT:  Powerful SAT based, have convex Polygon and rotation support
+     * @default AABB
      */
-    solver: 'SAT',
+    solver: 'AABB',
+    /**
+     * Broad phase algorithm to use for collision detection
+     * - Simple: Check collision between every possible pairs, for small amount of bodies
+     * - SpatialHash: Advanced solution that performs best if the objects are sparsely distributed
+     * @default SpatialHash
+     */
+    broadPhase: 'SpatialHash',
+    /**
+     * This only works while using "SpatialHash" broad phase.
+     * Feel free to tweak this number for best performance.
+     * @type {Number}
+     * @default 5
+     */
+    spatialFactor: 5,
   },
+
+  /**
+   * First scene to launch after loading.
+   * You can change this behavior from `game/loading.js`
+   */
+  firstScene: 'Main',
 };

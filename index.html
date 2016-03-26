@@ -2,34 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="translucent-black">
+  <meta name="apple-mobile-web-app-title" content="Lesser Panda">
+  <!-- IE -->
+  <meta http-equiv="cleartype" content="on">
+
   <title>LesserPanda</title>
+
   <style type="text/css">
     html, body {
-      margin: 0;
-      padding: 0;
-
-      overflow: hidden;
-
-      /* Full window page */
       width: 100%;
       height: 100%;
 
-      /* Center align the canvas */
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      -ms-flex-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      -ms-flex-align: center;
-      align-items: center;
+      overflow: hidden;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      border: 0;
     }
     #game {
       /* No touch action */
@@ -52,6 +48,21 @@
       image-rendering: -o-crisp-edges;
       image-rendering: pixelated;
       -ms-interpolation-mode: nearest-neighbor;
+    }
+    /* Style the rotate prompt for mobile devices */
+    #lp-rotate {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+             -webkit-box-pack: center;
+      -webkit-justify-content: center;
+                -ms-flex-pack: center;
+              justify-content: center;
+        -webkit-box-align: center;
+      -webkit-align-items: center;
+           -ms-flex-align: center;
+              align-items: center;
     }
   </style>
 </head>
