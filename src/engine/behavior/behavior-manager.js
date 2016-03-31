@@ -1,5 +1,12 @@
 var utils = require('engine/utils');
 
+/**
+ * Behavior protocol
+ */
+var Behavior = {
+  init: function(target, settings, memory) {}
+};
+
 function BehaviorManager(owner) {
   this.owner = owner;
 
@@ -44,6 +51,11 @@ BehaviorManager.prototype.removeBehavior = function(name) {
     utils.removeItems(this.behaviors, this.behaviors.indexOf(this.behaviorMap[name]), 1);
     delete this.behaviorMap[name];
   }
+};
+
+BehaviorManager.prototype.removeBehaviors = function() {
+  this.behaviors.length = 0;
+  this.behaviorMap = {};
 };
 
 BehaviorManager.prototype.hasBehavior = function(name) {
