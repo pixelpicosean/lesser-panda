@@ -20,7 +20,10 @@ function BehaviorManager(owner) {
    *     // (like "pure functions")
    *     {
    *       isJumping: true,
-   *     }
+   *     },
+   *
+   *     // Settings to initialize this behavior
+   *     {}
    *   ]
    * }
    * @type {Object}
@@ -28,12 +31,12 @@ function BehaviorManager(owner) {
   this.behaviorMap = {};
 }
 
-BehaviorManager.prototype.addBehavior = function(behavior) {
-  if (!this.behaviorMap[behavior.name]) {
-    var pack = [behavior, true, {}];
-    this.behaviorMap[behavior.name] = pack;
-    this.behaviors.push(pack);
-  }
+BehaviorManager.prototype.addBehavior = function(behavior, settings) {
+  var pack = [behavior, true, {}, settings || {}];
+  this.behaviorMap[behavior.name] = pack;
+  this.behaviors.push(pack);
+
+  return this;
 };
 
 BehaviorManager.prototype.removeBehavior = function(name) {
@@ -73,7 +76,7 @@ BehaviorManager.prototype.initBehaviors = function() {
   var i, be;
   for (i = 0; i < this.behaviors.length; i++) {
     be = this.behaviors[i];
-    be[0].init(this.owner, be[2]);
+    be[0].init(this.owner, be[3], be[2]);
   }
 };
 
