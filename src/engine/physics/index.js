@@ -114,7 +114,9 @@ function World(x, y) {
 World.prototype.addBody = function addBody(body) {
   body.world = this;
   body._remove = false;
-  this.bodies.push(body);
+  if (this.bodies.indexOf(body) === -1) {
+    this.bodies.push(body);
+  }
   this.addBodyCollision(body);
 };
 
