@@ -178,7 +178,7 @@ Object.assign(Timer, {
   },
 
   /**
-   * Create a not repeat timer.
+   * Create an one-shoot timer.
    * @param {Number} wait        Time in milliseconds
    * @param {Function}  callback  Callback function to run, when timer ends
    * @param {Object}    context   Context of the callback to be invoked
@@ -206,6 +206,13 @@ Object.assign(Timer, {
     }
 
     return timer;
+  },
+  /**
+   * Create an one-shoot timer while the time is in seconds instead.
+   * @see Timer.later
+   */
+  laterSec: function laterSec(wait, callback, context, tag) {
+    this.later(Math.floor(wait * 1000), callback, context, tag);
   },
 
   /**
@@ -238,6 +245,14 @@ Object.assign(Timer, {
 
     return timer;
   },
+  /**
+   * Create a repeat timer while the time is in seconds instead.
+   * @see Timer.interval
+   */
+  intervalSec: function intervalSec(interval, callback, context, tag) {
+    this.later(Math.floor(interval * 1000), callback, context, tag);
+  },
+
   /**
    * Remove a timer.
    * @param {Timer} timer

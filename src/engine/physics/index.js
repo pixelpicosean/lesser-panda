@@ -1379,11 +1379,11 @@ Scene.registerSystem('Physics', {
   init: function init(scene) {
     scene.world = new World();
   },
-  preUpdate: function preUpdate(scene, delta) {
-    scene.world.preUpdate(delta * 0.001);
+  preUpdate: function preUpdate(scene, _, delta) {
+    scene.world.preUpdate(delta);
   },
-  update: function update(scene, delta) {
-    scene.world.update(delta * 0.001);
+  update: function update(scene, _, delta) {
+    scene.world.update(delta);
   },
   postUpdate: function postUpdate(scene) {
     scene.world.collisionChecks = 0;

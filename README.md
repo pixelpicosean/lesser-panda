@@ -89,6 +89,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - Add a new `device-patch` module to solve device specific issues.
 - Add rotate prompt for mobile devices.
 - Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
+- Pass delta time to update methods in both milliseconds and seconds.
 
 ### 0.3.4
 

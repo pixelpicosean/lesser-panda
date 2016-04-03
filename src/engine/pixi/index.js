@@ -89,7 +89,7 @@ Scene.registerSystem('Renderer', {
 
     activeScene = scene;
   },
-  update: function update(scene, dt) {
+  update: function update(scene, _, dt) {
     for (var i = 0; i < scene.displayObjects.length; i++) {
       scene.displayObjects[i].update(dt);
     }

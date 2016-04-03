@@ -282,8 +282,8 @@ Camera.prototype.remove = function remove() {
   this.container = null;
 };
 
-Camera.prototype.update = function update(delta) {
-  this.delta = delta * 0.001;
+Camera.prototype.update = function update(_, delta) {
+  this.delta = delta;
 
   this.moveSensor(this.delta);
   this.moveCamera(this.delta);

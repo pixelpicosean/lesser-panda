@@ -193,7 +193,7 @@ AnimatedSprite.prototype.update = function update(delta) {
     return;
   }
   else if (this.playing) {
-    this._frameTime += anim.speed * (delta / 1000.0);
+    this._frameTime += anim.speed * delta;
   }
 
   if (this._frameTime > 1) {

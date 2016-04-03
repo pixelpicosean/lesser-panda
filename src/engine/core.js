@@ -347,7 +347,7 @@ function updateScene(scene) {
 
   // Update current scene
   if (scene) {
-    scene._update(slowStep);
+    scene._update(slowStep, slowStep * 0.001);
   }
 }
 var skipFrameCounter = 0;

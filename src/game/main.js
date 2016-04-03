@@ -94,11 +94,11 @@ class Main extends Scene {
     this.circle = this.addCircle(engine.width - 80, engine.height - 50, 8, { color: 0xff91b7, mass: 0.2 });
     this.circle.body.velocity.x = -30;
   }
-  update(dt) {
+  update(deltaMS, deltaSec) {
     this.info.x = engine.width * 0.5 - this.info.width * 0.5;
 
     // Rotation also affects collisions
-    this.box.rotation += Math.PI * (dt * 0.001) * (this.box.body.velocity.x * 0.075);
+    this.box.rotation += Math.PI * deltaSec * (this.box.body.velocity.x * 0.075);
   }
 
   addBox(x, y, w, h, { color, mass = 0 }) {
