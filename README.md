@@ -72,6 +72,11 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `utils` provides some math functions and helpers.
 - `vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
 
+## Progress
+
+There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which you will see what's coming next.
+Github issue and milestone maybe better for progress tracking~
+
 ## ChangeLog
 
 ### 0.4.0-dev
