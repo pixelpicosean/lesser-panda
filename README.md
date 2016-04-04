@@ -78,18 +78,19 @@ The engine itself contains both engine sources and a folder called `game` for yo
 
 - Emit `pause` and `resume` events from `core`.
 - Add resolution config, and renderer will pick the most suited resolution base on your configs.
-- [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
-- [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
 - Add Blender/Flash like keyframe based animation.
 - Add SAT based collision solver.
 - Add SpatialHash based broad phase solution for collision heavy games.
-- Deprecate `dom` resize mode.
 - Change canvas style during resizing for some resize modes.
 - Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
 - Add a new `device-patch` module to solve device specific issues.
 - Add rotate prompt for mobile devices.
-- Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
-- Pass delta time to update methods in both milliseconds and seconds.
+- [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
+- [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
+- [Changes] Deprecate `dom` resize mode.
+- [Changes] Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
+- [Changes] Pass delta time to update methods in both milliseconds and seconds.
+- [Changes] Upgrade PIXI to `master/3.0.11`
 
 ### 0.3.4
 
