@@ -59,20 +59,6 @@ function AnimatedSprite(textures) {
 
   this.textures = textures;
 
-  var newTextures = [];
-  for (var i = 0; i < this.textures.length; i++) {
-    var texture = this.textures[i];
-    if (!(texture instanceof core.Texture)) {
-      texture = core.Texture.fromAsset(texture);
-    }
-
-    newTextures.push(texture);
-  }
-
-  if (newTextures.length > 0) {
-    this.textures = newTextures;
-  }
-
   this.addAnim('default');
 
   core.Sprite.call(this, this.textures[0]);
