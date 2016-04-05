@@ -53,15 +53,9 @@ export default class HorizontalMove extends Behavior {
   // Private
   update(_, dt) {
     if (this.useKeyboard) {
-      if (keyboard.down(this.leftKey) && !keyboard.down(this.rightKey)) {
-        this.moveLeft();
-      }
-      else if (keyboard.down(this.rightKey) && !keyboard.down(this.leftKey)) {
-        this.moveRight();
-      }
-      else {
-        this.stop();
-      }
+      this.dir = 0;
+      if (keyboard.down(this.leftKey)) this.dir -= 1;
+      if (keyboard.down(this.rightKey)) this.dir += 1;
     }
 
     this.target.position.x += this.dir * this.speed * dt;

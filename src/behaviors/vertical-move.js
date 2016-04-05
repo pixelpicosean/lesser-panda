@@ -53,15 +53,9 @@ export default class VerticalMove extends Behavior {
   // Private
   update(_, dt) {
     if (this.useKeyboard) {
-      if (keyboard.down(this.upKey) && !keyboard.down(this.downKey)) {
-        this.moveUp();
-      }
-      else if (keyboard.down(this.downKey) && !keyboard.down(this.upKey)) {
-        this.moveDown();
-      }
-      else {
-        this.stop();
-      }
+      this.dir = 0;
+      if (keyboard.down(this.upKey)) this.dir -= 1;
+      if (keyboard.down(this.downKey)) this.dir += 1;
     }
 
     this.target.position.y += this.dir * this.speed * dt;
