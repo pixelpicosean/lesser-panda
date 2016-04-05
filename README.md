@@ -81,6 +81,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.0-dev
 
+- Add `Behavior` base class and some simple behaviors.
 - Emit `pause` and `resume` events from `core`.
 - Add resolution config, and renderer will pick the most suited resolution base on your configs.
 - Add Blender/Flash like keyframe based animation.
