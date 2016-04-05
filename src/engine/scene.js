@@ -55,7 +55,7 @@ Scene.prototype._awake = function _awake() {
  * Called each single frame once or more
  */
 Scene.prototype._update = function _update(deltaMS, deltaSec) {
-  var i;
+  var i, sys;
 
   // Pre-update
   for (i in this.updateOrder) {
@@ -92,6 +92,7 @@ Scene.prototype._freeze = function _freeze() {
   this.emit('freeze');
   this.freeze();
 
+  var i, sys;
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
     sys && sys.freeze && sys.freeze(this);
