@@ -1,13 +1,13 @@
 var utils = require('engine/utils');
 
 /**
- * Behavior protocol
+ * AI behavior protocol
  */
 var Behavior = {
   init: function(target, settings, memory) {}
 };
 
-function BehaviorManager(owner) {
+function Brain(owner) {
   this.owner = owner;
 
   this.behaviors = [];
@@ -17,7 +17,7 @@ function BehaviorManager(owner) {
    *   // Each item is an array
    *   'Jump': [
    *     // Reference to the behavior object
-   *     BehaviorJump,
+   *     Seek,
    *
    *     // Whether this behavior is enabled
    *     true,
@@ -26,7 +26,7 @@ function BehaviorManager(owner) {
    *     // so that behaviors will never mutate themselves
    *     // (like "pure functions")
    *     {
-   *       isJumping: true,
+   *       targetPos: { x: 100, y: 100 }
    *     },
    *
    *     // Settings to initialize this behavior
@@ -38,7 +38,7 @@ function BehaviorManager(owner) {
   this.behaviorMap = {};
 }
 
-BehaviorManager.prototype.addBehavior = function(behavior, settings) {
+Brain.prototype.addBehavior = function(behavior, settings) {
   var pack = [behavior, true, {}, settings || {}];
   this.behaviorMap[behavior.name] = pack;
   this.behaviors.push(pack);
@@ -46,37 +46,37 @@ BehaviorManager.prototype.addBehavior = function(behavior, settings) {
   return this;
 };
 
-BehaviorManager.prototype.removeBehavior = function(name) {
+Brain.prototype.removeBehavior = function(name) {
   if (this.behaviorMap.hasOwnProperty(name)) {
     utils.removeItems(this.behaviors, this.behaviors.indexOf(this.behaviorMap[name]), 1);
     delete this.behaviorMap[name];
   }
 };
 
-BehaviorManager.prototype.removeBehaviors = function() {
+Brain.prototype.removeBehaviors = function() {
   this.behaviors.length = 0;
   this.behaviorMap = {};
 };
 
-BehaviorManager.prototype.hasBehavior = function(name) {
+Brain.prototype.hasBehavior = function(name) {
   return this.behaviorMap.hasOwnProperty(name);
 };
 
-BehaviorManager.prototype.enableBehavior = function(name) {
+Brain.prototype.enableBehavior = function(name) {
   var be = this.behaviorMap[name];
   if (be) {
     be[1] = true;
   }
 };
 
-BehaviorManager.prototype.disableBehavior = function(name) {
+Brain.prototype.disableBehavior = function(name) {
   var be = this.behaviorMap[name];
   if (be) {
     be[1] = false;
   }
 };
 
-BehaviorManager.prototype.isBehaviorEnabled = function(name) {
+Brain.prototype.isBehaviorEnabled = function(name) {
   var be = this.behaviorMap[name];
   if (be) {
     return be[1];
@@ -84,7 +84,7 @@ BehaviorManager.prototype.isBehaviorEnabled = function(name) {
   return false;
 };
 
-BehaviorManager.prototype.initBehaviors = function() {
+Brain.prototype.initBehaviors = function() {
   var i, be;
   for (i = 0; i < this.behaviors.length; i++) {
     be = this.behaviors[i];
@@ -92,4 +92,4 @@ BehaviorManager.prototype.initBehaviors = function() {
   }
 };
 
-module.exports = exports = BehaviorManager;
+module.exports = exports = Brain;
