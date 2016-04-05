@@ -52,13 +52,6 @@ function Actor(spriteCreator, bodyCreator) {
   this.velocityLimit = this.body.velocityLimit;
 
   /**
-   * Acceleration
-   * @type {Vector}
-   * @default (0, 0)
-   */
-  this.acceleration = this.body.acceleration;
-
-  /**
    * Force
    * @type {Vector}
    * @default (0, 0)
