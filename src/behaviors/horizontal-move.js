@@ -23,24 +23,20 @@ import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 
 export default class HorizontalMove extends Behavior {
-  speed = 200;
-
-  useKeyboard = true;
-  leftKey = 'LEFT';
-  rightKey = 'RIGHT';
-
   constructor(settings) {
-    super(settings);
+    super();
 
+    this.speed = 200;
+
+    this.useKeyboard = true;
+    this.leftKey = 'LEFT';
+    this.rightKey = 'RIGHT';
+
+    /* @private */
+    this.needUpdate = true;
     this.dir = 0;
-  }
-  activate() {
-    this.scene.addObject(this);
-    return super.activate();
-  }
-  deactivate() {
-    this.scene.removeObject(this);
-    return super.deactivate();
+
+    Object.assign(this, settings);
   }
 
   // Actions

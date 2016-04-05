@@ -3,13 +3,12 @@
  * All the built-in behaviors inherit from this one.
  */
 
-function Behavior(settings) {
+function Behavior() {
   this.isActive = false;
+  this.needUpdate = false;
 
   this.target = null;
   this.scene = null;
-
-  Object.assign(this, settings);
 };
 /**
  * Add to target and scene
@@ -28,6 +27,9 @@ Behavior.prototype.addTo = function addTo(target, scene) {
  */
 Behavior.prototype.activate = function activate() {
   this.isActive = true;
+  if (this.needUpdate) {
+    this.scene.addObject(this);
+  }
   return this;
 };
 /**
@@ -36,6 +38,9 @@ Behavior.prototype.activate = function activate() {
  */
 Behavior.prototype.deactivate = function deactivate() {
   this.isActive = false;
+  if (this.needUpdate) {
+    this.scene.removeObject(this);
+  }
   return this;
 };
 

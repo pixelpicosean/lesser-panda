@@ -23,24 +23,20 @@ import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 
 export default class VerticalMove extends Behavior {
-  speed = 200;
-
-  useKeyboard = true;
-  upKey = 'UP';
-  downKey = 'DOWN';
-
   constructor(settings) {
-    super(settings);
+    super();
 
+    this.speed = 200;
+
+    this.useKeyboard = true;
+    this.upKey = 'UP';
+    this.downKey = 'DOWN';
+
+    /* @private */
+    this.needUpdate = true;
     this.dir = 0;
-  }
-  activate() {
-    this.scene.addObject(this);
-    return super.activate();
-  }
-  deactivate() {
-    this.scene.removeObject(this);
-    return super.deactivate();
+
+    Object.assign(this, settings);
   }
 
   // Actions
