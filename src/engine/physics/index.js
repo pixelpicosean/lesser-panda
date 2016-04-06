@@ -610,7 +610,7 @@ Body.prototype.update = function update(delta) {
   }
 
   this.velocity.add(this.force.x * delta, this.force.y * delta);
-  if (this.damping > 0 && this.damping < 1) this.velocity.scale(Math.pow(1 - this.damping, delta));
+  if (this.damping > 0 && this.damping < 1) this.velocity.multiply(Math.pow(1 - this.damping, delta));
 
   if (this.velocityLimit.x > 0) this.velocity.x = utils.clamp(this.velocity.x, -this.velocityLimit.x, this.velocityLimit.x);
   if (this.velocityLimit.y > 0) this.velocity.y = utils.clamp(this.velocity.y, -this.velocityLimit.y, this.velocityLimit.y);
