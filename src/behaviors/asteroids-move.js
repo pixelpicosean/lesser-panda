@@ -88,7 +88,6 @@ export default class AsteroidMove extends Behavior {
   update(_, dt) {
     let force = this.target.force;
     let vel = this.target.velocity;
-    this.scene.info.text = `force: (${force.x.toFixed(2)}, ${force.y.toFixed(2)}), vel: (${vel.x.toFixed(2)}, ${vel.y.toFixed(2)}), turn: ${this.turnSpeed.toFixed(2)}`;
 
     if (this.useKeyboard) {
       this.target.force.set(0);
