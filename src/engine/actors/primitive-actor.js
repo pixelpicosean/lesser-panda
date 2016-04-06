@@ -59,17 +59,17 @@ function PrimitiveActor(shape_, color_, param) {
       sprite.lineTo(param[i].x, param[i].y);
     }
   }
-  spr.endFill();
+  sprite.endFill();
 
   var body;
   if (shape === 'Circle') {
     body = new physics.Body({
-      shape: new physics.Circle(texture.width * 0.5),
+      shape: new physics.Circle(sprite.width * 0.5),
     });
   }
   else if (shape === 'Box') {
     body = new physics.Body({
-      shape: new physics.Box(texture.width, texture.height),
+      shape: new physics.Box(sprite.width, sprite.height),
     });
   }
   else if (shape === 'Polygon') {
