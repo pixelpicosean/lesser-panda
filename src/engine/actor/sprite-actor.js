@@ -3,24 +3,20 @@ var physics = require('engine/physics');
 
 var Actor = require('./actor');
 
-function SpriteActor(texture, shape) {
-  var sprite = function() {
-    return new PIXI.Sprite(texture);
-  };
-  var body = function() {
-    var shape = (shape === 'Circle') ? 'Circle' : 'Box';
+function SpriteActor(texture, shape_) {
+  var sprite = new PIXI.Sprite(texture);
 
-    if (shape === 'Circle') {
-      return new physics.Body({
-        shape: new physics.Circle(texture.width * 0.5),
-      });
-    }
-    else {
-      return new physics.Body({
-        shape: new physics.Box(texture.width, texture.height),
-      });
-    }
-  };
+  var body, shape = (shape_ === 'Circle') ? 'Circle' : 'Box';
+  if (shape === 'Circle') {
+    body = new physics.Body({
+      shape: new physics.Circle(texture.width * 0.5),
+    });
+  }
+  else {
+    body = new physics.Body({
+      shape: new physics.Box(texture.width, texture.height),
+    });
+  }
 
   Actor.call(sprite, body);
 }

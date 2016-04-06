@@ -40,49 +40,43 @@ function PrimitiveActor(shape_, color_, param) {
 
   validation(shape, param);
 
-  var sprite = function() {
-    var spr = new PIXI.Graphics();
-    spr.beginFill(color);
+  var sprite = new PIXI.Graphics();
+  sprite.beginFill(color);
+  if (shape === 'Circle') {
+    sprite.drawCircle(0, 0, param);
+  }
+  else if (shape === 'Box') {
+    if (typeof(param) === 'number') {
+      sprite.drawRect(-param * 0.5, -param * 0.5, param, param);
+    }
+    else {
+      sprite.drawRect(-param.x * 0.5, -param.y * 0.5, param.x, param.y);
+    }
+  }
+  else if (shape === 'Polygon') {
+    sprite.moveTo(param[0].x, param[0].y);
+    for (var i = 1; i < param.length; i++) {
+      sprite.lineTo(param[i].x, param[i].y);
+    }
+  }
+  spr.endFill();
 
-    if (shape === 'Circle') {
-      spr.drawCircle(0, 0, param);
-    }
-    else if (shape === 'Box') {
-      if (typeof(param) === 'number') {
-        spr.drawRect(-param * 0.5, -param * 0.5, param, param);
-      }
-      else {
-        spr.drawRect(-param.x * 0.5, -param.y * 0.5, param.x, param.y);
-      }
-    }
-    else if (shape === 'Polygon') {
-      spr.moveTo(param[0].x, param[0].y);
-      for (var i = 1; i < param.length; i++) {
-        spr.lineTo(param[i].x, param[i].y);
-      }
-    }
-
-    spr.endFill();
-  };
-  var body = function() {
-    var shape = (shape === 'Circle') ? 'Circle' : 'Box';
-
-    if (shape === 'Circle') {
-      return new physics.Body({
-        shape: new physics.Circle(texture.width * 0.5),
-      });
-    }
-    else if (shape === 'Box') {
-      return new physics.Body({
-        shape: new physics.Box(texture.width, texture.height),
-      });
-    }
-    else if (shape === 'Polygon') {
-      return new physics.Body({
-        shape: new physics.Polygon(param),
-      });
-    }
-  };
+  var body;
+  if (shape === 'Circle') {
+    body = new physics.Body({
+      shape: new physics.Circle(texture.width * 0.5),
+    });
+  }
+  else if (shape === 'Box') {
+    body = new physics.Body({
+      shape: new physics.Box(texture.width, texture.height),
+    });
+  }
+  else if (shape === 'Polygon') {
+    body = new physics.Body({
+      shape: new physics.Polygon(param),
+    });
+  }
 
   Actor.call(sprite, body);
 }

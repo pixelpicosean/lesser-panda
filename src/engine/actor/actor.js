@@ -5,23 +5,23 @@ var EventEmitter = require('engine/eventemitter3');
  * a physics.Body instance.
  * The `sprite` and `body` share the same postion and rotation,
  * designed to be easy to use.
- * @param {Function} spriteCreator  Function that create the sprite
- * @param {Function} bodyCreator    Function that create the body
+ * @param {PIXI.Container} sprite Sprite for visual display
+ * @param {physics.Body} body
  */
-function Actor(spriteCreator, bodyCreator) {
+function Actor(sprite, body) {
   EventEmitter.call(this);
 
   /**
-   * Sprite instance
-   * @type {PIXI.Sprite}
+   * Sprite for visual display
+   * @type {PIXI.Container}
    */
-  this.sprite = spriteCreator();
+  this.sprite = sprite;
 
   /**
    * Body instance
    * @type {physics}
    */
-  this.body = bodyCreator();
+  this.body = body;
 
   /**
    * Anchor
