@@ -517,6 +517,24 @@ Object.defineProperty(Body.prototype, 'rotation', {
   },
 });
 
+Object.defineProperty(Body.prototype, 'width', {
+  get: function() {
+    return this.shape ? this.shape.width : 0;
+  },
+  set: function(width) {
+    this.shape && (this.shape.width = width);
+  },
+});
+
+Object.defineProperty(Body.prototype, 'height', {
+  get: function() {
+    return this.shape ? this.shape.height : 0;
+  },
+  set: function(height) {
+    this.shape && (this.shape.height = height);
+  },
+});
+
 /**
  * This will be called before collision checking.
  * You can clean up collision related flags here.
