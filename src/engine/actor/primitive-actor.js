@@ -78,7 +78,7 @@ function PrimitiveActor(shape_, color_, param) {
     });
   }
 
-  Actor.call(sprite, body);
+  Actor.call(this, sprite, body);
 }
 PrimitiveActor.prototype = Object.create(Actor.prototype);
 PrimitiveActor.prototype.constructor = PrimitiveActor;

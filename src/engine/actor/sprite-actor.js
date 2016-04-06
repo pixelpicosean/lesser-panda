@@ -18,7 +18,7 @@ function SpriteActor(texture, shape_) {
     });
   }
 
-  Actor.call(sprite, body);
+  Actor.call(this, sprite, body);
 }
 SpriteActor.prototype = Object.create(Actor.prototype);
 SpriteActor.prototype.constructor = SpriteActor;
