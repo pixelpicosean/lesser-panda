@@ -304,5 +304,15 @@ Object.defineProperty(Camera.prototype, 'right', {
     return this.position.x + engine.width * (1 - this.anchor.x);
   },
 });
+Object.defineProperty(Camera.prototype, 'top', {
+  get: function() {
+    return this.position.y - engine.height * this.anchor.y;
+  },
+});
+Object.defineProperty(Camera.prototype, 'bottom', {
+  get: function() {
+    return this.position.y + engine.height * (1 - this.anchor.y);
+  },
+});
 
 module.exports = Camera;

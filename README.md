@@ -92,6 +92,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.0-dev
 
+- Add `top` and `bottom` properties to `Camera` object.
 - Add `width` and `height` properties to `physics.Body`, which map to `shape.width` and `shape.height`.
 - Add high level `Actor`, `SpriteActor`, `AnimatedActor` and `PrimitiveActor` classes.
 - Add `Behavior` base class and some simple behaviors.
