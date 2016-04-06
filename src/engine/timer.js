@@ -145,6 +145,12 @@ Object.assign(Timer, {
    */
   delta: 0,
   /**
+   * A cumulative number represents how long has passed since the
+   * game is launched (in milliseconds).
+   * @type {Number}
+   */
+  now: 0,
+  /**
    * Map of timers
    * @type {Object}
    */
@@ -159,6 +165,8 @@ Object.assign(Timer, {
    */
   update: function update(delta) {
     this.delta = delta;
+
+    this.now += delta;
 
     var i, key, timers;
     for (key in this.timers) {
