@@ -144,6 +144,7 @@ Actor.prototype.addTo = function addTo(scene, parent, tag) {
   this.parent = parent;
 
   this.parent.addChild(this.sprite);
+  this.scene.world.addBody(this.body);
   this.scene.addObject(this, tag);
 
   return this;
