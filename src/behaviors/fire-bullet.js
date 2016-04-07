@@ -3,69 +3,70 @@
  *
  * @protocol {
  *   position: Vector
+ *   createBullet: Function(position: Vector, direction: Number)
+ *   rotation: Number (only required when directionMode = "Relative")
  * }
  *
- * @action moveUp   Start to move up
- * @action moveDown Start to move down
- * @action stop     Stop
- *
- * @setting {
- *   useKeyboard [Boolean]  Whether use keyboard to control
- *   fireKey [String]       Press to fire, when `useKeyboard` is true
- *   bulletCreator [Function] Factory that creates bullets, bullet(position, rotation)
- *   rapid [Boolean]        Fire continually or not
- *   fireBetween [Number]   Time between 2 bullets, when `rapid` is true
- *   directionMode [String] "Relative" to target rotation or "Absolute" value
- *   direction [Number]     Angle that applied to bullets, based on `directionMode`
- * }
+ * @action fire Fire a bullet
  */
 
 import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
+import Vector from 'engine/vector';
 
-export default class FireBullet extends Behavior {
-  constructor(settings) {
-    super();
+const settings = {
+  /* Whether use keyboard to control */
+  useKeyboard: true,
+  /* Press to fire, when `useKeyboard` is true */
+  key: 'X',
 
-    this.useKeyboard = true;
-    this.fireKey = 'X';
+  /* Fire continually or not */
+  rapid: true,
+  /* Time between 2 bullets, when `rapid` is true */
+  fireBetween: 400,
 
-    this.bulletCreator = null;
+  /* "Relative" to target rotation or "Absolute" value */
+  directionMode: 'Relative',
+  /* Angle that applied to bullets, based on `directionMode` */
+  direction: 0,
+};
 
-    this.rapid = true;
-    this.fireBetween = 400;
+function fire() {
+  if (this.FireBullet.fireTimer > 0) return;
 
-    /* Relative, Absolute */
-    this.directionMode = 'Relative';
-    this.direction = 0;
-
-    /* @private */
-    this.needUpdate = true;
-    this._dir = 0;
-
-    Object.assign(this, settings);
+  if (this.FireBullet.rapid) {
+    this.FireBullet.fireTimer = this.FireBullet.fireBetween;
   }
 
-  // Actions
-  fire() {
-    if (this._fireTimer > 0) return;
+  this.FireBullet.dir = (this.FireBullet.directionMode === 'Relative') ? this.rotation + this.FireBullet.direction : this.FireBullet.direction;
+  this.createBullet(this.FireBullet.emitPoint, this.FireBullet.dir);
+}
 
-    if (rapid) {
-      this._fireTimer = this.fireBetween;
-    }
+// Function to setup target
+const targetSetup = function() {
+  this.fire = fire;
+};
 
-    this._dir = (this.directionMode === 'Relative') ? this.target.rotation + this.direction : this.direction;
-    this.bulletCreator(this.target.position, this._dir);
+export default class FireBullet extends Behavior {
+  get emitPoint() {
+    return this._emitPoint.set(this.offset, 0)
+      .rotate(this.dir);
+  }
+
+  constructor(s) {
+    super('FireBullet', targetSetup, Object.assign({}, settings, s), true);
+
+    this._emitPoint = Vector.create();
   }
 
   // Private
   update(dt) {
-    if (this._fireTimer > 0) {
-      this._fireTimer -= dt;
+    if (this.fireTimer > 0) {
+      this.fireTimer -= dt;
     }
 
-    if (this.useKeyboard && keyboard.down(this.fireKey)) {
-      this.fire();
+    if (this.useKeyboard && keyboard.down(this.key)) {
+      this.target.fire();
     }
   }
 }
