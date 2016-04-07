@@ -13,26 +13,6 @@
  *   force: Vector,
  *   rotation: Number,
  * }
- *
- * @action pushForward
- * @action pushBackward
- * @action turnLeft
- * @action turnRight
- *
- * @setting {
- *   useKeyboard [Boolean]    Whether use keyboard to control
- *   forwardKey [String]      Hold to push forward, when `useKeyboard` is true
- *   backwardKey [String]     Hold to push backward, when `useKeyboard` is true
- *   leftKey [String]         Hold to turn left, when `useKeyboard` is true
- *   rightKey [String]        Hold to turn right, when `useKeyboard` is true
- *   forwardForce [Number]    The force to move forward
- *   backwardForce [Number]   The force to move backward
- *   torque [Number]          The force to turn
- *   maxVelocity [Vector]     Same as Body.velocityLimit
- *   maxTurnSpeed [Number]    Max turn speed
- *   damping [Number]         Damping of velocity
- *   angularDamping [Number]  Damping of angular velocity(turn)
- * }
  */
 
 import keyboard from 'engine/keyboard';
@@ -40,65 +20,84 @@ import Behavior from 'engine/behavior';
 import Vector from 'engine/vector';
 import { clamp } from 'engine/utils';
 
-export default class AsteroidMove extends Behavior {
-  constructor(settings) {
-    super();
+const settings = {
+  /* Whether use keyboard to control */
+  useKeyboard: true,
+  /* Hold to push forward, when `useKeyboard` is true */
+  forwardKey: 'UP',
+  /* Hold to push backward, when `useKeyboard` is true */
+  backwardKey: 'DOWN',
+  /* Hold to turn left, when `useKeyboard` is true */
+  leftKey: 'LEFT',
+  /* Hold to turn right, when `useKeyboard` is true */
+  rightKey: 'RIGHT',
 
-    this.useKeyboard = true;
-    this.forwardKey = 'UP';
-    this.backwardKey = 'DOWN';
-    this.leftKey = 'LEFT';
-    this.rightKey = 'RIGHT';
-    this.forwardForce = 10;
-    this.backwardForce = 8;
-    this.torque = 1;
-    this.maxVelocity = Vector.create(400);
-    this.maxTurnSpeed = 3;
-    this.damping = 0.2;
-    this.angularDamping = 0.2;
+  /* The force to move forward */
+  forwardForce: 10,
+  /* The force to move backward */
+  backwardForce: 8,
 
-    /* @private */
-    this.needUpdate = true;
+  /* The force to turn */
+  torque: 1,
+
+  /* Same as Body.velocityLimit */
+  maxVelocity: Vector.create(400),
+  /* Max turn speed */
+  maxTurnSpeed: 3,
+
+  /* Damping of velocity */
+  damping: 0.2,
+  /* Damping of angular velocity(turn) */
+  angularDamping: 0.2,
+};
+
+// Move forward
+function pushForward() {
+  this.force
+    .copy(this.AsteroidsMove.dir)
+    .multiply(this.AsteroidsMove.forwardForce)
+}
+// Move backward
+function pushBackward() {
+  this.force
+    .copy(this.AsteroidsMove.dir)
+    .multiply(-this.AsteroidsMove.backwardForce)
+}
+// Turn left
+function turnLeft() {
+  this.AsteroidsMove.turning = -1;
+}
+// Turn right
+function turnRight() {
+  this.AsteroidsMove.turning = 1;
+}
+
+const setupTarget = function() {
+  this.pushForward = pushForward;
+  this.pushBackward = pushBackward;
+  this.turnLeft = turnLeft;
+  this.turnRight = turnRight;
+
+  this.damping = this.AsteroidsMove.damping;
+};
+
+export default class AsteroidsMove extends Behavior {
+  constructor(s) {
+    super('AsteroidsMove', setupTarget, Object.assign({}, settings, s), true);
+
     this.dir = Vector.create(1, 0);
     this.turnSpeed = 0;
     this.turning = 0;
-
-    Object.assign(this, settings);
   }
-
-  // Actions
-  pushForward() {
-    this.target.force
-      .copy(this.dir)
-      .multiply(this.forwardForce)
-  }
-  pushBackward() {
-    this.target.force
-      .copy(this.dir)
-      .multiply(-this.backwardForce)
-  }
-  turnLeft() {
-    this.turning = -1;
-  }
-  turnRight() {
-    this.turning = 1;
-  }
-
-  // Private
   update(_, dt) {
-    let force = this.target.force;
-    let vel = this.target.velocity;
-
     if (this.useKeyboard) {
       this.target.force.set(0);
       this.turning = 0;
-      if (keyboard.down(this.forwardKey)) this.pushForward();
-      if (keyboard.down(this.backwardKey)) this.pushBackward();
+      if (keyboard.down(this.forwardKey)) this.target.pushForward();
+      if (keyboard.down(this.backwardKey)) this.target.pushBackward();
       if (keyboard.down(this.leftKey)) this.turning -= 1;
       if (keyboard.down(this.rightKey)) this.turning += 1;
     }
-
-    this.target.damping = this.damping;
 
     // Update turning
     if (this.turning !== 0) {
