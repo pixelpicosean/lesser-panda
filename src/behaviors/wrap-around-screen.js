@@ -1,21 +1,22 @@
 /**
  * Wrap around the screen, works with or without camera
+ * TODO: take target size into account
  *
  * @protocol {
  *   position: Vector
  * }
- *
- * @setting {}
  */
 
 import engine from 'engine/core';
 import Behavior from 'engine/behavior';
 
-export default class WrapAroundScreen extends Behavior {
-  constructor(settings) {
-    super();
+const settings = {};
+const setupTarget = () => {};
 
-    /* @private */
+export default class WrapAroundScreen extends Behavior {
+  constructor(s) {
+    super('WrapAroundScreen', setupTarget, settings, true);
+
     this.needUpdate = true;
     this.left = 0;
     this.right = 0;
@@ -23,13 +24,7 @@ export default class WrapAroundScreen extends Behavior {
     this.bottom = 0;
     this.width = 0;
     this.height = 0;
-
-    Object.assign(this, settings);
   }
-
-  // Actions
-
-  // Private
   update(_, dt) {
     // Update bounds
     if (this.scene.camera) {
