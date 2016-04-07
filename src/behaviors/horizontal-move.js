@@ -35,7 +35,7 @@ function stop() {
   this.HorizontalMove.dir = 0;
 }
 
-const setupTarget = () => {
+const setupTarget = function() {
   this.moveLeft = moveLeft;
   this.moveRight = moveRight;
   this.stop = stop;

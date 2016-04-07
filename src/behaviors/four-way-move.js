@@ -55,7 +55,7 @@ function stop() {
   this.FourWayMove.dir.set(0);
 }
 
-const setupTarget = () => {
+const setupTarget = function() {
   this.moveLeft = moveLeft;
   this.moveRight = moveRight;
   this.moveUp = moveUp;

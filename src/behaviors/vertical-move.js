@@ -36,7 +36,7 @@ function stop() {
   this.VerticalMove.dir = 0;
 }
 
-const setupTarget = () => {
+const setupTarget = function() {
   this.moveUp = moveUp;
   this.moveDown = moveDown;
   this.stop = stop;

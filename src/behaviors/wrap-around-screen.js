@@ -11,7 +11,7 @@ import engine from 'engine/core';
 import Behavior from 'engine/behavior';
 
 const settings = {};
-const setupTarget = () => {};
+const setupTarget = function() {};
 
 export default class WrapAroundScreen extends Behavior {
   constructor(s) {

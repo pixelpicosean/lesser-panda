@@ -5,11 +5,11 @@
 
 var EventEmitter = require('engine/eventemitter3');
 
-function Behavior(type, targetSetup, settings, needUpdate) {
+function Behavior(type, setupTarget, settings, needUpdate) {
   EventEmitter.call(this);
 
   this.type = type;
-  this.targetSetup = targetSetup;
+  this.setupTarget = setupTarget;
   this.needUpdate = needUpdate;
 
   this.isActive = false;
@@ -37,7 +37,7 @@ Behavior.prototype.addTo = function addTo(target, scene) {
   target[this.type] = this;
 
   // Setup target object
-  this.targetSetup.call(target);
+  this.setupTarget.call(target);
 
   return this;
 };

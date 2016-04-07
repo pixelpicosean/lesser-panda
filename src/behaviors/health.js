@@ -50,7 +50,7 @@ function kill() {
 }
 
 // Function to setup target
-const setupTarget = () => {
+const setupTarget = function() {
   Object.defineProperty(this, 'health', {
     get: function() { return this.Health.health },
     set: function(v) {

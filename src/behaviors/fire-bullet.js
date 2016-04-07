@@ -43,7 +43,7 @@ function fire() {
 }
 
 // Function to setup target
-const setupTarget = () => {
+const setupTarget = function() {
   this.fire = fire;
 };
 
