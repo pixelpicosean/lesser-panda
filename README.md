@@ -80,6 +80,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `VerticalMove` move objects up/down
 - `FourWayMove` move objects left/right/up/down
 - `AsteroidsMove` move like ships of classic Asteroids game
+- `Health` health, receiveDamage and heal
 
 More behaviors are coming soon.
 
