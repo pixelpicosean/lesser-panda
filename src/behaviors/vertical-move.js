@@ -6,51 +6,48 @@
  *     y: Number
  *   }
  * }
- *
- * @action moveUp   Start to move up
- * @action moveDown Start to move down
- * @action stop     Stop
- *
- * @setting {
- *   speed [Number]         Move speed
- *   useKeyboard [Boolean]  Whether use keyboard to control
- *   upKey [String]         Hold to move up, when `useKeyboard` is true
- *   downKey [String]       Hold to move down, when `useKeyboard` is true
- * }
  */
 
 import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 
+const settings = {
+  /* Move speed */
+  speed: 200,
+
+  /* Whether use keyboard to control */
+  useKeyboard: true,
+  /* Hold to move up, when `useKeyboard` is true */
+  upKey: 'UP',
+  /* Hold to move down, when `useKeyboard` is true */
+  downKey: 'DOWN',
+};
+
+// Start to move up
+function moveUp() {
+  this.VerticalMove.dir = -1;
+}
+// Start to move down
+function moveDown() {
+  this.VerticalMove.dir = 1;
+}
+// Stop
+function stop() {
+  this.VerticalMove.dir = 0;
+}
+
+const setupTarget = () => {
+  this.moveUp = moveUp;
+  this.moveDown = moveDown;
+  this.stop = stop;
+};
+
 export default class VerticalMove extends Behavior {
-  constructor(settings) {
-    super();
+  constructor(s) {
+    super('VerticalMove', setupTarget, Object.assign({}, settings, s), true);
 
-    this.speed = 200;
-
-    this.useKeyboard = true;
-    this.upKey = 'UP';
-    this.downKey = 'DOWN';
-
-    /* @private */
-    this.needUpdate = true;
-    this.dir = 0;
-
-    Object.assign(this, settings);
-  }
-
-  // Actions
-  moveUp() {
-    this.dir = -1;
-  }
-  moveDown() {
-    this.dir = 1;
-  }
-  stop() {
     this.dir = 0;
   }
-
-  // Private
   update(_, dt) {
     if (this.useKeyboard) {
       this.dir = 0;
