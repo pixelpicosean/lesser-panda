@@ -1,74 +1,81 @@
 /**
- * Health
+ * Health management
  *
- * @protocol EventEmitter
+ * @protocol *
  *
- * @action heal
- * @action fullHeal
- * @action receiveDamage
- *
- * @event health [Number]       Health change events
- * @event invincible [Boolean]  Invincible change events
- *
- * @setting {
- *   startHealth [Number]         Health value at the beginning
- *   maxHealth [Number]           Max health value
- *   damageInvincibleTime [Number]Invincible time between damages, in milliseconds
- *   healInvincibleTime [Number]  Invincible time after heal
- *   killEvent [String]           Event to emit when health is 0
- * }
- *
+ * @event heal
+ * @event fullHeal
+ * @event receiveDamage
+ * @event kill
+ * @event health Health is changed
  */
 
 import Behavior from 'engine/behavior';
 import { clamp } from 'engine/utils';
 
+const settings = {
+  /* Health value at the beginning */
+  startHealth: 3,
+  /* Max health value */
+  maxHealth: 3,
+  damageInvincibleTime: 0,
+  healInvincibleTime: 0,
+};
+
+// Recover some health
+function heal(v) {
+  this.health = clamp(this.health + v, 1, this.Health.maxHealth);
+  this.Health.emit('heal', v);
+}
+// Reset health to maxHealth
+function fullHeal() {
+  this.health = this.Health.maxHealth;
+  this.Health.emit('fullHeal');
+}
+// Received damages
+function receiveDamage(dmg) {
+  if (this.Health.invincibleTimer > 0) return;
+
+  this.health = clamp(this.health - dmg, 0, this.Health.maxHealth);
+
+  if (this.health === 0) {
+    this.kill();
+  }
+
+  this.Health.emit('receiveDamage', dmg);
+}
+// Health is 0
+function kill() {
+  this.Health.emit('kill');
+}
+
+// Function to setup target
+const targetSetup = function() {
+  Object.defineProperty(this, 'health', {
+    get: function() { return this.Health.health },
+    set: function(v) {
+      this.Health.health = v;
+      this.Health.emit('health', v);
+    },
+  });
+
+  this.heal = heal;
+  this.fullHeal = fullHeal;
+  this.receiveDamage = receiveDamage;
+  this.kill = kill;
+
+  // Init variables
+  this.health = this.Health.startHealth;
+  this.Health.invincibleTimer = 0;
+};
+
 export default class Health extends Behavior {
-  get health() {
-    return this._health;
+  constructor(s) {
+    super('Health', targetSetup, Object.assign({}, settings, s), true);
   }
-  set health(v) {
-    this._health = v;
-    this.target && this.target.emit('health', this._health);
-  }
-
-  constructor(settings) {
-    super();
-
-    this.startHealth = 3;
-    this.maxHealth = 3;
-    this.damageInvincibleTime = 0;
-    this.healInvincibleTime = 0; after heal
-    this.killEvent = 'kill';
-
-    /* @private */
-    this.needUpdate = true;
-    this._health = this.startHealth;
-    this._invincibleTimer = 0;
-
-    Object.assign(this, settings);
-  }
-
-  // Actions
-  heal(v) {
-    this.health = clamp(this.health + v, 1, this.maxHealth);
-  }
-  fullHeal() {
-    this.health = this.maxHealth;
-  }
-  receiveDamage(dmg) {
-    if (this._invincibleTimer > 0) return;
-
-    this.health = clamp(0, this.maxHealth);
-    if (this.health === 0 && this.target) {
-      this.target.emit(this.killEvent);
-    }
-  }
-
-  // Private
   update(dt) {
-    if (this._invincibleTimer > 0) {
-      this._invincibleTimer -= dt;
+    if (this.invincibleTimer > 0) {
+      this.invincibleTimer -= dt;
     }
   }
 }
