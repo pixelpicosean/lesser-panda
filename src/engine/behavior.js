@@ -3,13 +3,26 @@
  * All the built-in behaviors inherit from this one.
  */
 
-function Behavior() {
+var EventEmitter = require('engine/eventemitter3');
+
+function Behavior(type, targetSetup, settings, needUpdate) {
+  EventEmitter.call(this);
+
+  this.type = type;
+  this.targetSetup = targetSetup;
+  this.needUpdate = needUpdate;
+
   this.isActive = false;
-  this.needUpdate = false;
 
   this.target = null;
   this.scene = null;
+
+  // Merge settings
+  Object.assign(this, settings);
 };
+Behavior.prototype = Object.create(EventEmitter.prototype);
+Behavior.prototype.constructor = Behavior;
+
 /**
  * Add to target and scene
  * @param {Object} target Any objects meet this behavior's requirement
@@ -19,6 +32,13 @@ function Behavior() {
 Behavior.prototype.addTo = function addTo(target, scene) {
   this.target = target;
   this.scene = scene;
+
+  // Keep a reference to this behavior
+  target[this.type] = this;
+
+  // Setup target object
+  this.targetSetup.call(target);
+
   return this;
 };
 /**
