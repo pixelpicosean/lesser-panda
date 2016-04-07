@@ -43,7 +43,7 @@ function fire() {
 }
 
 // Function to setup target
-const targetSetup = function() {
+const setupTarget = () => {
   this.fire = fire;
 };
 
@@ -54,7 +54,7 @@ export default class FireBullet extends Behavior {
   }
 
   constructor(s) {
-    super('FireBullet', targetSetup, Object.assign({}, settings, s), true);
+    super('FireBullet', setupTarget, Object.assign({}, settings, s), true);
 
     this._emitPoint = Vector.create();
   }

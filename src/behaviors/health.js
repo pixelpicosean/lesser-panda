@@ -50,7 +50,7 @@ function kill() {
 }
 
 // Function to setup target
-const targetSetup = function() {
+const setupTarget = () => {
   Object.defineProperty(this, 'health', {
     get: function() { return this.Health.health },
     set: function(v) {
@@ -71,7 +71,7 @@ const targetSetup = function() {
 
 export default class Health extends Behavior {
   constructor(s) {
-    super('Health', targetSetup, Object.assign({}, settings, s), true);
+    super('Health', setupTarget, Object.assign({}, settings, s), true);
   }
   update(dt) {
     if (this.invincibleTimer > 0) {
