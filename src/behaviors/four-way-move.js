@@ -2,27 +2,7 @@
  * Make the target object able to move horizontally or vertically
  *
  * @protocol {
- *   position: {
- *     x: Number,
- *     y: Number,
- *   }
- * }
- *
- * @action moveLeft   Move left
- * @action moveRight  Move right
- * @action moveUp     Move up
- * @action moveDown   Move down
- * @action stopX      Stop horizontal movement
- * @action stopY      Stop vertical movement
- * @action stop       Stop
- *
- * @setting {
- *   speed [Number]         Move speed
- *   useKeyboard [Boolean]  Whether use keyboard to control
- *   leftKey [String]       Hold to move left, when `useKeyboard` is true
- *   rightKey [String]      Hold to move right, when `useKeyboard` is true
- *   upKey [String]         Hold to move up, when `useKeyboard` is true
- *   downKey [String]       Hold to move down, when `useKeyboard` is true
+ *   position: Vector
  * }
  */
 
@@ -30,53 +10,71 @@ import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 import Vector from 'engine/vector';
 
+const settings = {
+  /* Move speed */
+  speed: 200,
+
+  /* Whether use keyboard to control */
+  useKeyboard: true,
+  /* Hold to move left, when `useKeyboard` is true */
+  leftKey: 'LEFT',
+  /* Hold to move right, when `useKeyboard` is true */
+  rightKey: 'RIGHT',
+  /* Hold to move up, when `useKeyboard` is true */
+  upKey: 'UP',
+  /* Hold to move down, when `useKeyboard` is true */
+  downKey: 'DOWN',
+};
+
+// Move left
+function moveLeft() {
+  this.FourWayMove.dir.x = -1;
+}
+// Move right
+function moveRight() {
+  this.FourWayMove.dir.x = 1;
+}
+// Move up
+function moveUp() {
+  this.FourWayMove.dir.y = -1;
+}
+// Move down
+function moveDown() {
+  this.FourWayMove.dir.y = 1;
+}
+// Stop horizontal movement
+function stopX() {
+  this.FourWayMove.dir.x = 0;
+}
+// Stop vertical movement
+function stopY() {
+  this.FourWayMove.dir.y = 0;
+}
+// Stop
+function stop() {
+  this.FourWayMove.dir.set(0);
+}
+
+const setupTarget = () => {
+  this.moveLeft = moveLeft;
+  this.moveRight = moveRight;
+  this.moveUp = moveUp;
+  this.moveDown = moveDown;
+  this.stopX = stopX;
+  this.stopY = stopY;
+  this.stop = stop;
+};
+
 export default class VerticalMove extends Behavior {
-  constructor(settings) {
-    super();
+  constructor(s) {
+    super('VerticalMove', setupTarget, Object.assign({}, settings, s), true);
 
-    this.speed = 200;
-
-    this.useKeyboard = true;
-    this.leftKey = 'LEFT';
-    this.rightKey = 'RIGHT';
-    this.upKey = 'UP';
-    this.downKey = 'DOWN';
-
-    /* @private */
-    this.needUpdate = true;
     this.dir = Vector.create();
     this.left = false;
     this.right = false;
     this.up = false;
     this.down = false;
-
-    Object.assign(this, settings);
   }
-
-  // Actions
-  moveLeft() {
-    this.dir.x = -1;
-  }
-  moveRight() {
-    this.dir.x = 1;
-  }
-  moveUp() {
-    this.dir.y = -1;
-  }
-  moveDown() {
-    this.dir.y = 1;
-  }
-  stopX() {
-    this.dir.x = 0;
-  }
-  stopY() {
-    this.dir.y = 0;
-  }
-  stop() {
-    this.dir.set(0);
-  }
-
-  // Private
   update(_, dt) {
     if (this.useKeyboard) {
       this.dir.set(0);
