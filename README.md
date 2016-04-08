@@ -82,6 +82,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `AsteroidsMove` move like ships of classic Asteroids game
 - `Health` health, receiveDamage and heal
 - `FireBullet` let Actors be able to fire bullets
+- `AnchorToScreen` anchor object to left/right/top/right
 
 More behaviors are coming soon.
 
