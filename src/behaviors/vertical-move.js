@@ -2,9 +2,7 @@
  * Make the target object able to move vertically.
  *
  * @protocol {
- *   position: {
- *     y: Number
- *   }
+ *   position: Vector
  * }
  */
 
@@ -14,6 +12,14 @@ import Behavior from 'engine/behavior';
 const settings = {
   /* Move speed */
   speed: 200,
+
+  /* Range of the movement, limit to a range or keep it undefined to avoid */
+  range: undefined,
+  /**
+   * Percentage of start y location in the range if exist
+   * when range is defined
+   */
+  startPct: 0,
 
   /* Whether use keyboard to control */
   useKeyboard: true,
@@ -47,6 +53,17 @@ export default class VerticalMove extends Behavior {
     super('VerticalMove', setupTarget, Object.assign({}, settings, s), true);
 
     this.dir = 0;
+    this.top = 0;
+    this.bottom = 0;
+    this.hasRange = Number.isFinite(this.range);
+  }
+  activate() {
+    if (this.hasRange) {
+      this.top = this.target.position.y - this.range * this.startPct;
+      this.bottom = this.top + this.range;
+    }
+
+    return super.activate();
   }
   update(_, dt) {
     if (this.useKeyboard) {
@@ -56,5 +73,18 @@ export default class VerticalMove extends Behavior {
     }
 
     this.target.position.y += this.dir * this.speed * dt;
+
+    if (this.dir !== 0 && this.hasRange) {
+      if (this.target.position.y > this.bottom) {
+        this.target.position.y = this.bottom;
+        this.dir = 0;
+        this.emit('reachEnd');
+      }
+      else if (this.target.position.y < this.top) {
+        this.target.position.y = this.top;
+        this.dir = 0;
+        this.emit('reachStart');
+      }
+    }
   }
 }

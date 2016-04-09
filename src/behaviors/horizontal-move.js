@@ -2,9 +2,7 @@
  * Make the target object able to move horizontally.
  *
  * @protocol {
- *   position: {
- *     x: Number
- *   }
+ *   position: Vector
  * }
  */
 
@@ -14,6 +12,15 @@ import Behavior from 'engine/behavior';
 const settings = {
   /* Move speed */
   speed: 200,
+
+  /* Range of the movement, limit to a range or keep it undefined to avoid */
+  range: undefined,
+  /**
+   * Percentage of start x location in the range if exist
+   * when range is defined
+   */
+  startPct: 0,
+
   /* Whether use keyboard to control */
   useKeyboard: true,
   /* Hold to move left, when `useKeyboard` is true */
@@ -46,6 +53,17 @@ export default class HorizontalMove extends Behavior {
     super('HorizontalMove', setupTarget, Object.assign({}, settings, s), true);
 
     this.dir = 0;
+    this.left = 0;
+    this.right = 0;
+    this.hasRange = Number.isFinite(this.range);
+  }
+  activate() {
+    if (this.hasRange) {
+      this.left = this.target.position.x - this.range * this.startPct;
+      this.right = this.left + this.range;
+    }
+
+    return super.activate();
   }
   update(_, dt) {
     if (this.useKeyboard) {
@@ -55,5 +73,18 @@ export default class HorizontalMove extends Behavior {
     }
 
     this.target.position.x += this.dir * this.speed * dt;
+
+    if (this.dir !== 0 && this.hasRange) {
+      if (this.target.position.x > this.right) {
+        this.target.position.x = this.right;
+        this.dir = 0;
+        this.emit('reachEnd');
+      }
+      else if (this.target.position.x < this.left) {
+        this.target.position.x = this.left;
+        this.dir = 0;
+        this.emit('reachStart');
+      }
+    }
   }
 }
