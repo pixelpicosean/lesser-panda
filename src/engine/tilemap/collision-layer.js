@@ -178,7 +178,20 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
   for (i = 0; i < current_tag; i++) {
     shapes.push(getTagShape(edges, i));
   }
-  console.log(shapes);
+
+  var hole_tags = [];
+  for (i = 0; i < shapes.length; i++) {
+    var s1 = shapes[i];
+    for (j = 0; j < shapes.length; j++) {
+      var s2 = shapes[j];
+      if (i !== j) {
+        if (polygonInPolygon(s2, s1)) {
+          hole_tags.push(j);
+        }
+      }
+    }
+  }
+  hole_tags = unique(hole_tags);
 };
 
 module.exports = exports = CollisionLayer;
