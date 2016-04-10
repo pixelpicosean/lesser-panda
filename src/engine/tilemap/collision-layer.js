@@ -235,6 +235,43 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     zero_width_points.push({ x: shape.shape[min_i][0], y: shape.shape[min_i][1] });
     zero_width_points.push({ x: all_points[min_j].point, y: all_points[min_j+1].point });
   }
+
+  function getTileValue(x, y) {
+    var i = Math.floor(y/my)+1, j = Math.floor(x/mx)+1;
+    return grid[i][j];
+  }
+
+  // Make zero width channels
+  var additional_edges = [];
+  for (i = 0; i < zero_width_points.length; i += 2) {
+    var hole_point = zero_width_points[i];
+    var out_point = zero_width_points[i+1];
+    var mid_point = { x: (hole_point.x + out_point.x)/2, y: (hole_point.y + out_point.y)/2 };
+    if (getTileValue(mid_point.x, mid_point.y) !== 0) {
+      var out_edge = [Object.assign({}, hole_point), Object.assign({}, out_point)];
+      var in_edge = [Object.assign({}, out_point), Object.assign({}, hole_point)];
+      additional_edges.push(out_edge);
+      additional_edges.push(in_edge);
+    }
+  }
+  for (i = 0; i < additional_edges.length; i++) {
+    edges.push(additional_edges[i]);
+  }
+
+  function findEdges(edge_list, point) {
+    var edges = [];
+    for (i = 0; i < edge_list.length; i++) {
+      edge = edge_list[i];
+      var d = (edge[1].x - point.x)*(edge[1].x - point.x) + (edge[1].y - point.y)*(edge[1].y - point.y);
+      if (d < 0.25) table.insert(edges, i);
+    }
+    return edges;
+  }
+
+  function isPointEqual(p1, p2) {
+    var d = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
+    return (d < 0.25);
+  }
 };
 
 module.exports = exports = CollisionLayer;
