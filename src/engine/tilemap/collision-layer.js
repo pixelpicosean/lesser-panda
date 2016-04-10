@@ -110,6 +110,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
       if (d < 0.25) return i;
     }
+    return -1;
   }
 
   // Remove extra edges
@@ -122,7 +123,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       var p2 = edge[1];
       var p3Idx = findEdge(edges, edge[1]);
       var p3 = null;
-      if (p3Idx !== undefined) {
+      if (p3Idx >= 0) {
         p3 = edges[p3Idx][1];
         if (Math.abs((p1.y - p2.y)*(p1.x - p3.x) - (p1.y - p3.y)*(p1.x - p2.x)) < 0.025) {
           edge[1].x = p3.x;
@@ -136,6 +137,25 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     last_edge_list_size = edges.length;
   }
   console.log('[simplify vertices]edges: ' + edges.length);
+
+  // Tag groups
+  function edgeTag(tag, edge) {
+    edge.tag = tag;
+    var next_edge = findEdge(edges, edge[1]);
+    while ((next_edge >= 0) && (edges[next_edge].tag == undefined)) {
+      edges[next_edge].tag = tag;
+      next_edge = findEdge(edges, edges[next_edge][1]);
+    }
+  }
+
+  var current_tag = 0;
+  for (i = 0; i < edges.length; i++) {
+    edge = edges[i];
+    if (edge.tag == undefined) {
+      edgeTag(current_tag, edge);
+      current_tag += 1;
+    }
+  }
 };
 
 module.exports = exports = CollisionLayer;
