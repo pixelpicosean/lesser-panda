@@ -97,9 +97,9 @@ loader.start = function start() {
  * Add assets to be loaded by ResourceLoader instance
  */
 loader.addAsset = function addAsset(url, key, settings) {
-  var url = loader.baseURL + '/' + url;
+  var realURL = loader.baseURL + '/' + url;
   var resInfo = Object.assign({
-    url: url,
+    url: realURL,
     key: key || url,
   }, settings);
 
