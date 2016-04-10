@@ -83,6 +83,26 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     }
   }
   console.log('[start]edges: ' + edges.length);
+
+  function isEdgeEqual(e1, e2) {
+    var d1 = (e1[0].x - e2[1].x)*(e1[0].x - e2[1].x) + (e1[0].y - e2[1].y)*(e1[0].y - e2[1].y);
+    var d2 = (e2[0].x - e1[1].x)*(e2[0].x - e1[1].x) + (e2[0].y - e1[1].y)*(e2[0].y - e1[1].y);
+    if (d1 < 0.25 && d2 < 0.25) return true;
+  }
+
+  // Go through all edges and delete all instances of the ones that appear more than once
+  var e1, e2;
+  for (i = edges.length - 1; i >= 0; i--) {
+    e1 = edges[i];
+    for (j = i - 1; j >= 0; j--) {
+      e2 = edges[j];
+      if (isEdgeEqual(e1, e2)) {
+        utilsG.removeItems(edges, i, 1);
+        utilsG.removeItems(edges, j, 1);
+      }
+    }
+  }
+  console.log('[remove duplicated edges]edges: ' + edges.length);
 };
 
 module.exports = exports = CollisionLayer;
