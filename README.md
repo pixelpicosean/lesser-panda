@@ -109,12 +109,14 @@ Github issue and milestone maybe better for progress tracking~
 - Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
 - Add a new `device-patch` module to solve device specific issues.
 - Add rotate prompt for mobile devices.
+- Save renderer resolution as `engine.resolution`.
 - [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
 - [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
 - [Changes] Deprecate `dom` resize mode.
 - [Changes] Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
 - [Changes] Pass delta time to update methods in both milliseconds and seconds.
 - [Changes] Upgrade PIXI to `master/3.0.11`
+- [Changes] Default asset key does not contain `baseURL` any more.
 
 ### 0.3.4
 
