@@ -10,7 +10,8 @@ import Tilemap from 'engine/tilemap';
 import config from 'game/config';
 import 'game/loading';
 
-loader.addAsset('tileset.png', 'world');
+loader.addAsset('tileset.png');
+loader.addAsset('room.json');
 
 // Constants
 const GROUPS = {
@@ -25,43 +26,15 @@ class Main extends Scene {
   awake() {
     this.backgroundColor = 0xaaaaaa;
 
+    // Tileset table
     const tilesets = {
-      world: loader.resources['world'].texture,
+      'tileset.png': loader.resources['tileset.png'].texture,
     };
 
-    // List of layers
-    const data = [
-      {
-        tilesize: 16,
-        width: 4,
-        height: 5,
-        tileset: 'world',
-        data: [
-          [ 0,  1,  2,  3],
-          [ 8,  9, 10, 11],
-          [16, 17, 18, 19],
-          [24, 25, 26, 27],
-          [32, 33, 34, 35],
-        ],
-      },
-      {
-        tilesize: 16,
-        width: 4,
-        height: 5,
-        collision: true,
-        data: [
-          [1, 1, 1, 1],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [1, 1, 1, 1],
-          [1, 1, 1, 1],
-        ],
-      }
-    ];
-
-    const tilemap = new Tilemap(tilesets, data)
+    // Create a tilemap from Tiled JSON map
+    const map = loader.resources['room.json'].data;
+    const tilemap2 = Tilemap.fromTiledJson(map, tilesets)
       .addTo(this.stage);
-    tilemap.scale.set(2);
   }
 };
 engine.addScene('Main', Main);

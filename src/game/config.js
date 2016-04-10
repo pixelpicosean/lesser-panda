@@ -3,7 +3,7 @@ export default {
    * Logic size of the game
    */
   width: 320,
-  height: 200,
+  height: 208,
 
   /**
    * Logic update FPS
