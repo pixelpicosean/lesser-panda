@@ -156,6 +156,29 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       current_tag += 1;
     }
   }
+
+  function getTagShape(edges, tag) {
+    var temp_edges = edges.filter(function(value) { return value.tag === tag });
+    var vertices = [];
+    var edge = temp_edges[0];
+    utilsG.removeItems(temp_edges, 0, 1);
+    vertices.push([edge[0].x, edge[0].y]);
+    var next_edge = findEdge(temp_edges, edge[1]);
+    while (next_edge >= 0) {
+      edge = temp_edges[next_edge];
+      utilsG.removeItems(temp_edges, next_edge, 1);
+      vertices.push([edge[0].x, edge[0].y]);
+      next_edge = findEdge(temp_edges, edge[1]);
+    }
+    if (temp_edges.length === 0) return vertices;
+  }
+
+  // Figure out which tags are holes
+  var shapes = [];
+  for (i = 0; i < current_tag; i++) {
+    shapes.push(getTagShape(edges, i));
+  }
+  console.log(shapes);
 };
 
 module.exports = exports = CollisionLayer;
