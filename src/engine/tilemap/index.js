@@ -17,7 +17,7 @@ Tilemap.prototype = Object.create(PIXI.Container.prototype);
 Tilemap.prototype.constructor = Tilemap;
 
 Tilemap.prototype.destroy = function() {
-  this.tileset = null;
+  this.tilesets = null;
   this.layers.length = 0;
 
   PIXI.Container.prototype.destroy.call(this);
