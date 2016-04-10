@@ -1,3 +1,36 @@
+/**
+ * Tilemap
+ *
+ * You need a map data and a table of tileset textures to be able to
+ * create a Tilemap instance.
+ *
+ * Map data is defined by an Array of layers. And there're currently
+ * 2 types of layers are supported: tile and collision.
+ *
+ * Tile layer: {
+ *   tileset: String
+ *   tilesize: Number
+ *   width: Number
+ *   height: Number
+ *   data: Array<Array<Number>>
+ * }
+ *
+ * Collision layer: {
+ *   collision: Boolean
+ *   tilesize: Number
+ *   width: Number
+ *   height: Number
+ *   data: Array<Array<Number>>
+ * }
+ *
+ * Tileset table is used to look up textures of layers.
+ * A simple example would like this:
+ * {
+ *   'background.png': loader.resources['background.png'].texture,
+ *   'buildings.png': loader.resources['buildings.png'].texture,
+ * }
+ */
+
 var PIXI = require('engine/pixi');
 
 var tilemap = require('./pixi-tilemap');
@@ -54,6 +87,25 @@ Tilemap.prototype.createLayers = function() {
   }
 };
 
+/**
+ * Create a Tilemap instance from Tiled JSON file.
+ *
+ * Notice:
+ * since tileset of Tiled maps uses relative path to save, which
+ * can be quite boring sometimes and is not designed to be capable
+ * with this implementation, the parser will simply ignore tileset
+ * data of the map.
+ *
+ * But we still need tileset info to render, so there're some extra
+ * steps you need to follow:
+ *
+ * 1. Only one tileset per layer
+ * 2. Add a custom property "tileset" and set its value to name of the image
+ *
+ * @param  {JSON} json        Map data
+ * @param  {Object} tilesets  Tileset table
+ * @return {Tilemap}          Tilemap instance
+ */
 Tilemap.fromTiledJson = function(json, tilesets) {
   return new Tilemap(tiledConverter(json), tilesets);
 };
