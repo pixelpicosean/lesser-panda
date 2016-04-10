@@ -4,7 +4,9 @@ var tilemap = require('./pixi-tilemap');
 var filmstrip = require('./filmstrip');
 var CollisionLayer = require('./collision-layer');
 
-function Tilemap(tilesets, data) {
+var tiledConverter = require('./tiled-converter');
+
+function Tilemap(data, tilesets) {
   PIXI.Container.call(this);
 
   this.tilesets = tilesets;
@@ -50,6 +52,10 @@ Tilemap.prototype.createLayers = function() {
       }
     }
   }
+};
+
+Tilemap.fromTiledJson = function(json, tilesets) {
+  return new Tilemap(tiledConverter(json), tilesets);
 };
 
 module.exports = Tilemap;
