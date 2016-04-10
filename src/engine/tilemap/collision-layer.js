@@ -51,6 +51,14 @@ function polygonInPolygon(p1, p2) {
 }
 
 function CollisionLayer(def) {
+  this.tilesize = def.tilesize;
+  this.width = def.width;
+  this.height = def.height;
+  this.data = utils.lift(def.data, this.width, this.height);
+
+  this.generateShapes();
 }
+CollisionLayer.prototype.generateShapes = function generateShapes() {
+};
 
 module.exports = exports = CollisionLayer;
