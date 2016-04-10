@@ -16,6 +16,10 @@ function unique(arr) {
   return out;
 }
 
+function distance(x1, y1, x2, y2) {
+  return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}
+
 function pointInPolygon(point, vs) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
@@ -192,6 +196,45 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     }
   }
   hole_tags = unique(hole_tags);
+
+  // Find zero width points
+  var holes = [];
+  for (i = 0; i < shapes.length; i++) {
+    shape = shapes[i];
+    if (hole_tags.indexOf(i) > -1) {
+      holes.push({ shape: shape.slice(), tag: i });
+    }
+  }
+
+  var all_points = [], shape;
+  for (i = 0; i < shapes.length; i++) {
+    shape = shapes[i];
+    var points = shape.slice();
+    for (j = 0; j < points.length; j++) {
+      all_points.push({ point: points[j][0], tag: i });
+      all_points.push({ point: points[j][1], tag: i });
+    }
+  }
+
+  var zero_width_points = [];
+  for (i = 0; i < holes.length; i++) {
+    shape = holes[i];
+    var min_d = 10000, min_i = 0, min_j = 0;
+    for (i = 0; i < shape.shape.length; i++) {
+      for (j = 0; j < all_points.length; j += 2) {
+        if (all_points[j].tag !== shape.tag) {
+          var d = distance(shape.shape[i][0], shape.shape[i][1], all_points[j].point, all_points[j+1].point);
+          if (d < min_d) {
+            min_d = d;
+            min_i = i;
+            min_j = j;
+          }
+        }
+      }
+    }
+    zero_width_points.push({ x: shape.shape[min_i][0], y: shape.shape[min_i][1] });
+    zero_width_points.push({ x: all_points[min_j].point, y: all_points[min_j+1].point });
+  }
 };
 
 module.exports = exports = CollisionLayer;
