@@ -59,6 +59,30 @@ function CollisionLayer(def) {
   this.generateShapes();
 }
 CollisionLayer.prototype.generateShapes = function generateShapes() {
+  var i, j;
+
+  // Create edges
+  var edges = [];
+
+  var mx = this.tilesize, my = this.tilesize;
+  var x, y, v0, v1, v2, v3, grid = this.data;
+  for (i = 0; i < this.height; i++) {
+    for (j = 0; j < this.width; j++) {
+      if (grid[i][j] !== 0) {
+        x = mx * j; // left
+        y = my * i; // top
+        v0 = { x: x,      y: y + my }; // left-bottom
+        v1 = { x: x,      y: y      }; // left-top
+        v2 = { x: x + mx, y: y      }; // right-top
+        v3 = { x: x + mx, y: y + my }; // right-bottom
+        edges.push([v0, v1]);
+        edges.push([v1, v2]);
+        edges.push([v2, v3]);
+        edges.push([v3, v0]);
+      }
+    }
+  }
+  console.log('[start]edges: ' + edges.length);
 };
 
 module.exports = exports = CollisionLayer;
