@@ -272,6 +272,47 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     var d = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
     return (d < 0.25);
   }
+
+  // Define shape's vertices from edges
+  var vertices = [];
+  var edge = edges[0];
+  var shape_n = 0;
+  var idx = 0;
+  while (edges.length > 0) {
+    vertices[shape_n] = [];
+    idx = 0;
+    var edge = null, next_edge = null, ne_ids = null;
+    do {
+      edge = edges[idx];
+      vertices[shape_n].push(edge[0].x);
+      vertices[shape_n].push(edge[0].y);
+      utilsG.removeItems(edges, idx, 1);
+      ne_ids = findEdges(edges, edge[1]);
+      var found = false;
+      for (i = 0; i < ne_ids.length; i++) {
+        var id = ne_ids[i];
+        if (!isPointEqual(edges[id][1], edge[0]) && (edges[id].tag == undefined)) {
+          idx = id;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        for (i = 0; i < ne_ids.length; i++) {
+          var id = ne_ids[i];
+          if (!isPointEqual(edges[id][1], edge[0]) && (edges[id].tag != undefined)) {
+            idx = id;
+            break;
+          }
+        }
+      }
+    }
+    while (ne_ids.length > 0);
+    shape_n += 1;
+  }
+
+  // Create solids
+  console.log(vertices);
 };
 
 module.exports = exports = CollisionLayer;
