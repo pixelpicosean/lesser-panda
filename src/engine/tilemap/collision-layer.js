@@ -103,6 +103,39 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     }
   }
   console.log('[remove duplicated edges]edges: ' + edges.length);
+
+  function findEdge(edge_list, point) {
+    for (var i = 0; i < edge_list.length; i++) {
+      var edge = edge_list[i];
+      var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
+      if (d < 0.25) return i;
+    }
+  }
+
+  // Remove extra edges
+  var edge_list_size = edges.length, last_edge_list_size = 0;
+  while (edge_list_size !== last_edge_list_size) {
+    edge_list_size = edges.length;
+    for (i = 0; i < edges.length; i++) {
+      edge = edges[i];
+      var p1 = edge[0];
+      var p2 = edge[1];
+      var p3Idx = findEdge(edges, edge[1]);
+      var p3 = null;
+      if (p3Idx !== undefined) {
+        p3 = edges[p3Idx][1];
+        if (Math.abs((p1.y - p2.y)*(p1.x - p3.x) - (p1.y - p3.y)*(p1.x - p2.x)) < 0.025) {
+          edge[1].x = p3.x;
+          edge[1].y = p3.y;
+          utilsG.removeItems(edges, p3Idx, 1);
+          i -= 1;
+          break;
+        }
+      }
+    }
+    last_edge_list_size = edges.length;
+  }
+  console.log('[simplify vertices]edges: ' + edges.length);
 };
 
 module.exports = exports = CollisionLayer;
