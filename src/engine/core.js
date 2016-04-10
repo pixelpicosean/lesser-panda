@@ -48,7 +48,7 @@ function boot() {
   core.view.addEventListener('touchstart', focus);
 
   // Config and create renderer
-  Renderer.resolution = rendererConfig.resolution =
+  core.resolution = Renderer.resolution = rendererConfig.resolution =
     chooseProperResolution(rendererConfig.resolution);
 
   Renderer.init(core.width, core.height, rendererConfig);
