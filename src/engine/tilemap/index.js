@@ -2,12 +2,14 @@ var PIXI = require('engine/pixi');
 
 var tilemap = require('./pixi-tilemap');
 var filmstrip = require('./filmstrip');
+var CollisionLayer = require('./collision-layer');
 
 function Tilemap(tilesets, data) {
   PIXI.Container.call(this);
 
   this.tilesets = tilesets;
   this.data = data;
+  this.collisionLayer = null;
 
   this.createLayers();
 }
@@ -26,19 +28,25 @@ Tilemap.prototype.createLayers = function() {
   var r, q;
   for (i = 0; i < this.data.length; i++) {
     layerDef = this.data[i];
-    tileset = this.tilesets[layerDef.tileset];
-    data = layerDef.data;
-    tilesize = layerDef.tilesize;
 
-    textures = filmstrip(tileset, tilesize, tilesize);
+    if (layerDef.collision) {
+      this.collisionLayer = new CollisionLayer(layerDef);
+    }
+    else {
+      tileset = this.tilesets[layerDef.tileset];
+      data = layerDef.data;
+      tilesize = layerDef.tilesize;
 
-    layer = new tilemap.CompositeRectTileLayer(0, [tileset], true);
-    for (r = 0; r < layerDef.height; r++) {
-      for (q = 0; q < layerDef.width; q++) {
-        texture = textures[data[r][q]];
-        layer.addRect(0, q * tilesize, r * tilesize, texture.frame.x, texture.frame.y, tilesize, tilesize);
+      textures = filmstrip(tileset, tilesize, tilesize);
 
-        this.addChild(layer);
+      layer = new tilemap.CompositeRectTileLayer(0, [tileset], true);
+      for (r = 0; r < layerDef.height; r++) {
+        for (q = 0; q < layerDef.width; q++) {
+          texture = textures[data[r][q]];
+          layer.addRect(0, q * tilesize, r * tilesize, texture.frame.x, texture.frame.y, tilesize, tilesize);
+
+          this.addChild(layer);
+        }
       }
     }
   }

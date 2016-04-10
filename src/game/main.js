@@ -44,6 +44,19 @@ class Main extends Scene {
           [32, 33, 34, 35],
         ],
       },
+      {
+        tilesize: 16,
+        width: 4,
+        height: 5,
+        collision: true,
+        data: [
+          [1, 1, 1, 1],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [1, 1, 1, 1],
+        ],
+      }
     ];
 
     const tilemap = new Tilemap(tilesets, data)
