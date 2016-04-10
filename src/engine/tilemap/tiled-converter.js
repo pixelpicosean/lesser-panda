@@ -1,3 +1,5 @@
+var utils = require('./utils');
+
 function normalizeImageTileID(tiles, firstgid) {
   for (var i = 0; i < tiles.length; i++) {
     tiles[i] = tiles[i] - firstgid + 1;
@@ -12,18 +14,6 @@ function normalizeCollisionTileID(tiles) {
   return tiles;
 }
 
-function lift(arr, w, h) {
-  var r, q, row, res = new Array(h);
-  for (r = 0; r < h; r++) {
-    row = new Array(w);
-    for (q = 0; q < w; q++) {
-      row[q] = arr[w * r + q];
-    }
-    res[r] = row;
-  }
-  return res;
-}
-
 function convertLayer(layer, tilesize, firstGIDs) {
   var collision = layer.name.indexOf('collision') > -1;
 
@@ -34,7 +24,7 @@ function convertLayer(layer, tilesize, firstGIDs) {
     }
 
     tileset = layer.properties.tileset;
-    data = lift(normalizeImageTileID(layer.data, firstGIDs[tileset]), layer.width, layer.height);
+    data = utils.lift(normalizeImageTileID(layer.data, firstGIDs[tileset]), layer.width, layer.height);
   }
   else {
     data = normalizeCollisionTileID(layer.data);
