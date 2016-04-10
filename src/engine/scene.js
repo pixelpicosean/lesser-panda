@@ -54,35 +54,35 @@ Scene.prototype._awake = function _awake() {
 /**
  * Called each single frame once or more
  */
-Scene.prototype._update = function _update(delta) {
-  var i;
+Scene.prototype._update = function _update(deltaMS, deltaSec) {
+  var i, sys;
 
   // Pre-update
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys && sys.preUpdate && sys.preUpdate(this, delta);
+    sys && sys.preUpdate && sys.preUpdate(this, deltaMS, deltaSec);
   }
 
-  this.emit('preUpdate', delta);
-  this.preUpdate(delta);
+  this.emit('preUpdate', deltaMS, deltaSec);
+  this.preUpdate(deltaMS, deltaSec);
 
   // Update
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys && sys.update && sys.update(this, delta);
+    sys && sys.update && sys.update(this, deltaMS, deltaSec);
   }
 
-  this.emit('update', delta);
-  this.update(delta);
+  this.emit('update', deltaMS, deltaSec);
+  this.update(deltaMS, deltaSec);
 
   // Post-update
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
-    sys && sys.postUpdate && sys.postUpdate(this, delta);
+    sys && sys.postUpdate && sys.postUpdate(this, deltaMS, deltaSec);
   }
 
-  this.emit('postUpdate', delta);
-  this.postUpdate(delta);
+  this.emit('postUpdate', deltaMS, deltaSec);
+  this.postUpdate(deltaMS, deltaSec);
 };
 
 /**
@@ -92,6 +92,7 @@ Scene.prototype._freeze = function _freeze() {
   this.emit('freeze');
   this.freeze();
 
+  var i, sys;
   for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
     sys && sys.freeze && sys.freeze(this);
@@ -194,7 +195,7 @@ Scene.registerSystem('Object', {
       },
     };
   },
-  update: function update(scene, dt) {
+  update: function update(scene, deltaMS, deltaSec) {
     var i, key, objects;
     for (key in scene.objectSystem.objects) {
       if (scene.objectSystem.activeTags.indexOf(key) < 0) continue;
@@ -202,7 +203,7 @@ Scene.registerSystem('Object', {
       objects = scene.objectSystem.objects[key];
       for (i = 0; i < objects.length; i++) {
         if (!objects[i].removed) {
-          objects[i].update(dt);
+          objects[i].update(deltaMS, deltaSec);
         }
         if (objects[i].removed) {
           utils.removeItems(objects, i--, 1);

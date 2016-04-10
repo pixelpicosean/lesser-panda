@@ -282,8 +282,8 @@ Camera.prototype.remove = function remove() {
   this.container = null;
 };
 
-Camera.prototype.update = function update(delta) {
-  this.delta = delta * 0.001;
+Camera.prototype.update = function update(_, delta) {
+  this.delta = delta;
 
   this.moveSensor(this.delta);
   this.moveCamera(this.delta);
@@ -302,6 +302,16 @@ Object.defineProperty(Camera.prototype, 'left', {
 Object.defineProperty(Camera.prototype, 'right', {
   get: function() {
     return this.position.x + engine.width * (1 - this.anchor.x);
+  },
+});
+Object.defineProperty(Camera.prototype, 'top', {
+  get: function() {
+    return this.position.y - engine.height * this.anchor.y;
+  },
+});
+Object.defineProperty(Camera.prototype, 'bottom', {
+  get: function() {
+    return this.position.y + engine.height * (1 - this.anchor.y);
   },
 });
 

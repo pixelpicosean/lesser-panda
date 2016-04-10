@@ -145,6 +145,12 @@ Object.assign(Timer, {
    */
   delta: 0,
   /**
+   * A cumulative number represents how long has passed since the
+   * game is launched (in milliseconds).
+   * @type {Number}
+   */
+  now: 0,
+  /**
    * Map of timers
    * @type {Object}
    */
@@ -159,6 +165,8 @@ Object.assign(Timer, {
    */
   update: function update(delta) {
     this.delta = delta;
+
+    this.now += delta;
 
     var i, key, timers;
     for (key in this.timers) {
@@ -178,7 +186,7 @@ Object.assign(Timer, {
   },
 
   /**
-   * Create a not repeat timer.
+   * Create an one-shoot timer.
    * @param {Number} wait        Time in milliseconds
    * @param {Function}  callback  Callback function to run, when timer ends
    * @param {Object}    context   Context of the callback to be invoked
@@ -206,6 +214,13 @@ Object.assign(Timer, {
     }
 
     return timer;
+  },
+  /**
+   * Create an one-shoot timer while the time is in seconds instead.
+   * @see Timer.later
+   */
+  laterSec: function laterSec(wait, callback, context, tag) {
+    this.later(Math.floor(wait * 1000), callback, context, tag);
   },
 
   /**
@@ -238,6 +253,14 @@ Object.assign(Timer, {
 
     return timer;
   },
+  /**
+   * Create a repeat timer while the time is in seconds instead.
+   * @see Timer.interval
+   */
+  intervalSec: function intervalSec(interval, callback, context, tag) {
+    this.later(Math.floor(interval * 1000), callback, context, tag);
+  },
+
   /**
    * Remove a timer.
    * @param {Timer} timer

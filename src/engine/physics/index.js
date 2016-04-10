@@ -114,7 +114,9 @@ function World(x, y) {
 World.prototype.addBody = function addBody(body) {
   body.world = this;
   body._remove = false;
-  this.bodies.push(body);
+  if (this.bodies.indexOf(body) === -1) {
+    this.bodies.push(body);
+  }
   this.addBodyCollision(body);
 };
 
@@ -515,6 +517,24 @@ Object.defineProperty(Body.prototype, 'rotation', {
   },
 });
 
+Object.defineProperty(Body.prototype, 'width', {
+  get: function() {
+    return this.shape ? this.shape.width : 0;
+  },
+  set: function(width) {
+    this.shape && (this.shape.width = width);
+  },
+});
+
+Object.defineProperty(Body.prototype, 'height', {
+  get: function() {
+    return this.shape ? this.shape.height : 0;
+  },
+  set: function(height) {
+    this.shape && (this.shape.height = height);
+  },
+});
+
 /**
  * This will be called before collision checking.
  * You can clean up collision related flags here.
@@ -608,7 +628,7 @@ Body.prototype.update = function update(delta) {
   }
 
   this.velocity.add(this.force.x * delta, this.force.y * delta);
-  if (this.damping > 0 && this.damping < 1) this.velocity.scale(Math.pow(1 - this.damping, delta));
+  if (this.damping > 0 && this.damping < 1) this.velocity.multiply(Math.pow(1 - this.damping, delta));
 
   if (this.velocityLimit.x > 0) this.velocity.x = utils.clamp(this.velocity.x, -this.velocityLimit.x, this.velocityLimit.x);
   if (this.velocityLimit.y > 0) this.velocity.y = utils.clamp(this.velocity.y, -this.velocityLimit.y, this.velocityLimit.y);
@@ -1379,11 +1399,11 @@ Scene.registerSystem('Physics', {
   init: function init(scene) {
     scene.world = new World();
   },
-  preUpdate: function preUpdate(scene, delta) {
-    scene.world.preUpdate(delta * 0.001);
+  preUpdate: function preUpdate(scene, _, delta) {
+    scene.world.preUpdate(delta);
   },
-  update: function update(scene, delta) {
-    scene.world.update(delta * 0.001);
+  update: function update(scene, _, delta) {
+    scene.world.update(delta);
   },
   postUpdate: function postUpdate(scene) {
     scene.world.collisionChecks = 0;

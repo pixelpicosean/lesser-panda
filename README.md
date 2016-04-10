@@ -12,6 +12,8 @@ LesserPanda has a lot of features, and the list is still growing:
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
 - Multiply broad phase solution: "Simple" for collision less games and "SpatialHash" for collision heavy ones.
 - ECS(Entity Component System) like sub-systems.
+- `Behaviors` bring objects to life with one-line setup.
+- High level `Actor` classes with both virsuals and physics built-in.
 - Automatically choose the best resolution based on configs.
 - Tag is supported by sub-systems.
 - Mobile friendly.
@@ -72,23 +74,47 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `utils` provides some math functions and helpers.
 - `vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
 
+### Behaviors
+
+- `HorizontalMove` move objects left/right
+- `VerticalMove` move objects up/down
+- `FourWayMove` move objects left/right/up/down
+- `AsteroidsMove` move like ships of classic Asteroids game
+- `Health` health, receiveDamage and heal
+- `FireBullet` let Actors be able to fire bullets
+- `AnchorToScreen` anchor object to left/right/top/right
+
+More behaviors are coming soon.
+
+## Progress
+
+There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which you will see what's coming next.
+Github issue and milestone maybe better for progress tracking~
+
 ## ChangeLog
 
 ### 0.4.0-dev
 
+- Add `Timer.now` to represent time passed since game started.
+- Add `top` and `bottom` properties to `Camera` object.
+- Add `width` and `height` properties to `physics.Body`, which map to `shape.width` and `shape.height`.
+- Add high level `Actor`, `SpriteActor`, `AnimatedActor` and `PrimitiveActor` classes.
+- Add `Behavior` base class and some simple behaviors.
 - Emit `pause` and `resume` events from `core`.
 - Add resolution config, and renderer will pick the most suited resolution base on your configs.
-- [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
-- [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
 - Add Blender/Flash like keyframe based animation.
 - Add SAT based collision solver.
 - Add SpatialHash based broad phase solution for collision heavy games.
-- Deprecate `dom` resize mode.
 - Change canvas style during resizing for some resize modes.
 - Use bitwise shift to optimise SpatialHash based collision detection, change `Body.collisionAgainst` to a 32bit integer number while broadPhase is SpatialHash.
 - Add a new `device-patch` module to solve device specific issues.
 - Add rotate prompt for mobile devices.
-- Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
+- [Changes] `PIXI.extras.Animation` is now renamed as `PIXI.extras.AnimatedSprite`.
+- [Changes] Huge improve of `Animation` system(formerly called `Timeline`), now the **tweening of nested properties** is supported.
+- [Changes] Deprecate `dom` resize mode.
+- [Changes] Deprecate `Texture.fromAsset` method, use `loader.resources` instead.
+- [Changes] Pass delta time to update methods in both milliseconds and seconds.
+- [Changes] Upgrade PIXI to `master/3.0.11`
 
 ### 0.3.4
 
