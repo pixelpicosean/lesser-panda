@@ -125,7 +125,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       edge = edges[i];
       var p1 = edge[0];
       var p2 = edge[1];
-      var p3Idx = findEdge(edges, edge[1]);
+      var p3Idx = findEdge(edges, p2);
       var p3 = null;
       if (p3Idx >= 0) {
         p3 = edges[p3Idx][1];
@@ -141,6 +141,8 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     last_edge_list_size = edges.length;
   }
   console.log('[simplify vertices]edges: ' + edges.length);
+
+  console.log(edges.slice());
 
   // Tag groups
   function edgeTag(tag, edge) {
@@ -160,6 +162,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       current_tag += 1;
     }
   }
+  console.log('tags: %d', current_tag);
 
   function getTagShape(edges, tag) {
     var temp_edges = edges.filter(function(value) { return value.tag === tag });
@@ -177,12 +180,35 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     if (temp_edges.length === 0) return vertices;
   }
 
-  // Figure out which tags are holes
   var shapes = [];
   for (i = 0; i < current_tag; i++) {
     shapes.push(getTagShape(edges, i));
   }
 
+  // Recreate edges from shapes(edges are now sorted)
+  edges.length = 0;
+  var shape, p1, p2;
+  for (i = 0; i < shapes.length; i++) {
+    shape = shapes[i];
+    console.log(shape);
+    for (j = 0; j < shape.length - 1; j++) {
+      p1 = shape[j];
+      p2 = shape[j + 1];
+      edges.push([
+        { x: p1[0], y: p1[1] },
+        { x: p2[0], y: p2[1] },
+      ]);
+      console.log('edge[%d][%d]', j, j+1);
+    }
+    edges.push([
+      { x: p2[0], y: p2[1] },
+      { x: shape[0][0], y: shape[0][1] },
+    ]);
+    console.log('edge[%d][%d]', j, 0);
+  }
+  console.log(edges.slice());
+
+  // Figure out which tags are holes
   var hole_tags = [];
   for (i = 0; i < shapes.length; i++) {
     var s1 = shapes[i];
@@ -205,6 +231,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       holes.push({ shape: shape.slice(), tag: i });
     }
   }
+  console.log(holes.length + ' holes');
 
   var all_points = [], shape;
   for (i = 0; i < shapes.length; i++) {
@@ -215,6 +242,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       all_points.push({ point: points[j][1], tag: i });
     }
   }
+  console.log(all_points.length + ' points');
 
   var zero_width_points = [];
   for (i = 0; i < holes.length; i++) {
@@ -235,6 +263,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     zero_width_points.push({ x: shape.shape[min_i][0], y: shape.shape[min_i][1] });
     zero_width_points.push({ x: all_points[min_j].point, y: all_points[min_j+1].point });
   }
+  console.log(zero_width_points.length + ' zero_width_points');
 
   function getTileValue(x, y) {
     var i = Math.floor(y/my)+1, j = Math.floor(x/mx)+1;
@@ -257,13 +286,14 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
   for (i = 0; i < additional_edges.length; i++) {
     edges.push(additional_edges[i]);
   }
+  console.log(additional_edges.length + ' zero width edges');
 
   function findEdges(edge_list, point) {
     var edges = [];
-    for (i = 0; i < edge_list.length; i++) {
+    for (var i = 0; i < edge_list.length; i++) {
       edge = edge_list[i];
-      var d = (edge[1].x - point.x)*(edge[1].x - point.x) + (edge[1].y - point.y)*(edge[1].y - point.y);
-      if (d < 0.25) table.insert(edges, i);
+      var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
+      if (d < 0.25) edges.push(i);
     }
     return edges;
   }
@@ -282,12 +312,24 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     vertices[shape_n] = [];
     idx = 0;
     var edge = null, next_edge = null, ne_ids = null;
+    for (var k = 0; k < edges.length; k++) {
+      console.log('e: (%d, %d)-(%d, %d)', edges[k][0].x, edges[k][0].y, edges[k][1].x, edges[k][1].y);
+    }
     do {
       edge = edges[idx];
+      // console.log(edge);
+      var x = edge[0].x, y = edge[0].y;
       vertices[shape_n].push(edge[0].x);
       vertices[shape_n].push(edge[0].y);
       utilsG.removeItems(edges, idx, 1);
       ne_ids = findEdges(edges, edge[1]);
+      console.log('p(%d, %d)', x, y);
+      if (ne_ids.length > 0) {
+        console.log('ne: (%d, %d)-(%d, %d)', edges[ne_ids[0]][0].x, edges[ne_ids[0]][0].y, edges[ne_ids[0]][1].x, edges[ne_ids[0]][1].y);
+      }
+      else {
+        console.log('ne: .............');
+      }
       var found = false;
       for (i = 0; i < ne_ids.length; i++) {
         var id = ne_ids[i];
@@ -310,9 +352,10 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     while (ne_ids.length > 0);
     shape_n += 1;
   }
+  console.log(shape_n + ' shapes are constructed');
+  console.log(vertices);
 
   // Create solids
-  console.log(vertices);
 };
 
 module.exports = exports = CollisionLayer;
