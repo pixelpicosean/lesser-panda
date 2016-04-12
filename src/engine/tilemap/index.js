@@ -4,19 +4,10 @@
  * You need a map data and a table of tileset textures to be able to
  * create a Tilemap instance.
  *
- * Map data is defined by an Array of layers. And there're currently
- * 2 types of layers are supported: tile and collision.
+ * Map data is defined by an Array of layers.
  *
- * Tile layer: {
+ * Tile layer data: {
  *   tileset: String
- *   tilesize: Number
- *   width: Number
- *   height: Number
- *   data: Array<Array<Number>>
- * }
- *
- * Collision layer: {
- *   collision: Boolean
  *   tilesize: Number
  *   width: Number
  *   height: Number
@@ -35,7 +26,7 @@ var PIXI = require('engine/pixi');
 
 var tilemap = require('./pixi-tilemap');
 var filmstrip = require('./filmstrip');
-var CollisionLayer = require('./collision-layer');
+// var CollisionLayer = require('./collision-layer');
 
 var tiledConverter = require('./tiled-converter');
 
@@ -65,7 +56,7 @@ Tilemap.prototype.createLayers = function() {
     layerDef = this.data[i];
 
     if (layerDef.collision) {
-      this.collisionLayer = new CollisionLayer(layerDef);
+      // this.collisionLayer = new CollisionLayer(layerDef);
     }
     else {
       tileset = this.tilesets[layerDef.tileset];
