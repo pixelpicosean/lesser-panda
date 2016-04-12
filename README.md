@@ -7,6 +7,7 @@ A module based HTML5 game engine designed to be flexible and powerful.
 LesserPanda has a lot of features, and the list is still growing:
 
 - Super fast Canvas and WebGL rendering powered by PIXI.js.
+- Tilemap rendering.
 - Fixed game loop with customizable `FPS` and `frame skips`.
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
@@ -95,6 +96,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.0-dev
 
+- Add simple `Tilemap` support for both built-in format or Tiled JSON map(some custom properties are required)
 - Add `Timer.now` to represent time passed since game started.
 - Add `top` and `bottom` properties to `Camera` object.
 - Add `width` and `height` properties to `physics.Body`, which map to `shape.width` and `shape.height`.
