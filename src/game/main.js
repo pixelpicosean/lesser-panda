@@ -1,40 +1,22 @@
 import engine from 'engine/core';
 import Scene from 'engine/scene';
 import PIXI from 'engine/pixi';
-import Timer from 'engine/timer';
 import loader from 'engine/loader';
-import physics from 'engine/physics';
 
-import Tilemap from 'engine/tilemap';
-
-import config from 'game/config';
 import 'game/loading';
 
-loader.addAsset('tileset.png');
-loader.addAsset('room.json');
-
-// Constants
-const GROUPS = {
-  SOLID:  0,
-  BOX:    1,
-  CIRCLE: 2,
-};
+loader.addAsset('KenPixel.fnt');
 
 PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 
 class Main extends Scene {
   awake() {
-    this.backgroundColor = 0xaaaaaa;
-
-    // Tileset table
-    const tilesets = {
-      'tileset.png': loader.resources['tileset.png'].texture,
-    };
-
-    // Create a tilemap from Tiled JSON map
-    const map = loader.resources['room.json'].data;
-    const tilemap2 = Tilemap.fromTiledJson(map, tilesets)
-      .addTo(this.stage);
+    const text = new PIXI.extras.BitmapText('It Works!', {
+      font: '16px KenPixel',
+    }).addTo(this.stage);
+    text.position
+      .set(engine.width * 0.5, engine.height * 0.5)
+      .subtract(text.width * 0.5, text.height * 0.5);
   }
 };
 engine.addScene('Main', Main);
