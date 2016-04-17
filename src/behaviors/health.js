@@ -40,9 +40,11 @@ function receiveDamage(dmg) {
 
   if (this.health === 0) {
     this.kill();
+    return;
   }
 
   this.Health.emit('receiveDamage', dmg);
+  this.Health.invincibleTimer = this.Health.damageInvincibleTime;
 }
 // Health is 0
 function kill() {
