@@ -364,31 +364,28 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
   // console.log(vertices);
 
   // Create bodies for each line segment
-  var seg, body;
+  var seg, body, p0, p1;
+  var segGfx, segNormalGfx, layer = core.scene.topLayer;
   for (i = 0; i < edges.length; i++) {
     seg = edges[i];
+
+    p0 = new Vector((seg[0].x - seg[1].x) * 0.5, (seg[0].y - seg[1].y) * 0.5);
+    p1 = new Vector((seg[1].x - seg[0].x) * 0.5, (seg[1].y - seg[0].y) * 0.5);
+
     body = new physics.Body({
-      shape: new physics.Polygon([
-        new Vector((seg[0].x - seg[1].x) * 0.5, (seg[0].y - seg[1].y) * 0.5),
-        new Vector((seg[1].x - seg[0].x) * 0.5, (seg[1].y - seg[0].y) * 0.5),
-      ]),
+      shape: new physics.Polygon([ p0, p1 ]),
     });
     body.position.set((seg[0].x + seg[1].x) * 0.5, (seg[0].y + seg[1].y) * 0.5);
     this.bodies.push(body);
-  }
 
-  // Draw bodies
-  var segGfx, segNormalGfx, cw, layer = core.scene.topLayer;
-  for (i = 0; i < edges.length; i++) {
-    seg = edges[i];
-
+    // Draw edge and normals
     segGfx = new PIXI.Graphics().addTo(layer);
     segGfx.lineStyle(2, 0xff2f62);
-    segGfx.moveTo(seg[0].x, seg[0].y);
-    segGfx.lineTo(seg[1].x, seg[1].y);
+    segGfx.moveTo(p0.x, p0.y);
+    segGfx.lineTo(p1.x, p1.y);
+    segGfx.position.copy(body.position);
 
-    let vec = new Vector((seg[1].x - seg[0].x) * 0.5, (seg[1].y - seg[0].y) * 0.5);
-    let vecN = vec.clone()
+    let vecN = p1.clone()
       .perp()
       .normalize()
       .multiply(4);
@@ -396,7 +393,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     segNormalGfx.lineStyle(1, 0x00e56e);
     segNormalGfx.moveTo(0, 0);
     segNormalGfx.lineTo(vecN.x, vecN.y);
-    segNormalGfx.position.set(seg[0].x + vec.x, seg[0].y + vec.y);
+    segNormalGfx.position.copy(segGfx.position);
   }
 };
 
