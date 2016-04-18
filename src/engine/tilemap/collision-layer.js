@@ -3,6 +3,9 @@ var utilsG = require('engine/utils');
 var physics = require('engine/physics');
 var Vector = require('engine/vector');
 
+var core = require('engine/core');
+var PIXI = require('engine/pixi');
+
 function unique(arr) {
   var seen = {};
   var out = [];
@@ -374,6 +377,26 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     this.bodies.push(body);
   }
 
+  // Draw bodies
+  var segGfx, segNormalGfx, cw, layer = core.scene.topLayer;
+  for (i = 0; i < edges.length; i++) {
+    seg = edges[i];
+
+    segGfx = new PIXI.Graphics().addTo(layer);
+    segGfx.lineStyle(2, 0xff2f62);
+    segGfx.moveTo(seg[0].x, seg[0].y);
+    segGfx.lineTo(seg[1].x, seg[1].y);
+
+    let vec = new Vector((seg[1].x - seg[0].x) * 0.5, (seg[1].y - seg[0].y) * 0.5);
+    let vecN = vec.clone()
+      .perp()
+      .normalize()
+      .multiply(4);
+    segNormalGfx = new PIXI.Graphics().addTo(layer);
+    segNormalGfx.lineStyle(1, 0x00e56e);
+    segNormalGfx.moveTo(0, 0);
+    segNormalGfx.lineTo(vecN.x, vecN.y);
+    segNormalGfx.position.set(seg[0].x + vec.x, seg[0].y + vec.y);
   }
 };
 

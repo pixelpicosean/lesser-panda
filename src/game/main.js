@@ -26,6 +26,9 @@ class Main extends Scene {
   awake() {
     this.backgroundColor = 0xaaaaaa;
 
+    this.bottomLayer = new PIXI.Container().addTo(this.stage);
+    this.topLayer = new PIXI.Container().addTo(this.stage);
+
     // Tileset table
     const tilesets = {
       'tileset.png': loader.resources['tileset.png'].texture,
@@ -33,8 +36,8 @@ class Main extends Scene {
 
     // Create a tilemap from Tiled JSON map
     const map = loader.resources['room.json'].data;
-    const tilemap2 = Tilemap.fromTiledJson(map, tilesets)
-      .addTo(this.stage);
+    const tilemap2 = Tilemap.fromTiledJson(map, tilesets, GROUPS.SOLID)
+      .addTo(this, this.bottomLayer);
   }
 };
 engine.addScene('Main', Main);
