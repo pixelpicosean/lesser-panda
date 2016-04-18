@@ -305,7 +305,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     var d = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
     return (d < 0.25);
   }
-
+};
   // Define shape's vertices from edges
   var vertices = [];
   var edge = edges[0];
@@ -355,10 +355,23 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     while (ne_ids.length > 0);
     shape_n += 1;
   }
+
   console.log(shape_n + ' shapes are constructed');
   console.log(vertices);
-
+CollisionLayer.prototype.destroy = function() {
   // Create solids
+  for (var i = 0; i < this.bodies.length; i++) {
+    this.bodies[i].remove();
+  }
+  this.bodies.length = 0;
+};
+
+CollisionLayer.prototype.addTo = function(scene) {
+  this.scene = scene;
+
+  for (var i = 0; i < this.bodies.length; i++) {
+    scene.world.addBody(this.bodies[i]);
+  }
 };
 
 module.exports = exports = CollisionLayer;
