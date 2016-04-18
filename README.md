@@ -12,6 +12,7 @@ LesserPanda has a lot of features, and the list is still growing:
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
 - Multiply broad phase solution: "Simple" for collision less games and "SpatialHash" for collision heavy ones.
+- Tilemap collision support by compiling collision map into line segments in the air.
 - ECS(Entity Component System) like sub-systems.
 - `Behaviors` bring objects to life with one-line setup.
 - High level `Actor` classes with both virsuals and physics built-in.
@@ -50,6 +51,7 @@ The engine itself contains both engine sources and a folder called `game` for yo
 
 ## Brief introduction of modules
 
+- `animation` provides both common tween animation and Blender like `action`.
 - `audio` provides sound playback functions, the basic usage is included in the `game/main`.
 - `canvasquery` provide a canvas 2d based renderer. Note that it is not capable with PIXI, so pick ONLY one of them at a time. Read more about it [here](http://canvasquery.com/).
 - `pixi` contains whole PIXI.js sources. Filters and mesh is disabled by default, you can enable them by uncomment related lines in `engine/pixi/index.js`.
@@ -70,7 +72,6 @@ The engine itself contains both engine sources and a folder called `game` for yo
 - `resize` provides some resize helper functions.
 - `rnd` is a random number generator.
 - `scene` exports the Scene class. Scenes should all be sub-classes of it.
-- `timeline` is the Tween animation support, basic usage is included in the main.js
 - `timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
 - `utils` provides some math functions and helpers.
 - `vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
@@ -96,6 +97,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.0-dev
 
+- Finish rectangle shaped tile collision support.
 - Add simple `Tilemap` support for both built-in format or Tiled JSON map(some custom properties are required)
 - Add `Timer.now` to represent time passed since game started.
 - Add `top` and `bottom` properties to `Camera` object.
