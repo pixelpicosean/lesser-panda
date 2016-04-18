@@ -1428,6 +1428,7 @@ module.exports = {
   Body: Body,
 
   Box: Box,
+  Polygon: Polygon,
   Circle: Circle,
 
   UP: UP,
