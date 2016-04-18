@@ -365,7 +365,6 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
 
   // Create bodies for each line segment
   var seg, body, p0, p1;
-  var segGfx, segNormalGfx, layer = core.scene.topLayer;
   for (i = 0; i < edges.length; i++) {
     seg = edges[i];
 
@@ -378,26 +377,6 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     body.collisionGroup = this.group;
     body.position.set((seg[0].x + seg[1].x) * 0.5, (seg[0].y + seg[1].y) * 0.5);
     this.bodies.push(body);
-
-    // Draw edge and normals
-    // var offset = 6;
-    segGfx = new PIXI.Graphics().addTo(layer);
-    segGfx.lineStyle(2, 0xff2f62);
-    segGfx.moveTo(body.shape.points[0].x, body.shape.points[0].y);
-    segGfx.lineTo(body.shape.points[0].x + body.shape.edges[0].x, body.shape.points[0].y + body.shape.edges[0].y);
-    // segGfx.moveTo(body.shape.points[1].x + offset, body.shape.points[1].y + offset);
-    // segGfx.lineTo(body.shape.points[1].x + body.shape.edges[1].x + offset, body.shape.points[1].y + body.shape.edges[1].y + offset);
-    segGfx.position.copy(body.position);
-
-    var vecN = body.shape.normals[0].clone().multiply(4);
-    segNormalGfx = new PIXI.Graphics().addTo(layer);
-    segNormalGfx.lineStyle(1, 0x00e56e);
-    segNormalGfx.moveTo(0, 0);
-    segNormalGfx.lineTo(vecN.x, vecN.y);
-    // vecN.copy(body.shape.normals[1]).multiply(4);
-    // segNormalGfx.moveTo(offset, offset);
-    // segNormalGfx.lineTo(vecN.x + offset, vecN.y + offset);
-    segNormalGfx.position.copy(segGfx.position);
   }
 };
 
