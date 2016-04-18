@@ -1,5 +1,10 @@
 var utils = require('./utils');
 var utilsG = require('engine/utils');
+var physics = require('engine/physics');
+var Vector = require('engine/vector');
+
+var core = require('engine/core');
+var PIXI = require('engine/pixi');
 
 function unique(arr) {
   var seen = {};
@@ -54,11 +59,14 @@ function polygonInPolygon(p1, p2) {
   return inside;
 }
 
-function CollisionLayer(def) {
+function CollisionLayer(def, group) {
   this.tilesize = def.tilesize;
   this.width = def.width;
   this.height = def.height;
   this.data = utils.lift(def.data, this.width, this.height);
+
+  this.group = group;
+  this.bodies = [];
 
   this.generateShapes();
 }
@@ -142,220 +150,249 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
   }
   console.log('[simplify vertices]edges: ' + edges.length);
 
-  console.log(edges.slice());
+  // console.log(edges.slice());
 
   // Tag groups
-  function edgeTag(tag, edge) {
-    edge.tag = tag;
-    var next_edge = findEdge(edges, edge[1]);
-    while ((next_edge >= 0) && (edges[next_edge].tag == undefined)) {
-      edges[next_edge].tag = tag;
-      next_edge = findEdge(edges, edges[next_edge][1]);
-    }
-  }
+  // function edgeTag(tag, edge) {
+  //   edge.tag = tag;
+  //   var next_edge = findEdge(edges, edge[1]);
+  //   while ((next_edge >= 0) && (edges[next_edge].tag == undefined)) {
+  //     edges[next_edge].tag = tag;
+  //     next_edge = findEdge(edges, edges[next_edge][1]);
+  //   }
+  // }
 
-  var current_tag = 0;
-  for (i = 0; i < edges.length; i++) {
-    edge = edges[i];
-    if (edge.tag == undefined) {
-      edgeTag(current_tag, edge);
-      current_tag += 1;
-    }
-  }
-  console.log('tags: %d', current_tag);
+  // var current_tag = 0;
+  // for (i = 0; i < edges.length; i++) {
+  //   edge = edges[i];
+  //   if (edge.tag == undefined) {
+  //     edgeTag(current_tag, edge);
+  //     current_tag += 1;
+  //   }
+  // }
+  // console.log('tags: %d', current_tag);
 
-  function getTagShape(edges, tag) {
-    var temp_edges = edges.filter(function(value) { return value.tag === tag });
-    var vertices = [];
-    var edge = temp_edges[0];
-    utilsG.removeItems(temp_edges, 0, 1);
-    vertices.push([edge[0].x, edge[0].y]);
-    var next_edge = findEdge(temp_edges, edge[1]);
-    while (next_edge >= 0) {
-      edge = temp_edges[next_edge];
-      utilsG.removeItems(temp_edges, next_edge, 1);
-      vertices.push([edge[0].x, edge[0].y]);
-      next_edge = findEdge(temp_edges, edge[1]);
-    }
-    if (temp_edges.length === 0) return vertices;
-  }
+  // function getTagShape(edges, tag) {
+  //   var temp_edges = edges.filter(function(value) { return value.tag === tag });
+  //   var vertices = [];
+  //   var edge = temp_edges[0];
+  //   utilsG.removeItems(temp_edges, 0, 1);
+  //   vertices.push([edge[0].x, edge[0].y]);
+  //   var next_edge = findEdge(temp_edges, edge[1]);
+  //   while (next_edge >= 0) {
+  //     edge = temp_edges[next_edge];
+  //     utilsG.removeItems(temp_edges, next_edge, 1);
+  //     vertices.push([edge[0].x, edge[0].y]);
+  //     next_edge = findEdge(temp_edges, edge[1]);
+  //   }
+  //   if (temp_edges.length === 0) return vertices;
+  // }
 
-  var shapes = [];
-  for (i = 0; i < current_tag; i++) {
-    shapes.push(getTagShape(edges, i));
-  }
+  // var shapes = [];
+  // for (i = 0; i < current_tag; i++) {
+  //   shapes.push(getTagShape(edges, i));
+  // }
 
   // Recreate edges from shapes(edges are now sorted)
-  edges.length = 0;
-  var shape, p1, p2;
-  for (i = 0; i < shapes.length; i++) {
-    shape = shapes[i];
-    console.log(shape);
-    for (j = 0; j < shape.length - 1; j++) {
-      p1 = shape[j];
-      p2 = shape[j + 1];
-      edges.push([
-        { x: p1[0], y: p1[1] },
-        { x: p2[0], y: p2[1] },
-      ]);
-      console.log('edge[%d][%d]', j, j+1);
-    }
-    edges.push([
-      { x: p2[0], y: p2[1] },
-      { x: shape[0][0], y: shape[0][1] },
-    ]);
-    console.log('edge[%d][%d]', j, 0);
-  }
-  console.log(edges.slice());
+  // edges.length = 0;
+  // var shape, p1, p2;
+  // for (i = 0; i < shapes.length; i++) {
+  //   shape = shapes[i];
+  //   console.log(shape);
+  //   for (j = 0; j < shape.length - 1; j++) {
+  //     p1 = shape[j];
+  //     p2 = shape[j + 1];
+  //     edges.push([
+  //       { x: p1[0], y: p1[1] },
+  //       { x: p2[0], y: p2[1] },
+  //     ]);
+  //     console.log('edge[%d][%d]', j, j+1);
+  //   }
+  //   edges.push([
+  //     { x: p2[0], y: p2[1] },
+  //     { x: shape[0][0], y: shape[0][1] },
+  //   ]);
+  //   console.log('edge[%d][%d]', j, 0);
+  // }
+  // console.log(edges.slice());
 
   // Figure out which tags are holes
-  var hole_tags = [];
-  for (i = 0; i < shapes.length; i++) {
-    var s1 = shapes[i];
-    for (j = 0; j < shapes.length; j++) {
-      var s2 = shapes[j];
-      if (i !== j) {
-        if (polygonInPolygon(s2, s1)) {
-          hole_tags.push(j);
-        }
-      }
-    }
-  }
-  hole_tags = unique(hole_tags);
+  // var hole_tags = [];
+  // for (i = 0; i < shapes.length; i++) {
+  //   var s1 = shapes[i];
+  //   for (j = 0; j < shapes.length; j++) {
+  //     var s2 = shapes[j];
+  //     if (i !== j) {
+  //       if (polygonInPolygon(s2, s1)) {
+  //         hole_tags.push(j);
+  //       }
+  //     }
+  //   }
+  // }
+  // hole_tags = unique(hole_tags);
 
   // Find zero width points
-  var holes = [];
-  for (i = 0; i < shapes.length; i++) {
-    shape = shapes[i];
-    if (hole_tags.indexOf(i) > -1) {
-      holes.push({ shape: shape.slice(), tag: i });
-    }
-  }
-  console.log(holes.length + ' holes');
+  // var holes = [];
+  // for (i = 0; i < shapes.length; i++) {
+  //   shape = shapes[i];
+  //   if (hole_tags.indexOf(i) > -1) {
+  //     holes.push({ shape: shape.slice(), tag: i });
+  //   }
+  // }
+  // console.log(holes.length + ' holes');
 
-  var all_points = [], shape;
-  for (i = 0; i < shapes.length; i++) {
-    shape = shapes[i];
-    var points = shape.slice();
-    for (j = 0; j < points.length; j++) {
-      all_points.push({ point: points[j][0], tag: i });
-      all_points.push({ point: points[j][1], tag: i });
-    }
-  }
-  console.log(all_points.length + ' points');
+  // var all_points = [], shape;
+  // for (i = 0; i < shapes.length; i++) {
+  //   shape = shapes[i];
+  //   var points = shape.slice();
+  //   for (j = 0; j < points.length; j++) {
+  //     all_points.push({ point: points[j][0], tag: i });
+  //     all_points.push({ point: points[j][1], tag: i });
+  //   }
+  // }
+  // console.log(all_points.length + ' points');
 
-  var zero_width_points = [];
-  for (i = 0; i < holes.length; i++) {
-    shape = holes[i];
-    var min_d = 10000, min_i = 0, min_j = 0;
-    for (i = 0; i < shape.shape.length; i++) {
-      for (j = 0; j < all_points.length; j += 2) {
-        if (all_points[j].tag !== shape.tag) {
-          var d = distance(shape.shape[i][0], shape.shape[i][1], all_points[j].point, all_points[j+1].point);
-          if (d < min_d) {
-            min_d = d;
-            min_i = i;
-            min_j = j;
-          }
-        }
-      }
-    }
-    zero_width_points.push({ x: shape.shape[min_i][0], y: shape.shape[min_i][1] });
-    zero_width_points.push({ x: all_points[min_j].point, y: all_points[min_j+1].point });
-  }
-  console.log(zero_width_points.length + ' zero_width_points');
+  // var zero_width_points = [];
+  // for (i = 0; i < holes.length; i++) {
+  //   shape = holes[i];
+  //   var min_d = 10000, min_i = 0, min_j = 0;
+  //   for (i = 0; i < shape.shape.length; i++) {
+  //     for (j = 0; j < all_points.length; j += 2) {
+  //       if (all_points[j].tag !== shape.tag) {
+  //         var d = distance(shape.shape[i][0], shape.shape[i][1], all_points[j].point, all_points[j+1].point);
+  //         if (d < min_d) {
+  //           min_d = d;
+  //           min_i = i;
+  //           min_j = j;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   zero_width_points.push({ x: shape.shape[min_i][0], y: shape.shape[min_i][1] });
+  //   zero_width_points.push({ x: all_points[min_j].point, y: all_points[min_j+1].point });
+  // }
+  // console.log(zero_width_points.length + ' zero_width_points');
 
-  function getTileValue(x, y) {
-    var i = Math.floor(y/my)+1, j = Math.floor(x/mx)+1;
-    return grid[i][j];
-  }
+  // function getTileValue(x, y) {
+  //   var i = Math.floor(y/my)+1, j = Math.floor(x/mx)+1;
+  //   return grid[i][j];
+  // }
 
   // Make zero width channels
-  var additional_edges = [];
-  for (i = 0; i < zero_width_points.length; i += 2) {
-    var hole_point = zero_width_points[i];
-    var out_point = zero_width_points[i+1];
-    var mid_point = { x: (hole_point.x + out_point.x)/2, y: (hole_point.y + out_point.y)/2 };
-    if (getTileValue(mid_point.x, mid_point.y) !== 0) {
-      var out_edge = [Object.assign({}, hole_point), Object.assign({}, out_point)];
-      var in_edge = [Object.assign({}, out_point), Object.assign({}, hole_point)];
-      additional_edges.push(out_edge);
-      additional_edges.push(in_edge);
-    }
-  }
-  for (i = 0; i < additional_edges.length; i++) {
-    edges.push(additional_edges[i]);
-  }
-  console.log(additional_edges.length + ' zero width edges');
+  // var additional_edges = [];
+  // for (i = 0; i < zero_width_points.length; i += 2) {
+  //   var hole_point = zero_width_points[i];
+  //   var out_point = zero_width_points[i+1];
+  //   var mid_point = { x: (hole_point.x + out_point.x)/2, y: (hole_point.y + out_point.y)/2 };
+  //   if (getTileValue(mid_point.x, mid_point.y) !== 0) {
+  //     var out_edge = [Object.assign({}, hole_point), Object.assign({}, out_point)];
+  //     var in_edge = [Object.assign({}, out_point), Object.assign({}, hole_point)];
+  //     additional_edges.push(out_edge);
+  //     additional_edges.push(in_edge);
+  //   }
+  // }
+  // for (i = 0; i < additional_edges.length; i++) {
+  //   edges.push(additional_edges[i]);
+  // }
+  // console.log(additional_edges.length + ' zero width edges');
 
-  function findEdges(edge_list, point) {
-    var edges = [];
-    for (var i = 0; i < edge_list.length; i++) {
-      edge = edge_list[i];
-      var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
-      if (d < 0.25) edges.push(i);
-    }
-    return edges;
-  }
+  // function findEdges(edge_list, point) {
+  //   var edges = [];
+  //   for (var i = 0; i < edge_list.length; i++) {
+  //     edge = edge_list[i];
+  //     var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
+  //     if (d < 0.25) edges.push(i);
+  //   }
+  //   return edges;
+  // }
 
-  function isPointEqual(p1, p2) {
-    var d = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
-    return (d < 0.25);
-  }
+  // function isPointEqual(p1, p2) {
+  //   var d = (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
+  //   return (d < 0.25);
+  // }
 
   // Define shape's vertices from edges
-  var vertices = [];
-  var edge = edges[0];
-  var shape_n = 0;
-  var idx = 0;
-  while (edges.length > 0) {
-    vertices[shape_n] = [];
-    idx = 0;
-    var edge = null, next_edge = null, ne_ids = null;
-    for (var k = 0; k < edges.length; k++) {
-      console.log('e: (%d, %d)-(%d, %d)', edges[k][0].x, edges[k][0].y, edges[k][1].x, edges[k][1].y);
-    }
-    do {
-      edge = edges[idx];
-      // console.log(edge);
-      var x = edge[0].x, y = edge[0].y;
-      vertices[shape_n].push(edge[0].x);
-      vertices[shape_n].push(edge[0].y);
-      utilsG.removeItems(edges, idx, 1);
-      ne_ids = findEdges(edges, edge[1]);
-      console.log('p(%d, %d)', x, y);
-      if (ne_ids.length > 0) {
-        console.log('ne: (%d, %d)-(%d, %d)', edges[ne_ids[0]][0].x, edges[ne_ids[0]][0].y, edges[ne_ids[0]][1].x, edges[ne_ids[0]][1].y);
-      }
-      else {
-        console.log('ne: .............');
-      }
-      var found = false;
-      for (i = 0; i < ne_ids.length; i++) {
-        var id = ne_ids[i];
-        if (!isPointEqual(edges[id][1], edge[0]) && (edges[id].tag == undefined)) {
-          idx = id;
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        for (i = 0; i < ne_ids.length; i++) {
-          var id = ne_ids[i];
-          if (!isPointEqual(edges[id][1], edge[0]) && (edges[id].tag != undefined)) {
-            idx = id;
-            break;
-          }
-        }
-      }
-    }
-    while (ne_ids.length > 0);
-    shape_n += 1;
-  }
-  console.log(shape_n + ' shapes are constructed');
-  console.log(vertices);
+  // var vertices = [];
+  // var edge = edges[0];
+  // var shape_n = 0;
+  // var idx = 0;
+  // while (edges.length > 0) {
+  //   vertices[shape_n] = [];
+  //   idx = 0;
+  //   var edge = null, next_edge = null, ne_ids = null;
+  //   for (var k = 0; k < edges.length; k++) {
+  //     console.log('e: (%d, %d)-(%d, %d)', edges[k][0].x, edges[k][0].y, edges[k][1].x, edges[k][1].y);
+  //   }
+  //   do {
+  //     edge = edges[idx];
+  //     // console.log(edge);
+  //     var x = edge[0].x, y = edge[0].y;
+  //     vertices[shape_n].push(edge[0].x);
+  //     vertices[shape_n].push(edge[0].y);
+  //     utilsG.removeItems(edges, idx, 1);
+  //     ne_ids = findEdges(edges, edge[1]);
+  //     console.log('p(%d, %d)', x, y);
+  //     if (ne_ids.length > 0) {
+  //       console.log('ne: (%d, %d)-(%d, %d)', edges[ne_ids[0]][0].x, edges[ne_ids[0]][0].y, edges[ne_ids[0]][1].x, edges[ne_ids[0]][1].y);
+  //     }
+  //     else {
+  //       console.log('ne: .............');
+  //     }
+  //     var found = false;
+  //     for (i = 0; i < ne_ids.length; i++) {
+  //       var id = ne_ids[i];
+  //       if (!isPointEqual(edges[id][1], edge[0]) && (edges[id].tag == undefined)) {
+  //         idx = id;
+  //         found = true;
+  //         break;
+  //       }
+  //     }
+  //     if (!found) {
+  //       for (i = 0; i < ne_ids.length; i++) {
+  //         var id = ne_ids[i];
+  //         if (!isPointEqual(edges[id][1], edge[0]) && (edges[id].tag != undefined)) {
+  //           idx = id;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   while (ne_ids.length > 0);
+  //   shape_n += 1;
+  // }
+  // console.log(shape_n + ' shapes are constructed');
+  // console.log(vertices);
 
-  // Create solids
+  // Create bodies for each line segment
+  var seg, body, p0, p1;
+  for (i = 0; i < edges.length; i++) {
+    seg = edges[i];
+
+    p0 = new Vector((seg[0].x - seg[1].x) * 0.5, (seg[0].y - seg[1].y) * 0.5);
+    p1 = new Vector((seg[1].x - seg[0].x) * 0.5, (seg[1].y - seg[0].y) * 0.5);
+
+    body = new physics.Body({
+      shape: new physics.Polygon([ p0, p1 ]),
+    });
+    body.collisionGroup = this.group;
+    body.position.set((seg[0].x + seg[1].x) * 0.5, (seg[0].y + seg[1].y) * 0.5);
+    this.bodies.push(body);
+  }
+};
+
+CollisionLayer.prototype.destroy = function() {
+  for (var i = 0; i < this.bodies.length; i++) {
+    this.bodies[i].remove();
+  }
+  this.bodies.length = 0;
+};
+
+CollisionLayer.prototype.addTo = function(scene) {
+  this.scene = scene;
+
+  for (var i = 0; i < this.bodies.length; i++) {
+    scene.world.addBody(this.bodies[i]);
+  }
 };
 
 module.exports = exports = CollisionLayer;

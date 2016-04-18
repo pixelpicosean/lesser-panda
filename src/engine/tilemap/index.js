@@ -26,16 +26,17 @@ var PIXI = require('engine/pixi');
 
 var tilemap = require('./pixi-tilemap');
 var filmstrip = require('./filmstrip');
-// var CollisionLayer = require('./collision-layer');
+var CollisionLayer = require('./collision-layer');
 
 var tiledConverter = require('./tiled-converter');
 
-function Tilemap(data, tilesets) {
+function Tilemap(data, tilesets, group) {
   PIXI.Container.call(this);
 
   this.tilesets = tilesets;
   this.data = data;
   this.collisionLayer = null;
+  this.group = group;
 
   this.createLayers();
 }
@@ -44,9 +45,20 @@ Tilemap.prototype.constructor = Tilemap;
 
 Tilemap.prototype.destroy = function() {
   this.tilesets = null;
+  this.collisionLayer.destroy();
   this.layers.length = 0;
 
   PIXI.Container.prototype.destroy.call(this);
+};
+
+Tilemap.prototype.addTo = function(scene, container) {
+  PIXI.Container.prototype.addTo.call(this, container);
+
+  if (this.collisionLayer) {
+    this.collisionLayer.addTo(scene);
+  }
+
+  return this;
 };
 
 Tilemap.prototype.createLayers = function() {
@@ -56,7 +68,7 @@ Tilemap.prototype.createLayers = function() {
     layerDef = this.data[i];
 
     if (layerDef.collision) {
-      // this.collisionLayer = new CollisionLayer(layerDef);
+      this.collisionLayer = new CollisionLayer(layerDef, this.group);
     }
     else {
       tileset = this.tilesets[layerDef.tileset];
@@ -95,10 +107,11 @@ Tilemap.prototype.createLayers = function() {
  *
  * @param  {JSON} json        Map data
  * @param  {Object} tilesets  Tileset table
+ * @param  {Number} group     Collision group
  * @return {Tilemap}          Tilemap instance
  */
-Tilemap.fromTiledJson = function(json, tilesets) {
-  return new Tilemap(tiledConverter(json), tilesets);
+Tilemap.fromTiledJson = function(json, tilesets, group) {
+  return new Tilemap(tiledConverter(json), tilesets, group);
 };
 
 module.exports = Tilemap;
