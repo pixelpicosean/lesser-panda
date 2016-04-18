@@ -375,6 +375,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     body = new physics.Body({
       shape: new physics.Polygon([ p0, p1 ]),
     });
+    body.collisionGroup = this.group;
     body.position.set((seg[0].x + seg[1].x) * 0.5, (seg[0].y + seg[1].y) * 0.5);
     this.bodies.push(body);
 
