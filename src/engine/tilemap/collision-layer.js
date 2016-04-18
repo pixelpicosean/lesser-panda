@@ -54,11 +54,14 @@ function polygonInPolygon(p1, p2) {
   return inside;
 }
 
-function CollisionLayer(def) {
+function CollisionLayer(def, group) {
   this.tilesize = def.tilesize;
   this.width = def.width;
   this.height = def.height;
   this.data = utils.lift(def.data, this.width, this.height);
+
+  this.group = group;
+  this.bodies = [];
 
   this.generateShapes();
 }
