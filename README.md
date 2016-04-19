@@ -12,7 +12,7 @@ LesserPanda has a lot of features, and the list is still growing:
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
 - Multiply broad phase solution: "Simple" for collision less games and "SpatialHash" for collision heavy ones.
-- Tilemap collision support by compiling collision map into line segments in the air.
+- Tilemap collision support by compiling collision map into convex polygons in the air.
 - ECS(Entity Component System) like sub-systems.
 - `Behaviors` bring objects to life with one-line setup.
 - High level `Actor` classes with both virsuals and physics built-in.
