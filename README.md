@@ -24,6 +24,10 @@ LesserPanda has a lot of features, and the list is still growing:
 - CSS style can be imported by using standard ES6 module system.
 - Live-reload browsers after any changes are saved.
 
+## Samples
+
+Samples are on [samples repo](https://github.com/pixelpicosean/lesser-panda-samples)
+
 ## Getting Start
 
 Make sure you have [Node.js](https://nodejs.org) installed.
