@@ -26,7 +26,11 @@ LesserPanda has a lot of features, and the list is still growing:
 
 ## Samples
 
-Samples are on [samples repo](https://github.com/pixelpicosean/lesser-panda-samples)
+Plz go to [samples repo](https://github.com/pixelpicosean/lesser-panda-samples) for samples, currently the samples are located inside `src/game/samples` folder.
+
+## Wiki
+
+[Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) pages are available now. Weekly devlog will be post every Wednesday.
 
 ## Getting Start
 
