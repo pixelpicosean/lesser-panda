@@ -31,7 +31,7 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 
 ## Document
 
-You can find [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Started) from the [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home).
+You can find [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) from the [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home).
 
 A weekly devlog can also be found from the [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), which will be updated each Wednesday.
 
