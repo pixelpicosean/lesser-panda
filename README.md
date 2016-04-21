@@ -26,36 +26,16 @@ LesserPanda has a lot of features, and the list is still growing:
 
 ## Samples
 
-Plz go to [samples repo](https://github.com/pixelpicosean/lesser-panda-samples) for samples, currently the samples are located inside `src/game/samples` folder.
+Samples are moved to its own [repo here](https://github.com/pixelpicosean/lesser-panda-samples).
+Currently the samples are located inside `src/game/samples` folder, and each is just a simple `Scene` focusing on one or more particular feature.
 
-## Wiki
+## Document
 
-[Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) pages are available now. Weekly devlog will be post every Wednesday.
+You can find [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Started) from the [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home).
 
-## Getting Start
+A weekly devlog can also be found from the [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), which will be updated each Wednesday.
 
-Make sure you have [Node.js](https://nodejs.org) installed.
-
-### Install `lesser-panda-cli` package globally
-
-`npm i -g lesser-panda-cli`
-
-### Download lesser-panda engine
-
-You can clone from the official repo:
-
-`git clone https://github.com/pixelpicosean/lesser-panda.git my-game`
-`cd my-game && rm -rf .git`
-
-or simply download from [here](https://github.com/pixelpicosean/lesser-panda/archive/master.zip)
-
-### Start the dev server and run the game from your browsers
-
-1. `lpanda server`
-2. Open [http://localhost:4000](http://localhost:4000) and you should see "It Works!" in your browser
-3. Make some changes and save, the browser will automatically reload
-
-The engine itself contains both engine sources and a folder called `game` for your JavaScript and CSS files. **It is recommend not to modify engine folder so you can upgrade to latest version by replacing it**
+Note that there're no **API doc** currently, but the coming won't be long.
 
 ## Brief introduction of modules
 
