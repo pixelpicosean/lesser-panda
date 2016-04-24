@@ -147,8 +147,16 @@ Actor.prototype.addTo = function addTo(scene, parent, tag) {
   this.scene.world.addBody(this.body);
   this.scene.addObject(this, tag);
 
+  this.prepare();
+
   return this;
 };
+
+/**
+ * Will be called by `addTo` method after the Actor components are
+ * properly added.
+ */
+Actor.prototype.prepare = function prepare() {};
 
 /**
  * Remove from current scene and parent container

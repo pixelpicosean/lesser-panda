@@ -85,6 +85,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.0-dev
 
+- Add a `prepare` method to `Actor` which will be called at the end of `addTo`.
 - Finish rectangle shaped tile collision support.
 - Add simple `Tilemap` support for both built-in format or Tiled JSON map(some custom properties are required)
 - Add `Timer.now` to represent time passed since game started.
