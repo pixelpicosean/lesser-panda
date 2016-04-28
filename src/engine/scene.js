@@ -117,7 +117,7 @@ Object.assign(Scene, {
    * @attribute {Array} updateOrder
    */
   updateOrder: [
-    'Object',
+    'Actor',
     'Animation',
     'Physics',
     'Renderer',
@@ -129,84 +129,126 @@ Object.assign(Scene, {
   },
 });
 
-// Object system --------------------------------------------
+// Actor system --------------------------------------------
 Object.assign(Scene.prototype, {
   /**
-   * Add object to scene, so it's `update()` function get's called every frame.
-   * @method addObject
-   * @param {Object} object Object you want to add
-   * @param {String} tag    Tag of this object, default is '0'
+   * Spawn an Actor to this scene
+   * @param  {Actor} actor      Actor class
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {String} layerName Name of the layer to add to(key of a PIXI.Container instance in this scene)
+   * @param  {Object} settings  Custom settings
+   * @param  {String} [settings.name] Name of this actor
+   * @param  {String} [settings.tag]  Tag of this actor
+   * @return {Actor}            Actor instance
    */
-  addObject: function addObject(object, tag) {
-    var t = tag || '0';
+  spawnActor: function spawnActor(actor, x, y, layerName, settings) {
+    var settings_ = settings || {};
 
-    if (!this.objectSystem.objects[t]) {
-      // Create a new object list
-      this.objectSystem.objects[t] = [];
-
-      // Active new tag by default
-      this.objectSystem.activeTags.push(t);
+    if (!this[layerName]) {
+      console.log('Layer ' + layerName + ' does not exist!');
+      return null;
     }
 
-    if (this.objectSystem.objects[t].indexOf(object) < 0) {
-      object.removed = false;
-      this.objectSystem.objects[t].push(object);
+    var a = new actor().addTo(this, this[layerName]);
+    a.position.set(x, y);
+    this.addActor(a, settings_.tag);
+
+    if (settings_.name) {
+      a.name = settings_.name;
+      this.namedActors[settings_.name] = a;
+    }
+
+    return a;
+  },
+
+  /**
+   * Add actor to this scene, so its `update()` function gets called every frame.
+   * @method addActor
+   * @param {Actor} actor   Actor you want to add
+   * @param {String} tag    Tag of this actor, default is '0'
+   */
+  addActor: function addActor(actor, tag) {
+    var t = tag || '0';
+
+    actor.tag = t;
+
+    if (!this.actorSystem.actors[t]) {
+      // Create a new actor list
+      this.actorSystem.actors[t] = [];
+
+      // Active new tag by default
+      this.actorSystem.activeTags.push(t);
+    }
+
+    if (this.actorSystem.actors[t].indexOf(actor) < 0) {
+      actor.removed = false;
+      this.actorSystem.actors[t].push(actor);
     }
   },
 
   /**
-   * Remove object from scene.
-   * @method removeObject
-   * @param {Object} object
+   * Remove actor from scene.
+   * @method removeActor
+   * @param {Actor} actor
    */
-  removeObject: function removeObject(object) {
-    if (object) object.removed = true;
+  removeActor: function removeActor(actor) {
+    // Will remove in next frame
+    if (actor) actor.removed = true;
+
+    // Remove name based reference
+    if (actor.name) {
+      if (this.actorSystem.namedActors[actor.name] === actor) {
+        this.actorSystem.namedActors[actor.name] = null;
+      }
+    }
   },
 
   pauseObjectsTagged: function pauseObjectsTagged(tag) {
-    if (this.objectSystem.objects[tag]) {
-      utils.removeItems(this.objectSystem.activeTags, this.objectSystem.activeTags.indexOf(tag), 1);
-      this.objectSystem.deactiveTags.push(tag);
+    if (this.actorSystem.actors[tag]) {
+      utils.removeItems(this.actorSystem.activeTags, this.actorSystem.activeTags.indexOf(tag), 1);
+      this.actorSystem.deactiveTags.push(tag);
     }
 
     return this;
   },
 
   resumeObjectsTagged: function resumeObjectsTagged(tag) {
-    if (this.objectSystem.objects[tag]) {
-      utils.removeItems(this.objectSystem.deactiveTags, this.objectSystem.deactiveTags.indexOf(tag), 1);
-      this.objectSystem.activeTags.push(tag);
+    if (this.actorSystem.actors[tag]) {
+      utils.removeItems(this.actorSystem.deactiveTags, this.actorSystem.deactiveTags.indexOf(tag), 1);
+      this.actorSystem.activeTags.push(tag);
     }
 
     return this;
   },
 });
 
-Scene.registerSystem('Object', {
+Scene.registerSystem('Actor', {
   init: function init(scene) {
     /**
-     * Object system runtime data storage
+     * Actor system runtime data storage
      */
-    scene.objectSystem = {
+    scene.actorSystem = {
       activeTags: ['0'],
       deactiveTags: [],
-      objects: {
+      actors: {
         '0': [],
       },
+      namedActors: {},
     };
   },
   update: function update(scene, deltaMS, deltaSec) {
-    var i, key, objects;
-    for (key in scene.objectSystem.objects) {
-      if (scene.objectSystem.activeTags.indexOf(key) < 0) continue;
+    var i, key, actors;
+    for (key in scene.actorSystem.actors) {
+      if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
 
-      objects = scene.objectSystem.objects[key];
-      for (i = 0; i < objects.length; i++) {
-        if (!objects[i].removed) {
-          objects[i].update(deltaMS, deltaSec);
+      actors = scene.actorSystem.actors[key];
+      for (i = 0; i < actors.length; i++) {
+        if (!actors[i].removed && actors[i].canEverTick) {
+          actors[i].update(deltaMS, deltaSec);
         }
-        if (objects[i].removed) {
-          utils.removeItems(objects, i--, 1);
+        if (actors[i].removed) {
+          utils.removeItems(actors, i--, 1);
         }
       }
     }
