@@ -2,6 +2,7 @@ var EventEmitter = require('engine/eventemitter3');
 var Vector = require('engine/vector');
 var PIXI = require('engine/pixi');
 var physics = require('engine/physics');
+var Behavior = require('engine/behavior');
 
 var DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),
@@ -80,6 +81,18 @@ function Actor(name) {
    */
   this.layer = null;
 
+  /**
+   * Behavior list
+   * @type {Array}
+   */
+  this.behaviors = [];
+
+  /**
+   * Type-behavior map
+   * @type {Object}
+   */
+  this.behaviorMap = {};
+
   // @privates
   this._rotation = 0;
 }
@@ -139,7 +152,7 @@ Actor.prototype.prepare = function prepare() {};
  * Update method to be called each frame
  * Nothing inside, no need to call `super.update`
  */
-Actor.prototype.update = function update() {};
+Actor.prototype.update = function update(dtMS, dtSec) {};
 
 /**
  * Remove from current scene and layer container
@@ -163,7 +176,7 @@ Actor.prototype.remove = function remove() {
 /**
  * Initialize `sprite` as Sprite
  * @param  {PIXI.Texture} texture
- * @return {Actor}        self for chainning
+ * @return {Actor}        self for chaining
  */
 Actor.prototype.initSprite = function(texture) {
   this.sprite = new PIXI.Sprite(texture);
@@ -185,7 +198,7 @@ Actor.prototype.initSprite = function(texture) {
  * @param  [settings.height] {Number} default 8, for 'Box' shapes
  * @param  [settings.radius] {Number} default 8, for 'Circle' shapes
  * @param  [settings.points] {Array<Vector>} vertices for 'Polygon' shapes
- * @return {Actor}  self for chainning
+ * @return {Actor}  self for chaining
  */
 Actor.prototype.initGraphics = function(settings_) {
   var settings = settings_ || {};
@@ -224,7 +237,7 @@ Actor.prototype.initGraphics = function(settings_) {
  * @param settings {Object}
  * @param settings.textures {Array<PIXI.Texture>}
  * @param settings.anims {Array<{ name, frames, settings }>}
- * @return {Actor}  self for chainning
+ * @return {Actor}  self for chaining
  */
 Actor.prototype.initAnimation = function(settings_) {
   var settings = settings_ || {};
@@ -256,7 +269,7 @@ Actor.prototype.initAnimation = function(settings_) {
  * @param  [settings.height] {Number} default 8, for 'Box' shapes
  * @param  [settings.radius] {Number} default 8, for 'Circle' shapes
  * @param  [settings.points] {Array<Vector>} vertices for 'Polygon' shapes
- * @return {Actor}  self for chainning
+ * @return {Actor}  self for chaining
  */
 Actor.prototype.initBody = function(settings_) {
   var settings = settings_ || {};
@@ -313,6 +326,89 @@ Actor.prototype.initBody = function(settings_) {
   }
 
   return this;
+};
+
+/**
+ * Add a behavior to this Actor.
+ * Note: the same behavior can only be added ONCE.
+ * @param {String|Behavior|Object}  behavior  Behavior type or constructor or instance
+ * @param {Object}                  settings  Settings for this behavior
+ * @return {Actor} Self for chaining
+ */
+Actor.prototype.behave = function behave(behv, settings) {
+  var behavior = behv;
+  if (typeof(behv) === 'string') {
+    behavior = Behavior.behaviors[behv];
+  }
+
+  // Create instance if the behavior is a function(constructor)
+  if (typeof(behavior) === 'function') {
+    behavior = new behavior();
+  }
+
+  if (this.behaviorMap[behavior.type]) {
+    console.log('An instance of behavior "' + behavior.type + '" is already added!');
+    return this;
+  }
+
+  this.behaviors.push(behavior);
+  this.behaviorMap[behavior.type] = behavior;
+
+  // Setup
+  behavior.addTo(this);
+  behavior.setup(settings || {});
+
+  return this;
+};
+
+/**
+ * Get a behavior instance by its type
+ * @param  {String} type  Type of the behavior to be activated
+ * @return {Behavior}     Behavior of the type, return undefined no one exists.
+ */
+Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
+  return this.behaviorMap[type];
+};
+
+/**
+ * Activate a behavior by its type
+ * @param  {String} type  Type of the behavior to be activated
+ * @return {Actor}        Self for chaining
+ */
+Actor.prototype.activateBehavior = function(type) {
+  var behv = this.behaviorMap[type];
+  if (behv) {
+    behv.activate();
+  }
+
+  return this;
+};
+
+/**
+ * De-activate a behavior by its type
+ * @param  {String} type  Type of the behavior to be de-activated
+ * @return {Actor}        Self for chaining
+ */
+Actor.prototype.deactivateBehavior = function(type) {
+  var behv = this.behaviorMap[type];
+  if (behv) {
+    behv.deactivate();
+  }
+
+  return this;
+};
+
+/**
+ * Update behaviors, automatically called by Actor sub-system
+ * @param  {Number} dtMS  Delta time in milli-seconds
+ * @param  {Number} dtSec Delta time in seconds
+ */
+Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
+  var i, behv;
+  for (i = 0; i < this.behaviors.length; i++) {
+    behv = this.behaviors[i];
+    behv.update && behv.update(dtMS, dtSec);
+  }
 };
 
 module.exports = exports = Actor;
