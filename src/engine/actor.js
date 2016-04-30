@@ -321,6 +321,8 @@ Actor.prototype.initBody = function(settings_) {
   this.body = new physics.Body(bodySettings);
   this.body.position = this.position;
 
+  this.body.parent = this;
+
   if (this.scene) {
     this.scene.world.addBody(this.body);
   }
