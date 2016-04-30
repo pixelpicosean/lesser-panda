@@ -238,16 +238,24 @@ Scene.registerSystem('Actor', {
     };
   },
   update: function update(scene, deltaMS, deltaSec) {
-    var i, key, actors;
+    var i, key, actors, actor;
     for (key in scene.actorSystem.actors) {
       if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
 
       actors = scene.actorSystem.actors[key];
       for (i = 0; i < actors.length; i++) {
-        if (!actors[i].removed && actors[i].canEverTick) {
-          actors[i].update(deltaMS, deltaSec);
+        actor = actors[i];
+
+        if (!actor.removed) {
+          if (actor.behaviors.length > 0) {
+            actor.updateBehaviors(deltaMS, deltaSec);
+          }
+          if (actor.canEverTick) {
+            actor.update(deltaMS, deltaSec);
+          }
         }
-        if (actors[i].removed) {
+
+        if (actor.removed) {
           utils.removeItems(actors, i--, 1);
         }
       }
