@@ -10,28 +10,33 @@
 import engine from 'engine/core';
 import Behavior from 'engine/behavior';
 
-const settings = {};
-const setupTarget = function() {};
-
 export default class WrapAroundScreen extends Behavior {
-  constructor(s) {
-    super('WrapAroundScreen', setupTarget, settings, true);
+  type = 'WrapAroundScreen'
 
-    this.needUpdate = true;
+  constructor() {
+    super();
+
     this.left = 0;
     this.right = 0;
     this.top = 0;
     this.bottom = 0;
     this.width = 0;
     this.height = 0;
+
+    this.targetLeft = 0;
+    this.targetRight = 0;
+    this.targetTop = 0;
+    this.targetBottom = 0;
+
+    this.targetBounds;
   }
   update(_, dt) {
     // Update bounds
-    if (this.scene.camera) {
-      this.left = this.scene.camera.left;
-      this.right = this.scene.camera.right;
-      this.up = this.scene.camera.up;
-      this.bottom = this.scene.camera.bottom;
+    if (this.target.scene.camera) {
+      this.left = this.target.scene.camera.left;
+      this.right = this.target.scene.camera.right;
+      this.up = this.target.scene.camera.up;
+      this.bottom = this.target.scene.camera.bottom;
     }
     else {
       this.left = 0;
@@ -42,17 +47,25 @@ export default class WrapAroundScreen extends Behavior {
     this.width = this.right - this.left;
     this.height = this.bottom - this.up;
 
-    if (this.target.position.x < this.left) {
+    this.targetBounds = this.target.sprite.getLocalBounds();
+    this.targetLeft = this.targetBounds.x + this.target.position.x;
+    this.targetRight = this.targetBounds.x + this.targetBounds.width + this.target.position.x;
+    this.targetTop = this.targetBounds.y + this.target.position.y;
+    this.targetBottom = this.targetBounds.y + this.targetBounds.height + this.target.position.y;
+
+    if (this.targetRight < this.left) {
       this.target.position.x += this.width;
     }
-    else if (this.target.position.x > this.right) {
+    else if (this.targetLeft > this.right) {
       this.target.position.x -= this.width;
     }
-    if (this.target.position.y < this.up) {
+    if (this.targetBottom < this.up) {
       this.target.position.y += this.height;
     }
-    else if (this.target.position.y > this.bottom) {
+    else if (this.targetTop > this.bottom) {
       this.target.position.y -= this.height;
     }
   }
 }
+
+Behavior.register('WrapAroundScreen', WrapAroundScreen);
