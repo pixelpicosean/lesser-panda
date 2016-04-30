@@ -98,7 +98,7 @@ Camera.prototype.addTo = function addTo(scene, container) {
   this.scene = scene;
   this.container = container;
 
-  scene.addObject(this);
+  scene.on('update', this.update, this);
 
   this.position.set(engine.width, engine.height)
     .multiply(this.anchor);
@@ -278,7 +278,7 @@ Camera.prototype.moveCamera = function moveCamera(dt) {
 };
 
 Camera.prototype.remove = function remove() {
-  this.scene.removeObject(this);
+  scene.off('update', this.update, this);
   this.container = null;
 };
 
