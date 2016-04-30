@@ -85,13 +85,13 @@ function Actor(name) {
    * Behavior list
    * @type {Array}
    */
-  this.behaviors = [];
+  this.behaviorList = [];
 
   /**
    * Type-behavior map
    * @type {Object}
    */
-  this.behaviorMap = {};
+  this.behaviors = {};
 
   // @privates
   this._rotation = 0;
@@ -346,13 +346,13 @@ Actor.prototype.behave = function behave(behv, settings) {
     behavior = new behavior();
   }
 
-  if (this.behaviorMap[behavior.type]) {
+  if (this.behaviors[behavior.type]) {
     console.log('An instance of behavior "' + behavior.type + '" is already added!');
     return this;
   }
 
-  this.behaviors.push(behavior);
-  this.behaviorMap[behavior.type] = behavior;
+  this.behaviorList.push(behavior);
+  this.behaviors[behavior.type] = behavior;
 
   // Setup
   behavior.addTo(this);
@@ -367,7 +367,7 @@ Actor.prototype.behave = function behave(behv, settings) {
  * @return {Behavior}     Behavior of the type, return undefined no one exists.
  */
 Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
-  return this.behaviorMap[type];
+  return this.behaviors[type];
 };
 
 /**
@@ -376,7 +376,7 @@ Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
  * @return {Actor}        Self for chaining
  */
 Actor.prototype.activateBehavior = function(type) {
-  var behv = this.behaviorMap[type];
+  var behv = this.behaviors[type];
   if (behv) {
     behv.activate();
   }
@@ -390,7 +390,7 @@ Actor.prototype.activateBehavior = function(type) {
  * @return {Actor}        Self for chaining
  */
 Actor.prototype.deactivateBehavior = function(type) {
-  var behv = this.behaviorMap[type];
+  var behv = this.behaviors[type];
   if (behv) {
     behv.deactivate();
   }
@@ -399,14 +399,14 @@ Actor.prototype.deactivateBehavior = function(type) {
 };
 
 /**
- * Update behaviors, automatically called by Actor sub-system
+ * Update behaviorList, automatically called by Actor sub-system
  * @param  {Number} dtMS  Delta time in milli-seconds
  * @param  {Number} dtSec Delta time in seconds
  */
 Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
   var i, behv;
-  for (i = 0; i < this.behaviors.length; i++) {
-    behv = this.behaviors[i];
+  for (i = 0; i < this.behaviorList.length; i++) {
+    behv = this.behaviorList[i];
     behv.update && behv.update(dtMS, dtSec);
   }
 };

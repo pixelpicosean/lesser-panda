@@ -247,7 +247,7 @@ Scene.registerSystem('Actor', {
         actor = actors[i];
 
         if (!actor.removed) {
-          if (actor.behaviors.length > 0) {
+          if (actor.behaviorList.length > 0) {
             actor.updateBehaviors(deltaMS, deltaSec);
           }
           if (actor.canEverTick) {

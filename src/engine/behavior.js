@@ -70,7 +70,6 @@ Behavior.register = function(type, behv) {
     return;
   }
 
-  behv.type = type;
   Behavior.behaviors[type] = behv;
 };
 
