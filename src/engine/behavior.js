@@ -1,45 +1,40 @@
 /**
- * Behavior base class
- * All the built-in behaviors inherit from this one.
+ * Behavior is just an "interface", you can inherit from it or
+ * simply create an object with the methods as light-weight
+ * behavior.
  */
 
 var EventEmitter = require('engine/eventemitter3');
 
-function Behavior(type, setupTarget, settings, needUpdate) {
+function Behavior() {
   EventEmitter.call(this);
 
-  this.type = type;
-  this.setupTarget = setupTarget;
-  this.needUpdate = needUpdate;
+  this.type = '';
 
   this.isActive = false;
 
   this.target = null;
-  this.scene = null;
-
-  // Merge settings
-  Object.assign(this, settings);
 };
 Behavior.prototype = Object.create(EventEmitter.prototype);
 Behavior.prototype.constructor = Behavior;
 
 /**
- * Add to target and scene
+ * Add to target
  * @param {Object} target Any objects meet this behavior's requirement
- * @param {Scene} scene   Which scene this behavior will run inside
  * @return {Behavior} Behavior itself for chaining
  */
-Behavior.prototype.addTo = function addTo(target, scene) {
+Behavior.prototype.addTo = function addTo(target) {
   this.target = target;
-  this.scene = scene;
-
-  // Keep a reference to this behavior
-  target[this.type] = this;
-
-  // Setup target object
-  this.setupTarget.call(target);
-
   return this;
+};
+/**
+ * Setup the behavior
+ * @param {Object} settings
+ * @return {Behavior} Self for chaining
+ */
+Behavior.prototype.setup = function setup(settings) {
+  // Merge settings
+  Object.assign(this, this.defaultSettings || {}, settings);
 };
 /**
  * Activate this behavior
@@ -47,9 +42,6 @@ Behavior.prototype.addTo = function addTo(target, scene) {
  */
 Behavior.prototype.activate = function activate() {
   this.isActive = true;
-  if (this.needUpdate) {
-    this.scene.addObject(this);
-  }
   return this;
 };
 /**
@@ -58,10 +50,28 @@ Behavior.prototype.activate = function activate() {
  */
 Behavior.prototype.deactivate = function deactivate() {
   this.isActive = false;
-  if (this.needUpdate) {
-    this.scene.removeObject(this);
-  }
   return this;
+};
+
+/**
+ * Behaviors map
+ * @type {Object}
+ */
+Behavior.behaviors = {};
+
+/**
+ * Register a new type of behavior.
+ * @param  {String}           type  Type of this behavior.
+ * @param  {Behavior|Object}  behv  Behavior sub-class or pure object
+ */
+Behavior.register = function(type, behv) {
+  if (Behavior.behaviors[type]) {
+    console.log('Behavior "' + type + '" is already defined!');
+    return;
+  }
+
+  behv.type = type;
+  Behavior.behaviors[type] = behv;
 };
 
 module.exports = exports = Behavior;
