@@ -83,7 +83,12 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
-### 0.4.0-dev
+### 0.4.1-dev
+
+- Re-design `Actor` system and make it more powerful yet easier to work with.
+- Re-design `Behavior` system.
+
+### 0.4.0
 
 - Add a `prepare` method to `Actor` which will be called at the end of `addTo`.
 - Finish rectangle shaped tile collision support.

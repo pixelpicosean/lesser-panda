@@ -364,6 +364,8 @@ function renderScene(scene) {
 
 // Public properties and methods
 Object.assign(core, {
+  version: 'v0.4.1-dev'
+
   /**
    * Main Canvas element
    */
