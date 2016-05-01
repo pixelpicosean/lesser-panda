@@ -5,7 +5,7 @@
     "source": {
         "include": [
             // "./src/behaviors",
-            "./src/engine"
+            "./src/engine/"
         ],
         "exclude": [
             "./src/engine/ai/",
@@ -15,6 +15,7 @@
             "./src/engine/pixi/",
             "./src/engine/resource-loader",
             "./src/engine/reactive.js",
+            "./src/engine/tilemap/decomp",
             "./src/engine/eventemitter3.js"
         ],
         "includePattern": ".+\\.js(doc)?$",
@@ -24,16 +25,23 @@
         "plugins/markdown"
     ],
     "templates": {
+        "applicationName": "Lesser Panda",
         "cleverLinks"   : false,
-        "monospaceLinks": false,
+        "copyright"     : "Lesser Panda Copyright © 2015 Sean Bohan.",
+        "disqus": "",
         "default"       : {
             "outputSourceFiles" : true
         },
-        "applicationName": "Lesser Panda",
         "footer"        : "Made with ♥ by Sean Bohan",
-        "copyright"     : "Lesser Panda Copyright © 2015 Sean Bohan.",
-        "disqus": "",
         "googleAnalytics": "",
+        "linenums"      : true,
+        "meta": {
+            "title": "",
+            "description": "",
+            "keyword": ""
+        },
+        "monospaceLinks": false,
+        "navType"       : "inline",
         "openGraph": {
             "title": "",
             "type": "website",
@@ -41,12 +49,8 @@
             "site_name": "",
             "url": ""
         },
-        "meta": {
-            "title": "",
-            "description": "",
-            "keyword": ""
-        },
-        "linenums"      : true
+        "theme"         : "Flatly",
+        "syntaxTheme"   : "dark"
     },
     "markdown"  : {
         "parser"        : "gfm",

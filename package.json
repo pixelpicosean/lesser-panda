@@ -4,11 +4,11 @@
   "description": "A module based HTML5 game engine designed to be flexible and powerful.",
   "dependencies": {},
   "devDependencies": {
-    "jaguarjs-jsdoc": "0.0.1",
+    "ink-docstrap": "^1.1.4",
     "jsdoc": "^3.4.0"
   },
   "scripts": {
-    "docs": "jsdoc -c ./jsdoc.conf.json -R README.md"
+    "docs": "jsdoc -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template -R README.md"
   },
   "repository": {
     "type": "git",
