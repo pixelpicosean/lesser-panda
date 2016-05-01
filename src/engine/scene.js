@@ -195,7 +195,7 @@ Object.assign(Scene.prototype, {
       return null;
     }
 
-    var a = new actor().addTo(this, this[layerName]);
+    var a = new actor(settings_).addTo(this, this[layerName]);
     a.position.set(x, y);
     this.addActor(a, settings_.tag);
 
