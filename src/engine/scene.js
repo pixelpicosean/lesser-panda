@@ -4,23 +4,26 @@ var utils = require('engine/utils');
 var config = require('game/config').default;
 
 /**
-  Game scene.
-  @class Scene
-**/
+ * Scene is the main hub for a game. A game made with LesserPanda
+ * is a combination of different scenes(menu, shop, game, game-over .etc).
+ * @class Scene
+ * @constructor
+ * @extends {EvenetEmitter}
+ */
 function Scene() {
   EventEmitter.call(this);
 
   /**
-    Desired FPS this scene should run
-    @attribute {Number} desiredFPS
-    @default 30
-  **/
+   * Desired FPS this scene should run
+   * @property {Number} desiredFPS
+   * @default 30
+   */
   this.desiredFPS = config.desiredFPS || 30;
 
   /**
-    @property {Array} updateOrder
-    @private
-  **/
+   * @property {Array} updateOrder
+   * @private
+   */
   this.updateOrder = [];
 
   var i, name, sys;
@@ -99,22 +102,51 @@ Scene.prototype._freeze = function _freeze() {
   }
 };
 
+/**
+ * Awake is called when this scene is activated.
+ * @method awake
+ */
 Scene.prototype.awake = function awake() {};
+/**
+ * PreUpdate is called at the beginning of each frame
+ * @method preUpdate
+ */
 Scene.prototype.preUpdate = function preUpdate() {};
+/**
+ * Update is called each frame, right after `preUpdate`.
+ * @method update
+ */
 Scene.prototype.update = function update() {};
+/**
+ * PostUpdate is called at the end of each frame, right after `update`.
+ * @method postUpdate
+ */
 Scene.prototype.postUpdate = function postUpdate() {};
+/**
+ * Freeze is called when this scene is deactivated(switched to another one)
+ */
 Scene.prototype.freeze = function freeze() {};
 
+/**
+ * System pause callback.
+ */
 Scene.prototype.pause = function pause() {};
+/**
+ * System resume callback.
+ */
 Scene.prototype.resume = function resume() {};
 
 Object.assign(Scene, {
+  /**
+   *  @property desiredFPS
+   * @default 30
+   */
   desiredFPS: config.desiredFPS || 30,
 
   systems: {},
   /**
    * System updating order
-   * @attribute {Array} updateOrder
+   *  @property {Array} updateOrder
    */
   updateOrder: [
     'Actor',
@@ -122,6 +154,13 @@ Object.assign(Scene, {
     'Physics',
     'Renderer',
   ],
+  /**
+   * Register a new sub-system.
+   * @memberOf Scene
+   * @static
+   * @param  {String} name
+   * @param  {Object} system
+   */
   registerSystem: function registerSystem(name, system) {
     if (Scene.systems[name]) console.log('Warning: override [' + name + '] system!');
 
@@ -133,6 +172,8 @@ Object.assign(Scene, {
 Object.assign(Scene.prototype, {
   /**
    * Spawn an Actor to this scene
+   * @method spawnActor
+   * @memberOf Scene
    * @param  {Actor} actor      Actor class
    * @param  {Number} x
    * @param  {Number} y
@@ -165,6 +206,7 @@ Object.assign(Scene.prototype, {
   /**
    * Add actor to this scene, so its `update()` function gets called every frame.
    * @method addActor
+   * @memberOf Scene
    * @param {Actor} actor   Actor you want to add
    * @param {String} tag    Tag of this actor, default is '0'
    */
@@ -190,6 +232,7 @@ Object.assign(Scene.prototype, {
   /**
    * Remove actor from scene.
    * @method removeActor
+   * @memberOf Scene
    * @param {Actor} actor
    */
   removeActor: function removeActor(actor) {
@@ -204,7 +247,11 @@ Object.assign(Scene.prototype, {
     }
   },
 
-  pauseObjectsTagged: function pauseObjectsTagged(tag) {
+  /**
+   * Pause actors with a specific tag.
+   * @param  {String} tag
+   */
+  pauseActorsTagged: function pauseActorsTagged(tag) {
     if (this.actorSystem.actors[tag]) {
       utils.removeItems(this.actorSystem.activeTags, this.actorSystem.activeTags.indexOf(tag), 1);
       this.actorSystem.deactiveTags.push(tag);
@@ -213,7 +260,11 @@ Object.assign(Scene.prototype, {
     return this;
   },
 
-  resumeObjectsTagged: function resumeObjectsTagged(tag) {
+  /**
+   * Resume actors with a specific tag.
+   * @param  {String} tag
+   */
+  resumeActorsTagged: function resumeActorsTagged(tag) {
     if (this.actorSystem.actors[tag]) {
       utils.removeItems(this.actorSystem.deactiveTags, this.actorSystem.deactiveTags.indexOf(tag), 1);
       this.actorSystem.activeTags.push(tag);

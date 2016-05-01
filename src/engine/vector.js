@@ -15,7 +15,6 @@ function Vector(x, y) {
 /**
  * Set vector values.
  * @method set
- * @chainable
  * @param {Number} [x=0]  Position of the point on the x axis
  * @param {Number} [y=0]  Position of the point on the y axis
  * @return {Vector}       Vector itself for chaining.
@@ -38,7 +37,6 @@ Vector.prototype.clone = function clone() {
 /**
  * Copy values from another vector.
  * @method copy
- * @chainable
  * @param {Vector} v Vector to copy from.
  * @return {Vector}  Self for chaining.
  */
@@ -51,7 +49,6 @@ Vector.prototype.copy = function copy(v) {
 /**
  * Add to vector values.
  * @method add
- * @chainable
  * @param {Number|Vector} x Number or `Vector` to add to self.
  * @param {Number} [y]      Number to add to `y`.
  * @return {Vector}         Self for chaining.
@@ -65,7 +62,6 @@ Vector.prototype.add = function add(x, y) {
 /**
  * Subtract from vector values.
  * @method subtract
- * @chainable
  * @param {Number|Vector} x  Number or `Vector` to subtract from.
  * @param {Number} [y]       Number to subtract from `y`.
  * @return {Vector}          Self for chaining.
@@ -79,7 +75,6 @@ Vector.prototype.subtract = function subtract(x, y) {
 /**
  * Multiply self with another vector or 2 numbers.
  * @method multiply
- * @chainable
  * @param {Number|Vector} x  Number or `Vector` to multiply.
  * @param {Number} [y]       Number to multiply to `y`.
  * @return {Vector}          Self for chaining.
@@ -93,7 +88,6 @@ Vector.prototype.multiply = function multiply(x, y) {
 /**
  * Divide self by another vector or 2 numbers.
  * @method multiply
- * @chainable
  * @param {Number|Vector} x  Number or `Vector` to divide.
  * @param {Number} [y]       Number to divide by.
  * @return {Vector}          Self for chaining.
@@ -179,7 +173,6 @@ Vector.prototype.dotNormalized = function dotNormalized(vector) {
 /**
  * Rotate vector in radians.
  * @method rotate
- * @chainable
  * @param {Number} angle Angle to rotate.
  * @return {Vector} Self for chaining.
  */
@@ -196,7 +189,6 @@ Vector.prototype.rotate = function rotate(angle) {
 /**
  * Normalize vector.
  * @method normalize
- * @chainable
  * @return {Vector} Self for chaining
  */
 Vector.prototype.normalize = function normalize() {
@@ -209,7 +201,6 @@ Vector.prototype.normalize = function normalize() {
 /**
  * Limit vector values.
  * @method limit
- * @chainable
  * @param {Vector} vector Clamp this vector to a limitation(vector)
  * @return {Vector}       Self for chaining.
  */
@@ -246,7 +237,6 @@ Vector.prototype.angleFromOrigin = function angleFromOrigin(vector) {
 /**
  * Round vector values.
  * @method round
- * @chainable
  * @return {Vector} Self for chaining
  */
 Vector.prototype.round = function round() {
@@ -269,7 +259,6 @@ Vector.prototype.equals = function equals(vector) {
  * Change this vector to be perpendicular to what it was before. (Effectively
  * roatates it 90 degrees in a clockwise direction)
  * @method perp
- * @chainable
  * @return {Vector} Self for chaining.
  */
 Vector.prototype.perp = function perp() {
@@ -282,7 +271,6 @@ Vector.prototype.perp = function perp() {
 /**
  * Reverse this vector
  * @method reverse
- * @chainable
  * @return {Vector} Self for chaining.
  */
 Vector.prototype.reverse = function reverse() {
@@ -294,7 +282,6 @@ Vector.prototype.reverse = function reverse() {
 /**
  * Project this vector on to another vector.
  * @method project
- * @chainable
  * @param {Vector} other The vector to project onto
  * @return {Vector} Self for chaining.
  */
@@ -309,7 +296,6 @@ Vector.prototype.project = function project(other) {
  * Project this vector onto a vector of unit length. This is slightly more efficient
  * than `project` when dealing with unit vectors.
  * @memberOf projectN
- * @chainable
  * @param {Vector} other The unit vector to project onto
  * @return {Vector} Self for chaining.
  */
@@ -323,7 +309,6 @@ Vector.prototype.projectN = function projectN(other) {
 /**
  * Reflect this vector on an arbitrary axis.
  * @method reflect
- * @chainable
  * @param {Vector} axis The vector representing the axis
  * @return {Vector} Self for chaining.
  */
@@ -340,7 +325,6 @@ Vector.prototype.reflect = function reflect(axis) {
  * Reflect this vector on an arbitrary axis (represented by a unit vector). This is
  * slightly more efficient than `reflect` when dealing with an axis that is a unit vector.
  * @method reflectN
- * @chainable
  * @param {Vector} axis The unit vector representing the axis
  * @return {Vector} Self for chaining.
  */

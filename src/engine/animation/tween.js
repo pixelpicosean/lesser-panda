@@ -1,5 +1,5 @@
 /**
- * Classic but better tween animation.
+ * Classic tween animation.
  */
 
 var EventEmitter = require('engine/eventemitter3');
@@ -14,7 +14,7 @@ var Interpolation = easing.Interpolation;
 
 /**
  * Action type enums
- * @const
+ * @enum {ACTION_TYPES}
  */
 var ACTION_TYPES = {
   REPEAT:   0,
@@ -27,6 +27,7 @@ var ACTION_TYPES = {
 /**
  * @class Tween
  * @constructor
+ * @extends {EventEmitter}
  * @param {Object} context
  */
 function Tween(context) {
@@ -35,9 +36,9 @@ function Tween(context) {
   this.context = context;
 
   /**
-    List of actions.
-    @property {Array}
-  **/
+   * List of actions.
+   * @property {Array}
+   */
   this.actions = [];
   this.index = -1;
   this.current = null;
@@ -104,11 +105,11 @@ Tween.prototype.constructor = Tween;
 
 /**
  * Add a new action to the tween
+ * @method to
  * @param  {Object} properties              Target properties
  * @param  {Number} duration                Duration of the action in ms
  * @param  {String|Function} easing         Easing function
  * @param  {String|Function} interpolation  Interpolation function
- * @chainable
  */
 Tween.prototype.to = function to(properties, duration, easing, interpolation) {
   var easingFn = easing || Easing.Linear.None;
@@ -143,7 +144,6 @@ Tween.prototype.to = function to(properties, duration, easing, interpolation) {
 /**
  * Repeat the tween for times
  * @param  {Number} times How many times to repeat
- * @chainable
  */
 Tween.prototype.repeat = function repeat(times) {
   this.actions.push([ACTION_TYPES.REPEAT, times]);
@@ -152,8 +152,8 @@ Tween.prototype.repeat = function repeat(times) {
 
 /**
  * Wait a short time before next action
+ * @method wait
  * @param  {Number} time Time to wait in ms
- * @chainable
  */
 Tween.prototype.wait = function wait(time) {
   this.actions.push([ACTION_TYPES.WAIT, time]);
@@ -162,7 +162,7 @@ Tween.prototype.wait = function wait(time) {
 
 /**
  * Stop this tween
- * @chainable
+ * @method stop
  */
 Tween.prototype.stop = function stop() {
   this.removed = true;
@@ -171,7 +171,7 @@ Tween.prototype.stop = function stop() {
 
 /**
  * Pause this tween
- * @chainable
+ * @method pause
  */
 Tween.prototype.pause = function pause() {
   this.paused = true;
@@ -180,7 +180,7 @@ Tween.prototype.pause = function pause() {
 
 /**
  * Resume this tween from pausing
- * @chainable
+ * @method resume
  */
 Tween.prototype.resume = function resume() {
   this.paused = false;
@@ -340,24 +340,29 @@ Tween.prototype.recycle = function recycle() {
 
 // Object recycle
 var pool = [];
-Object.assign(Tween, {
-  create: function create(context) {
-    var t = pool.shift();
-    if (!t) {
-      t = new Tween(context);
-    }
-    else {
-      Tween.call(t, context);
-    }
-    return t;
-  },
-});
+
+/**
+ * Tween factory method.
+ * @param  {Object} context
+ * @return {Tween}
+ */
+Tween.create = function create(context) {
+  var t = pool.shift();
+  if (!t) {
+    t = new Tween(context);
+  }
+  else {
+    Tween.call(t, context);
+  }
+  return t;
+};
 
 // Inject tween factory method
 Object.assign(Scene.prototype, {
   /**
-   * Create a new tween
+   * Create and add a new tween to the scene.
    * @method tween
+   * @memberOf Scene
    * @param {Object}     context Context of this tween
    * @param {String}     tag     Tag of this tween (default is '0')
    * @return {Tween}

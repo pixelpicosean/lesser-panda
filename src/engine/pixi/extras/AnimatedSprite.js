@@ -1,51 +1,51 @@
 var core = require('../core');
 
 /**
-  @class AnimationData
-  @constructor
-  @param {Array} frames
-  @param {Object} [props]
-**/
+ * @class AnimationData
+ * @constructor
+ * @param {Array} frames
+ * @param {Object} [props]
+ */
 function AnimationData(frames, props) {
   /**
-    Is animation looping.
-    @property {Boolean} loop
-    @default true
+   * Is animation looping.
+   * @property {Boolean} loop
+   * @default true
   **/
   this.loop = true;
   /**
-    Play animation in random order.
-    @property {Boolean} random
-    @default false
-  **/
+   * Play animation in random order.
+   * @property {Boolean} random
+   * @default false
+   */
   this.random = false;
   /**
-    Play animation in reverse.
-    @property {Boolean} reverse
-    @default false
-  **/
+   * Play animation in reverse.
+   * @property {Boolean} reverse
+   * @default false
+   */
   this.reverse = false;
   /**
-    Speed of animation (frames per second).
-    @property {Number} speed
-    @default 10
-  **/
+   * Speed of animation (frames per second).
+   * @property {Number} speed
+   * @default 10
+   */
   this.speed = 10;
   /**
-    Animation frame order.
-    @property {Array} frames
-  **/
+   * Animation frame order.
+   * @property {Array} frames
+   */
   this.frames = frames;
 
   Object.assign(this, props);
 }
 
 /**
-  @class AnimatedSprite
-  @extends Sprite
-  @constructor
-  @param {Array} textures Textures this animation made up of
-**/
+ * @class AnimatedSprite
+ * @extends Sprite
+ * @constructor
+ * @param {Array} textures Textures this animation made up of
+ */
 function AnimatedSprite(textures) {
   this.anims = {};
   this.currentAnim = 'default';
@@ -76,13 +76,12 @@ AnimatedSprite.prototype.remove = function remove() {
 };
 
 /**
-  Add new animation.
-  @method addAnim
-  @param {String} name
-  @param {Array} [frames]
-  @param {Object} [props]
-  @chainable
-**/
+ * Add new animation.
+ * @method addAnim
+ * @param {String} name
+ * @param {Array} [frames]
+ * @param {Object} [props]
+ */
 AnimatedSprite.prototype.addAnim = function addAnim(name, frames, props) {
   if (!name) return;
   if (!frames) {
@@ -98,12 +97,11 @@ AnimatedSprite.prototype.addAnim = function addAnim(name, frames, props) {
 };
 
 /**
-  Play animation.
-  @method play
-  @param {String} name Name of animation
-  @param {Number} [frame] Frame index
-  @chainable
-**/
+ * Play animation.
+ * @method play
+ * @param {String} name Name of animation
+ * @param {Number} [frame] Frame index
+ */
 AnimatedSprite.prototype.play = function play(name, frame) {
   name = name || this.currentAnim;
   var anim = this.anims[name];
@@ -128,11 +126,10 @@ AnimatedSprite.prototype.play = function play(name, frame) {
 };
 
 /**
-  Stop animation.
-  @method stop
-  @param {Number} [frame] Frame index
-  @chainable
-**/
+ * Stop animation.
+ * @method stop
+ * @param {Number} [frame] Frame index
+ */
 AnimatedSprite.prototype.stop = function stop(frame) {
   this.playing = false;
   if (typeof frame === 'number') this.gotoFrame(frame);
@@ -147,11 +144,10 @@ AnimatedSprite.prototype.stop = function stop(frame) {
 };
 
 /**
-  Jump to specific frame.
-  @method gotoFrame
-  @param {Number} frame
-  @chainable
-**/
+ * Jump to specific frame.
+ * @method gotoFrame
+ * @param {Number} frame
+ */
 AnimatedSprite.prototype.gotoFrame = function gotoFrame(frame) {
   var anim = this.anims[this.currentAnim];
   if (!anim) return;
@@ -162,8 +158,8 @@ AnimatedSprite.prototype.gotoFrame = function gotoFrame(frame) {
 };
 
 /**
-  @method updateAnimation
-**/
+ * @method updateAnimation
+ */
 AnimatedSprite.prototype.update = function update(delta) {
   var anim = this.anims[this.currentAnim];
 

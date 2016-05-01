@@ -69,7 +69,7 @@ Keyboard.prototype._resetKeys = function _resetKeys() {
 Object.assign(Keyboard, {
   /**
     List of available keys.
-    @attribute {Object} keys
+     @property {Object} keys
   **/
   keys: {
     8: 'BACKSPACE',

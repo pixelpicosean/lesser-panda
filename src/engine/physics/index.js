@@ -427,7 +427,7 @@ function Body(properties) {
   this.position = Vector.create();
   /**
    * Anchor of the shape.
-   * @type {Vector} anchor
+   * @type {Vector}
    * @default (0.5, 0.5)
    */
   this.anchor = Vector.create(0.5);
