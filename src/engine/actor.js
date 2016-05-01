@@ -174,11 +174,26 @@ Actor.prototype.remove = function remove() {
 // Component factory methods
 
 /**
+ * Initialize `sprite` as PIXI.Container
+ * @return {Actor}        self for chaining
+ */
+Actor.prototype.initEmpty = function initEmpty() {
+  this.sprite = new PIXI.Container();
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+
+/**
  * Initialize `sprite` as Sprite
  * @param  {PIXI.Texture} texture
  * @return {Actor}        self for chaining
  */
-Actor.prototype.initSprite = function(texture) {
+Actor.prototype.initSprite = function initSprite(texture) {
   this.sprite = new PIXI.Sprite(texture);
   this.sprite.position = this.position;
   this.sprite.anchor.set(0.5);
@@ -200,7 +215,7 @@ Actor.prototype.initSprite = function(texture) {
  * @param  [settings.points] {Array<Vector>} vertices for 'Polygon' shapes
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initGraphics = function(settings_) {
+Actor.prototype.initGraphics = function initGraphics(settings_) {
   var settings = settings_ || {};
 
   this.sprite = new PIXI.Graphics();
@@ -239,7 +254,7 @@ Actor.prototype.initGraphics = function(settings_) {
  * @param settings.anims {Array<{ name, frames, settings }>}
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initAnimation = function(settings_) {
+Actor.prototype.initAnimation = function initAnimation(settings_) {
   var settings = settings_ || {};
 
   this.sprite = new PIXI.extras.AnimatedSprite(settings.textures);
@@ -271,7 +286,7 @@ Actor.prototype.initAnimation = function(settings_) {
  * @param  [settings.points] {Array<Vector>} vertices for 'Polygon' shapes
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initBody = function(settings_) {
+Actor.prototype.initBody = function initBody(settings_) {
   var settings = settings_ || {};
 
   // Create shape
@@ -377,7 +392,7 @@ Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
  * @param  {String} type  Type of the behavior to be activated
  * @return {Actor}        Self for chaining
  */
-Actor.prototype.activateBehavior = function(type) {
+Actor.prototype.activateBehavior = function activateBehavior(type) {
   var behv = this.behaviors[type];
   if (behv) {
     behv.activate();
@@ -391,7 +406,7 @@ Actor.prototype.activateBehavior = function(type) {
  * @param  {String} type  Type of the behavior to be de-activated
  * @return {Actor}        Self for chaining
  */
-Actor.prototype.deactivateBehavior = function(type) {
+Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
   var behv = this.behaviors[type];
   if (behv) {
     behv.deactivate();
