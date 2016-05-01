@@ -1,3 +1,7 @@
+/**
+ * @module  engine/renderer
+ */
+
 var Renderer = {
   instance: undefined,
   resolution: 1,

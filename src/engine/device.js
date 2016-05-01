@@ -1,3 +1,7 @@
+/**
+ * @module engine/device
+ */
+
 function fetchDeviceInfo() {
   var device = {};
 

@@ -1,3 +1,7 @@
+/**
+ * @module engine/keyboard
+ */
+
 var EventEmitter = require('engine/eventemitter3');
 
 /**

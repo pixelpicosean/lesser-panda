@@ -1,3 +1,7 @@
+/**
+ * @module engine/vector
+ */
+
 var pool = [];
 
 /**

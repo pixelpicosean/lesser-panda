@@ -1,3 +1,7 @@
+/**
+ * @module engine/resize
+ */
+
 var pRatio = 1.0, cRatio = 1.0;
 
 function innerBoxResize(containerSize, contentSize) {
