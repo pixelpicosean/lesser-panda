@@ -41,7 +41,6 @@ Note that there're no **API doc** currently, but the coming won't be long.
 
 - `animation` provides both common tween animation and Blender like `action`.
 - `audio` provides sound playback functions, the basic usage is included in the `game/main`.
-- `canvasquery` provide a canvas 2d based renderer. Note that it is not capable with PIXI, so pick ONLY one of them at a time. Read more about it [here](http://canvasquery.com/).
 - `pixi` contains whole PIXI.js sources. Filters and mesh is disabled by default, you can enable them by uncomment related lines in `engine/pixi/index.js`.
 - `polyfill` contains some ES6 polyfills (`Object.assign`, `rAF` and `Math.sign`).
 - `resource-loader` brings resource loading functionality which is used by PIXI.js and you probably don't need to use it directly.
@@ -85,6 +84,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- `canvasquery` module is removed.
 - Re-design `Actor` system and make it more powerful yet easier to work with.
 - Re-design `Behavior` system.
 
