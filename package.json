@@ -1,0 +1,23 @@
+{
+  "name": "lesser-panda",
+  "version": "0.4.1-dev",
+  "description": "A module based HTML5 game engine designed to be flexible and powerful.",
+  "dependencies": {},
+  "devDependencies": {
+    "jaguarjs-jsdoc": "0.0.1",
+    "jsdoc": "^3.4.0"
+  },
+  "scripts": {
+    "docs": "jsdoc -c ./jsdoc.conf.json -R README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LesserPanda-Engine/LP-Engine.git"
+  },
+  "author": "Sean Bohan (pixelpicosean@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LesserPanda-Engine/LP-Engine/issues"
+  },
+  "homepage": "https://github.com/LesserPanda-Engine/LP-Engine#readme"
+}
