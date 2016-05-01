@@ -2,10 +2,10 @@ var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
 /**
-  @class Timer
-  @constructor
-  @param {Number} [ms]
-**/
+ * @class Timer
+ * @constructor
+ * @param {Number} [ms]
+ */
 function Timer(ms) {
   /**
    * @property {Number} _count
@@ -39,8 +39,8 @@ function Timer(ms) {
 
 /**
  * Set duration for timer.
+ * @method set
  * @param {Number} ms
- * @chainable
  */
 Timer.prototype.set = function set(ms) {
   if (typeof ms !== 'number') {
@@ -55,7 +55,6 @@ Timer.prototype.set = function set(ms) {
 /**
  * Reset timer to current duration.
  * @method reset
- * @chainable
  */
 Timer.prototype.reset = function reset() {
   this.removed = false;
@@ -66,7 +65,6 @@ Timer.prototype.reset = function reset() {
 /**
  * Pause timer.
  * @method pause
- * @chainable
  */
 Timer.prototype.pause = function pause() {
   this.paused = true;
@@ -76,13 +74,16 @@ Timer.prototype.pause = function pause() {
 /**
  * Resume paused timer.
  * @method resume
- * @chainable
  */
 Timer.prototype.resume = function resume() {
   this.paused = false;
   return this;
 };
 
+/**
+ * Update method that is called by timer system.
+ * @param  {Number} delta Delta time
+ */
 Timer.prototype.update = function update(delta) {
   if (this.removed || this.paused) return;
 
@@ -105,6 +106,7 @@ Timer.prototype.update = function update(delta) {
 
 /**
  * @property {Number} elapsed Time elapsed since start.
+ * @readOnly
  */
 Object.defineProperty(Timer.prototype, 'elapsed', {
   get: function() {
@@ -114,6 +116,7 @@ Object.defineProperty(Timer.prototype, 'elapsed', {
 
 /**
  * @property {Number} left Time left till the end.
+ * @readOnly
  */
 Object.defineProperty(Timer.prototype, 'left', {
   get: function() {
@@ -141,18 +144,18 @@ function recycleTimer(timer) {
 Object.assign(Timer, {
   /**
    * Delta since last frame (ms).
-   * @attribute {Number} delta
+   *  @property {Number} delta
    */
   delta: 0,
   /**
    * A cumulative number represents how long has passed since the
    * game is launched (in milliseconds).
-   * @type {Number}
+   *  @property {Number}
    */
   now: 0,
   /**
    * Map of timers
-   * @type {Object}
+   *  @property {Object}
    */
   timers: {
     '0': [],
@@ -161,7 +164,7 @@ Object.assign(Timer, {
   deactiveTags: [],
   /**
    * Update timer system.
-   * @attribute {Number} update
+   *  @property {Number} update
    */
   update: function update(delta) {
     this.delta = delta;
@@ -187,6 +190,7 @@ Object.assign(Timer, {
 
   /**
    * Create an one-shoot timer.
+   * @memberOf Timer
    * @param {Number} wait        Time in milliseconds
    * @param {Function}  callback  Callback function to run, when timer ends
    * @param {Object}    context   Context of the callback to be invoked
@@ -217,6 +221,7 @@ Object.assign(Timer, {
   },
   /**
    * Create an one-shoot timer while the time is in seconds instead.
+   * @memberOf Timer
    * @see Timer.later
    */
   laterSec: function laterSec(wait, callback, context, tag) {
@@ -225,6 +230,7 @@ Object.assign(Timer, {
 
   /**
    * Create a repeat timer.
+   * @memberOf Timer
    * @param {Number} interval    Time in milliseconds
    * @param {Function}  callback  Callback function to run, when timer ends
    * @param {Object}    context   Context of the callback to be invoked
@@ -255,6 +261,7 @@ Object.assign(Timer, {
   },
   /**
    * Create a repeat timer while the time is in seconds instead.
+   * @memberOf Timer
    * @see Timer.interval
    */
   intervalSec: function intervalSec(interval, callback, context, tag) {
@@ -263,12 +270,18 @@ Object.assign(Timer, {
 
   /**
    * Remove a timer.
+   * @memberOf Timer
    * @param {Timer} timer
    */
   remove: function remove(timer) {
     if (timer) timer.removed = true;
   },
 
+  /**
+   * Pause timers with a specific tag.
+   * @memberOf Timer
+   * @param  {String} tag
+   */
   pauseTimersTagged: function pauseTimersTagged(tag) {
     if (this.timers[tag]) {
       utils.removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
@@ -278,6 +291,11 @@ Object.assign(Timer, {
     return this;
   },
 
+  /**
+   * Resume timers with a specific tag.
+   * @memberOf Timer
+   * @param  {String} tag
+   */
   resumeTimersTagged: function resumeTimersTagged(tag) {
     if (this.timers[tag]) {
       utils.removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);

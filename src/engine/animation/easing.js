@@ -1,5 +1,5 @@
 /**
- * @attribute {Object} Easing
+ * Easing functions.
  */
 var Easing = {
   Linear: {
@@ -196,7 +196,7 @@ var Easing = {
 };
 
 /**
- * @attribute {Object} Interpolation
+ * Interpolation functions.
  */
 var Interpolation = {
   Linear: function(v, k) {
