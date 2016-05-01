@@ -1,3 +1,7 @@
+/**
+ * @module engine/actor
+ */
+
 var EventEmitter = require('engine/eventemitter3');
 var Vector = require('engine/vector');
 var PIXI = require('engine/pixi');
@@ -17,6 +21,9 @@ var DEFAULT_POLYGON_VERTICES = [
  * The `sprite` and `body` share the same postion and rotation,
  * designed to be easy to use.
  *
+ * @class Actor
+ * @constructor
+ * @extends {EventEmitter}
  * @param {String} name   Name of this actor
  */
 function Actor(name) {
@@ -103,6 +110,8 @@ Actor.uid = 0;
 
 /**
  * Rotation
+ * @member {Number}
+ * @memberOf Actor
  */
 Object.defineProperty(Actor.prototype, 'rotation', {
   get: function() {
@@ -122,6 +131,7 @@ Object.defineProperty(Actor.prototype, 'rotation', {
 
 /**
  * Add to the scene and a container
+ * @method addTo
  * @param {Scene} scene
  * @param {PIXI.Container} layer
  * @return {Actor} Actor itself for chaining
@@ -145,17 +155,20 @@ Actor.prototype.addTo = function addTo(scene, layer) {
 /**
  * Will be called by `addTo` method after the Actor components are
  * properly added.
+ * @method prepare
  */
 Actor.prototype.prepare = function prepare() {};
 
 /**
  * Update method to be called each frame
  * Nothing inside, no need to call `super.update`
+ * @method update
  */
 Actor.prototype.update = function update(dtMS, dtSec) {};
 
 /**
  * Remove from current scene and layer container
+ * @method remove
  */
 Actor.prototype.remove = function remove() {
   this.removed = true;
@@ -175,6 +188,7 @@ Actor.prototype.remove = function remove() {
 
 /**
  * Initialize `sprite` as PIXI.Container
+ * @method initEmpty
  * @return {Actor}        self for chaining
  */
 Actor.prototype.initEmpty = function initEmpty() {
@@ -190,6 +204,7 @@ Actor.prototype.initEmpty = function initEmpty() {
 
 /**
  * Initialize `sprite` as Sprite
+ * @method initSprite
  * @param  {PIXI.Texture} texture
  * @return {Actor}        self for chaining
  */
@@ -207,6 +222,7 @@ Actor.prototype.initSprite = function initSprite(texture) {
 
 /**
  * Initialize `sprite` as Graphics
+ * @method initGraphics
  * @param  {Object} settings
  * @param  [settings.shape] {String} default 'Box'
  * @param  [settings.width] {Number} default 8, for 'Box' shapes
@@ -249,6 +265,7 @@ Actor.prototype.initGraphics = function initGraphics(settings_) {
 
 /**
  * Initialize `sprite` as AnimatedSprite
+ * @method initAnimation
  * @param settings {Object}
  * @param settings.textures {Array<PIXI.Texture>}
  * @param settings.anims {Array<{ name, frames, settings }>}
@@ -278,6 +295,7 @@ Actor.prototype.initAnimation = function initAnimation(settings_) {
 
 /**
  * Initialize `body`
+ * @method initBody
  * @param  {Object} settings
  * @param  [settings.shape] {String} default 'Box'
  * @param  [settings.width] {Number} default 8, for 'Box' shapes
@@ -348,6 +366,7 @@ Actor.prototype.initBody = function initBody(settings_) {
 /**
  * Add a behavior to this Actor.
  * Note: the same behavior can only be added ONCE.
+ * @method behave
  * @param {String|Behavior|Object}  behavior  Behavior type or constructor or instance
  * @param {Object}                  settings  Settings for this behavior
  * @return {Actor} Self for chaining
@@ -380,6 +399,7 @@ Actor.prototype.behave = function behave(behv, settings) {
 
 /**
  * Get a behavior instance by its type
+ * @method getBehaviorByType
  * @param  {String} type  Type of the behavior to be activated
  * @return {Behavior}     Behavior of the type, return undefined no one exists.
  */
@@ -389,6 +409,7 @@ Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
 
 /**
  * Activate a behavior by its type
+ * @method activateBehavior
  * @param  {String} type  Type of the behavior to be activated
  * @return {Actor}        Self for chaining
  */
@@ -403,6 +424,7 @@ Actor.prototype.activateBehavior = function activateBehavior(type) {
 
 /**
  * De-activate a behavior by its type
+ * @method deactivateBehavior
  * @param  {String} type  Type of the behavior to be de-activated
  * @return {Actor}        Self for chaining
  */
@@ -417,6 +439,8 @@ Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
 
 /**
  * Update behaviorList, automatically called by Actor sub-system
+ * @method updateBehaviors
+ * @private
  * @param  {Number} dtMS  Delta time in milli-seconds
  * @param  {Number} dtSec Delta time in seconds
  */

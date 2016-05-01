@@ -1,3 +1,7 @@
+/**
+ * @module engine/scene
+ */
+
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
 var utils = require('engine/utils');

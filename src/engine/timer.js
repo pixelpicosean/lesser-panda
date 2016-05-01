@@ -1,3 +1,7 @@
+/**
+ * @module engine/timer
+ */
+
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 

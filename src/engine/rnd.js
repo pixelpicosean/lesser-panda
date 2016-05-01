@@ -1,4 +1,8 @@
 /**
+ * @module engine/rnd
+ */
+
+/**
  * An extremely useful repeatable random data generator.
  *
  * Based on RandomDataGenerator of Phaser engine, by Richard Davey <rich@photonstorm.com>

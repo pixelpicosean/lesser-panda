@@ -1,8 +1,17 @@
+/**
+ * @module engine/camera
+ */
+
 var engine = require('engine/core');
 var Vector = require('engine/vector');
 var Timer = require('engine/timer');
 var utils = require('engine/utils');
 
+/**
+ * Camera.
+ * @class Camera
+ * @constructor
+ */
 function Camera() {
   /**
    * Camera acceleration speed.
@@ -109,7 +118,7 @@ Camera.prototype.addTo = function addTo(scene, container) {
 };
 
 /**
- * Set target for camera.
+ * Set target of camera.
  * @method setTarget
  * @param {DisplayObject} target  The object to follow
  * @param {Boolean}            lerp    Whether lerp to target instead of reseting camera position
@@ -128,6 +137,10 @@ Camera.prototype.setTarget = function setTarget(target, lerp) {
   }
 };
 
+/**
+ * Set position of the camera
+ * @method setPosition
+ */
 Camera.prototype.setPosition = function setPosition(x, y) {
   this._setPosition(x, y);
   this.sensor.x = x - this.sensor.width * 0.5;
@@ -175,6 +188,7 @@ Camera.prototype._setPosition = function _setPosition(x, y) {
 
 /**
  * Shake camera
+ * @method shake
  * @param {Vector|Number} force Max shake distance in pixel
  * @param {Number} duration  How long will the camera shake
  * @param {Number} count How many times will the camera shake
@@ -217,6 +231,10 @@ Camera.prototype._startShake = function _startShake() {
   }
 };
 
+/**
+ * @private
+ * @method moveSensor
+ */
 Camera.prototype.moveSensor = function moveSensor() {
   if (!this.target) return;
 
@@ -254,6 +272,10 @@ Camera.prototype.moveSensor = function moveSensor() {
   }
 };
 
+/**
+ * @private
+ * @method moveCamera
+ */
 Camera.prototype.moveCamera = function moveCamera(dt) {
   this.speed.x = utils.clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
   this.speed.y = utils.clamp(this.position.y - (this.sensor.y + this.sensor.height * 0.5), -this.maxSpeed, this.maxSpeed);
@@ -277,11 +299,20 @@ Camera.prototype.moveCamera = function moveCamera(dt) {
   }
 };
 
+/**
+ * Remove camera from parent container.
+ * @method remove
+ */
 Camera.prototype.remove = function remove() {
   scene.off('update', this.update, this);
   this.container = null;
 };
 
+/**
+ * Update method
+ * @private
+ * @method [name]
+ */
 Camera.prototype.update = function update(_, delta) {
   this.delta = delta;
 

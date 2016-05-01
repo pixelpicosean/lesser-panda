@@ -1,12 +1,15 @@
+/**
+ * @module engine/analytics
+ */
+
 var device = require('engine/device');
 var config = require('game/config').default;
 
 /**
-  Google Analytics tracking.
-  @class Analytics
-  @extends game.Class
-  @constructor
-**/
+ * Google Analytics tracking.
+ * @class Analytics
+ * @constructor
+ */
 function Analytics(settings) {
   this.trackId = settings.id;
 

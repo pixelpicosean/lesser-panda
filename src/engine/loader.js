@@ -1,3 +1,7 @@
+/**
+ * @module engine/loader
+ */
+
 var EventEmitter = require('engine/eventemitter3');
 var ResourceLoader = require('engine/resource-loader');
 var config = require('game/config').default;

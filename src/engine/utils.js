@@ -2,6 +2,8 @@
  * Utility functions and constant variables
  *
  * Some utils come from [playground] and [supermix]
+ *
+ * @module engine/utils
  */
 
 // Math
