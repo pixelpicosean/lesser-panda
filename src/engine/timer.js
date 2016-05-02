@@ -7,7 +7,16 @@ var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
 /**
+ * The constructor should not be used directly, use the static methods instead:
+ *
+ * - {@link Timer.later}
+ * - {@link Timer.laterSec}
+ * - {@link Timer.interval}
+ * - {@link Timer.intervalSec}
+ *
  * @class Timer
+ *
+ * @constructor
  * @param {number} [ms]
  */
 function Timer(ms) {

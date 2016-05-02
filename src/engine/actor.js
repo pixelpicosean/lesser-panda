@@ -1,5 +1,9 @@
 /**
- * @module engine/actor
+ * @requires engine/eventemitter3
+ * @requires engine/vector
+ * @requires engine/pixi
+ * @requires engine/physics
+ * @requires engine/behavior
  */
 
 var EventEmitter = require('engine/eventemitter3');
@@ -16,57 +20,66 @@ var DEFAULT_POLYGON_VERTICES = [
 ];
 
 /**
- * base object that may contain a PIXI.Container instance(as `sprite`)
+ * Base object that may contain a PIXI.Container instance(as `sprite`)
  * and a physics.Body instance(as `body`).
+ *
  * The `sprite` and `body` share the same postion and rotation,
  * designed to be easy to use.
  *
+ * It is recommend to inherit {@link Actor} to create complex objects,
+ * while for the simple cases {@link module:engine/scene#spawnActor} with settings is enough.
+ *
  * @class Actor
- * @constructor
  * @extends {EventEmitter}
- * @param {String} name   Name of this actor
+ *
+ * @constructor
+ * @param {string} name   Name of this actor
  */
 function Actor(name) {
   EventEmitter.call(this);
 
   /**
-   * @type {Number}
+   * @type {number}
    */
   this.id = Actor.uid++;
 
   /**
    * Name of this Actor, can be undefined
-   * @type {String}
+   * @type {string}
    */
   this.name = name;
 
   /**
    * Tag for updating
-   * @type {String}
+   * @type {string}
    */
   this.tag = null;
 
   /**
    * Whether this actor is removed from scene
-   * @type {Boolean}
+   * @type {boolean}
+   * @private
    */
   this.removed = false;
 
   /**
    * Want this actor to be updated?
-   * @type {Boolean}
+   * @type {boolean}
+   * @default false
    */
   this.canEverTick = false;
 
   /**
    * Component for visual display, can be any sub-classes of `PIXI.Cotnainer` or null
    * @type {PIXI.Container}
+   * @default null
    */
   this.sprite = null;
 
   /**
    * Component for physics simulation and collision detection or null.
-   * @type {physics.Body}
+   * @type {module:engine/physics.Body}
+   * @default null
    */
   this.body = null;
 
@@ -80,27 +93,33 @@ function Actor(name) {
   /**
    * Reference to the scene that actor is added to
    * @type {Scene}
+   * @default null
    */
   this.scene = null;
   /**
    * Reference to the container that `sprite` is added to
    * @type {PIXI.Container}
+   * @default null
    */
   this.layer = null;
 
   /**
    * Behavior list
-   * @type {Array}
+   * @type {array}
    */
   this.behaviorList = [];
 
   /**
    * Type-behavior map
-   * @type {Object}
+   * @type {object}
    */
   this.behaviors = {};
 
-  // @privates
+  /**
+   * Rotation cache
+   * @type {number}
+   * @private
+   */
   this._rotation = 0;
 }
 Actor.prototype = Object.create(EventEmitter.prototype);
@@ -110,8 +129,8 @@ Actor.uid = 0;
 
 /**
  * Rotation
- * @member {Number}
- * @memberOf Actor
+ * @member {number}
+ * @memberof Actor#
  */
 Object.defineProperty(Actor.prototype, 'rotation', {
   get: function() {
@@ -132,6 +151,7 @@ Object.defineProperty(Actor.prototype, 'rotation', {
 /**
  * Add to the scene and a container
  * @method addTo
+ * @memberof Actor#
  * @param {Scene} scene
  * @param {PIXI.Container} layer
  * @return {Actor} Actor itself for chaining
@@ -156,6 +176,7 @@ Actor.prototype.addTo = function addTo(scene, layer) {
  * Will be called by `addTo` method after the Actor components are
  * properly added.
  * @method prepare
+ * @memberof Actor#
  */
 Actor.prototype.prepare = function prepare() {};
 
@@ -163,12 +184,15 @@ Actor.prototype.prepare = function prepare() {};
  * Update method to be called each frame
  * Nothing inside, no need to call `super.update`
  * @method update
+ * @memberof Actor#
+ * @protected
  */
 Actor.prototype.update = function update(dtMS, dtSec) {};
 
 /**
  * Remove from current scene and layer container
  * @method remove
+ * @memberof Actor#
  */
 Actor.prototype.remove = function remove() {
   this.removed = true;
@@ -189,6 +213,7 @@ Actor.prototype.remove = function remove() {
 /**
  * Initialize `sprite` as PIXI.Container
  * @method initEmpty
+ * @memberof Actor#
  * @return {Actor}        self for chaining
  */
 Actor.prototype.initEmpty = function initEmpty() {
@@ -205,6 +230,7 @@ Actor.prototype.initEmpty = function initEmpty() {
 /**
  * Initialize `sprite` as Sprite
  * @method initSprite
+ * @memberof Actor#
  * @param  {PIXI.Texture} texture
  * @return {Actor}        self for chaining
  */
@@ -223,12 +249,13 @@ Actor.prototype.initSprite = function initSprite(texture) {
 /**
  * Initialize `sprite` as Graphics
  * @method initGraphics
- * @param  {Object} settings
- * @param  [settings.shape] {String} default 'Box'
- * @param  [settings.width] {Number} default 8, for 'Box' shapes
- * @param  [settings.height] {Number} default 8, for 'Box' shapes
- * @param  [settings.radius] {Number} default 8, for 'Circle' shapes
- * @param  [settings.points] {Array<Vector>} vertices for 'Polygon' shapes
+ * @memberof Actor#
+ * @param  {object} [settings]
+ * @param  [settings.shape] {string} default 'Box'
+ * @param  [settings.width] {number} default 8, for 'Box' shapes
+ * @param  [settings.height] {number} default 8, for 'Box' shapes
+ * @param  [settings.radius] {number} default 8, for 'Circle' shapes
+ * @param  [settings.points] {array<engine/vector>} vertices for 'Polygon' shapes
  * @return {Actor}  self for chaining
  */
 Actor.prototype.initGraphics = function initGraphics(settings_) {
@@ -266,9 +293,10 @@ Actor.prototype.initGraphics = function initGraphics(settings_) {
 /**
  * Initialize `sprite` as AnimatedSprite
  * @method initAnimation
- * @param settings {Object}
- * @param settings.textures {Array<PIXI.Texture>}
- * @param settings.anims {Array<{ name, frames, settings }>}
+ * @memberof Actor#
+ * @param settings {object}
+ * @param settings.textures {array<PIXI.Texture>}
+ * @param settings.anims {array<{ name, frames, settings }>}
  * @return {Actor}  self for chaining
  */
 Actor.prototype.initAnimation = function initAnimation(settings_) {
@@ -296,12 +324,13 @@ Actor.prototype.initAnimation = function initAnimation(settings_) {
 /**
  * Initialize `body`
  * @method initBody
- * @param  {Object} settings
- * @param  [settings.shape] {String} default 'Box'
- * @param  [settings.width] {Number} default 8, for 'Box' shapes
- * @param  [settings.height] {Number} default 8, for 'Box' shapes
- * @param  [settings.radius] {Number} default 8, for 'Circle' shapes
- * @param  [settings.points] {Array<Vector>} vertices for 'Polygon' shapes
+ * @memberof Actor#
+ * @param  {object} settings
+ * @param  [settings.shape] {string} default 'Box'
+ * @param  [settings.width] {number} default 8, for 'Box' shapes
+ * @param  [settings.height] {number} default 8, for 'Box' shapes
+ * @param  [settings.radius] {number} default 8, for 'Circle' shapes
+ * @param  [settings.points] {array<engine/vector>} vertices for 'Polygon' shapes
  * @return {Actor}  self for chaining
  */
 Actor.prototype.initBody = function initBody(settings_) {
@@ -367,8 +396,9 @@ Actor.prototype.initBody = function initBody(settings_) {
  * Add a behavior to this Actor.
  * Note: the same behavior can only be added ONCE.
  * @method behave
- * @param {String|Behavior|Object}  behavior  Behavior type or constructor or instance
- * @param {Object}                  settings  Settings for this behavior
+ * @memberof Actor#
+ * @param {string|Behavior|object}  behavior  Behavior type or constructor or instance
+ * @param {object}                  settings  Settings for this behavior
  * @return {Actor} Self for chaining
  */
 Actor.prototype.behave = function behave(behv, settings) {
@@ -400,7 +430,8 @@ Actor.prototype.behave = function behave(behv, settings) {
 /**
  * Get a behavior instance by its type
  * @method getBehaviorByType
- * @param  {String} type  Type of the behavior to be activated
+ * @memberof Actor#
+ * @param  {string} type  Type of the behavior to be activated
  * @return {Behavior}     Behavior of the type, return undefined no one exists.
  */
 Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
@@ -410,7 +441,8 @@ Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
 /**
  * Activate a behavior by its type
  * @method activateBehavior
- * @param  {String} type  Type of the behavior to be activated
+ * @memberof Actor#
+ * @param  {string} type  Type of the behavior to be activated
  * @return {Actor}        Self for chaining
  */
 Actor.prototype.activateBehavior = function activateBehavior(type) {
@@ -425,7 +457,8 @@ Actor.prototype.activateBehavior = function activateBehavior(type) {
 /**
  * De-activate a behavior by its type
  * @method deactivateBehavior
- * @param  {String} type  Type of the behavior to be de-activated
+ * @memberof Actor#
+ * @param  {string} type  Type of the behavior to be de-activated
  * @return {Actor}        Self for chaining
  */
 Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
@@ -440,9 +473,10 @@ Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
 /**
  * Update behaviorList, automatically called by Actor sub-system
  * @method updateBehaviors
+ * @memberof Actor#
  * @private
- * @param  {Number} dtMS  Delta time in milli-seconds
- * @param  {Number} dtSec Delta time in seconds
+ * @param  {number} dtMS  Delta time in milli-seconds
+ * @param  {number} dtSec Delta time in seconds
  */
 Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
   var i, behv;
@@ -452,4 +486,11 @@ Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
   }
 };
 
-module.exports = exports = Actor;
+/**
+ * Actor is the core object of Lesser Panda, which provides lots of
+ * benefits such as Behavior support, config based initialise.
+ *
+ * @exports engine/actor
+ * @see Actor
+ */
+module.exports = Actor;
