@@ -1,13 +1,8 @@
-/**
- * @requires engine/scene
- * @requires engine/utils
- */
-
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 
 /**
- * The constructor should not be used directly, use the static methods instead:
+ * Timer constructor should not be used directly, use the static methods instead:
  *
  * - {@link Timer.later}
  * - {@link Timer.laterSec}
@@ -359,5 +354,8 @@ Object.assign(Timer, {
 /**
  * @exports engine/timer
  * @see Timer
+ *
+ * @requires engine/scene
+ * @requires engine/utils
  */
 module.exports = Timer;
