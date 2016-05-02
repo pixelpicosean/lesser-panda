@@ -50,7 +50,8 @@
             "url": ""
         },
         "theme"         : "Flatly",
-        "syntaxTheme"   : "dark"
+        "syntaxTheme"   : "dark",
+        "systemName"    : "Lesser Panda"
     },
     "markdown"  : {
         "parser"        : "gfm",
