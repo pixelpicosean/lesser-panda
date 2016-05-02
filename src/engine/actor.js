@@ -1,11 +1,3 @@
-/**
- * @requires engine/eventemitter3
- * @requires engine/vector
- * @requires engine/pixi
- * @requires engine/physics
- * @requires engine/behavior
- */
-
 var EventEmitter = require('engine/eventemitter3');
 var Vector = require('engine/vector');
 var PIXI = require('engine/pixi');
@@ -492,5 +484,11 @@ Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
  *
  * @exports engine/actor
  * @see Actor
+ *
+ * @requires module:engine/eventemitter3
+ * @requires module:engine/vector
+ * @requires module:engine/pixi
+ * @requires module:engine/physics
+ * @requires module:engine/behavior
  */
 module.exports = Actor;
