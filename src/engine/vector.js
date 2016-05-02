@@ -8,13 +8,22 @@ var pool = [];
 
 /**
  * The Vector object represents a location in a two-dimensional coordinate system, where x represents the horizontal axis and y represents the vertical axis.
+ * Prefer {@link Vector.create} for new instances.
+ *
  * @class Vector
+ *
  * @constructor
  * @param {number} [x=0]  Position of the point on the x axis
  * @param {number} [y=0]  Position of the point on the y axis
  */
 function Vector(x, y) {
+  /**
+   * @type {number}
+   */
   this.x = x || 0;
+  /**
+   * @type {number}
+   */
   this.y = y || ((y !== 0) ? this.x : 0);
 };
 
