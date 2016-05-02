@@ -29,9 +29,6 @@
         "cleverLinks"   : false,
         "copyright"     : "Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.",
         "disqus": "",
-        "default"       : {
-            "outputSourceFiles" : true
-        },
         "footer"        : "<span class=\"jsdoc-message\">Made with ♥ by Sean Bohan</span>",
         "googleAnalytics": "",
         "linenums"      : true,
@@ -49,6 +46,7 @@
             "site_name": "",
             "url": ""
         },
+        "outputSourceFiles" : true,
         "theme"         : "Flatly",
         "syntaxTheme"   : "dark",
         "systemName"    : "Lesser Panda"
