@@ -1,5 +1,5 @@
 /**
- * @module engine/analytics
+ * @requires engine/device
  */
 
 var device = require('engine/device');
@@ -7,10 +7,27 @@ var config = require('game/config').default;
 
 /**
  * Google Analytics tracking.
+ * Note: This class is protected, use the default instance instead.
+ *
+ * @example
+ * // Add your GA code into `game/config`
+ * analytics: {
+ *   id: 'my-ga-code'
+ * }
+ *
+ * // Import the {@link module:engine/analytics} module
+ * import analytics from 'engine/analytics';
+ *
+ * // Send to the server
+ * analytics.send('category', 'action', 'label', 'value');
+ *
  * @class Analytics
  * @constructor
  */
 function Analytics(settings) {
+  /**
+   * @private
+   */
   this.trackId = settings.id;
 
   if (!navigator.onLine) return;
@@ -43,13 +60,14 @@ function Analytics(settings) {
 }
 
 /**
-  Send event to analytics.
-  @method send
-  @param {String} category
-  @param {String} action
-  @param {String} [label]
-  @param {String} [value]
-**/
+ * Send event to analytics.
+ * @method send
+ * @memberof Analytics#
+ * @param {string} category
+ * @param {string} action
+ * @param {string} [label]
+ * @param {string} [value]
+ */
 Analytics.prototype.send = function send(category, action, label, value) {
   if (!navigator.onLine) return;
 
@@ -66,6 +84,16 @@ Analytics.prototype.send = function send(category, action, label, value) {
   }
 };
 
+/**
+ * Analytics module makes it easier to work with Google Analytics.
+ *
+ * An instance of {@link Analytics} is already created as the module
+ * exports.
+ *
+ * See {@link Analytics} for more information.
+ *
+ * @exports engine/analytics
+ */
 module.exports = new Analytics(Object.assign({
   id: '',
 }, config.analytics));
