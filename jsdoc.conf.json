@@ -27,12 +27,12 @@
     "templates": {
         "applicationName": "Lesser Panda",
         "cleverLinks"   : false,
-        "copyright"     : "Lesser Panda Copyright © 2015 Sean Bohan.",
+        "copyright"     : "Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.",
         "disqus": "",
         "default"       : {
             "outputSourceFiles" : true
         },
-        "footer"        : "Made with ♥ by Sean Bohan",
+        "footer"        : "<span class=\"jsdoc-message\">Made with ♥ by Sean Bohan</span>",
         "googleAnalytics": "",
         "linenums"      : true,
         "meta": {
