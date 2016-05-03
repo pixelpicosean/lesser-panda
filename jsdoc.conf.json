@@ -15,8 +15,7 @@
             "./src/engine/pixi/",
             "./src/engine/resource-loader",
             "./src/engine/reactive.js",
-            "./src/engine/tilemap/decomp",
-            "./src/engine/eventemitter3.js"
+            "./src/engine/tilemap/decomp"
         ],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
