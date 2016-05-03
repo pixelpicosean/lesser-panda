@@ -1,19 +1,20 @@
-/**
- * @module engine/keyboard
- */
-
 var EventEmitter = require('engine/eventemitter3');
 
 /**
-  @class Keyboard
-**/
+ * @class Keyboard
+ * @constructor
+ * @extends {EventEmitter}
+ *
+ * @emits keydown
+ * @emits keyup
+ */
 function Keyboard() {
   EventEmitter.call(this);
 
   /**
-    @property {Array} _keysDown
-    @private
-  **/
+   * @type {array}
+   * @private
+   */
   this._keysDown = [];
 
   window.addEventListener('keydown', this._keydown.bind(this));
@@ -24,20 +25,22 @@ Keyboard.prototype = Object.create(EventEmitter.prototype);
 Keyboard.prototype.constructor = Keyboard;
 
 /**
-  Check if key is pressed down.
-  @method down
-  @param {String} key
-  @return {Boolean}
-**/
+ * Check if key is pressed down.
+ * @method down
+ * @memberof Keyboard#
+ * @param {string} key
+ * @return {boolean}
+ */
 Keyboard.prototype.down = function down(key) {
   return !!this._keysDown[key];
 },
 
 /**
-  @method _keydown
-  @param {KeyboardEvent} event
-  @private
-**/
+ * @method _keydown
+ * @memberof Keyboard#
+ * @param {KeyboardEvent} event
+ * @private
+ */
 Keyboard.prototype._keydown = function _keydown(event) {
   if (!Keyboard.keys[event.keyCode]) {
     // Unknown key
@@ -51,19 +54,21 @@ Keyboard.prototype._keydown = function _keydown(event) {
 };
 
 /**
-  @method _keyup
-  @param {KeyboardEvent} event
-  @private
-**/
+ * @method _keyup
+ * @memberof Keyboard#
+ * @param {KeyboardEvent} event
+ * @private
+ */
 Keyboard.prototype._keyup = function _keyup(event) {
   this._keysDown[Keyboard.keys[event.keyCode]] = false;
   this.emit('keyup', Keyboard.keys[event.keyCode]);
 };
 
 /**
-  @method _resetKeys
-  @private
-**/
+ * @method _resetKeys
+ * @memberof Keyboard#
+ * @private
+ */
 Keyboard.prototype._resetKeys = function _resetKeys() {
   for (var key in this._keysDown) {
     this._keysDown[key] = false;
@@ -72,9 +77,10 @@ Keyboard.prototype._resetKeys = function _resetKeys() {
 
 Object.assign(Keyboard, {
   /**
-    List of available keys.
-     @property {Object} keys
-  **/
+   * List of available keys.
+   * @memberof Keyboard#
+   * @type {object}
+   */
   keys: {
     8: 'BACKSPACE',
     9: 'TAB',
@@ -168,4 +174,20 @@ Object.assign(Keyboard, {
   },
 });
 
+/**
+ * Keyboard events and states support.
+ * An instance of `Keyboard` is exported as the default value of
+ * `engine/keyboard` module.
+ *
+ * @see Keyboard
+ *
+ * @exports engine/keyboard
+ * @requires module:engine/eventemitter3
+ *
+ * @example
+ * import keyboard from 'engine/keyboard';
+ * keyboard.on('keydown', (key) => {
+ *   console.log(`key "${key}" is pressed`);
+ * });
+ */
 module.exports = new Keyboard();
