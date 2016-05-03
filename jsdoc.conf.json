@@ -48,7 +48,7 @@
         },
         "outputSourceFiles" : true,
         "theme"         : "Flatly",
-        "syntaxTheme"   : "dark",
+        "syntaxTheme"   : "default",
         "systemName"    : "Lesser Panda"
     },
     "markdown"  : {
