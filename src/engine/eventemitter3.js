@@ -1,5 +1,3 @@
-'use strict';
-
 //
 // We store our EE objects in a plain object whose properties are event names.
 // If `Object.create(null)` is not supported we prefix the event names with a
@@ -13,10 +11,10 @@ var prefix = typeof Object.create !== 'function' ? '~' : false;
 /**
  * Representation of a single EventEmitter function.
  *
- * @param {Function} fn Event handler to be called.
+ * @param {function} fn Event handler to be called.
  * @param {Mixed} context Context for function execution.
- * @param {Boolean} once Only emit once
- * @api private
+ * @param {boolean} once Only emit once
+ * @private
  */
 function EE(fn, context, once) {
   this.fn = fn;
@@ -28,15 +26,16 @@ function EE(fn, context, once) {
  * Minimal EventEmitter interface that is molded against the Node.js
  * EventEmitter interface.
  *
+ * @class EventEmitter
+ *
  * @constructor
- * @api public
  */
 function EventEmitter() { /* Nothing to set */ }
 
 /**
  * Holds the assigned EventEmitters by name.
  *
- * @type {Object}
+ * @type {object}
  * @private
  */
 EventEmitter.prototype._events = undefined;
@@ -44,10 +43,11 @@ EventEmitter.prototype._events = undefined;
 /**
  * Return a list of assigned event listeners.
  *
- * @param {String} event The events that should be listed.
- * @param {Boolean} exists We only need to know if there are listeners.
- * @returns {Array|Boolean}
- * @api public
+ * @memberof EventEmitter#
+ * @method listeners
+ * @param {string} event The events that should be listed.
+ * @param {boolean} exists We only need to know if there are listeners.
+ * @returns {array|boolean}
  */
 EventEmitter.prototype.listeners = function listeners(event, exists) {
   var evt = prefix ? prefix + event : event
@@ -67,9 +67,10 @@ EventEmitter.prototype.listeners = function listeners(event, exists) {
 /**
  * Emit an event to all registered event listeners.
  *
- * @param {String} event The name of the event.
- * @returns {Boolean} Indication if we've emitted an event.
- * @api public
+ * @memberof EventEmitter#
+ * @method emit
+ * @param {string} event The name of the event.
+ * @returns {boolean} Indication if we've emitted an event.
  */
 EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
   var evt = prefix ? prefix + event : event;
@@ -125,10 +126,11 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
 /**
  * Register a new EventListener for the given event.
  *
- * @param {String} event Name of the event.
- * @param {Functon} fn Callback function.
+ * @memberof EventEmitter#
+ * @method on
+ * @param {string} event Name of the event.
+ * @param {functon} fn Callback function.
  * @param {Mixed} context The context of the function.
- * @api public
  */
 EventEmitter.prototype.on = function on(event, fn, context) {
   var listener = new EE(fn, context || this)
@@ -149,10 +151,11 @@ EventEmitter.prototype.on = function on(event, fn, context) {
 /**
  * Add an EventListener that's only called once.
  *
- * @param {String} event Name of the event.
- * @param {Function} fn Callback function.
+ * @memberof EventEmitter#
+ * @method once
+ * @param {string} event Name of the event.
+ * @param {function} fn Callback function.
  * @param {Mixed} context The context of the function.
- * @api public
  */
 EventEmitter.prototype.once = function once(event, fn, context) {
   var listener = new EE(fn, context || this, true)
@@ -173,11 +176,12 @@ EventEmitter.prototype.once = function once(event, fn, context) {
 /**
  * Remove event listeners.
  *
- * @param {String} event The event we want to remove.
- * @param {Function} fn The listener that we need to find.
+ * @memberof EventEmitter#
+ * @method removeListener
+ * @param {string} event The event we want to remove.
+ * @param {function} fn The listener that we need to find.
  * @param {Mixed} context Only remove listeners matching this context.
- * @param {Boolean} once Only remove once listeners.
- * @api public
+ * @param {boolean} once Only remove once listeners.
  */
 EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
   var evt = prefix ? prefix + event : event;
@@ -224,8 +228,9 @@ EventEmitter.prototype.removeListener = function removeListener(event, fn, conte
 /**
  * Remove all listeners or only the listeners for the specified event.
  *
- * @param {String} event The event want to remove all listeners for.
- * @api public
+ * @memberof EventEmitter#
+ * @method removeAllListeners
+ * @param {string} event The event want to remove all listeners for.
  */
 EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
   if (!this._events) return this;
@@ -236,10 +241,17 @@ EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
   return this;
 };
 
-//
-// Alias methods names because people roll like that.
-//
+/**
+ * @method off
+ * @memberof EventEmitter#
+ * @alias EventEmitter#removeListener
+ */
 EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+/**
+ * @method addListener
+ * @memberof EventEmitter#
+ * @alias EventEmitter#on
+ */
 EventEmitter.prototype.addListener = EventEmitter.prototype.on;
 
 //
@@ -254,9 +266,11 @@ EventEmitter.prototype.setMaxListeners = function setMaxListeners() {
 //
 EventEmitter.prefixed = prefix;
 
-//
-// Expose the module.
-//
-if ('undefined' !== typeof module) {
-  module.exports = EventEmitter;
-}
+/**
+ * Minimal EventEmitter interface that is molded against the Node.js
+ * EventEmitter interface.
+ *
+ * @exports engine/eventemitter3
+ * @see EventEmitter
+ */
+module.exports = EventEmitter;
