@@ -31,11 +31,10 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 
 ## Document
 
-You can find [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) from the [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home).
+- [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
+- [API document](https://pixelpicosean.github.io/lesser-panda/) (This is not completed yet, but will be ready soon!)
 
-A weekly devlog can also be found from the [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), which will be updated each Wednesday.
-
-Note that there're no **API doc** currently, but the coming won't be long.
+A **weekly devlog** shows what happened to LesserPanda, read them at [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), it will be updated on each Wednesday.
 
 ## Brief introduction of modules
 
