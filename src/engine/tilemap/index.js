@@ -80,6 +80,7 @@ Tilemap.prototype.createLayers = function() {
       layer = new tilemap.CompositeRectTileLayer(0, [tileset], true);
       for (r = 0; r < layerDef.height; r++) {
         for (q = 0; q < layerDef.width; q++) {
+          if (data[r][q] === 0) continue;
           texture = textures[data[r][q] - 1];
           layer.addRect(0, texture.frame.x, texture.frame.y, q * tilesize, r * tilesize, tilesize, tilesize);
 
