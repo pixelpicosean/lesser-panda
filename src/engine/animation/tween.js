@@ -362,7 +362,7 @@ Object.assign(Scene.prototype, {
   /**
    * Create and add a new tween to the scene.
    * @method tween
-   * @memberOf Scene
+   * @memberOf Scene#
    * @param {Object}     context Context of this tween
    * @param {String}     tag     Tag of this tween (default is '0')
    * @return {Tween}

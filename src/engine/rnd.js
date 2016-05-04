@@ -1,16 +1,5 @@
 /**
- * @module engine/rnd
- */
-
-/**
- * An extremely useful repeatable random data generator.
- *
- * Based on RandomDataGenerator of Phaser engine, by Richard Davey <rich@photonstorm.com>
- *
- * The random number genererator is based on the Alea PRNG, but is modified.
- *  - https://github.com/coverslide/node-alea
- *  - https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
- *  - http://baagoe.org/en/wiki/Better_random_numbers_for_javascript (original, perm. 404)
+ * An instance of `RandomDataGenerator` is exported as `engine/rnd`.
  *
  * @class RandomDataGenerator
  * @constructor
@@ -20,30 +9,30 @@ function RandomDataGenerator(seeds) {
   if (seeds === undefined) { seeds = []; }
 
   /**
-  * @property {number} c - Internal var.
-  * @private
-  */
+   * @type {number}
+   * @private
+   */
   this.c = 1;
 
   /**
-  * @property {number} s0 - Internal var.
-  * @private
-  */
+   * @type {number}
+   * @private
+   */
   this.s0 = 0;
 
   /**
-  * @property {number} s1 - Internal var.
-  * @private
-  */
+   * @type {number}
+   * @private
+   */
   this.s1 = 0;
 
   /**
-  * @property {number} s2 - Internal var.
-  * @private
-  */
+   * @type {number}
+   * @private
+   */
   this.s2 = 0;
 
-  if (typeof seeds === 'string') {
+  if (typeof(seeds) === 'string') {
     this.state(seeds);
   }
   else {
@@ -58,7 +47,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#rnd
    * @private
    * @return {number}
-  */
+   */
   rnd: function rnd() {
     var t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
 
@@ -274,4 +263,18 @@ Object.assign(RandomDataGenerator.prototype, {
   },
 });
 
+/**
+ * An extremely useful repeatable random data generator.
+ *
+ * Based on RandomDataGenerator of Phaser engine, by Richard Davey <rich@photonstorm.com>
+ *
+ * The random number genererator is based on the Alea PRNG, but is modified.
+ *  - https://github.com/coverslide/node-alea
+ *  - https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
+ *  - http://baagoe.org/en/wiki/Better_random_numbers_for_javascript (original, perm. 404)
+ *
+ * @see RandomDataGenerator
+ *
+ * @exports engine/rnd
+ */
 module.exports = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
