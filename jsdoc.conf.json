@@ -46,7 +46,7 @@
             "url": ""
         },
         "outputSourceFiles" : true,
-        "theme"         : "Flatly",
+        "theme"         : "flatly",
         "syntaxTheme"   : "default",
         "systemName"    : "Lesser Panda"
     },
