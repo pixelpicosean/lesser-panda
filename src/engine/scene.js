@@ -1,7 +1,3 @@
-/**
- * @module engine/scene
- */
-
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
 var utils = require('engine/utils');
@@ -10,6 +6,7 @@ var config = require('game/config').default;
 /**
  * Scene is the main hub for a game. A game made with LesserPanda
  * is a combination of different scenes(menu, shop, game, game-over .etc).
+ *
  * @class Scene
  * @constructor
  * @extends {EvenetEmitter}
@@ -46,7 +43,8 @@ Scene.prototype = Object.create(EventEmitter.prototype);
 Scene.prototype.constructor = Scene;
 
 /**
- * Called before activating this scene
+ * Called before activating this scene.
+ * @protected
  */
 Scene.prototype._awake = function _awake() {
   for (var i in this.updateOrder) {
@@ -59,7 +57,8 @@ Scene.prototype._awake = function _awake() {
 };
 
 /**
- * Called each single frame once or more
+ * Called each single frame once or more.
+ * @protected
  */
 Scene.prototype._update = function _update(deltaMS, deltaSec) {
   var i, sys;
@@ -93,7 +92,8 @@ Scene.prototype._update = function _update(deltaMS, deltaSec) {
 };
 
 /**
- * Called before deactivating this scene
+ * Called before deactivating this scene.
+ * @protected
  */
 Scene.prototype._freeze = function _freeze() {
   this.emit('freeze');
@@ -109,48 +109,57 @@ Scene.prototype._freeze = function _freeze() {
 /**
  * Awake is called when this scene is activated.
  * @method awake
+ * @memberof Scene#
  */
 Scene.prototype.awake = function awake() {};
 /**
  * PreUpdate is called at the beginning of each frame
  * @method preUpdate
+ * @memberof Scene#
  */
 Scene.prototype.preUpdate = function preUpdate() {};
 /**
  * Update is called each frame, right after `preUpdate`.
  * @method update
+ * @memberof Scene#
  */
 Scene.prototype.update = function update() {};
 /**
  * PostUpdate is called at the end of each frame, right after `update`.
  * @method postUpdate
+ * @memberof Scene#
  */
 Scene.prototype.postUpdate = function postUpdate() {};
 /**
  * Freeze is called when this scene is deactivated(switched to another one)
+ * @method freeze
+ * @memberof Scene#
  */
 Scene.prototype.freeze = function freeze() {};
 
 /**
  * System pause callback.
+ * @method pause
+ * @memberof Scene#
  */
 Scene.prototype.pause = function pause() {};
 /**
  * System resume callback.
+ * @method resume
+ * @memberof Scene#
  */
 Scene.prototype.resume = function resume() {};
 
 Object.assign(Scene, {
   /**
-   *  @property desiredFPS
-   * @default 30
+   * Sub-systems.
+   * @memberof Scene
+   * @type {object}
    */
-  desiredFPS: config.desiredFPS || 30,
-
   systems: {},
   /**
-   * System updating order
-   *  @property {Array} updateOrder
+   * Sub-system updating order
+   * @type {array}
    */
   updateOrder: [
     'Actor',
@@ -161,9 +170,9 @@ Object.assign(Scene, {
   /**
    * Register a new sub-system.
    * @memberOf Scene
-   * @static
-   * @param  {String} name
-   * @param  {Object} system
+   * @method registerSystem
+   * @param  {string} name
+   * @param  {object} system
    */
   registerSystem: function registerSystem(name, system) {
     if (Scene.systems[name]) console.log('Warning: override [' + name + '] system!');
@@ -177,14 +186,14 @@ Object.assign(Scene.prototype, {
   /**
    * Spawn an Actor to this scene
    * @method spawnActor
-   * @memberOf Scene
+   * @memberOf Scene#
    * @param  {Actor} actor      Actor class
-   * @param  {Number} x
-   * @param  {Number} y
-   * @param  {String} layerName Name of the layer to add to(key of a PIXI.Container instance in this scene)
-   * @param  {Object} settings  Custom settings
-   * @param  {String} [settings.name] Name of this actor
-   * @param  {String} [settings.tag]  Tag of this actor
+   * @param  {number} x
+   * @param  {number} y
+   * @param  {string} layerName Name of the layer to add to(key of a PIXI.Container instance in this scene)
+   * @param  {object} settings  Custom settings
+   * @param  {string} [settings.name] Name of this actor
+   * @param  {string} [settings.tag]  Tag of this actor
    * @return {Actor}            Actor instance
    */
   spawnActor: function spawnActor(actor, x, y, layerName, settings) {
@@ -210,9 +219,9 @@ Object.assign(Scene.prototype, {
   /**
    * Add actor to this scene, so its `update()` function gets called every frame.
    * @method addActor
-   * @memberOf Scene
+   * @memberOf Scene#
    * @param {Actor} actor   Actor you want to add
-   * @param {String} tag    Tag of this actor, default is '0'
+   * @param {string} tag    Tag of this actor, default is '0'
    */
   addActor: function addActor(actor, tag) {
     var t = tag || '0';
@@ -236,7 +245,7 @@ Object.assign(Scene.prototype, {
   /**
    * Remove actor from scene.
    * @method removeActor
-   * @memberOf Scene
+   * @memberOf Scene#
    * @param {Actor} actor
    */
   removeActor: function removeActor(actor) {
@@ -253,7 +262,9 @@ Object.assign(Scene.prototype, {
 
   /**
    * Pause actors with a specific tag.
-   * @param  {String} tag
+   * @method pauseActorsTagged
+   * @memberof Scene#
+   * @param  {string} tag
    */
   pauseActorsTagged: function pauseActorsTagged(tag) {
     if (this.actorSystem.actors[tag]) {
@@ -266,7 +277,9 @@ Object.assign(Scene.prototype, {
 
   /**
    * Resume actors with a specific tag.
-   * @param  {String} tag
+   * @method resumeActorsTagged
+   * @memberof Scene#
+   * @param  {string} tag
    */
   resumeActorsTagged: function resumeActorsTagged(tag) {
     if (this.actorSystem.actors[tag]) {
@@ -318,4 +331,22 @@ Scene.registerSystem('Actor', {
   },
 });
 
+/**
+ * @example <captain>Create a new scene class</captain>
+ * import Scene from 'engine/scene';
+ * class MyScene extends Scene {}
+ *
+ * @example <captain>Register a new scene</captain>
+ * import core from 'engine/core';
+ * core.addScene('MyScene', MyScene);
+ *
+ * @example <captain>Switch to another scene</captain>
+ * import core from 'engine/core';
+ * core.setScene('MyScene');
+ *
+ * @exports engine/scene
+ * @requires engine/eventemitter3
+ * @requires engine/core
+ * @requires engine/utils
+ */
 module.exports = Scene;
