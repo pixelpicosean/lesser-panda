@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Source: core.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: core.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">require('engine/polyfill');
+
+var EventEmitter = require('engine/eventemitter3');
+var Renderer = require('engine/renderer');
+var Timer = require('engine/timer');
+var Vector = require('engine/vector');
+var resize = require('engine/resize');
+var device = require('engine/device');
+var config = require('game/config').default;
+
+/**
+ * @type {EventEmitter}
+ */
+var core = new EventEmitter();
+
+// - Private properties and methods
+var nextScene = null;
+var loopId = 0;
+var resizeFunc = _letterBoxResize;
+function startLoop() {
+  loopId = requestAnimationFrame(loop);
+}
+function loop(timestamp) {
+  loopId = requestAnimationFrame(loop);
+
+  // Do not update anything when paused
+  if (!core.paused) {
+    tickAndRender(core.scene, timestamp);
+  }
+}
+function endLoop() {
+  cancelAnimationFrame(loopId);
+}
+function boot() {
+  window.removeEventListener('load', boot);
+  document.removeEventListener('DOMContentLoaded', boot);
+
+  // Disable scroll
+  _noPageScroll();
+
+  var rendererConfig = Object.assign({
+    canvasId: 'game',
+  }, config.renderer);
+
+  core.view = document.getElementById(rendererConfig.canvasId);
+
+  // Keep focus when mouse/touch event occurs on the canvas
+  function focus() { window.focus() }
+  core.view.addEventListener('mousedown', focus);
+  core.view.addEventListener('touchstart', focus);
+
+  // Config and create renderer
+  core.resolution = Renderer.resolution = rendererConfig.resolution =
+    chooseProperResolution(rendererConfig.resolution);
+
+  Renderer.init(core.width, core.height, rendererConfig);
+  startLoop();
+
+  // Pick a resize function
+  switch (config.resizeMode) {
+    case 'letter-box':
+      resizeFunc = _letterBoxResize;
+      break;
+    case 'crop':
+      resizeFunc = _cropResize;
+      break;
+    case 'scale-inner':
+      resizeFunc = _scaleInnerResize;
+      break;
+    case 'scale-outer':
+      resizeFunc = _scaleOuterResize;
+      break;
+    case 'never':
+      resizeFunc = _neverResize;
+      break;
+    default:
+      resizeFunc = _letterBoxResize;
+  }
+  core.resizeFunc = resizeFunc;
+
+  // Listen to the resize and orientation events
+  window.addEventListener('resize', resizeFunc, false);
+  window.addEventListener('orientationchange', resizeFunc, false);
+
+  // Manually resize for the first time
+  resizeFunc(true);
+
+  // Setup visibility change API
+  var visibleResume = function() {
+    config.pauseOnHide &amp;&amp; core.resume('visibility');
+  };
+  var visiblePause = function() {
+    config.pauseOnHide &amp;&amp; core.pause('visibility');
+  };
+
+  // Main visibility API function
+  var vis = (function() {
+    var stateKey, eventKey;
+    var keys = {
+      hidden: "visibilitychange",
+      webkitHidden: "webkitvisibilitychange",
+      mozHidden: "mozvisibilitychange",
+      msHidden: "msvisibilitychange"
+    };
+    for (stateKey in keys) {
+      if (stateKey in document) {
+        eventKey = keys[stateKey];
+        break;
+      }
+    }
+    return function(c) {
+      if (c) document.addEventListener(eventKey, c);
+      return !document[stateKey];
+    }
+  })();
+
+  // Check if current tab is active or not
+  vis(function() {
+    if (vis()) {
+      // The setTimeout() is used due to a delay
+      // before the tab gains focus again, very important!
+      setTimeout(visibleResume, 300);
+    }
+    else {
+      visiblePause();
+    }
+  });
+
+  // Check if browser window has focus
+  if (window.addEventListener) {
+    window.addEventListener('focus', function() {
+      setTimeout(visibleResume, 300);
+    }, false);
+    window.addEventListener('blur', visiblePause, false);
+  }
+  else {
+    window.attachEvent("focus", function() {
+      setTimeout(visibleResume, 300);
+    });
+    window.attachEvent('blur', visiblePause);
+  }
+
+  // Create rotate prompt if required
+  if (device.mobile &amp;&amp; config.showRotatePrompt) {
+    var div = document.createElement('div');
+    div.innerHTML = config.rotatePromptImg ? '' : config.rotatePromptMsg;
+    div.style.position = 'absolute';
+    div.style.height = '12px';
+    div.style.textAlign = 'center';
+    div.style.left = 0;
+    div.style.right = 0;
+    div.style.top = 0;
+    div.style.bottom = 0;
+    div.style.margin = 'auto';
+    div.style.display = 'none';
+    div.style.color = config.rotatePromptFontColor || 'black';
+    div.id = 'lp-rotate';
+    core.rotatePromptElm = div;
+    document.body.appendChild(div);
+
+    if (config.rotatePromptImg) {
+      var img = new Image();
+      var me = this;
+      img.onload = function() {
+        div.image = img;
+        div.style.height = img.height + 'px';
+        div.appendChild(img);
+        resizeRotatePrompt();
+      };
+      img.src = config.rotatePromptImg;
+      img.style.position = 'relative';
+      img.style.maxWidth = '100%';
+    }
+
+    // Check orientation and display the rotate prompt if required
+    var isLandscape = (core.width / core.height >= 1);
+    core.on('resize', function() {
+      if (window.innerWidth &lt; window.innerHeight &amp;&amp; isLandscape) {
+        core.rotatePromptVisible = true;
+      }
+      else if (window.innerWidth > window.innerHeight &amp;&amp; !isLandscape) {
+        core.rotatePromptVisible = true;
+      }
+      else {
+        core.rotatePromptVisible = false;
+      }
+
+      // Hide game view
+      core.view.style.display = core.rotatePromptVisible ? 'none' : 'block';
+      // Show rotate view
+      core.rotatePromptElm.style.backgroundColor = config.rotatePromptBGColor || 'black';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-box' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-flex' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-ms-flexbox' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? 'flex' : 'none';
+      resizeRotatePrompt();
+
+      // Pause the game if orientation is not correct
+      if (core.rotatePromptVisible) {
+        core.pause('rotate');
+      }
+      else {
+        core.resume('rotate');
+      }
+    });
+  }
+
+  core.emit('boot');
+  core.emit('booted');
+}
+function getVendorAttribute(el, attr) {
+  var uc = attr.ucfirst();
+  return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
+}
+function chooseProperResolution(res) {
+  // Default value
+  if (!res) {
+    return 1;
+  }
+  // Numerical value
+  else if (typeof(res) === 'number') {
+    return res;
+  }
+  // Calculate based on window size and device pixel ratio
+  else {
+    res.values.sort(function(a, b) { return a - b });
+    var gameRatio = core.width / core.height;
+    var windowRatio = window.innerWidth / window.innerHeight;
+    var scale = res.retina ? window.devicePixelRatio : 1;
+    var result = res.values[0];
+    for (var i = 0; i &lt; res.values.length; i++) {
+      result = res.values[i];
+
+      if ((gameRatio >= windowRatio &amp;&amp; window.innerWidth * scale &lt;= core.width * result) ||
+        (gameRatio &lt; windowRatio &amp;&amp; window.innerHeight * scale &lt;= core.height * result)) {
+        break;
+      }
+    }
+
+    return result;
+  }
+}
+function resizeRotatePrompt() {
+  _fullWindowStyle(core.rotatePromptElm);
+  _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
+
+  // if (core.rotatePromptElm.image) {
+  //   if (window.innerHeight &lt; core.rotatePromptElm.image.height) {
+  //     core.rotatePromptElm.image.style.height = window.innerHeight + 'px';
+  //     core.rotatePromptElm.image.style.width = 'auto';
+  //     core.rotatePromptElm.style.height = window.innerHeight + 'px';
+  //     core.rotatePromptElm.style.bottom = 'auto';
+  //   }
+  // }
+}
+
+// Update (fixed update implementation from Phaser by @photonstorm)
+var spiraling = 0;
+var last = -1;
+var realDelta = 0;
+var deltaTime = 0;
+var desiredFPS = 30;
+var currentUpdateID = 0;
+var lastCount = 0;
+var step = 0;
+var slowStep = 0;
+var count = 0;
+/**
+ * Update and render a scene
+ * @private
+ * @param  {Scene} scene      Scene to be updated
+ * @param  {Number} timestamp Current time stamp
+ */
+function tickAndRender(scene, timestamp) {
+  if (last > 0) {
+    realDelta = timestamp - last;
+  }
+  last = timestamp;
+
+  // If the logic time is spiraling upwards, skip a frame entirely
+  if (spiraling > 1) {
+    // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
+    deltaTime = 0;
+    spiraling = 0;
+
+    renderScene(scene);
+  }
+  else {
+    desiredFPS = scene ? scene.desiredFPS : 30;
+
+    // Step size
+    step = 1000.0 / desiredFPS;
+    slowStep = step * core.speed;
+
+    // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
+    deltaTime += Math.max(Math.min(step * 3, realDelta), 0);
+
+    // Call the game update logic multiple times if necessary to "catch up" with dropped frames
+    // unless forceSingleUpdate is true
+    count = 0;
+
+    while (deltaTime >= step) {
+      deltaTime -= step;
+      currentUpdateID = count;
+
+      // Fixed update with the timestep
+      core.delta = step;
+      Timer.update(slowStep);
+      updateScene(scene);
+
+      count += 1;
+    }
+
+    // Detect spiraling (if the catch-up loop isn't fast enough, the number of iterations will increase constantly)
+    if (count > lastCount) {
+      spiraling += 1;
+    }
+    else if (count &lt; lastCount) {
+      // Looks like it caught up successfully, reset the spiral alert counter
+      spiraling = 0;
+    }
+
+    lastCount = count;
+
+    renderScene(scene);
+  }
+}
+function updateScene(scene) {
+  // Switch to new scene
+  if (nextScene) {
+    var pair = nextScene;
+    nextScene = null;
+
+    // Freeze current scene before switching
+    core.scene &amp;&amp; core.scene._freeze();
+    core.scene = null;
+
+    // Create instance of scene if not exist
+    if (!pair.inst) {
+      pair.inst = new pair.ctor();
+    }
+
+    // Awake the scene
+    core.scene = pair.inst;
+    core.scene._awake();
+
+    // Resize container of the scene
+    resizeFunc();
+  }
+
+  // Update current scene
+  if (scene) {
+    scene._update(slowStep, slowStep * 0.001);
+  }
+}
+var skipFrameCounter = 0;
+function renderScene(scene) {
+  skipFrameCounter -= 1;
+  if (skipFrameCounter &lt; 0) {
+    skipFrameCounter = (config.skipFrame || 0);
+
+    if (scene) {
+      Renderer.render(scene);
+    }
+  }
+}
+
+// Public properties and methods
+Object.assign(core, {
+  /**
+   * Version text.
+   * @memberof module:engine/core
+   * @type {string}
+   */
+  version: 'v0.4.1-dev',
+
+  /**
+   * Main Canvas element.
+   * @memberof module:engine/core
+   * @type {HTMLCanvasElement}
+   */
+  view: null,
+
+  /**
+   * Size of game content.
+   * @memberof module:engine/core
+   * @type {Vector}
+   * @default (640, 400)
+   */
+  size: Vector.create(config.width || 640, config.height || 400),
+  /**
+   * Size of view (devicePixelRatio independent).
+   * @memberof module:engine/core
+   * @type {Vector}
+   */
+  viewSize: Vector.create(config.width || 640, config.height || 400),
+  /**
+   * Current resize function.
+   * @memberof module:engine/core
+   * @type {function}
+   */
+  resizeFunc: null,
+
+  /**
+   * Map of registered scenes.
+   * @memberof module:engine/core
+   * @type {object}
+   */
+  scenes: {},
+  /**
+   * Current activated scene.
+   * Note: this may be undefined during switching.
+   * Will be deprecated in future versions.
+   * @memberof module:engine/core
+   * @type {Scene}
+   */
+  scene: null,
+
+  /**
+   * Map that contains pause state of all kinds of reasons.
+   * See {@link core.pause} for more information.
+   * @memberof module:engine/core
+   * @type {object}
+   */
+  pauses: {},
+
+  /**
+   * Global time speed, whose value is between 0 and 1.
+   * @memberof module:engine/core
+   * @type {number}
+   * @default 1
+   */
+  speed: 1,
+  /**
+   * Delta time since last **update** (in milliseconds).
+   * This can be useful for time based updating.
+   * @memberof module:engine/core
+   * @type {number}
+   */
+  delta: 0,
+
+  /**
+   * Rotate prompt element for mobile devices.
+   * @memberof module:engine/core
+   * @type {HTMLElement}
+   */
+  rotatePromptElm: null,
+  /**
+   * Whether the rotate prompt is visible.
+   * @memberof module:engine/core
+   * @type {boolean}
+   */
+  rotatePromptVisible: false,
+
+  /**
+   * Register a new scene class.
+   * @memberof module:engine/core
+   *
+   * @example
+   * import core from 'engine/core';
+   * class MyScene extends Scene {}
+   * core.addScene('MyScene', MyScene);
+   *
+   * @param {string}    name  Name of this scene.
+   * @param {function}  ctor  Constructor of the scene.
+   */
+  addScene: function addScene(name, ctor) {
+    if (core.scenes[name]) {
+      console.log('Scene [' + name + '] is already defined!');
+      return;
+    }
+
+    var pair = { ctor: ctor, inst: null };
+    core.scenes[name] = pair;
+  },
+  /**
+   * Switch to a scene.
+   * @memberof module:engine/core
+   * @param {string} name Name of the target scene.
+   */
+  setScene: function setScene(name) {
+    var pair = core.scenes[name];
+
+    if (!pair) {
+      console.log('Scene [' + name + '] is not defined!');
+      return;
+    }
+
+    nextScene = pair;
+  },
+  /**
+   * Entrance of the game, set the first scene to boot with.
+   * Note: it's recommend to set the first scene to `Loading` or
+   * your customized loading scene, otherwise the assets won't get load.
+   *
+   * Simply use `core.start` instead if you don't want to start
+   * from a custom loading scene.
+   *
+   * @example
+   * // In the `game/main` module
+   * import core from 'engine/core';
+   * core.startWithScene('MyCustomLoading');
+   * // or simply use the default loading scene
+   * core.start();
+   *
+   * @memberof module:engine/core
+   * @param  {string} sceneName Name of the start scene
+   */
+  startWithScene: function startWithScene(sceneName) {
+    core.setScene(sceneName);
+
+    window.addEventListener('load', boot, false);
+    document.addEventListener('DOMContentLoaded', boot, false);
+  },
+  /**
+   * Start with `Loading` scene.
+   * @memberof module:engine/core
+   */
+  start: function start() {
+    core.startWithScene('Loading');
+  },
+
+  /**
+   * Pause the engine with a reason.
+   * @memberof module:engine/core
+   *
+   * @example
+   * import core from 'engine/core';
+   * // Pause when ad is playing
+   * core.pause('ad');
+   * // And resume after the ad finished
+   * core.resume('ad');
+   *
+   * @param {string} reason  The reason to pause, you have to pass
+   *                         the same reason when resume from this
+   *                         pause.
+   */
+  pause: function pause(reasonP) {
+    var i,
+      reason = reasonP || 'untitled',
+      alreadyPaused = false;
+
+    for (i in core.pauses) {
+      if (!core.pauses.hasOwnProperty(i)) continue;
+      // Do not pause again if game is paused by other reasons
+      if (core.pauses[i]) {
+        alreadyPaused = true;
+        break;
+      }
+    }
+
+    core.pauses[reason] = true;
+
+    if (!alreadyPaused) {
+      core.emit('pause', reason);
+    }
+  },
+  /**
+   * Unpause the engine.
+   * @memberof module:engine/core
+   * @param {string} reasonP Resume from pause tagged with this reason
+   * @param {boolean} force Whether force to resume
+   */
+  resume: function resume(reasonP, force) {
+    var i, reason = reasonP || 'untitled';
+
+    if (force) {
+      // Resume everything
+      for (i in core.pauses) {
+        if (!core.pauses.hasOwnProperty(i)) continue;
+        core.pauses[i] = false;
+      }
+      core.emit('resume');
+    }
+    else if (typeof(core.pauses[reason]) === 'boolean') {
+      core.pauses[reason] = false;
+      for (i in core.pauses) {
+        if (!core.pauses.hasOwnProperty(i)) continue;
+        // Do not resume if game is still paused by other reasons
+        if (core.pauses[i]) {
+          return;
+        }
+      }
+
+      core.emit('resume', reason);
+    }
+  },
+});
+
+/**
+ * Width of the game.
+ * Should keep the same to `config` settings.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'width', {
+  get: function() {
+    return this.size.x;
+  },
+});
+/**
+ * Height of the game.
+ * Should keep the same to `config` settings.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'height', {
+  get: function() {
+    return this.size.y;
+  },
+});
+/**
+ * Width of the game view, `devicePixelRatio` is not take into account.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'viewWidth', {
+  get: function() {
+    return this.viewSize.x;
+  },
+});
+/**
+ * Height of the game view, `devicePixelRatio` is not take into account.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'viewHeight', {
+  get: function() {
+    return this.viewSize.y;
+  },
+});
+/**
+ * Whether the game is currently paused by any reason.
+ * @memberof module:engine/core
+ * @type {boolean}
+ * @readonly
+ */
+Object.defineProperty(core, 'paused', {
+  get: function() {
+    // Paused by any reason?
+    for (var i in core.pauses) {
+      if (core.pauses[i]) {
+        return true;
+      }
+    }
+
+    // Totally unpaused
+    return false;
+  },
+});
+
+// Resize functions
+var windowSize = { x: 1, y: 1 };
+var result, container;
+function _letterBoxResize(first) {
+  // Update sizes
+  windowSize.x = window.innerWidth;
+  windowSize.y = window.innerHeight;
+
+  // Use inner box scaling function to calculate correct size
+  result = resize.innerBoxResize(windowSize, core.viewSize);
+
+  // Resize the renderer once
+  first &amp;&amp; Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  // Resize the view
+  core.view.style.width = (core.viewSize.x * result.scale) + 'px';
+  core.view.style.height = (core.viewSize.y * result.scale) + 'px';
+
+  _alignToWindowCenter(core.view, core.viewSize.x * result.scale, core.viewSize.y * result.scale);
+
+  // Broadcast resize events
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _cropResize() {
+  // Update sizes
+  core.viewSize.set(window.innerWidth, window.innerHeight);
+
+  // Resize the renderer
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  _fullWindowStyle(core.view);
+
+  // Broadcast resize events
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _scaleInnerResize() {
+  // Update sizes
+  core.viewSize.set(window.innerWidth, window.innerHeight);
+
+  // Resize the renderer
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  // Resize container of current scene
+  if (core.scene) {
+    container = core.scene.stage;
+    result = resize.innerBoxResize(core.viewSize, core.size);
+    container.scale.set(result.scale);
+    container.position.set(result.left, result.top);
+  }
+
+  _fullWindowStyle(core.view);
+
+  // Broadcast resize events
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _scaleOuterResize() {
+  // Update sizes
+  core.viewSize.set(window.innerWidth, window.innerHeight);
+
+  // Resize the renderer
+  Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  // Resize container of current scene
+  if (core.scene) {
+    container = core.scene.stage;
+    result = resize.outerBoxResize(core.viewSize, core.size);
+    container.scale.set(result.scale);
+    container.position.set(result.left, result.top);
+  }
+
+  _fullWindowStyle(core.view);
+
+  // Broadcast resize events
+  core.emit('resize', core.viewSize.x, core.viewSize.y);
+}
+function _neverResize() {}
+
+// CSS helpers
+function _alignToWindowCenter(el, w, h) {
+  el.style.position = 'absolute';
+  el.style.left = '50%';
+  el.style.top = '50%';
+  el.style.margin = '-' + Math.floor(h / 2) + 'px 0 0 -' + Math.floor(w / 2) + 'px';
+}
+function _fullWindowStyle(el) {
+  el.style.position = 'absolute';
+  el.style.left = '0';
+  el.style.top = '0';
+  el.style.right = '0';
+  el.style.bottom = '0';
+  el.style.width = '100%';
+  el.style.height = '100%';
+}
+function _noPageScroll() {
+  document.ontouchmove = function(event) {
+    event.preventDefault();
+  }
+}
+
+/**
+ * Engine core that manages game loop and resize functionality.
+ * @exports engine/core
+ *
+ * @requires module:engine/polyfill
+ * @requires module:engine/eventemitter3
+ * @requires module:engine/renderer
+ * @requires module:engine/timer
+ * @requires module:engine/vector
+ * @requires module:engine/resize
+ * @requires module:engine/device
+ */
+module.exports = core;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

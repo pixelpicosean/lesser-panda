@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1>LesserPanda</h1><p>A module based HTML5 game engine designed to be flexible and powerful.</p>
+<h2>Features</h2><p>LesserPanda has a lot of features, and the list is still growing:</p>
+<ul>
+<li>Super fast Canvas and WebGL rendering powered by PIXI.js.</li>
+<li>Tilemap rendering.</li>
+<li>Fixed game loop with customizable <code>FPS</code> and <code>frame skips</code>.</li>
+<li>Fast and powerful physics solution.</li>
+<li>Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.</li>
+<li>Multiply broad phase solution: &quot;Simple&quot; for collision less games and &quot;SpatialHash&quot; for collision heavy ones.</li>
+<li>Tilemap collision support by compiling collision map into convex polygons in the air.</li>
+<li>ECS(Entity Component System) like sub-systems.</li>
+<li><code>Behaviors</code> bring objects to life with one-line setup.</li>
+<li>High level <code>Actor</code> classes with both virsuals and physics built-in.</li>
+<li>Automatically choose the best resolution based on configs.</li>
+<li>Tag is supported by sub-systems.</li>
+<li>Mobile friendly.</li>
+<li>Rotate prompt for mobile devices with just a few configs.</li>
+<li>ES6 based scripting environment.</li>
+<li>CSS style can be imported by using standard ES6 module system.</li>
+<li>Live-reload browsers after any changes are saved.</li>
+</ul>
+<h2>Samples</h2><p>Samples are moved to its own <a href="https://github.com/pixelpicosean/lesser-panda-samples">repo here</a>.<br>Currently the samples are located inside <code>src/game/samples</code> folder, and each is just a simple <code>Scene</code> focusing on one or more particular feature.</p>
+<h2>Document</h2><p>You can find <a href="https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start">Getting Start Guide</a> from the <a href="https://github.com/pixelpicosean/lesser-panda/wiki/Home">Wiki</a>.</p>
+<p>A weekly devlog can also be found from the <a href="https://github.com/pixelpicosean/lesser-panda/wiki/Home">wiki</a>, which will be updated each Wednesday.</p>
+<p>Note that there're no <strong>API doc</strong> currently, but the coming won't be long.</p>
+<h2>Brief introduction of modules</h2><ul>
+<li><code>animation</code> provides both common tween animation and Blender like <code>action</code>.</li>
+<li><code>audio</code> provides sound playback functions, the basic usage is included in the <code>game/main</code>.</li>
+<li><code>pixi</code> contains whole PIXI.js sources. Filters and mesh is disabled by default, you can enable them by uncomment related lines in <code>engine/pixi/index.js</code>.</li>
+<li><code>polyfill</code> contains some ES6 polyfills (<code>Object.assign</code>, <code>rAF</code> and <code>Math.sign</code>).</li>
+<li><code>resource-loader</code> brings resource loading functionality which is used by PIXI.js and you probably don't need to use it directly.</li>
+<li><code>storage</code> provides session and persistent data storage. <code>session</code> and <code>persistent</code> from this module is quite useful but you can also use low level <code>storage</code>.</li>
+<li><code>analytics</code> provides some helper functions to work with Google Analytics.</li>
+<li><code>camera</code> 2D camera that can follow targets, zoom, rotate and shake.</li>
+<li><code>core</code> is the core of lesser-panda, which provides the base functionalities such as &quot;loop&quot; and &quot;resize&quot;.</li>
+<li><code>device</code> tells what device the game is currently running.</li>
+<li><code>device-patch</code> includes patches to solve issues of specific devices.</li>
+<li><code>eventemitter3</code> is a fast EventEmitter implementation.</li>
+<li><code>keyboard</code> emits keyboard events, you need to subscribe to get noticed.</li>
+<li><code>loader</code> provides assets loading functon <code>addAsset(path, key, settings)</code></li>
+<li><code>physics</code> provides AABB based collision detection and response.</li>
+<li><code>reactive</code> is a wrapper of Kefir.js, which is used for Reactive Programming.</li>
+<li><code>renderer</code> is just the base object of renderer, if you import PIXI or canvasquery related renderer instance will be added to this object.</li>
+<li><code>resize</code> provides some resize helper functions.</li>
+<li><code>rnd</code> is a random number generator.</li>
+<li><code>scene</code> exports the Scene class. Scenes should all be sub-classes of it.</li>
+<li><code>timer</code> provides timers with callbacks. Use <code>Timer.later</code> or <code>Timer.interval</code> to create instances.</li>
+<li><code>utils</code> provides some math functions and helpers.</li>
+<li><code>vector</code> provide a <code>Vector</code> class that is used everywhere <code>PIXI.Point</code> is also an alias of it.</li>
+</ul>
+<h3>Behaviors</h3><ul>
+<li><code>HorizontalMove</code> move objects left/right</li>
+<li><code>VerticalMove</code> move objects up/down</li>
+<li><code>FourWayMove</code> move objects left/right/up/down</li>
+<li><code>AsteroidsMove</code> move like ships of classic Asteroids game</li>
+<li><code>Health</code> health, receiveDamage and heal</li>
+<li><code>FireBullet</code> let Actors be able to fire bullets</li>
+<li><code>AnchorToScreen</code> anchor object to left/right/top/right</li>
+</ul>
+<p>More behaviors are coming soon.</p>
+<h2>Progress</h2><p>There's a <a href="https://trello.com/b/6nzCTotX/lesserpanda">Trello board</a>, from which you will see what's coming next.<br>Github issue and milestone maybe better for progress tracking~</p>
+<h2>ChangeLog</h2><h3>0.4.1-dev</h3><ul>
+<li>Add <code>start</code> function to <code>core</code> module as a easy replacement of <code>startWithScene</code>.</li>
+<li><code>canvasquery</code> module is removed.</li>
+<li>Re-design <code>Actor</code> system and make it more powerful yet easier to work with.</li>
+<li>Re-design <code>Behavior</code> system.</li>
+</ul>
+<h3>0.4.0</h3><ul>
+<li>Add a <code>prepare</code> method to <code>Actor</code> which will be called at the end of <code>addTo</code>.</li>
+<li>Finish rectangle shaped tile collision support.</li>
+<li>Add simple <code>Tilemap</code> support for both built-in format or Tiled JSON map(some custom properties are required)</li>
+<li>Add <code>Timer.now</code> to represent time passed since game started.</li>
+<li>Add <code>top</code> and <code>bottom</code> properties to <code>Camera</code> object.</li>
+<li>Add <code>width</code> and <code>height</code> properties to <code>physics.Body</code>, which map to <code>shape.width</code> and <code>shape.height</code>.</li>
+<li>Add high level <code>Actor</code>, <code>SpriteActor</code>, <code>AnimatedActor</code> and <code>PrimitiveActor</code> classes.</li>
+<li>Add <code>Behavior</code> base class and some simple behaviors.</li>
+<li>Emit <code>pause</code> and <code>resume</code> events from <code>core</code>.</li>
+<li>Add resolution config, and renderer will pick the most suited resolution base on your configs.</li>
+<li>Add Blender/Flash like keyframe based animation.</li>
+<li>Add SAT based collision solver.</li>
+<li>Add SpatialHash based broad phase solution for collision heavy games.</li>
+<li>Change canvas style during resizing for some resize modes.</li>
+<li>Use bitwise shift to optimise SpatialHash based collision detection, change <code>Body.collisionAgainst</code> to a 32bit integer number while broadPhase is SpatialHash.</li>
+<li>Add a new <code>device-patch</code> module to solve device specific issues.</li>
+<li>Add rotate prompt for mobile devices.</li>
+<li>Save renderer resolution as <code>engine.resolution</code>.</li>
+<li>[Changes] <code>PIXI.extras.Animation</code> is now renamed as <code>PIXI.extras.AnimatedSprite</code>.</li>
+<li>[Changes] Huge improve of <code>Animation</code> system(formerly called <code>Timeline</code>), now the <strong>tweening of nested properties</strong> is supported.</li>
+<li>[Changes] Deprecate <code>dom</code> resize mode.</li>
+<li>[Changes] Deprecate <code>Texture.fromAsset</code> method, use <code>loader.resources</code> instead.</li>
+<li>[Changes] Pass delta time to update methods in both milliseconds and seconds.</li>
+<li>[Changes] Upgrade PIXI to <code>master/3.0.11</code></li>
+<li>[Changes] Default asset key does not contain <code>baseURL</code> any more.</li>
+</ul>
+<h3>0.3.4</h3><ul>
+<li>Upgrade PIXI to <code>master/3.0.10</code></li>
+<li>[Changes] Accept an object as third parameter of <code>loader.addAsset</code> function</li>
+</ul>
+<h3>0.3.3</h3><ul>
+<li>Add animation support to boolean and object (instantly changes value at the end of duration, ignore its easing setting).</li>
+<li>Add animation support to string text (from empty to full content).</li>
+</ul>
+<h3>0.3.2</h3><ul>
+<li>Add <code>tag</code> support to <code>Object</code>, <code>Timeline</code> and <code>Timer</code> sub-systems, now it is possible to pause/resume any <em>tagged</em> components. For example you can easily pause the timelines tagged <em>object</em> and keep the <em>ui</em> when game is paused.</li>
+<li>Emit <code>boot</code> and <code>booted</code> events when engine is started.</li>
+<li>Upgrade <code>Kefir</code> and add a <code>emitter</code> function to create self emittable streams for convenience.</li>
+<li>Create <code>session</code> and <code>persistent</code> data manager for easier data saving without touching low-level <code>storage</code> and <code>localStorage</code>.</li>
+<li>Add &quot;skipFrame&quot; setting to constantly skip render frames, which may be used to increase performance but may also sacrifice the accuracy of input.</li>
+</ul>
+<h3>0.3.1</h3><ul>
+<li>Upgrade PIXI to (dev/9d7a393)</li>
+<li>Upgrade resource-loader</li>
+<li>Rename base container of Scene to <code>stage</code> instead of <code>container</code></li>
+<li>Fixed update support. FPS now can be lock to a constant value</li>
+<li>Improved <code>PIXI.extras.Animation</code> updating logic</li>
+<li>Improved Array element removing process</li>
+<li>Create utils module with useful functions and constants</li>
+<li>Better pre-defined sub-system updating order, now collision works pretty well with Timelined bodies</li>
+<li>New component system. The &quot;Object&quot;, &quot;Physics&quot;, &quot;Timeline&quot; and &quot;Renderer&quot; are just predefined sub-systems.</li>
+<li>Timer is also updated at fixed steps now, but act as a <em>engine-level</em> system instead of <em>Scene</em></li>
+<li>Fix camera update error when it's not added to any containers</li>
+</ul>
+<h3>0.3.0-rc1</h3><ul>
+<li>Completely module based structure</li>
+</ul>
+<h3>0.2.1</h3><ul>
+<li>Add camera shake support.</li>
+<li>Let Scene emit input events just like what PIXI does.</li>
+</ul>
+<h3>0.2.0</h3><ul>
+<li>Add support for module imports/exports, so you do not need to expose everything to global namespaces (like <code>game</code>).</li>
+<li>Remove <code>Class</code> system due to performance and capabilities.</li>
+</ul>
+<h3>0.1.0</h3><ul>
+<li>Update renderer to PIXI.js latest stable version (v3.0.7).</li>
+</ul>
+<h2>License</h2><p>LesserPanda is released under the <a href="http://opensource.org/licenses/MIT">MIT License</a>, the same<br>as <a href="http://www.pandajs.net">Panda.js engine</a>.</p>
+<h3>Special Thanks</h3><p><a href="https://github.com/ekelokorpi">@ekelokorpi</a> for creating the awesome panda.js-engine</p></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

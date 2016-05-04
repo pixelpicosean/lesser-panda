@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Source: rnd.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: rnd.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * An instance of `RandomDataGenerator` is exported as `engine/rnd`.
+ *
+ * @class RandomDataGenerator
+ * @constructor
+ * @param {any[]|string} [seeds] - An array of values to use as the seed, or a generator state (from {#state}).
+ */
+function RandomDataGenerator(seeds) {
+  if (seeds === undefined) { seeds = []; }
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.c = 1;
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.s0 = 0;
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.s1 = 0;
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.s2 = 0;
+
+  if (typeof(seeds) === 'string') {
+    this.state(seeds);
+  }
+  else {
+    this.sow(seeds);
+  }
+};
+
+Object.assign(RandomDataGenerator.prototype, {
+  /**
+   * Private random helper.
+   *
+   * @method RandomDataGenerator#rnd
+   * @private
+   * @return {number}
+   */
+  rnd: function rnd() {
+    var t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
+
+    this.c = t | 0;
+    this.s0 = this.s1;
+    this.s1 = this.s2;
+    this.s2 = t - this.c;
+
+    return this.s2;
+  },
+
+  /**
+   * Reset the seed of the random data generator.
+   *
+   * _Note_: the seed array is only processed up to the first `undefined` (or `null`) value, should such be present.
+   *
+   * @method RandomDataGenerator#sow
+   * @param {any[]} seeds - The array of seeds: the `toString()` of each value is used.
+   */
+  sow: function sow(seeds) {
+    // Always reset to default seed
+    this.s0 = this.hash(' ');
+    this.s1 = this.hash(this.s0);
+    this.s2 = this.hash(this.s1);
+    this.c = 1;
+
+    if (!seeds) {
+      return;
+    }
+
+    // Apply any seeds
+    for (var i = 0; i &lt; seeds.length &amp;&amp; (seeds[i] != null); i++) {
+      var seed = seeds[i];
+
+      this.s0 -= this.hash(seed);
+      this.s0 += ~~(this.s0 &lt; 0);
+      this.s1 -= this.hash(seed);
+      this.s1 += ~~(this.s1 &lt; 0);
+      this.s2 -= this.hash(seed);
+      this.s2 += ~~(this.s2 &lt; 0);
+    }
+  },
+
+  /**
+   * Internal method that creates a seed hash.
+   *
+   * @method RandomDataGenerator#hash
+   * @private
+   * @param {any} data
+   * @return {number} hashed value.
+   */
+  hash: function hash(data) {
+    var h, i, n;
+    n = 0xefc8249d;
+    data = data.toString();
+
+    for (i = 0; i &lt; data.length; i++) {
+      n += data.charCodeAt(i);
+      h = 0.02519603282416938 * n;
+      n = h >>> 0;
+      h -= n;
+      h *= n;
+      n = h >>> 0;
+      h -= n;
+      n += h * 0x100000000;// 2^32
+    }
+
+    return (n >>> 0) * 2.3283064365386963e-10;// 2^-32
+  },
+
+  /**
+   * Returns a random integer between 0 and 2^32.
+   *
+   * @method RandomDataGenerator#integer
+   * @return {number} A random integer between 0 and 2^32.
+   */
+  integer: function integer() {
+    return this.rnd.apply(this) * 0x100000000;// 2^32
+  },
+
+  /**
+   * Returns a random real number between 0 and 1.
+   *
+   * @method RandomDataGenerator#frac
+   * @return {number} A random real number between 0 and 1.
+   */
+  frac: function frac() {
+    return this.rnd.apply(this) + (this.rnd.apply(this) * 0x200000 | 0) * 1.1102230246251565e-16;   // 2^-53
+  },
+
+  /**
+   * Returns a random real number between 0 and 2^32.
+   *
+   * @method RandomDataGenerator#real
+   * @return {number} A random real number between 0 and 2^32.
+   */
+  real: function real() {
+    return this.integer() + this.frac();
+  },
+
+  /**
+   * Returns a random integer between and including min and max.
+   *
+   * @method RandomDataGenerator#integerInRange
+   * @param {number} min - The minimum value in the range.
+   * @param {number} max - The maximum value in the range.
+   * @return {number} A random number between min and max.
+   */
+  integerInRange: function integerInRange(min, max) {
+    return Math.floor(this.realInRange(0, max - min + 1) + min);
+  },
+
+  /**
+   * Returns a random integer between and including min and max.
+   * This method is an alias for RandomDataGenerator.integerInRange.
+   *
+   * @method RandomDataGenerator#between
+   * @param {number} min - The minimum value in the range.
+   * @param {number} max - The maximum value in the range.
+   * @return {number} A random number between min and max.
+   */
+  between: function between(min, max) {
+    return this.integerInRange(min, max);
+  },
+
+  /**
+   * Returns a random real number between min and max.
+   *
+   * @method RandomDataGenerator#realInRange
+   * @param {number} min - The minimum value in the range.
+   * @param {number} max - The maximum value in the range.
+   * @return {number} A random number between min and max.
+   */
+  realInRange: function realInRange(min, max) {
+    return this.frac() * (max - min) + min;
+  },
+
+  /**
+   * Returns a random real number between -1 and 1.
+   *
+   * @method RandomDataGenerator#normal
+   * @return {number} A random real number between -1 and 1.
+   */
+  normal: function normal() {
+    return 1 - 2 * this.frac();
+  },
+
+  /**
+   * Returns a valid RFC4122 version4 ID hex string from https://gist.github.com/1308368
+   *
+   * @method RandomDataGenerator#uuid
+   * @return {string} A valid RFC4122 version4 ID hex string
+   */
+  uuid: function uuid() {
+    var a = '';
+    var b = '';
+
+    for (b = a = ''; a++ &lt; 36; b +=~a % 5 | a * 3&amp;4 ? (a^15 ? 8^this.frac() * (a^20 ? 16 : 4) : 4).toString(16) : '-') {}
+
+    return b;
+  },
+
+  /**
+   * Returns a random member of `array`.
+   *
+   * @method RandomDataGenerator#pick
+   * @param {Array} ary - An Array to pick a random member of.
+   * @return {any} A random member of the array.
+   */
+  pick: function pick(ary) {
+    return ary[this.integerInRange(0, ary.length - 1)];
+  },
+
+  /**
+   * Returns a random member of `array`, favoring the earlier entries.
+   *
+   * @method RandomDataGenerator#weightedPick
+   * @param {Array} ary - An Array to pick a random member of.
+   * @return {any} A random member of the array.
+   */
+  weightedPick: function weightedPick(ary) {
+    return ary[~~(Math.pow(this.frac(), 2) * (ary.length - 1) + 0.5)];
+  },
+
+  /**
+   * Gets or Sets the state of the generator. This allows you to retain the values
+   * that the generator is using between games, i.e. in a game save file.
+   *
+   * To seed this generator with a previously saved state you can pass it as the
+   * `seed` value in your game config, or call this method directly after Phaser has booted.
+   *
+   * Call this method with no parameters to return the current state.
+   *
+   * If providing a state it should match the same format that this method
+   * returns, which is a string with a header `!rnd` followed by the `c`,
+   * `s0`, `s1` and `s2` values respectively, each comma-delimited.
+   *
+   * @method RandomDataGenerator#state
+   * @param {string} [state] - Generator state to be set.
+   * @return {string} The current state of the generator.
+   */
+  state: function state(state) {
+    if (typeof state === 'string' &amp;&amp; state.match(/^!rnd/)) {
+      state = state.split(',');
+
+      this.c = parseFloat(state[1]);
+      this.s0 = parseFloat(state[2]);
+      this.s1 = parseFloat(state[3]);
+      this.s2 = parseFloat(state[4]);
+    }
+
+    return ['!rnd', this.c, this.s0, this.s1, this.s2].join(',');
+  },
+});
+
+/**
+ * An extremely useful repeatable random data generator.
+ *
+ * Based on RandomDataGenerator of Phaser engine, by Richard Davey &lt;rich@photonstorm.com>
+ *
+ * The random number genererator is based on the Alea PRNG, but is modified.
+ *  - https://github.com/coverslide/node-alea
+ *  - https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
+ *  - http://baagoe.org/en/wiki/Better_random_numbers_for_javascript (original, perm. 404)
+ *
+ * @see RandomDataGenerator
+ *
+ * @exports engine/rnd
+ */
+module.exports = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

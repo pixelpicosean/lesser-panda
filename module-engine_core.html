@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Module: engine/core</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Module: engine/core</h1>
+<section>
+
+<header>
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Engine core that manages game loop and resize functionality.</p></div>
+        
+
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-767">line 767</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li>module:engine/polyfill</li>
+        
+            <li><a href="module-engine_eventemitter3.html">module:engine/eventemitter3</a></li>
+        
+            <li><a href="module-engine_renderer.html">module:engine/renderer</a></li>
+        
+            <li><a href="module-engine_timer.html">module:engine/timer</a></li>
+        
+            <li><a href="module-engine_vector.html">module:engine/vector</a></li>
+        
+            <li><a href="module-engine_resize.html">module:engine/resize</a></li>
+        
+            <li><a href="module-engine_device.html">module:engine/device</a></li>
+        </ul>
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id=".delta">
+    <h4><span class="type-signature">&lt;static> </span>delta<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Delta time since last <strong>update</strong> (in milliseconds).<br>This can be useful for time based updating.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-440">line 440</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".pauses">
+    <h4><span class="type-signature">&lt;static> </span>pauses<span class="type-signature"> :object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Map that contains pause state of all kinds of reasons.<br>See core.pause for more information.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-425">line 425</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".resizeFunc">
+    <h4><span class="type-signature">&lt;static> </span>resizeFunc<span class="type-signature"> :function</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Current resize function.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">function</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-402">line 402</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".rotatePromptElm">
+    <h4><span class="type-signature">&lt;static> </span>rotatePromptElm<span class="type-signature"> :HTMLElement</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Rotate prompt element for mobile devices.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-447">line 447</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".rotatePromptVisible">
+    <h4><span class="type-signature">&lt;static> </span>rotatePromptVisible<span class="type-signature"> :boolean</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Whether the rotate prompt is visible.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-453">line 453</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".scene">
+    <h4><span class="type-signature">&lt;static> </span>scene<span class="type-signature"> :<a href="Scene.html">Scene</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Current activated scene.<br>Note: this may be undefined during switching.<br>Will be deprecated in future versions.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Scene.html">Scene</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-417">line 417</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".scenes">
+    <h4><span class="type-signature">&lt;static> </span>scenes<span class="type-signature"> :object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Map of registered scenes.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-409">line 409</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".size">
+    <h4><span class="type-signature">&lt;static> </span>size<span class="type-signature"> :<a href="Vector.html">Vector</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Size of game content.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Vector.html">Vector</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>(640, 400)</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-390">line 390</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".speed">
+    <h4><span class="type-signature">&lt;static> </span>speed<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Global time speed, whose value is between 0 and 1.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>1</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-433">line 433</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".version">
+    <h4><span class="type-signature">&lt;static> </span>version<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Version text.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-375">line 375</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".view">
+    <h4><span class="type-signature">&lt;static> </span>view<span class="type-signature"> :HTMLCanvasElement</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Main Canvas element.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">HTMLCanvasElement</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-382">line 382</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".viewSize">
+    <h4><span class="type-signature">&lt;static> </span>viewSize<span class="type-signature"> :<a href="Vector.html">Vector</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Size of view (devicePixelRatio independent).</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Vector.html">Vector</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-396">line 396</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id=".addScene"><span class="type-signature">&lt;static> </span>addScene(name, ctor)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Register a new scene class.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of this scene.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ctor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Constructor of the scene.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-467">line 467</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">import core from &#x27;engine/core&#x27;;
+class MyScene extends Scene {}
+core.addScene(&#x27;MyScene&#x27;, MyScene);</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".pause"><span class="type-signature">&lt;static> </span>pause(reason)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Pause the engine with a reason.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>reason</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The reason to pause, you have to pass<br>                        the same reason when resume from this<br>                        pause.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-538">line 538</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">import core from &#x27;engine/core&#x27;;
+// Pause when ad is playing
+core.pause(&#x27;ad&#x27;);
+// And resume after the ad finished
+core.resume(&#x27;ad&#x27;);</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".resume"><span class="type-signature">&lt;static> </span>resume(reasonP, force)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Unpause the engine.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>reasonP</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Resume from pause tagged with this reason</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Whether force to resume</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-564">line 564</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".setScene"><span class="type-signature">&lt;static> </span>setScene(name)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Switch to a scene.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the target scene.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-481">line 481</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".start"><span class="type-signature">&lt;static> </span>start()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Start with <code>Loading</code> scene.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-519">line 519</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".startWithScene"><span class="type-signature">&lt;static> </span>startWithScene(sceneName)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Entrance of the game, set the first scene to boot with.<br>Note: it's recommend to set the first scene to <code>Loading</code> or<br>your customized loading scene, otherwise the assets won't get load.</p>
+<p>Simply use <code>core.start</code> instead if you don't want to start<br>from a custom loading scene.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sceneName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the start scene</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="core.js.html">core.js</a>,
+				 <a href="core.js.html#sunlight-1-line-509">line 509</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// In the &#x60;game/main&#x60; module
+import core from &#x27;engine/core&#x27;;
+core.startWithScene(&#x27;MyCustomLoading&#x27;);
+// or simply use the default loading scene
+core.start();</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

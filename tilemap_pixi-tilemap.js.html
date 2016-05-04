@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Source: tilemap/pixi-tilemap.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: tilemap/pixi-tilemap.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * PIXI-tilemap made by Ivan Popelyshev
+ * @version master/5276fa4
+ */
+var PIXI = require('engine/pixi');
+
+(function() {
+    function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes)
+    {
+        this.vertSize = 7;
+        this.vertPerQuad = 1;
+        this.stride = this.vertSize * 4;
+        var uniforms = {
+            uSampler:           { type: 'sampler2D', value: 0 },
+            animationFrame:     { type: '2f', value: new Float32Array([0, 0]) },
+            samplerSize:        { type: '2f', value: new Float32Array([0, 0]) },
+            projectionMatrix:   { type: 'mat3', value: new Float32Array([1, 0, 0,
+                0, 1, 0,
+                0, 0, 1]) },
+            pointScale:         { type: '2f', value: new Float32Array([0, 0])},
+            projectionScale:    { type: 'f', value: 1 }
+        };
+        if (customUniforms)
+        {
+            for (var u in customUniforms)
+            {
+                uniforms[u] = customUniforms[u];
+            }
+        }
+        var attributes = {
+            aVertexPosition:    0,
+            aSize:              0
+        };
+        if (customAttributes)
+        {
+            for (var a in customAttributes)
+            {
+                attributes[a] = customAttributes[a];
+            }
+        }
+        vertexSrc = vertexSrc || SquareTileShader.defaultVertexSrc;
+        fragmentSrc = fragmentSrc || SquareTileShader.defaultFragmentSrc;
+        PIXI.Shader.call(this, shaderManager, vertexSrc, fragmentSrc, uniforms, attributes);
+    }
+
+// constructor
+    SquareTileShader.prototype = Object.create(PIXI.Shader.prototype);
+    SquareTileShader.prototype.constructor = SquareTileShader;
+    SquareTileShader.prototype.bindBuffer = function (gl, vb) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, vb);
+        gl.vertexAttribPointer(this.attributes.aVertexPosition, 4, gl.FLOAT, false, this.stride, 0);
+        gl.vertexAttribPointer(this.attributes.aSize, 3, gl.FLOAT, false, this.stride, 4 * 4);
+    };
+
+    /**
+     * The default vertex shader source
+     *
+     * @static
+     * @constant
+     */
+    SquareTileShader.defaultVertexSrc = [
+        'precision lowp float;',
+        'attribute vec4 aVertexPosition;',
+        'attribute vec3 aSize;',
+
+        'uniform mat3 projectionMatrix;',
+        'uniform vec2 samplerSize;',
+        'uniform vec2 animationFrame;',
+        'uniform float projectionScale;',
+
+        'varying vec2 vTextureCoord;',
+        'varying float vSize;',
+
+        'void main(void){',
+        '   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition.xy + aSize.x * 0.5, 1.0)).xy, 0.0, 1.0);',
+        '   gl_PointSize = aSize.x * projectionScale;',
+        '   vTextureCoord = (aVertexPosition.zw + aSize.yz * animationFrame ) * samplerSize;',
+        '   vSize = aSize.x;',
+        '}'
+    ].join('\n');
+
+    SquareTileShader.defaultFragmentSrc = [
+        'precision lowp float;',
+
+        'varying vec2 vTextureCoord;',
+        'varying float vSize;',
+        'uniform vec2 samplerSize;',
+
+        'uniform sampler2D uSampler;',
+        'uniform vec2 pointScale;',
+
+        'void main(void){',
+        '   float margin = 1.0/vSize;',
+        '   vec2 clamped = vec2(clamp(gl_PointCoord.x, margin, 1.0 - margin), clamp(gl_PointCoord.y, margin, 1.0 - margin));',
+        '   gl_FragColor = texture2D(uSampler, ((clamped-0.5) * pointScale + 0.5) * vSize * samplerSize + vTextureCoord);',
+        '}'
+    ].join('\n');
+
+    function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes)
+    {
+        this.vertSize = 6;
+        this.vertPerQuad = 6;
+        this.stride = this.vertSize * 4;
+        var uniforms = {
+            uSampler:           { type: 'sampler2D', value: 0 },
+            animationFrame:     { type: '2f', value: new Float32Array([0, 0]) },
+            samplerSize:        { type: '2f', value: new Float32Array([0, 0]) },
+            projectionMatrix:   { type: 'mat3', value: new Float32Array([1, 0, 0,
+                0, 1, 0,
+                0, 0, 1]) }
+        };
+        if (customUniforms)
+        {
+            for (var u in customUniforms)
+            {
+                uniforms[u] = customUniforms[u];
+            }
+        }
+        var attributes = {
+            aVertexPosition:    0,
+            aAnim:              0
+        };
+        if (customAttributes)
+        {
+            for (var a in customAttributes)
+            {
+                attributes[a] = customAttributes[a];
+            }
+        }
+        vertexSrc = vertexSrc || RectTileShader.defaultVertexSrc;
+        fragmentSrc = fragmentSrc || RectTileShader.defaultFragmentSrc;
+        PIXI.Shader.call(this, shaderManager, vertexSrc, fragmentSrc, uniforms, attributes);
+    }
+
+// constructor
+    RectTileShader.prototype = Object.create(PIXI.Shader.prototype);
+    RectTileShader.prototype.constructor = RectTileShader;
+    RectTileShader.prototype.bindBuffer = function (gl, vb) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, vb);
+        gl.vertexAttribPointer(this.attributes.aVertexPosition, 4, gl.FLOAT, false, this.stride, 0);
+        gl.vertexAttribPointer(this.attributes.aAnim, 2, gl.FLOAT, false, this.stride, 4 * 4);
+    };
+
+    /**
+     * The default vertex shader source
+     *
+     * @static
+     * @constant
+     */
+    RectTileShader.defaultVertexSrc = [
+        'precision lowp float;',
+        'attribute vec4 aVertexPosition;',
+        'attribute vec2 aAnim;',
+
+        'uniform mat3 projectionMatrix;',
+        'uniform vec2 samplerSize;',
+        'uniform vec2 animationFrame;',
+
+        'varying vec2 vTextureCoord;',
+
+        'void main(void){',
+        '   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition.xy, 1.0)).xy, 0.0, 1.0);',
+        '   vTextureCoord = (aVertexPosition.zw + aAnim * animationFrame ) * samplerSize;',
+        '}'
+    ].join('\n');
+
+    RectTileShader.defaultFragmentSrc = [
+        'precision lowp float;',
+        'varying vec2 vTextureCoord;',
+        'uniform sampler2D uSampler;',
+        'void main(void){',
+        '   gl_FragColor = texture2D(uSampler, vTextureCoord);',
+        '}'
+    ].join('\n');
+
+    function TileRenderer(renderer) {
+        PIXI.ObjectRenderer.call(this, renderer);
+        this.vbs = {};
+        this.lastTimeCheck = 0;
+    }
+
+    TileRenderer.prototype = Object.create(PIXI.ObjectRenderer.prototype);
+    TileRenderer.prototype.constructor = TileRenderer;
+    TileRenderer.vbAutoincrement = 0;
+
+    TileRenderer.prototype.onContextChange = function() {
+        this.rectShader = new RectTileShader(this.renderer.shaderManager);
+        this.squareShader = new SquareTileShader(this.renderer.shaderManager);
+        this.vbs = {};
+    };
+
+
+    TileRenderer.prototype.checkLeaks = function() {
+        var now = Date.now();
+        var old = now - 10000;
+        if (this.lastTimeCheck &lt; old ||
+            this.lastTimeCheck > now) {
+            this.lastTimeCheck = now;
+            var vbs = this.vbs;
+            for (var key in vbs) {
+                if (vbs[key].lastTimeAccess &lt; old) {
+                    this.renderer.gl.deleteBuffer(vbs[key].vb);
+                    delete vbs[key];
+                }
+            }
+        }
+    };
+
+    TileRenderer.prototype.start = function() {
+        this.renderer.blendModeManager.setBlendMode( PIXI.BLEND_MODES.NORMAL );
+        //sorry, nothing
+    };
+
+    TileRenderer.prototype.getVb = function(id) {
+        this.checkLeaks();
+        var vb = this.vbs[id];
+        if (vb) {
+            vb.lastAccessTime = Date.now();
+            return vb;
+        }
+        return null;
+    };
+
+    TileRenderer.prototype.createVb = function() {
+        var id = ++TileRenderer.vbAutoincrement;
+        var vb = this.renderer.gl.createBuffer();
+        return this.vbs[id] = { id: id, vb: vb, lastTimeAccess: Date.now() };
+    };
+
+    TileRenderer.prototype.removeVb = function(id) {
+        if (this.vbs[id]) {
+            this.renderer.gl.deleteBuffer(this.vbs[id]);
+            delete this.vbs[id];
+        }
+    };
+
+    TileRenderer.prototype.getShader = function(useSquare) {
+        return useSquare ? this.squareShader : this.rectShader;
+    };
+
+    TileRenderer.prototype.destroy = function () {
+        PIXI.ObjectRenderer.prototype.destroy.call(this);
+        this.rectShader.destroy();
+        this.squareShader.destroy();
+        this.rectShader = null;
+        this.squareShader = null;
+    };
+
+    PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
+
+    function RectTileLayer(zIndex, texture) {
+        PIXI.DisplayObject.apply(this, arguments);
+        this.initialize.apply(this, arguments);
+    }
+
+    RectTileLayer.prototype = Object.create(PIXI.DisplayObject.prototype);
+    RectTileLayer.prototype.constructor = RectTileLayer;
+
+    RectTileLayer.prototype.initialize = function(zIndex, texture) {
+        this.texture = texture;
+        this.z = this.zIndex = zIndex;
+        this.pointsBuf = [];
+        this.visible = false;
+    };
+
+    RectTileLayer.prototype.clear = function () {
+        this.pointsBuf.length = 0;
+        this.modificationMarker = 0;
+        this.hasAnim = false;
+    };
+
+    RectTileLayer.prototype.renderCanvas = function (renderer) {
+        if (!this.texture || !this.texture.valid) return;
+        var points = this.pointsBuf;
+        for (var i = 0, n = points.length; i &lt; n; i += 8) {
+            var x1 = points[i], y1 = points[i+1];
+            var x2 = points[i+2], y2 = points[i+3];
+            var w = points[i+4];
+            var h = points[i+5];
+            x1 += points[i+6] * (renderer.tileAnimX | 0);
+            y1 += points[i+7] * (renderer.tileAnimY | 0);
+            renderer.context.drawImage(this.texture.baseTexture.source, x1, y1, w, h, x2, y2, w, h);
+        }
+    };
+
+    RectTileLayer.prototype.addRect = function (u, v, x, y, tileWidth, tileHeight, animX, animY) {
+        var pb = this.pointsBuf;
+        this.hasAnim = this.hasAnim || animX > 0 || animY > 0;
+        if (tileWidth == tileHeight) {
+            pb.push(u);
+            pb.push(v);
+            pb.push(x);
+            pb.push(y);
+            pb.push(tileWidth);
+            pb.push(tileHeight);
+            pb.push(animX | 0);
+            pb.push(animY | 0);
+        } else {
+            //horizontal line on squares
+            if (tileWidth % tileHeight == 0) {
+                for (var i=0;i&lt;tileWidth/tileHeight;i++) {
+                    pb.push(u + i * tileHeight);
+                    pb.push(v);
+                    pb.push(x + i * tileHeight);
+                    pb.push(y);
+                    pb.push(tileWidth);
+                    pb.push(tileHeight);
+                    pb.push(animX | 0);
+                    pb.push(animY | 0);
+                }
+            } else {
+                //ok, ok, lets use rectangle. but its not working with square shader yet
+                pb.push(u);
+                pb.push(v);
+                pb.push(x);
+                pb.push(y);
+                pb.push(tileWidth);
+                pb.push(tileHeight);
+                pb.push(animX | 0);
+                pb.push(animY | 0);
+            }
+        }
+    };
+
+    RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
+        if (!this.texture || !this.texture.valid) return;
+        var points = this.pointsBuf;
+        if (points.length == 0) return;
+
+        var gl = renderer.gl;
+        var tile = renderer.plugins.tile;
+        var shader = tile.getShader(useSquare);
+        gl.activeTexture(gl.TEXTURE0);
+        var texture = this.texture.baseTexture;
+        if (!texture._glTextures[gl.id])
+            renderer.updateTexture(texture);
+        else
+            gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
+        var ss =  shader.uniforms.samplerSize;
+        ss.value[0] = 1.0 / texture.width;
+        ss.value[1] = 1.0 / texture.height;
+        shader.syncUniform(ss);
+        //lost context! recover!
+        var vb = tile.getVb(this.vbId);
+        if (!vb) {
+            vb = tile.createVb();
+            this.vbId = vb.id;
+            this.vbBuffer = null;
+            this.modificationMarker = 0;
+        }
+        vb = vb.vb;
+        //if layer was changed, reupload vertices
+        shader.bindBuffer(gl, vb);
+        var vertices = points.length / 8 * shader.vertPerQuad;
+        if (this.modificationMarker != vertices) {
+            this.modificationMarker = vertices;
+            var vs = shader.stride * vertices;
+            if (!this.vbBuffer || this.vbBuffer.byteLength &lt; vs) {
+                //!@#$
+                var bk = shader.stride;
+                while (bk &lt; vs) {
+                    bk *= 2;
+                }
+                this.vbBuffer = new ArrayBuffer(bk);
+                this.vbArray = new Float32Array(this.vbBuffer);
+                this.vbInts = new Uint32Array(this.vbBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, this.vbArray, gl.DYNAMIC_DRAW);
+            }
+
+            var arr = this.vbArray, ints = this.vbInts;
+            //upload vertices!
+            var sz = 0;
+            //var tint = 0xffffffff;
+            if (useSquare) {
+                for (var i = 0; i &lt; points.length; i += 8) {
+                    arr[sz++] = points[i + 2];
+                    arr[sz++] = points[i + 3];
+                    arr[sz++] = points[i + 0];
+                    arr[sz++] = points[i + 1];
+                    arr[sz++] = points[i + 4];
+                    arr[sz++] = points[i + 6];
+                    arr[sz++] = points[i + 7];
+                }
+            } else {
+                var ww = texture.width, hh = texture.height;
+                //var tint = 0xffffffff;
+                var tint = -1;
+                for (var i=0;i&lt;points.length;i+=8) {
+                    var x = points[i+2], y = points[i+3];
+                    var w = points[i+4], h = points[i+5];
+                    var u = points[i], v = points[i+1];
+                    var animX = points[i+6], animY = points[i+7];
+                    arr[sz++] = x;
+                    arr[sz++] = y;
+                    arr[sz++] = u;
+                    arr[sz++] = v;
+                    arr[sz++] = animX;
+                    arr[sz++] = animY;
+                    arr[sz++] = x + w;
+                    arr[sz++] = y;
+                    arr[sz++] = u + w;
+                    arr[sz++] = v;
+                    arr[sz++] = animX;
+                    arr[sz++] = animY;
+                    arr[sz++] = x + w;
+                    arr[sz++] = y + h;
+                    arr[sz++] = u + w;
+                    arr[sz++] = v + h;
+                    arr[sz++] = animX;
+                    arr[sz++] = animY;
+                    arr[sz++] = x;
+                    arr[sz++] = y;
+                    arr[sz++] = u;
+                    arr[sz++] = v;
+                    arr[sz++] = animX;
+                    arr[sz++] = animY;
+                    arr[sz++] = x + w;
+                    arr[sz++] = y + h;
+                    arr[sz++] = u + w;
+                    arr[sz++] = v + h;
+                    arr[sz++] = animX;
+                    arr[sz++] = animY;
+                    arr[sz++] = x;
+                    arr[sz++] = y + h;
+                    arr[sz++] = u;
+                    arr[sz++] = v + h;
+                    arr[sz++] = animX;
+                    arr[sz++] = animY;
+                }
+            }
+            if (vs > this.vbArray.length/2 ) {
+                gl.bufferSubData(gl.ARRAY_BUFFER, 0, arr);
+            } else {
+                var view = arr.subarray(0, vs)
+                gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
+            }
+        }
+        if (useSquare)
+            gl.drawArrays(gl.POINTS, 0, vertices);
+        else
+            gl.drawArrays(gl.TRIANGLES, 0, vertices);
+    }
+
+    function CompositeRectTileLayer() {
+        PIXI.Container.apply(this, arguments);
+        this.initialize.apply(this, arguments);
+    }
+
+    CompositeRectTileLayer.prototype = Object.create(PIXI.Container.prototype);
+    CompositeRectTileLayer.prototype.constructor = RectTileLayer;
+    CompositeRectTileLayer.prototype.updateTransform = CompositeRectTileLayer.prototype.displayObjectUpdateTransform;
+
+        //can be initialized multiple times
+    CompositeRectTileLayer.prototype.initialize = function(zIndex, bitmaps, useSquare) {
+        this.z = this.zIndex = zIndex;
+        this.useSquare = useSquare;
+        bitmaps &amp;&amp; this.setBitmaps(bitmaps);
+    };
+
+    CompositeRectTileLayer.prototype.setBitmaps = function(bitmaps) {
+        this.removeChildren();
+        for (var i=0;i&lt;bitmaps.length;i++)
+            this.addChild(new RectTileLayer(this.zIndex, bitmaps[i]));
+        this.modificationMarker = 0;
+    };
+
+    CompositeRectTileLayer.prototype.clear = function () {
+        for (var i=0;i&lt;this.children.length;i++)
+            this.children[i].clear();
+        this.modificationMarker = 0;
+    };
+
+    CompositeRectTileLayer.prototype.addRect = function (num, u, v, x, y, tileWidth, tileHeight) {
+        if (this.children[num] &amp;&amp; this.children[num].texture)
+            this.children[num].addRect(u, v, x, y, tileWidth, tileHeight);
+    };
+
+    /**
+     * "hello world!" of pixi-tilemap library. Pass it texture and it will be added
+     * @param texture
+     * @param x
+     * @param y
+     * @returns {boolean}
+     */
+    CompositeRectTileLayer.prototype.addFrame = function (texture, x, y) {
+        if (typeof texture === "string") {
+            texture = PIXI.Texture.fromImage(texture);
+        }
+        var children = this.children;
+        var layer = null;
+        for (var i=0;i&lt;children.length; i++) {
+            if (children[i].texture.baseTexture == texture.baseTexture) {
+                layer = children[i];
+                break;
+            }
+        }
+        if (!layer) {
+            children.push(layer = new RectTileLayer(this.zIndex, texture));
+        }
+        layer.addRect(texture.frame.x, texture.frame.y, x, y, texture.frame.width, texture.frame.height);
+        return true;
+    };
+
+    CompositeRectTileLayer.prototype.renderCanvas = function (renderer) {
+        if (!renderer.dontUseTransform) {
+            var wt = this.worldTransform;
+            renderer.context.setTransform(
+                wt.a,
+                wt.b,
+                wt.c,
+                wt.d,
+                wt.tx * renderer.resolution,
+                wt.ty * renderer.resolution
+            );
+        }
+        var layers = this.children;
+        for (var i = 0; i &lt; layers.length; i++)
+            layers[i].renderCanvas(renderer);
+    };
+
+
+    CompositeRectTileLayer.prototype.renderWebGL = function(renderer) {
+        var gl = renderer.gl;
+        var shader = renderer.plugins.tile.getShader(this.useSquare);
+        renderer.setObjectRenderer(renderer.plugins.tile);
+        renderer.shaderManager.setShader(shader);
+        var tm = shader.uniforms.projectionMatrix;
+        //TODO: dont create new array, please
+        this._globalMat = this._globalMat || new PIXI.Matrix();
+        renderer.currentRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
+        tm.value = this._globalMat.toArray(true);
+        if (this.useSquare) {
+            var ps = shader.uniforms.pointScale;
+            ps.value[0] = this._globalMat.a >= 0?1:-1;
+            ps.value[1] = this._globalMat.d &lt; 0?1:-1;
+            ps = shader.uniforms.projectionScale;
+            ps.value = Math.abs(this.worldTransform.a);
+        }
+        var af = shader.uniforms.animationFrame.value;
+        af[0] = renderer.tileAnimX | 0;
+        af[1] = renderer.tileAnimY | 0;
+        //shader.syncUniform(shader.uniforms.animationFrame);
+        shader.syncUniforms();
+        var layers = this.children;
+        for (var i = 0; i &lt; layers.length; i++)
+            layers[i].renderWebGL(renderer, this.useSquare);
+    };
+
+
+    CompositeRectTileLayer.prototype.isModified = function(anim) {
+        var layers = this.children;
+        if (this.modificationMarker != layers.length) {
+            return true;
+        }
+        for (var i=0;i&lt;layers.length;i++) {
+            if (layers[i].modificationMarker != layers[i].pointsBuf.length ||
+                anim &amp;&amp; layers[i].hasAnim) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    CompositeRectTileLayer.prototype.clearModify = function() {
+        var layers = this.children;
+        this.modificationMarker = layers.length;
+        for (var i = 0; i &lt; layers.length; i++) {
+            layers[i].modificationMarker = layers[i].pointsBuf.length;
+        }
+    };
+
+    function GraphicsLayer(zIndex) {
+        PIXI.Graphics.apply(this, arguments);
+        this.z = this.zIndex = zIndex;
+    }
+
+    GraphicsLayer.prototype = Object.create(PIXI.Graphics.prototype);
+    GraphicsLayer.prototype.constructor = GraphicsLayer;
+    GraphicsLayer.prototype.renderCanvas = function (renderer) {
+        if (!renderer.dontUseTransform) {
+            var wt = this.worldTransform;
+            renderer.context.setTransform(
+                wt.a,
+                wt.b,
+                wt.c,
+                wt.d,
+                wt.tx * renderer.resolution,
+                wt.ty * renderer.resolution
+            );
+        }
+        PIXI.CanvasGraphics.renderGraphics(this, renderer.context);
+        renderer.context.globalAlpha = 1.0;
+    };
+    GraphicsLayer.prototype.renderWebGL = function(renderer) {
+        if (!this._webGL[renderer.gl.id])
+            this.dirty = true;
+        PIXI.Graphics.prototype.renderWebGL.call(this, renderer);
+    };
+
+    GraphicsLayer.prototype.isModified = function(anim) {
+        return false;
+    };
+
+    GraphicsLayer.prototype.clearModify = function() {
+    };
+
+    function ZLayer() {
+        this.initialize.apply(this, arguments);
+    };
+
+    ZLayer.prototype = Object.create(PIXI.Container.prototype);
+    ZLayer.prototype.initialize = function(tilemap, zIndex) {
+        PIXI.Container.apply(this, arguments);
+        this.tilemap = tilemap;
+        this.z = zIndex;
+    };
+
+    ZLayer.prototype.clear = function() {
+        var layers = this.children;
+        for (var i=0; i&lt;layers.length; i++)
+            layers[i].clear();
+        this._previousLayers = 0;
+    };
+
+    ZLayer.prototype.cacheIfDirty = function() {
+        var tilemap = this.tilemap;
+        var layers = this.children;
+        var modified = this._previousLayers != layers.length;
+        this._previousLayers = layers.length;
+        var buf = this.canvasBuffer;
+        if (!buf) {
+            buf = this.canvasBuffer = document.createElement('canvas');
+        }
+        if (buf.width != tilemap._layerWidth ||
+            buf.height != tilemap._layerHeight) {
+            buf.width = tilemap._layerWidth;
+            buf.height = tilemap._layerHeight;
+            modified = true;
+        }
+        if (!modified) {
+            for (var i=0;i&lt;layers.length;i++) {
+                if (layers[i].isModified(this._lastAnimationFrame != tilemap.animationFrame)) {
+                    modified = true;
+                    break;
+                }
+            }
+        }
+        this._lastAnimationFrame = tilemap.animationFrame;
+        if (modified) {
+            var render = { context: buf.getContext("2d"), dontUseTransform: true };
+            tilemap._hackRenderer &amp;&amp; tilemap._hackRenderer(render);
+            render.context.clearRect(0, 0, buf.width, buf.height);
+            for (var i=0;i&lt;layers.length;i++) {
+                layers[i].clearModify();
+                layers[i].renderCanvas(render);
+            }
+        }
+        this.layerTransform = this.worldTransform;
+        for (var i=0;i&lt;layers.length;i++) {
+            this.layerTransform = layers[i].worldTransform;
+            break;
+        }
+    };
+
+    ZLayer.prototype.renderCanvas = function(renderer) {
+        this.cacheIfDirty();
+        var wt = this.layerTransform;
+        renderer.context.setTransform(
+            wt.a,
+            wt.b,
+            wt.c,
+            wt.d,
+            wt.tx * renderer.resolution,
+            wt.ty * renderer.resolution
+        );
+        var tilemap = this.tilemap;
+        renderer.context.drawImage(this.canvasBuffer, 0, 0);
+    };
+
+    PIXI.tilemap = {
+        ZLayer: ZLayer,
+        GraphicsLayer: GraphicsLayer,
+        RectTileLayer: RectTileLayer,
+        CompositeRectTileLayer: CompositeRectTileLayer
+    };
+})();
+
+module.exports = exports = PIXI.tilemap;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

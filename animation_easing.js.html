@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Source: animation/easing.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: animation/easing.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * Easing functions.
+ */
+var Easing = {
+  Linear: {
+    None: function(k) {
+      return k;
+    },
+  },
+
+  Quadratic: {
+    In: function(k) {
+      return k * k;
+    },
+
+    Out: function(k) {
+      return k * (2 - k);
+    },
+
+    InOut: function(k) {
+      if ((k *= 2) &lt; 1) return 0.5 * k * k;
+      return -0.5 * (--k * (k - 2) - 1);
+    },
+  },
+
+  Cubic: {
+    In: function(k) {
+      return k * k * k;
+    },
+
+    Out: function(k) {
+      return --k * k * k + 1;
+    },
+
+    InOut: function(k) {
+      if ((k *= 2) &lt; 1) return 0.5 * k * k * k;
+      return 0.5 * ((k -= 2) * k * k + 2);
+    },
+  },
+
+  Quartic: {
+    In: function(k) {
+      return k * k * k * k;
+    },
+
+    Out: function(k) {
+      return 1 - (--k * k * k * k);
+    },
+
+    InOut: function(k) {
+      if ((k *= 2) &lt; 1) return 0.5 * k * k * k * k;
+      return -0.5 * ((k -= 2) * k * k * k - 2);
+    },
+  },
+
+  Quintic: {
+    In: function(k) {
+      return k * k * k * k * k;
+    },
+
+    Out: function(k) {
+      return --k * k * k * k * k + 1;
+    },
+
+    InOut: function(k) {
+      if ((k *= 2) &lt; 1) return 0.5 * k * k * k * k * k;
+      return 0.5 * ((k -= 2) * k * k * k * k + 2);
+    },
+  },
+
+  Sinusoidal: {
+    In: function(k) {
+      return 1 - Math.cos(k * Math.PI / 2);
+    },
+
+    Out: function(k) {
+      return Math.sin(k * Math.PI / 2);
+    },
+
+    InOut: function(k) {
+      return 0.5 * (1 - Math.cos(Math.PI * k));
+    },
+  },
+
+  Exponential: {
+    In: function(k) {
+      return k === 0 ? 0 : Math.pow(1024, k - 1);
+    },
+
+    Out: function(k) {
+      return k === 1 ? 1 : 1 - Math.pow(2, -10 * k);
+    },
+
+    InOut: function(k) {
+      if (k === 0) return 0;
+      if (k === 1) return 1;
+      if ((k *= 2) &lt; 1) return 0.5 * Math.pow(1024, k - 1);
+      return 0.5 * (-Math.pow(2, -10 * (k - 1)) + 2);
+    },
+  },
+
+  Circular: {
+    In: function(k) {
+      return 1 - Math.sqrt(1 - k * k);
+    },
+
+    Out: function(k) {
+      return Math.sqrt(1 - (--k * k));
+    },
+
+    InOut: function(k) {
+      if ((k *= 2) &lt; 1) return -0.5 * (Math.sqrt(1 - k * k) - 1);
+      return 0.5 * (Math.sqrt(1 - (k -= 2) * k) + 1);
+    },
+  },
+
+  Elastic: {
+    In: function(k) {
+      var s, a = 0.1,
+        p = 0.4;
+      if (k === 0) return 0;
+      if (k === 1) return 1;
+      if (!a || a &lt; 1) {
+        a = 1;
+        s = p / 4;
+      } else s = p * Math.asin(1 / a) / (2 * Math.PI);
+      return -(a * Math.pow(2, 10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p));
+    },
+
+    Out: function(k) {
+      var s, a = 0.1,
+        p = 0.4;
+      if (k === 0) return 0;
+      if (k === 1) return 1;
+      if (!a || a &lt; 1) {
+        a = 1;
+        s = p / 4;
+      } else s = p * Math.asin(1 / a) / (2 * Math.PI);
+      return (a * Math.pow(2, -10 * k) * Math.sin((k - s) * (2 * Math.PI) / p) + 1);
+    },
+
+    InOut: function(k) {
+      var s, a = 0.1,
+        p = 0.4;
+      if (k === 0) return 0;
+      if (k === 1) return 1;
+      if (!a || a &lt; 1) {
+        a = 1;
+        s = p / 4;
+      } else s = p * Math.asin(1 / a) / (2 * Math.PI);
+      if ((k *= 2) &lt; 1) return -0.5 * (a * Math.pow(2, 10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p));
+      return a * Math.pow(2, -10 * (k -= 1)) * Math.sin((k - s) * (2 * Math.PI) / p) * 0.5 + 1;
+    },
+  },
+
+  Back: {
+    In: function(k) {
+      var s = 1.70158;
+      return k * k * ((s + 1) * k - s);
+    },
+
+    Out: function(k) {
+      var s = 1.70158;
+      return --k * k * ((s + 1) * k + s) + 1;
+    },
+
+    InOut: function(k) {
+      var s = 1.70158 * 1.525;
+      if ((k *= 2) &lt; 1) return 0.5 * (k * k * ((s + 1) * k - s));
+      return 0.5 * ((k -= 2) * k * ((s + 1) * k + s) + 2);
+    },
+  },
+
+  Bounce: {
+    In: function(k) {
+      return 1 - Tween.Easing.Bounce.Out(1 - k);
+    },
+
+    Out: function(k) {
+      if (k &lt; (1 / 2.75)) {
+        return 7.5625 * k * k;
+      } else if (k &lt; (2 / 2.75)) {
+        return 7.5625 * (k -= (1.5 / 2.75)) * k + 0.75;
+      } else if (k &lt; (2.5 / 2.75)) {
+        return 7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375;
+      } else {
+        return 7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375;
+      }
+    },
+
+    InOut: function(k) {
+      if (k &lt; 0.5) return Tween.Easing.Bounce.In(k * 2) * 0.5;
+      return Tween.Easing.Bounce.Out(k * 2 - 1) * 0.5 + 0.5;
+    },
+  },
+};
+
+/**
+ * Interpolation functions.
+ */
+var Interpolation = {
+  Linear: function(v, k) {
+    var m = v.length - 1,
+      f = m * k,
+      i = Math.floor(f),
+      fn = Tween.Interpolation.Utils.Linear;
+    if (k &lt; 0) return fn(v[0], v[1], f);
+    if (k > 1) return fn(v[m], v[m - 1], m - f);
+    return fn(v[i], v[i + 1 > m ? m : i + 1], f - i);
+  },
+
+  Bezier: function(v, k) {
+    var b = 0,
+      n = v.length - 1,
+      pw = Math.pow,
+      bn = Tween.Interpolation.Utils.Bernstein,
+      i;
+    for (i = 0; i &lt;= n; i++) {
+      b += pw(1 - k, n - i) * pw(k, i) * v[i] * bn(n, i);
+    }
+
+    return b;
+  },
+
+  CatmullRom: function(v, k) {
+    var m = v.length - 1,
+      f = m * k,
+      i = Math.floor(f),
+      fn = Tween.Interpolation.Utils.CatmullRom;
+    if (v[0] === v[m]) {
+      if (k &lt; 0) i = Math.floor(f = m * (1 + k));
+      return fn(v[(i - 1 + m) % m], v[i], v[(i + 1) % m], v[(i + 2) % m], f - i);
+    } else {
+      if (k &lt; 0) return v[0] - (fn(v[0], v[0], v[1], v[1], -f) - v[0]);
+      if (k > 1) return v[m] - (fn(v[m], v[m], v[m - 1], v[m - 1], f - m) - v[m]);
+      return fn(v[i ? i - 1 : 0], v[i], v[m &lt; i + 1 ? m : i + 1], v[m &lt; i + 2 ? m : i + 2], f - i);
+    }
+  },
+
+  Utils: {
+    Linear: function(p0, p1, t) {
+      return (p1 - p0) * t + p0;
+    },
+
+    Bernstein: function(n, i) {
+      var fc = Tween.Interpolation.Utils.Factorial;
+      return fc(n) / fc(i) / fc(n - i);
+    },
+
+    Factorial: (function() {
+      var a = [1];
+      return function(n) {
+        var s = 1, i;
+        if (a[n]) return a[n];
+        for (i = n; i > 1; i--) s *= i;
+        return a[n] = s;
+      };
+    })(),
+
+    CatmullRom: function(p0, p1, p2, p3, t) {
+      var v0 = (p2 - p0) * 0.5,
+        v1 = (p3 - p1) * 0.5,
+        t2 = t * t,
+        t3 = t * t2;
+      return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+    },
+  },
+};
+
+module.exports = {
+  Easing: Easing,
+  Interpolation: Interpolation,
+};
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Lesser Panda Source: actor.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.Flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Lesser Panda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_actor.html">engine/actor</a></li><li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_animation.html">engine/animation</a></li><li><a href="module-engine_behavior.html">engine/behavior</a></li><li><a href="module-engine_camera.html">engine/camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_eventemitter3.html">engine/eventemitter3</a></li><li><a href="module-engine_keyboard.html">engine/keyboard</a></li><li><a href="module-engine_loader.html">engine/loader</a></li><li><a href="module-engine_renderer.html">engine/renderer</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_scene.html">engine/scene</a></li><li><a href="module-engine_timer.html">engine/timer</a></li><li><a href="module-engine_utils.html">engine/utils</a></li><li><a href="module-engine_vector.html">engine/vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="Actor.html">Actor</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="Behavior.html">Behavior</a></li><li><a href="Body.html">Body</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="Circle.html">Circle</a></li><li><a href="global.html#EventEmitter">EventEmitter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Scene.html">Scene</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="Vector.html">Vector</a></li><li><a href="World.html">World</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#a">a</a></li><li><a href="global.html#ACTION_TYPES">ACTION_TYPES</a></li><li><a href="global.html#addBody">addBody</a></li><li><a href="global.html#addBodyCollision">addBodyCollision</a></li><li><a href="global.html#addTo">addTo</a></li><li><a href="global.html#afterCollide">afterCollide</a></li><li><a href="global.html#aInB">aInB</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#bInA">bInA</a></li><li><a href="global.html#channelMap">channelMap</a></li><li><a href="global.html#channels">channels</a></li><li><a href="global.html#collide">collide</a></li><li><a href="global.html#core">core</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#DEFAULT_POWER_OF_TWO">DEFAULT_POWER_OF_TWO</a></li><li><a href="global.html#defaultVal">defaultVal</a></li><li><a href="global.html#duration">duration</a></li><li><a href="global.html#Easing">Easing</a></li><li><a href="global.html#easing">easing</a></li><li><a href="global.html#finished">finished</a></li><li><a href="global.html#flattenPointsOn">flattenPointsOn</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getTargetAndKey">getTargetAndKey</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#hitResponse">hitResponse</a></li><li><a href="global.html#hitTest">hitTest</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#Interpolation">Interpolation</a></li><li><a href="global.html#isSeparatingAxis">isSeparatingAxis</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#looped">looped</a></li><li><a href="global.html#overlap">overlap</a></li><li><a href="global.html#overlapN">overlapN</a></li><li><a href="global.html#overlapV">overlapV</a></li><li><a href="global.html#owner">owner</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#PIXI">PIXI</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#removeBody">removeBody</a></li><li><a href="global.html#removeBodyCollision">removeBodyCollision</a></li><li><a href="global.html#removeCollision">removeCollision</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#Response">Response</a></li><li><a href="global.html#resume">resume</a></li><li><a href="global.html#runAction">runAction</a></li><li><a href="global.html#SATSolver">SATSolver</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setCollideAgainst">setCollideAgainst</a></li><li><a href="global.html#setCollisionGroup">setCollisionGroup</a></li><li><a href="global.html#SpatialHash">SpatialHash</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#T_ARRAYS">T_ARRAYS</a></li><li><a href="global.html#T_RESPONSE">T_RESPONSE</a></li><li><a href="global.html#T_VECTORS">T_VECTORS</a></li><li><a href="global.html#testCircleCircle">testCircleCircle</a></li><li><a href="global.html#testCirclePolygon">testCirclePolygon</a></li><li><a href="global.html#testPolygonCircle">testPolygonCircle</a></li><li><a href="global.html#testPolygonPolygon">testPolygonPolygon</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#to">to</a></li><li><a href="global.html#type">type</a></li><li><a href="global.html#UNIT_SQUARE">UNIT_SQUARE</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateOrder">updateOrder</a></li><li><a href="global.html#value">value</a></li><li><a href="global.html#vornoiRegion">vornoiRegion</a></li><li><a href="global.html#wait">wait</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+		<div class="col-sm-3 col-md-3">
+            <form class="navbar-form" role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: actor.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">var EventEmitter = require('engine/eventemitter3');
+var Vector = require('engine/vector');
+var PIXI = require('engine/pixi');
+var physics = require('engine/physics');
+var Behavior = require('engine/behavior');
+
+var DEFAULT_POLYGON_VERTICES = [
+  Vector.create(-4, -4),
+  Vector.create( 4, -4),
+  Vector.create( 4,  4),
+  Vector.create(-4,  4),
+];
+
+/**
+ * Base object that may contain a PIXI.Container instance(as `sprite`)
+ * and a physics.Body instance(as `body`).
+ *
+ * The `sprite` and `body` share the same postion and rotation,
+ * designed to be easy to use.
+ *
+ * It is recommend to inherit {@link Actor} to create complex objects,
+ * while for the simple cases {@link module:engine/scene#spawnActor} with settings is enough.
+ *
+ * @class Actor
+ * @extends {EventEmitter}
+ *
+ * @constructor
+ * @param {string} name   Name of this actor
+ */
+function Actor(name) {
+  EventEmitter.call(this);
+
+  /**
+   * @type {number}
+   */
+  this.id = Actor.uid++;
+
+  /**
+   * Name of this Actor, can be undefined
+   * @type {string}
+   */
+  this.name = name;
+
+  /**
+   * Tag for updating
+   * @type {string}
+   */
+  this.tag = null;
+
+  /**
+   * Whether this actor is removed from scene
+   * @type {boolean}
+   * @private
+   */
+  this.removed = false;
+
+  /**
+   * Want this actor to be updated?
+   * @type {boolean}
+   * @default false
+   */
+  this.canEverTick = false;
+
+  /**
+   * Component for visual display, can be any sub-classes of `PIXI.Cotnainer` or null
+   * @type {PIXI.Container}
+   * @default null
+   */
+  this.sprite = null;
+
+  /**
+   * Component for physics simulation and collision detection or null.
+   * @type {module:engine/physics.Body}
+   * @default null
+   */
+  this.body = null;
+
+  /**
+   * Position
+   * @type {Vector}
+   * @default (0, 0)
+   */
+  this.position = Vector.create();
+
+  /**
+   * Reference to the scene that actor is added to
+   * @type {Scene}
+   * @default null
+   */
+  this.scene = null;
+  /**
+   * Reference to the container that `sprite` is added to
+   * @type {PIXI.Container}
+   * @default null
+   */
+  this.layer = null;
+
+  /**
+   * Behavior list
+   * @type {array}
+   */
+  this.behaviorList = [];
+
+  /**
+   * Type-behavior map
+   * @type {object}
+   */
+  this.behaviors = {};
+
+  /**
+   * Rotation cache
+   * @type {number}
+   * @private
+   */
+  this._rotation = 0;
+}
+Actor.prototype = Object.create(EventEmitter.prototype);
+Actor.prototype.constructor = Actor;
+
+Actor.uid = 0;
+
+/**
+ * Rotation
+ * @member {number}
+ * @memberof Actor#
+ */
+Object.defineProperty(Actor.prototype, 'rotation', {
+  get: function() {
+    return this._rotation;
+  },
+  set: function(val) {
+    this._rotation = val;
+
+    if (this.sprite) {
+      this.sprite.rotation = this._rotation;
+    }
+    if (this.body) {
+      this.body.rotation = this._rotation;
+    }
+  },
+});
+
+/**
+ * Add to the scene and a container
+ * @method addTo
+ * @memberof Actor#
+ * @param {Scene} scene
+ * @param {PIXI.Container} layer
+ * @return {Actor} Actor itself for chaining
+ */
+Actor.prototype.addTo = function addTo(scene, layer) {
+  this.scene = scene;
+  this.layer = layer;
+
+  if (this.sprite) {
+    this.layer.addChild(this.sprite);
+  }
+  if (this.body) {
+    this.scene.world.addBody(this.body);
+  }
+
+  this.prepare();
+
+  return this;
+};
+
+/**
+ * Will be called by `addTo` method after the Actor components are
+ * properly added.
+ * @method prepare
+ * @memberof Actor#
+ */
+Actor.prototype.prepare = function prepare() {};
+
+/**
+ * Update method to be called each frame
+ * Nothing inside, no need to call `super.update`
+ * @method update
+ * @memberof Actor#
+ * @protected
+ */
+Actor.prototype.update = function update(dtMS, dtSec) {};
+
+/**
+ * Remove from current scene and layer container
+ * @method remove
+ * @memberof Actor#
+ */
+Actor.prototype.remove = function remove() {
+  this.removed = true;
+
+  if (this.sprite) {
+    this.sprite.remove();
+  }
+  if (this.body) {
+    this.body.remove();
+  }
+
+  this.scene = null;
+  this.layer = null;
+};
+
+// Component factory methods
+
+/**
+ * Initialize `sprite` as PIXI.Container
+ * @method initEmpty
+ * @memberof Actor#
+ * @return {Actor}        self for chaining
+ */
+Actor.prototype.initEmpty = function initEmpty() {
+  this.sprite = new PIXI.Container();
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+
+/**
+ * Initialize `sprite` as Sprite
+ * @method initSprite
+ * @memberof Actor#
+ * @param  {PIXI.Texture} texture
+ * @return {Actor}        self for chaining
+ */
+Actor.prototype.initSprite = function initSprite(texture) {
+  this.sprite = new PIXI.Sprite(texture);
+  this.sprite.position = this.position;
+  this.sprite.anchor.set(0.5);
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+
+/**
+ * Initialize `sprite` as Graphics
+ * @method initGraphics
+ * @memberof Actor#
+ * @param  {object} [settings]
+ * @param  [settings.shape] {string} default 'Box'
+ * @param  [settings.width] {number} default 8, for 'Box' shapes
+ * @param  [settings.height] {number} default 8, for 'Box' shapes
+ * @param  [settings.radius] {number} default 8, for 'Circle' shapes
+ * @param  [settings.points] {array&lt;engine/vector>} vertices for 'Polygon' shapes
+ * @return {Actor}  self for chaining
+ */
+Actor.prototype.initGraphics = function initGraphics(settings_) {
+  var settings = settings_ || {};
+
+  this.sprite = new PIXI.Graphics();
+  this.sprite.beginFill(settings.color || 0x000000);
+  var shape = settings.shape || 'Box';
+  if (shape === 'Circle') {
+    this.sprite.drawCircle(0, 0, settings.radius || 8);
+  }
+  else if (shape === 'Box') {
+    var w = settings.width || 8;
+    var h = settings.height || 8;
+    this.sprite.drawRect(-w * 0.5, -h * 0.5, w, h);
+  }
+  else if (shape === 'Polygon') {
+    var points = settings.points || DEFAULT_POLYGON_VERTICES;
+    this.sprite.moveTo(points[0].x, points[0].y);
+    for (var i = 1; i &lt; points.length; i++) {
+      this.sprite.lineTo(points[i].x, points[i].y);
+    }
+  }
+  this.sprite.endFill();
+
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+
+/**
+ * Initialize `sprite` as AnimatedSprite
+ * @method initAnimation
+ * @memberof Actor#
+ * @param settings {object}
+ * @param settings.textures {array&lt;PIXI.Texture>}
+ * @param settings.anims {array&lt;{ name, frames, settings }>}
+ * @return {Actor}  self for chaining
+ */
+Actor.prototype.initAnimation = function initAnimation(settings_) {
+  var settings = settings_ || {};
+
+  this.sprite = new PIXI.extras.AnimatedSprite(settings.textures);
+  this.sprite.anchor.set(0.5);
+
+  var anims = settings.anims;
+  if (Array.isArray(anims)) {
+    for (var i = 0; i &lt; anims.length; i++) {
+      this.sprite.addAnim(anims[i].name, anims[i].frames, anims[i].settings);
+    }
+  }
+
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+
+/**
+ * Initialize `body`
+ * @method initBody
+ * @memberof Actor#
+ * @param  {object} settings
+ * @param  [settings.shape] {string} default 'Box'
+ * @param  [settings.width] {number} default 8, for 'Box' shapes
+ * @param  [settings.height] {number} default 8, for 'Box' shapes
+ * @param  [settings.radius] {number} default 8, for 'Circle' shapes
+ * @param  [settings.points] {array&lt;engine/vector>} vertices for 'Polygon' shapes
+ * @return {Actor}  self for chaining
+ */
+Actor.prototype.initBody = function initBody(settings_) {
+  var settings = settings_ || {};
+
+  // Create shape
+  var shapeInst, shape = settings.shape || 'Box';
+  if (shape === 'Circle') {
+    var r = settings.radius;
+    if (!Number.isFinite(r)) {
+      if (this.sprite) {
+        r = this.sprite.width / 2;
+      }
+    }
+    shape = new physics.Circle(r);
+  }
+  else if (shape === 'Box') {
+    var w = settings.width, h = settings.height;
+    if (!Number.isFinite(w)) {
+      if (this.sprite) {
+        w = this.sprite.width;
+        h = this.sprite.height;
+      }
+      else {
+        w = h = 8;
+      }
+    }
+    else {
+      if (!Number.isFinite(h)) {
+        h = w;
+      }
+    }
+
+    shape = new physics.Box(w, h);
+  }
+  else if (shape === 'Polygon') {
+    shape = new physics.Polygon(settings.points || DEFAULT_POLYGON_VERTICES);
+  }
+
+  // Cleanup settings
+  var bodySettings = Object.assign({}, settings);
+  delete bodySettings.shape;
+  delete bodySettings.radius;
+  delete bodySettings.width;
+  delete bodySettings.height;
+  delete bodySettings.points;
+  bodySettings.shape = shape;
+
+  // Create body
+  this.body = new physics.Body(bodySettings);
+  this.body.position = this.position;
+
+  this.body.parent = this;
+
+  if (this.scene) {
+    this.scene.world.addBody(this.body);
+  }
+
+  return this;
+};
+
+/**
+ * Add a behavior to this Actor.
+ * Note: the same behavior can only be added ONCE.
+ * @method behave
+ * @memberof Actor#
+ * @param {string|Behavior|object}  behavior  Behavior type or constructor or instance
+ * @param {object}                  settings  Settings for this behavior
+ * @return {Actor} Self for chaining
+ */
+Actor.prototype.behave = function behave(behv, settings) {
+  var behavior = behv;
+  if (typeof(behv) === 'string') {
+    behavior = Behavior.behaviors[behv];
+  }
+
+  // Create instance if the behavior is a function(constructor)
+  if (typeof(behavior) === 'function') {
+    behavior = new behavior();
+  }
+
+  if (this.behaviors[behavior.type]) {
+    console.log('An instance of behavior "' + behavior.type + '" is already added!');
+    return this;
+  }
+
+  this.behaviorList.push(behavior);
+  this.behaviors[behavior.type] = behavior;
+
+  // Setup
+  behavior.addTo(this);
+  behavior.setup(settings || {});
+
+  return this;
+};
+
+/**
+ * Get a behavior instance by its type
+ * @method getBehaviorByType
+ * @memberof Actor#
+ * @param  {string} type  Type of the behavior to be activated
+ * @return {Behavior}     Behavior of the type, return undefined no one exists.
+ */
+Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
+  return this.behaviors[type];
+};
+
+/**
+ * Activate a behavior by its type
+ * @method activateBehavior
+ * @memberof Actor#
+ * @param  {string} type  Type of the behavior to be activated
+ * @return {Actor}        Self for chaining
+ */
+Actor.prototype.activateBehavior = function activateBehavior(type) {
+  var behv = this.behaviors[type];
+  if (behv) {
+    behv.activate();
+  }
+
+  return this;
+};
+
+/**
+ * De-activate a behavior by its type
+ * @method deactivateBehavior
+ * @memberof Actor#
+ * @param  {string} type  Type of the behavior to be de-activated
+ * @return {Actor}        Self for chaining
+ */
+Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
+  var behv = this.behaviors[type];
+  if (behv) {
+    behv.deactivate();
+  }
+
+  return this;
+};
+
+/**
+ * Update behaviorList, automatically called by Actor sub-system
+ * @method updateBehaviors
+ * @memberof Actor#
+ * @private
+ * @param  {number} dtMS  Delta time in milli-seconds
+ * @param  {number} dtSec Delta time in seconds
+ */
+Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
+  var i, behv;
+  for (i = 0; i &lt; this.behaviorList.length; i++) {
+    behv = this.behaviorList[i];
+    behv.update &amp;&amp; behv.update(dtMS, dtSec);
+  }
+};
+
+/**
+ * Actor is the core object of Lesser Panda, which provides lots of
+ * benefits such as Behavior support, config based initialise.
+ *
+ * @exports engine/actor
+ * @see Actor
+ *
+ * @requires module:engine/eventemitter3
+ * @requires module:engine/vector
+ * @requires module:engine/pixi
+ * @requires module:engine/physics
+ * @requires module:engine/behavior
+ */
+module.exports = Actor;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+<div class="modal fade" id="searchResults">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Search results</h4>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+	
+		on 2016-05-04T09:55:10+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+<script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			var id = $( heading ).attr( "id" );
+			return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		SearcherDisplay.init();
+	});
+</script>
+
+</body>
+</html>
