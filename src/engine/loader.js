@@ -1,15 +1,29 @@
-/**
- * @module engine/loader
- */
-
 var EventEmitter = require('engine/eventemitter3');
 var ResourceLoader = require('engine/resource-loader');
 var config = require('game/config').default;
 
-// Loader instance
 // TODO: add dymanic loading support
+/**
+ * Assets loader powered by `resource-loader` that can load any kind
+ * of resources.
+ *
+ * Config:
+ * - baseURL: Base url for the assets related to project root, the default is `media`.
+ *
+ * @emits progress
+ * @emits error
+ * @emits complete
+ *
+ * @exports engine/loader
+ * @requires engine/eventemitter3
+ * @requires engine/resource-loader
+ */
 var loader = new EventEmitter();
 
+/**
+ * ResourceLoader constructor
+ * @type {ResourceLoader}
+ */
 loader.ResourceLoader = ResourceLoader;
 
 Object.assign(loader, {
@@ -51,10 +65,24 @@ function progress(res, err) {
   loader.emit('progress', loadedCount / assetsLength);
 }
 
+/**
+ * Register a custom loader.
+ * Usually you don't need anything else than `resource-loader`. The main
+ * purpose it to support the {@link module:engine/audio} which uses
+ * `hower` to support audio playback.
+ *
+ * See {@link module:engine/audio} to learn to create a custom loader.
+ *
+ * @param  {object} loader
+ */
 loader.registerLoader = function registerLoader(loader) {
   loaders.push(loader);
 };
 
+/**
+ * Start the loading process
+ * @private
+ */
 loader.start = function start() {
   started = true;
 
@@ -98,7 +126,10 @@ loader.start = function start() {
 };
 
 /**
- * Add assets to be loaded by ResourceLoader instance
+ * Add assets to be loaded by ResourceLoader instance.
+ * @param {string} url        Path of the asset to load(`baseURL` is not included)
+ * @param {string} [key]      Key to assign to the asset(it will be the same as `url` if not provided)
+ * @param {string} [settings] Extra settings to pass to `resource-loader` instance.
  */
 loader.addAsset = function addAsset(url, key, settings) {
   var realURL = loader.baseURL + '/' + url;
@@ -120,6 +151,10 @@ loader.addAsset = function addAsset(url, key, settings) {
   return loader;
 };
 
+/**
+ * Add a new `resource-loader` middleware for loading process.
+ * @param {function} fn   Middleware creator
+ */
 loader.addMiddleware = function addMiddleware(fn) {
   middlewares.push(fn);
 };
