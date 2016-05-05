@@ -159,6 +159,7 @@ Object.assign(Scene, {
   systems: {},
   /**
    * Sub-system updating order
+   * @memberof Scene
    * @type {array}
    */
   updateOrder: [
