@@ -1,3 +1,13 @@
+/**
+ * Simple physics simulation and collision support.
+ *
+ * @module engine/physics
+ * @requires engine/vector
+ * @requires engine/scene
+ * @requires engine/utils
+ * @requires engine/physics/spatial-hash
+ */
+
 var Vector = require('engine/vector');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
@@ -60,12 +70,14 @@ function updateBounds(body) {
 }
 
 /**
-  Physics world.
-  @class World
-  @constructor
-  @param {Number} [x] Gravity x
-  @param {Number} [y] Gravity y
-**/
+ * Physics world. Will automatically create one for each scene when
+ * physics module is imported.
+ *
+ * @class World
+ * @constructor
+ * @param {number} [x] Gravity x
+ * @param {number} [y] Gravity y
+ */
 function World(x, y) {
   /**
    * Gravity of physics world.
@@ -79,35 +91,45 @@ function World(x, y) {
    */
   this.tree = new SpatialHash(config.spatialFactor);
   /**
-   * Collision solver instance
+   * Collision solver instance.
+   * @type {SATSolver|AABBSolver}
    */
   this.solver = (config.solver === 'SAT') ? new SATSolver() : new AABBSolver();
+  /**
+   * Response cache.
+   * @type {Response}
+   * @private
+   */
   this.response = new Response();
   /**
    * List of bodies in world.
-   * @property {Array} bodies
+   * @type {array}
    */
   this.bodies = [];
   /**
    * List of collision groups.
-   * @property {Object} collisionGroups
+   * @type {object}
+   * @private
    */
   this.collisionGroups = {};
   /**
    * Save whether collision of a pair of objects are checked
-   * @type {Object}
+   * @type {object}
+   * @private
    */
   this.checks = {};
 
   /**
    * How many pair of bodies have been checked in this frame
-   * @type {Number}
+   * @type {number}
+   * @protected
    */
   this.collisionChecks = 0;
 }
 
 /**
  * Add body to world.
+ * @memberof World#
  * @method addBody
  * @param {Body} body
  */
@@ -121,10 +143,11 @@ World.prototype.addBody = function addBody(body) {
 };
 
 /**
-  Remove body from world.
-  @method removeBody
-  @param {Body} body
-**/
+ * Remove body from world.
+ * @memberof World#
+ * @method removeBody
+ * @param {Body} body
+ */
 World.prototype.removeBody = function removeBody(body) {
   if (!body.world) return;
   body.world = null;
@@ -132,10 +155,11 @@ World.prototype.removeBody = function removeBody(body) {
 };
 
 /**
-  Add body to collision group.
-  @method addBodyCollision
-  @param {Body} body
-**/
+ * Add body to collision group.
+ * @memberof World#
+ * @method addBodyCollision
+ * @param {Body} body
+ */
 World.prototype.addBodyCollision = function addBodyCollision(body) {
   if (typeof body.collisionGroup !== 'number') return;
   this.collisionGroups[body.collisionGroup] = this.collisionGroups[body.collisionGroup] || [];
@@ -144,10 +168,11 @@ World.prototype.addBodyCollision = function addBodyCollision(body) {
 };
 
 /**
-  Remove body from collision group.
-  @method removeBodyCollision
-  @param {Body} body
-**/
+ * Remove body from collision group.
+ * @memberof World#
+ * @method removeBodyCollision
+ * @param {Body} body
+ */
 World.prototype.removeBodyCollision = function removeBodyCollision(body) {
   if (typeof body.collisionGroup !== 'number') return;
   if (!this.collisionGroups[body.collisionGroup]) return;
@@ -156,10 +181,12 @@ World.prototype.removeBodyCollision = function removeBodyCollision(body) {
 };
 
 /**
-  Collide body against it's `collideAgainst` groups.
-  @method collide
-  @param {Body} body
-**/
+ * Collide body against it's `collideAgainst` groups.
+ * @memberof World#
+ * @method collide
+ * @private
+ * @param {Body} body
+ */
 World.prototype.collide = function collide(body) {
   var g, i, b, group;
   var key;
@@ -226,9 +253,11 @@ World.prototype.collide = function collide(body) {
 };
 
 /**
-  Update physics world.
-  @method update
-**/
+ * Update physics world.
+ * @memberof World#
+ * @method update
+ * @protected
+ */
 World.prototype.preUpdate = function preUpdate(delta) {
   var i;
   for (i = 0; i < this.bodies.length; i++) {
@@ -248,9 +277,11 @@ World.prototype.preUpdate = function preUpdate(delta) {
 };
 
 /**
-  Update physics world.
-  @method update
-**/
+ * Update physics world.
+ * @memberof World#
+ * @method update
+ * @protected
+ */
 World.prototype.update = function update(delta) {
   var i, j, body;
   var useSpatialHash = config.broadPhase === 'SpatialHash';
@@ -285,24 +316,39 @@ World.prototype.update = function update(delta) {
   }
 };
 
+/**
+ * Remove all bodies and collision groups.
+ * @memberof World#
+ * @method cleanup
+ */
 World.prototype.cleanup = function cleanup() {
   this.bodies.length = 0;
   this.collisionGroups = {};
 };
 
 /**
-  Physics collision solver.
-  @class AABBSolver
-**/
+ * AABB collision solver. This collision solver only supports
+ * Box vs Box, Box vs Circle collisions, and rotation is simply
+ * ignored.
+ *
+ * If you want to rotate the body or use {@link Tilemap} collision
+ * layer, use the more advanced {@link SATSolver} instead.
+ *
+ * Set `physics.solver` to `'AABB'` to enable.
+ *
+ * @class AABBSolver
+ * @constructor
+ */
 function AABBSolver() {}
 
 /**
-  Hit test a versus b.
-  @method hitTest
-  @param {Body} a
-  @param {Body} b
-  @return {Boolean} return true, if bodies hit.
-**/
+ * Hit test a versus b.
+ * @memberof AABBSolver#
+ * @method hitTest
+ * @param {Body} a
+ * @param {Body} b
+ * @return {boolean} return true if bodies hit.
+ */
 AABBSolver.prototype.hitTest = function hitTest(a, b) {
   // Skip when shape is not available
   if (!a.shape || !b.shape) return false;
@@ -350,12 +396,13 @@ AABBSolver.prototype.hitTest = function hitTest(a, b) {
 };
 
 /**
-  Hit response a versus b.
-  @method hitResponse
-  @param {Body} a
-  @param {Body} b
-  @return {Boolean}
-**/
+ * Hit response a versus b.
+ * @memberof AABBSolver#
+ * @method hitResponse
+ * @param {Body} a
+ * @param {Body} b
+ * @return {boolean}
+ */
 AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
   if (a.shape.type === BOX && b.shape.type === BOX ||
     a.shape.type === BOX && b.shape.type === CIRC ||
@@ -403,27 +450,80 @@ AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
 };
 
 /**
-  Physics body.
-  @class Body
-  @constructor
-  @param {Object} [properties]
-**/
+ * Body is the core element of physics module.
+ *
+ * @example <caption>Create a body</caption>
+ * import { Body, Box } from 'engine/physics';
+ *
+ * // Create a shape first
+ * let shape = new Box(20, 20);
+ *
+ * // Create body instance
+ * let body = new Body({
+ *   shape: shape,
+ *   dumping: 0.6,
+ * });
+ *
+ * @example <caption>Define collision groups</caption>
+ * import { getGroupMask } from 'engine/physics';
+ *
+ * // It is recommend to define once in a module, and import it to use.
+ * const GROUPS = {
+ *   SOLID:   getGroupMask(0),
+ *   PLAYER:  getGroupMask(1),
+ *   TRIGGER: getGroupMask(2),
+ * };
+ *
+ * @example <caption>Setup collision</caption>
+ * let bodyA = new Body({
+ *   // A is a SOLID body
+ *   collisionGroup: GROUPS.SOLID,
+ * });
+ *
+ * let bodyB = new Body({
+ *   // B is a player body
+ *   collisionGroup: GROUPS.PLAYER,
+ *   // This body will collide with SOLID bodies
+ *   collideAgainst: [GROUPS.SOLID],
+ *   // Collision response handler
+ *   collide: function(other) {
+ *     // Response to the collision when collide with something SOLID,
+ *     // which means this will be moved back and won't get through
+ *     // the SOLID body.
+ *     if (other.collisionGroup === GROUPS.SOLID) {
+ *       // When return false here, this body will keep as is.
+ *       // In this case, player will get through the SOLID body.
+ *       return true;
+ *     }
+ *   },
+ * });
+ *
+ * For more complex samples, take a look at the [physics sample code](https://github.com/pixelpicosean/lesser-panda-samples/blob/master/src/game/samples/physics.js).
+ *
+ * @class Body
+ * @constructor
+ * @param {object} [properties] Settings to merge.
+ */
 function Body(properties) {
+  /**
+   * ID of this body.
+   * @type {number}
+   */
   this.id = Body.uid++;
   /**
-    Body's physic world.
-    @property {World} world
-  **/
+   * Body's physic world.
+   * @type {World}
+   */
   this.world = null;
   /**
-    Body's shape.
-    @property {Box|Circle} shape
-  **/
+   * Body's shape.
+   * @type {Box|Circle}
+   */
   this.shape = null;
   /**
-    Position of body.
-    @property {Vector} position
-  **/
+   * Position of body.
+   * @type {Vector}
+   */
   this.position = Vector.create();
   /**
    * Anchor of the shape.
@@ -432,51 +532,51 @@ function Body(properties) {
    */
   this.anchor = Vector.create(0.5);
   /**
-    Last position of body.
-    @property {Vector} last
-  **/
+   * Last position of body.
+   * @type {Vector}
+   */
   this.last = Vector.create();
   /**
-    Body's velocity.
-    @property {Vector} velocity
-  **/
+   * Body's velocity.
+   * @type {Vector}
+   */
   this.velocity = Vector.create();
   /**
-    Body's maximum velocity.
-    @property {Vector} velocityLimit
-    @default 400, 400
-  **/
+   * Body's maximum velocity.
+   * @type {Vector}
+   * @default 400, 400
+   */
   this.velocityLimit = Vector.create(400, 400);
   /**
-    Body's mass.
-    @property {Number} mass
-    @default 0
-  **/
+   * Body's mass.
+   * @type {number}
+   * @default 0
+   */
   this.mass = 0;
   /**
-    Body's collision group.
-    @property {Number} collisionGroup
-    @default null
-  **/
+   * Body's collision group.
+   * @type {number}
+   * @default null
+   */
   this.collisionGroup = null;
   /**
    * Collision groups that this body collides against.
    * Note: this will be a Number when broadPhase is "SpatialHash",
-   *   but will be an Array while using "Simple".
-   * @property {Array|Number} collideAgainst
+   * but will be an Array while using "Simple".
+   * @type {array|number}
    */
   this.collideAgainst = 0;
   /**
-    Body's force.
-    @property {Vector} force
-    @default 0,0
-  **/
+   * Body's force.
+   * @type {Vector}
+   * @default 0,0
+   */
   this.force = Vector.create();
   /**
-    Body's damping. Should be number between 0 and 1.
-    @property {Number} damping
-    @default 0
-  **/
+   * Body's damping. Should be number between 0 and 1.
+   * @type {number}
+   * @default 0
+   */
   this.damping = 0;
 
   // Internal caches
@@ -508,6 +608,10 @@ function Body(properties) {
 }
 Body.uid = 0;
 
+/**
+ * Rotation of this body, and equals the rotation of its shape(if exists).
+ * @type {number}
+ */
 Object.defineProperty(Body.prototype, 'rotation', {
   get: function() {
     return this.shape ? this.shape.rotation : 0;
@@ -517,6 +621,10 @@ Object.defineProperty(Body.prototype, 'rotation', {
   },
 });
 
+/**
+ * Width of this body.
+ * @type {number}
+ */
 Object.defineProperty(Body.prototype, 'width', {
   get: function() {
     return this.shape ? this.shape.width : 0;
@@ -526,6 +634,10 @@ Object.defineProperty(Body.prototype, 'width', {
   },
 });
 
+/**
+ * Height of this body.
+ * @type {number}
+ */
 Object.defineProperty(Body.prototype, 'height', {
   get: function() {
     return this.shape ? this.shape.height : 0;
@@ -538,31 +650,36 @@ Object.defineProperty(Body.prototype, 'height', {
 /**
  * This will be called before collision checking.
  * You can clean up collision related flags here.
+ * @memberof Body#
+ * @method beforeCollide
  */
 Body.prototype.beforeCollide = function beforeCollide() {};
 
 /**
-  This is called, when body collides with another body.
-  @method collide
-  @param {Body} body body that it collided with.
-  @return {Boolean} Return true, to apply hit response.
-**/
+ * This is called, when body collides with another body.
+ * @memberof Body#
+ * @method collide
+ * @param {Body} body body that it collided with.
+ * @return {boolean} Return true to apply hit response.
+ */
 Body.prototype.collide = function collide() {
   return true;
 };
 
 /**
-  This is called after hit response.
-  @method afterCollide
-  @param {Body} bodyB body that it collided with.
-**/
+ * This is called after hit response.
+ * @memberof Body#
+ * @method afterCollide
+ * @param {Body} bodyB body that it collided with.
+ */
 Body.prototype.afterCollide = function afterCollide() {};
 
 /**
-  Set new collision group for body.
-  @method setCollisionGroup
-  @param {Number} group
-**/
+ * Set new collision group for body.
+ * @memberof Body#
+ * @method setCollisionGroup
+ * @param {number} group
+ */
 Body.prototype.setCollisionGroup = function setCollisionGroup(group) {
   if (this.world && typeof this.collisionGroup === 'number') this.world.removeBodyCollision(this);
   this.collisionGroup = group;
@@ -571,8 +688,9 @@ Body.prototype.setCollisionGroup = function setCollisionGroup(group) {
 
 /**
  * Set body's collideAgainst groups.
+ * @memberof Body#
  * @method setCollideAgainst
- * @param {Array} groups
+ * @param {array} groups
  */
 Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
   // TODO: warning when groups are not array
@@ -588,10 +706,11 @@ Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
 };
 
 /**
-  Add body to world.
-  @method addTo
-  @param {World} world
-**/
+ * Add body to world.
+ * @memberof Body#
+ * @method addTo
+ * @param {World} world
+ */
 Body.prototype.addTo = function addTo(world) {
   if (this.world) return;
   world.addBody(this);
@@ -599,24 +718,28 @@ Body.prototype.addTo = function addTo(world) {
 };
 
 /**
-  Remove body from it's world.
-  @method remove
-**/
+ * Remove body from it's world.
+ * @memberof Body#
+ * @method remove
+ */
 Body.prototype.remove = function remove() {
   if (this.world) this.world.removeBody(this);
 };
 
 /**
-  Remove collision from body.
-  @method removeCollision
-**/
+ * Remove collision from body.
+ * @memberof Body#
+ * @method removeCollision
+ */
 Body.prototype.removeCollision = function removeCollision() {
   if (this.world) this.world.removeBodyCollision(this);
 };
 
 /**
-  @method update
-**/
+ * @memberof Body#
+ * @method update
+ * @protected
+ */
 Body.prototype.update = function update(delta) {
   if (!this.world) return;
 
@@ -640,16 +763,53 @@ Body.prototype.update = function update(delta) {
   }
 };
 
+/**
+ * Polygon collision shape.
+ * @class Polygon
+ * @constructor
+ * @param {array<Vector>} points Vertices that define the polygon.
+ */
 function Polygon(points) {
+  /**
+   * Width of this polygon.
+   * @type {number}
+   */
   this.width = 1;
+  /**
+   * Height of this polygon.
+   * @type {number}
+   */
   this.height = 1;
 
+  /**
+   * Vertices.
+   * @type {array<Vector>}
+   */
   this.points = [];
+  /**
+   * Vertices cache.
+   * @private
+   * @type {array<Vector>}
+   */
   this.calcPoints = [];
 
+  /**
+   * Edges of the polygon.
+   * @private
+   * @type {array<Vector>}
+   */
   this.edges = [];
+  /**
+   * Normals of edges.
+   * @private
+   * @type {array<Vector>}
+   */
   this.normals = [];
 
+  /**
+   * Offset of the vertices to the center.
+   * @type {Vector}
+   */
   this.offset = new Vector();
 
   this._rotation = 0;
@@ -658,6 +818,7 @@ function Polygon(points) {
 }
 /**
  * Set the points of the polygon.
+ * @memberof Polygon#
  * @param {Array<Vector>=} points An array of vectors representing the points in the polygon,
  *   in clockwise order
  * @return {Polygon} This for chaining
@@ -692,7 +853,8 @@ Polygon.prototype.setOffset = function setOffset(offset) {
 };
 /**Rotates this polygon counter-clockwise around the origin of *its local coordinate system* (i.e. `pos`).
  * Note: This changes the **original** points (so any `rotation` will be applied on top of this rotation).
- * @param {Number} rotation The rotation to rotate (in radians)
+ * @memberof Polygon#
+ * @param {number} rotation The rotation to rotate (in radians)
  * @return {Polygon} This for chaining
  */
 Polygon.prototype.rotate = function rotate(rotation) {
@@ -709,8 +871,9 @@ Polygon.prototype.rotate = function rotate(rotation) {
  * This is most useful to change the "center point" of a polygon. If you just want to move the whole polygon, change
  * the coordinates of `body.position`.
  * Note: This changes the **original** points (so any `offset` will be applied on top of this translation)
- * @param {Number} x The horizontal amount to translate
- * @param {Number} y The vertical amount to translate
+ * @memberof Polygon#
+ * @param {number} x The horizontal amount to translate
+ * @param {number} y The vertical amount to translate
  * @return {Polygon} This for chaining
  */
 Polygon.prototype.translate = function translate(x, y) {
@@ -725,6 +888,7 @@ Polygon.prototype.translate = function translate(x, y) {
 /**
  * Computes the calculated collision polygon. Applies the `rotation` and `offset` to the original points then recalculates the
  * edges and normals of the collision polygon.
+ * @memberof Polygon#
  * @return {Polygon} This for chaining
  */
 Polygon.prototype._recalc = function _recalc() {
@@ -778,6 +942,11 @@ Polygon.prototype._recalc = function _recalc() {
 
   return this;
 };
+/**
+ * Rotation of this polygon.
+ * @memberof Polygon#
+ * @type {number}
+ */
 Object.defineProperty(Polygon.prototype, 'rotation', {
   get: function() {
     return this._rotation;
@@ -789,12 +958,12 @@ Object.defineProperty(Polygon.prototype, 'rotation', {
 });
 
 /**
-  Box shape for physic body.
-  @class Box
-  @constructor
-  @param {Number} [width]
-  @param {Number} [height]
-**/
+ * Box shape for physic body.
+ * @class Box
+ * @constructor
+ * @param {number} [width]
+ * @param {number} [height]
+ */
 function Box(width, height) {
   /**
     Width of rectangle.
@@ -803,16 +972,30 @@ function Box(width, height) {
   **/
   this.width = width || 50;
   /**
-    Height of rectangle.
-    @property {Number} height
-    @default 50
-  **/
+   * Height of rectangle.
+   * @property {Number} height
+   * @default 50
+   */
   this.height = height || 50;
 
+  /**
+   * Rotation
+   * @type {number}
+   */
   this.rotation = 0;
 
+  /**
+   * Type of this shape, should always be `BOX`.
+   * @type {number}
+   * @const
+   */
   this.type = BOX;
 }
+/**
+ * Convert to a polygon.
+ * @memberof Box#
+ * @return {Polygon}
+ */
 Box.prototype.toPolygon = function toPolygon() {
   var halfWidth = this.width * 0.5;
   var halfHeight = this.height * 0.5;
@@ -823,28 +1006,48 @@ Box.prototype.toPolygon = function toPolygon() {
 };
 
 /**
-  Circle shape for physic body.
-  @class Circle
-  @constructor
-  @param {Number} [radius]
-**/
+ * Circle shape for physic body.
+ *
+ * @class Circle
+ * @constructor
+ * @param {number} [radius]
+ */
 function Circle(radius) {
   /**
-    Radius of circle.
-    @property {Number} radius
-    @default 50
-  **/
+   * Radius of circle.
+   * @property {number} radius
+   * @default 50
+   */
   this.radius = radius || 50;
 
+  /**
+   * Rotation.
+   * @type {number}
+   */
   this.rotation = 0;
 
+  /**
+   * Type of this shape, should always be `CIRC`.
+   * @type {number}
+   * @const
+   */
   this.type = CIRC;
 }
+/**
+ * Width of the circle shape.
+ * @memberof Circle#
+ * @type {number}
+ */
 Object.defineProperty(Circle.prototype, 'width', {
   get: function() {
     return this.radius * 2;
   },
 });
+/**
+ * Height of the circle shape.
+ * @memberof Circle#
+ * @type {number}
+ */
 Object.defineProperty(Circle.prototype, 'height', {
   get: function() {
     return this.radius * 2;
@@ -852,7 +1055,7 @@ Object.defineProperty(Circle.prototype, 'height', {
 });
 
 /**
- * Response
+ * Response of a collision.
  * An object representing the result of an intersection. Contains:
  * - The two objects participating in the intersection
  * - The vector representing the minimum change necessary to extract the first object
@@ -875,17 +1078,17 @@ function Response () {
   /**
    * Whether the first object is completely inside the second.
    * Self inside another one?
-   * @type {Boolean}
+   * @type {boolean}
    */
   this.aInB = true;
   /**
    * Whether the second object is completely inside the first
-   * @type {Boolean}
+   * @type {boolean}
    */
   this.bInA = true;
   /**
    * Magnitude of the overlap on the shortest colliding axis
-   * @type {Number}
+   * @type {number}
    */
   this.overlap = Number.MAX_VALUE;
   /**
@@ -906,6 +1109,7 @@ function Response () {
  * Set some values of the response back to their defaults.  Call this between tests if
  * you are going to reuse a single Response object for multiple intersection tests (recommented
  * as it will avoid allcating extra memory)
+ * @memberof Response#
  * @return {Response} This for chaining
  */
 Response.prototype.clear = function clear() {
@@ -916,11 +1120,26 @@ Response.prototype.clear = function clear() {
 };
 
 /**
- * SAT based collision solver
+ * Advanced SAT based collision solver.
+ *
+ * This solver is the best choice when you want to rotate any body or
+ * use {@link Tilemap} collision layer.
+ *
+ * Fore more realistic cases, you need a REAL rigid body physics engine
+ * like [p2.js](https://github.com/schteppe/p2.js). Those will be supported in the future(maybe).
+ *
+ * NOTE: SAT solver currently not support custom `anchor`, it will ignore
+ * {@link Body#anchor} and always treat it as (0.5, 0.5).
+ *
+ * Set `physics.solver` to `'SAT'` to enable.
+ *
+ * @class SATSolver
+ * @constructor
  */
 function SATSolver() {}
 /**
  * Hit test a versus b.
+ * @memberof SATSolver#
  * @method hitTest
  * @param {Body} a
  * @param {Body} b
@@ -945,6 +1164,15 @@ SATSolver.prototype.hitTest = function hitTest(a, b, response) {
 
   return false;
 };
+/**
+ * Apply hit respose to group of overlaping bodies.
+ * @memberof SATSolver#
+ * @param  {Body} a
+ * @param  {Body} b
+ * @param  {boolean} AvsB
+ * @param  {boolean} BvsA
+ * @param  {Response} response
+ */
 SATSolver.prototype.hitResponse = function hitResponse(a, b, AvsB, BvsA, response) {
   // Make sure a and b are not reversed
   var uniqueA = (a === response.a ? a : b),
@@ -989,9 +1217,10 @@ SATSolver.prototype.hitResponse = function hitResponse(a, b, AvsB, BvsA, respons
  * Flattens the specified array of points onto a unit vector axis,
  * resulting in a one dimensional range of the minimum and
  * maximum value on that axis.
- * @param {Array<Vector>} points The points to flatten
+ * @private
+ * @param {array<Vector>} points The points to flatten
  * @param {Vector} normal The unit vector axis to flatten on
- * @param {Array<Number>} result An array.  After calling this function,
+ * @param {array<Number>} result An array.  After calling this function,
  *   result[0] will be the minimum value,
  *   result[1] will be the maximum value
  */
@@ -1011,15 +1240,16 @@ function flattenPointsOn(points, normal, result) {
 /**
  * Check whether two convex polygons are separated by the specified
  * axis (must be a unit vector).
+ * @private
  * @param {Vector} aPos The position of the first polygon
  * @param {Vector} bPos The position of the second polygon
- * @param {Array<Vector>} aPoints The points in the first polygon
- * @param {Array<Vector>} bPoints The points in the second polygon
+ * @param {array<Vector>} aPoints The points in the first polygon
+ * @param {array<Vector>} bPoints The points in the second polygon
  * @param {Vector} axis The axis (unit sized) to test against. The points of both polygons
  *   will be projected onto this axis
  * @param {Response=} response A Response object (optional) which will be populated
  *   if the axis is not a separating axis
- * @return {Boolean} true if it is a separating axis, false otherwise.  If false,
+ * @return {boolean} true if it is a separating axis, false otherwise.  If false,
  *   and a response is passed in, information about how much overlap and
  *   the direction of the overlap will be populated
  */
@@ -1097,6 +1327,8 @@ function isSeparatingAxis(aPos, bPos, aPoints, bPoints, axis, response) {
  *            |       (0)      |
  *     (-1)  [S]--------------[E]  (1)
  *            |       (0)      |
+ *
+ * @private
  * @param {Vector} line The line segment
  * @param {Vector} point The point
  * @return {number} LEFT_VORNOI_REGION (-1) if it is the left region,
@@ -1124,11 +1356,12 @@ var RIGHT_VORNOI_REGION = 1;
 
 /**
  * Check if two circles collide.
+ * @private
  * @param {Body} a The first circle body
  * @param {Body} b The second circle body
  * @param {Response=} response Response object (optional) that will be populated if
  *   the circles intersect
- * @return {Boolean} true if the circles intersect, false if they don't
+ * @return {boolean} true if the circles intersect, false if they don't
  */
 function testCircleCircle(a, b, response) {
   // Check if the distance between the centers of the two
@@ -1159,11 +1392,12 @@ function testCircleCircle(a, b, response) {
 
 /**
  * Check if a polygon and a circle collide.
+ * @private
  * @param {Polygon} polygon The polygon
  * @param {Circle} circle The circle
  * @param {Response=} response Response object (optional) that will be populated if
  *   they interset
- * @return {Boolean} true if they intersect, false if they don't
+ * @return {boolean} true if they intersect, false if they don't
  */
 function testPolygonCircle(polygon, circle, response) {
   // Get the position of the circle relative to the polygon.
@@ -1303,11 +1537,13 @@ function testPolygonCircle(polygon, circle, response) {
  * **NOTE:** This is slightly less efficient than polygonCircle as it just
  * runs polygonCircle and reverses everything at the end.
  *
+ * @private
+ *
  * @param {Circle} circle The circle
  * @param {Polygon} polygon The polygon
  * @param {Response=} response Response object (optional) that will be populated if
  *   they interset
- * @return {Boolean} true if they intersect, false if they don't
+ * @return {boolean} true if they intersect, false if they don't
  */
 function testCirclePolygon(circle, polygon, response) {
   // Test the polygon against the circle.
@@ -1328,11 +1564,12 @@ function testCirclePolygon(circle, polygon, response) {
 
 /**
  * Checks whether polygons collide.
+ * @private
  * @param {Polygon} a The first polygon
  * @param {Polygon} b The second polygon
  * @param {Response=} response Response object (optional) that will be populated if
  *   they interset
- * @return {Boolean} true if they intersect, false if they don't
+ * @return {boolean} true if they intersect, false if they don't
  */
 function testPolygonPolygon(a, b, response) {
   var aPoints = a.shape.calcPoints;
@@ -1367,7 +1604,8 @@ function testPolygonPolygon(a, b, response) {
 /**
  * A pool of `Vector` objects that are used in calculations to avoid
  * allocating memory.
- * @type {Array<Vector>}
+ * @type {array<Vector>}
+ * @private
  */
 var T_VECTORS = [];
 for (var i = 0; i < 10; i++) { T_VECTORS.push(new Vector()); }
@@ -1375,7 +1613,8 @@ for (var i = 0; i < 10; i++) { T_VECTORS.push(new Vector()); }
 /**
  * A pool of arrays of numbers used in calculations to avoid allocating
  * memory.
- * @type {Array<Array<Bumber>>}
+ * @type {array<array<number>>}
+ * @private
  */
 var T_ARRAYS = [];
 for (var i = 0; i < 5; i++) { T_ARRAYS.push([]); }
@@ -1383,12 +1622,14 @@ for (var i = 0; i < 5; i++) { T_ARRAYS.push([]); }
 /**
  * Temporary response used for polygon hit detection.
  * @type {Response}
+ * @private
  */
 var T_RESPONSE = new Response();
 
 /**
  * Unit square polygon used for polygon hit detection.
  * @type {Polygon}
+ * @private
  */
 var UNIT_SQUARE = new Body({
   position: new Vector(),
@@ -1431,9 +1672,34 @@ module.exports = {
   Polygon: Polygon,
   Circle: Circle,
 
+  /**
+   * UP direction(used as parameter of `collide` method, in Simple solver mode)
+   * @type {number}
+   * @const
+   */
   UP: UP,
+  /**
+   * DOWN direction(used as parameter of `collide` method, in Simple solver mode)
+   * @type {number}
+   * @const
+   */
   DOWN: DOWN,
+  /**
+   * LEFT direction(used as parameter of `collide` method, in Simple solver mode)
+   * @type {number}
+   * @const
+   */
   LEFT: LEFT,
+  /**
+   * RIGHT direction(used as parameter of `collide` method, in Simple solver mode)
+   * @type {number}
+   * @const
+   */
   RIGHT: RIGHT,
+  /**
+   * OVERLAP(used as parameter of `collide` method, in Simple solver mode)
+   * @type {number}
+   * @const
+   */
   OVERLAP: OVERLAP,
 };
