@@ -32,7 +32,7 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 ## Document
 
 - [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
-- [API document](https://pixelpicosean.github.io/lesser-panda/) (This is not completed yet, but will be ready soon!)
+- [API document](https://pixelpicosean.github.io/lesser-panda/)
 
 A **weekly devlog** shows what happened to LesserPanda, read them at [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), it will be updated on each Wednesday.
 
@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Fix inline documents.
 - Add `start` function to `core` module as a easy replacement of `startWithScene`.
 - `canvasquery` module is removed.
 - Re-design `Actor` system and make it more powerful yet easier to work with.
