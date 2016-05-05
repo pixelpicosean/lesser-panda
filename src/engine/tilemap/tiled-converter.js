@@ -40,7 +40,16 @@ function convertLayer(layer, tilesize, firstGIDs) {
   };
 }
 
-module.exports = exports = function(map) {
+/**
+ * Convert a tiled map data into LesserPanda built-in tilemap format.
+ *
+ * @exports engine/tilemap/tiled-converter
+ * @requires engine/tilemap/utils
+ *
+ * @param  {object} map     Map data.
+ * @return {array<object>}
+ */
+module.exports = function(map) {
   var i, result = [];
 
   // Fetch basic informations

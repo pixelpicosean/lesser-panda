@@ -1,6 +1,19 @@
 var PIXI = require('engine/pixi');
 
-module.exports = exports = function filmstrip(tileset, tileWidth, tileHeight) {
+/**
+ * Create textures for tiles in a tileset. Can also be used to extract
+ * grid based sprite-sheets.
+ *
+ * @exports engine/tilemap/filmstrip
+ *
+ * @requires engine/pixi
+ *
+ * @param  {PIXI.Texture} tileset   Tileset texture.
+ * @param  {number} tileWidth       Width of a single tile.
+ * @param  {number} tileHeight      Height of a single tile.
+ * @return {array<PIXI.Texture>}    List of textures.
+ */
+module.exports = function filmstrip(tileset, tileWidth, tileHeight) {
   var strip = [];
 
   var w = tileset.width;
