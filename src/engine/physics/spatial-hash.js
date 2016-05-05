@@ -53,8 +53,9 @@ function makeKeysFn(shift) {
 }
 
 /**
- * @param {number} power_of_two - how many times the rects should be shifted
- *                                when hashing
+ * @class SpatialHash
+ * @constructor
+ * @param {number} power_of_two - how many times the rects should be shifted when hashing.
  */
 function SpatialHash(power_of_two) {
   if (!power_of_two) {
@@ -66,6 +67,11 @@ function SpatialHash(power_of_two) {
   this._lastTotalCleared = 0;
 }
 
+/**
+ * Clear and reset.
+ * @memberof SpatialHash#
+ * @method clear
+ */
 SpatialHash.prototype.clear = function() {
   var key;
   for (key in this.hash) {
@@ -79,6 +85,12 @@ SpatialHash.prototype.clear = function() {
   this.list.length = 0;
 };
 
+/**
+ * Get buckets amount.
+ * @memberof SpatialHash#
+ * @method getNumBuckets
+ * @return {number}
+ */
 SpatialHash.prototype.getNumBuckets = function() {
   var key, count = 0;
   for (key in this.hash) {
@@ -92,6 +104,13 @@ SpatialHash.prototype.getNumBuckets = function() {
 
 };
 
+/**
+ * Insert an object into the hash
+ * @memberof SpatialHash#
+ * @method insert
+ * @param  {object} obj
+ * @param  {object} [rect]
+ */
 SpatialHash.prototype.insert = function(obj, rect) {
   var keys = this.getKeys(rect || obj), key, i;
   this.list.push(obj);
@@ -106,6 +125,14 @@ SpatialHash.prototype.insert = function(obj, rect) {
   }
 };
 
+/**
+ * Get objects in the same grid of an object
+ * @memberof SpatialHash#
+ * @method retrieve
+ * @param  {object} obj
+ * @param  {object} [rect]
+ * @return {array}
+ */
 SpatialHash.prototype.retrieve = function(obj, rect) {
   var ret = [], keys, i, key;
   if (!obj && !rect) {
@@ -121,4 +148,11 @@ SpatialHash.prototype.retrieve = function(obj, rect) {
   return ret;
 };
 
-module.exports = exports = SpatialHash;
+/**
+ * SpetialHash implementation.
+ *
+ * @see SpatialHash
+ *
+ * @exports engine/physics/spatial-hash
+ */
+module.exports = SpatialHash;
