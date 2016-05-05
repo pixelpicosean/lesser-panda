@@ -10,6 +10,7 @@ var config = require('game/config').default;
 
 /**
  * @type {EventEmitter}
+ * @private
  */
 var core = new EventEmitter();
 

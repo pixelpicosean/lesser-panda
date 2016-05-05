@@ -33,6 +33,11 @@
  * only argument to the constructor.
  */
 
+/**
+ * Default POT setting.
+ * @type {number}
+ * @private
+ */
 var DEFAULT_POWER_OF_TWO = 5;
 
 function makeKeysFn(shift) {

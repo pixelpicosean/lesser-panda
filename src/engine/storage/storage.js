@@ -1,40 +1,47 @@
 var config = require('game/config').default;
 
 /**
-  Local storage.
-  @class Storage
-  @constructor
-**/
+ * Local storage wrapper.
+ * No need to create instance, an instance is exported as default.
+ *
+ * @class Storage
+ * @constructor
+ *
+ * @param {object} config Settings from `game/config`.
+ */
 function Storage(config) {
   /**
-    @property {String} id
-  **/
+   * Namespace to save data to.
+   * @type {string}
+   */
   this.id = config.id;
   /**
-    Is local storage supported.
-    @property {Boolean} supported
-  **/
+   * Is local storage supported?
+   * @type {boolean}
+   */
   this.supported = this._isSupported();
 }
 
 /**
-  Set value to local storage.
-  @method set
-  @param {String} key
-  @param {*} value
-**/
+ * Set value to local storage.
+ * @memberof Storage#
+ * @method set
+ * @param {string} key
+ * @param {*} value
+ */
 Storage.prototype.set = function set(key, value) {
   if (!this.supported) return false;
   localStorage.setItem(this.id + '.' + key, this._encode(value));
 };
 
 /**
-  Get key from local storage.
-  @method get
-  @param {String} key
-  @param {*} [defaultValue]
-  @return {*} value
-**/
+ * Get key from local storage.
+ * @memberof Storage#
+ * @method get
+ * @param {string} key
+ * @param {*} [defaultValue]
+ * @return {*} value
+ */
 Storage.prototype.get = function get(key, defaultValue) {
   var raw = localStorage.getItem(this.id + '.' + key);
   if (raw === null) return defaultValue;
@@ -47,28 +54,31 @@ Storage.prototype.get = function get(key, defaultValue) {
 };
 
 /**
-  Check if a key is in local storage.
-  @method has
-  @param {String} key
-  @return {Boolean}
-**/
+ * Check if a key is in local storage.
+ * @memberof Storage#
+ * @method has
+ * @param {string} key
+ * @return {boolean}
+ */
 Storage.prototype.has = function has(key) {
   return localStorage.getItem(this.id + '.' + key) !== null;
 };
 
 /**
-  Remove key from local storage.
-  @method remove
-  @param {String} key
-**/
+ * Remove key from local storage.
+ * @memberof Storage#
+ * @method remove
+ * @param {string} key
+ */
 Storage.prototype.remove = function remove(key) {
   localStorage.removeItem(this.id + '.' + key);
 };
 
 /**
-  Reset local storage. This removes ALL keys.
-  @method reset
-**/
+ * Reset local storage. This removes ALL keys.
+ * @memberof Storage#
+ * @method reset
+ */
 Storage.prototype.reset = function reset() {
   for (var i = localStorage.length - 1; i >= 0; i--) {
     var key = localStorage.key(i);
@@ -77,25 +87,28 @@ Storage.prototype.reset = function reset() {
 };
 
 /**
-  @method _encode
-  @private
-**/
+ * @memberof Storage#
+ * @method _encode
+ * @private
+ */
 Storage.prototype._encode = function _encode(val) {
   return JSON.stringify(val);
 };
 
 /**
-  @method _decode
-  @private
-**/
+ * @memberof Storage#
+ * @method _decode
+ * @private
+ */
 Storage.prototype._decode = function _decode(str) {
   return JSON.parse(str);
 };
 
 /**
-  @method _isSupported
-  @private
-**/
+ * @memberof Storage#
+ * @method _isSupported
+ * @private
+ */
 Storage.prototype._isSupported = function _isSupported() {
   if (typeof localStorage !== 'object') return false;
   try {
@@ -109,6 +122,6 @@ Storage.prototype._isSupported = function _isSupported() {
   return true;
 };
 
-module.exports = exports = new Storage(Object.assign({
+module.exports = new Storage(Object.assign({
   id: 'lpanda-debug',
 }, config.storage));
