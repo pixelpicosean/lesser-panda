@@ -1,7 +1,3 @@
-/**
- * Classic tween animation.
- */
-
 var EventEmitter = require('engine/eventemitter3');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
@@ -14,7 +10,7 @@ var Interpolation = easing.Interpolation;
 
 /**
  * Action type enums
- * @enum {ACTION_TYPES}
+ * @enum {number}
  */
 var ACTION_TYPES = {
   REPEAT:   0,
@@ -26,9 +22,9 @@ var ACTION_TYPES = {
 
 /**
  * @class Tween
- * @constructor
  * @extends {EventEmitter}
- * @param {Object} context
+ * @constructor
+ * @param {object} context
  */
 function Tween(context) {
   EventEmitter.call(this);
@@ -37,7 +33,7 @@ function Tween(context) {
 
   /**
    * List of actions.
-   * @property {Array}
+   * @type {array}
    */
   this.actions = [];
   this.index = -1;
@@ -46,49 +42,49 @@ function Tween(context) {
 
   /**
    * Delta cache for updating
-   * @type {Number}
+   * @type {number}
    */
   this.delta = 0;
 
   /**
    * Tween duration.
-   * @property {Number} duration
+   * @type {number}
    * @default 500
    */
   this.duration = 500;
 
   /**
    * Progress of current performing action
-   * @type {Number}
+   * @type {number}
    */
   this.progress = 0;
 
   /**
    * Tween's easing function.
-   * @property {Function} easing
+   * @property {function} easing
    */
   this.easing = Easing.Linear.None;
   /**
    * Tween's interpolation function.
-   * @property {Function} interpolationFn
+   * @property {function} interpolationFn
    */
   this.interpolation = Interpolation.Linear;
 
   /**
    * Whether this tween is finished
-   * @type {Boolean}
+   * @type {boolean}
    */
   this.finished = false;
 
   /**
    * Whether this tween is removed
-   * @type {Boolean}
+   * @type {boolean}
    */
   this.removed = false;
 
   /**
    * Whether this tween is paused
-   * @type {Boolean}
+   * @type {boolean}
    */
   this.paused = false;
 
@@ -105,6 +101,7 @@ Tween.prototype.constructor = Tween;
 
 /**
  * Add a new action to the tween
+ * @memberof Tween#
  * @method to
  * @param  {Object} properties              Target properties
  * @param  {Number} duration                Duration of the action in ms
@@ -143,7 +140,8 @@ Tween.prototype.to = function to(properties, duration, easing, interpolation) {
 
 /**
  * Repeat the tween for times
- * @param  {Number} times How many times to repeat
+ * @memberof Tween#
+ * @param  {number} times How many times to repeat
  */
 Tween.prototype.repeat = function repeat(times) {
   this.actions.push([ACTION_TYPES.REPEAT, times]);
@@ -152,8 +150,9 @@ Tween.prototype.repeat = function repeat(times) {
 
 /**
  * Wait a short time before next action
+ * @memberof Tween#
  * @method wait
- * @param  {Number} time Time to wait in ms
+ * @param  {number} time Time to wait in ms
  */
 Tween.prototype.wait = function wait(time) {
   this.actions.push([ACTION_TYPES.WAIT, time]);
@@ -162,6 +161,7 @@ Tween.prototype.wait = function wait(time) {
 
 /**
  * Stop this tween
+ * @memberof Tween#
  * @method stop
  */
 Tween.prototype.stop = function stop() {
@@ -171,6 +171,7 @@ Tween.prototype.stop = function stop() {
 
 /**
  * Pause this tween
+ * @memberof Tween#
  * @method pause
  */
 Tween.prototype.pause = function pause() {
@@ -180,6 +181,7 @@ Tween.prototype.pause = function pause() {
 
 /**
  * Resume this tween from pausing
+ * @memberof Tween#
  * @method resume
  */
 Tween.prototype.resume = function resume() {
@@ -343,8 +345,8 @@ var pool = [];
 
 /**
  * Tween factory method.
- * @param  {Object} context
- * @return {Tween}
+ * @param  {object} context
+ * @return {module:engine/animation/tween~Tween}
  */
 Tween.create = function create(context) {
   var t = pool.shift();
@@ -363,9 +365,9 @@ Object.assign(Scene.prototype, {
    * Create and add a new tween to the scene.
    * @method tween
    * @memberOf Scene#
-   * @param {Object}     context Context of this tween
-   * @param {String}     tag     Tag of this tween (default is '0')
-   * @return {Tween}
+   * @param {Oblject}     context Context of this tween
+   * @param {string}     tag     Tag of this tween (default is '0')
+   * @return {module:engine/animation/tween~Tween}
    */
   tween: function tween(context, tag) {
     var t = tag || '0';
@@ -385,4 +387,34 @@ Object.assign(Scene.prototype, {
   },
 });
 
+/**
+ * Classic tween animation.
+ * Use {@link Scene#tween} to create a new tween and start it immediately.
+ *
+ * @example
+ * // Remember to import `animation` module.
+ * import 'engine/animation';
+ *
+ * class MyScene extends Scene {
+ *   awake() {
+ *     let coin = new PIXI.Sprite(...);
+ *     this.tween(coin)
+ *       .wait(1000)
+ *       .to({
+ *         'position.x': 20,
+ *         'position.y': 20,
+ *         'scale.x': 1.2,
+ *         'scale.y': 1.2,
+ *       });
+ *   }
+ * }
+ *
+ * @exports engine/animation/tween
+ *
+ * @requires engine/eventemitter3
+ * @requires engine/scene
+ * @requires engine/utils
+ * @requires engine/animation/utils
+ * @requires engine/animation/easing
+ */
 module.exports = Tween;

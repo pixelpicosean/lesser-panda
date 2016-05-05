@@ -1,3 +1,15 @@
+/**
+ * Action module provides functionalities to create Flash/Blender like
+ * key based animation.
+ *
+ * @module engine/animation/action
+ *
+ * @requires engine/scene
+ * @requires engine/eventemitter3
+ * @requires engine/animation/utils
+ * @requires engine/animation/easing
+ */
+
 var Scene = require('engine/scene');
 var EventEmitter = require('engine/eventemitter3');
 
@@ -8,21 +20,33 @@ var easing = require('./easing');
 var Easing = easing.Easing;
 var Interpolation = easing.Interpolation;
 
+/**
+ * Type of channels
+ * @enum {number}
+ */
 var CHANNEL_TYPE = {
   VALUE: 0,
   EVENT: 1,
 };
 
+/**
+ * A single key of an action.
+ * @class Key
+ * @constructor
+ * @param {number} time     At which time.
+ * @param {*} value         Value for this key.
+ * @param {function} easing Easing function.
+ */
 function Key(time, value, easing) {
   /**
    * Time of this key
-   * @type {Number}
+   * @type {number}
    */
   this.time = time;
 
   /**
-   * Value of this key
-   * @type {Any}
+   * Value of this key.
+   * @type {*}
    */
   this.value = value;
 
@@ -33,22 +57,32 @@ function Key(time, value, easing) {
   }
 
   /**
-   * Easing of this key
-   * @type {Function}
+   * Easing of this key.
+   * @type {function}
    */
   this.easing = easingFn;
 }
 
+/**
+ * Channel represents a specific path of variable. Say we have an
+ * action that modifies `position` and two channels will be created
+ * for that as `position.x` and `position.y`.
+ * @class Channel
+ * @constructor
+ * @param {string} path       Path of the target variable.
+ * @param {Action} owner      Which action this channel is in.
+ * @param {CHANNEL_TYPE} type Type of this channel.
+ */
 function Channel(path, owner, type) {
   /**
    * Which action is this channel belongs to
-   * @type {Action}
+   * @type {module:engine/animation/action~Action}
    */
   this.owner = owner;
 
   /**
    * Full path to the property
-   * @type {String}
+   * @type {string}
    */
   this.path = path;
 
@@ -60,22 +94,28 @@ function Channel(path, owner, type) {
    * Type of this channel, valid types are:
    * - VALUE
    * - EVENT
-   * @type {String|Number}
+   * @type {string|number}
    */
   this.type = theType;
 
   /**
-   * Key list
-   * @type {Array.<Key>}
+   * Key list.
+   * @type {array<module:engine/animation/action~Key>}
    */
   this.keys = [];
 
   /**
-   * Time between the first and last key
-   * @type {Number}
+   * Time between the first and last key.
+   * @type {number}
    */
   this.duration = 0;
 }
+/**
+ * Insert a new key.
+ * @memberof Channel#
+ * @method insert
+ * @param  {module:engine/animation/action~Key} key Key to insert.
+ */
 Channel.prototype.insert = function insert(key) {
   this.keys.push(key);
 
@@ -98,6 +138,11 @@ Channel.prototype.insert = function insert(key) {
   // Update duration of owner Action
   this.owner.duration = Math.max(this.owner.duration, this.duration);
 };
+/**
+ * Find the key at a specific time.
+ * @param  {number} time  Time to seek for.
+ * @return {module:engine/animation/action~Key}          Will return undefined if no one can be found.
+ */
 Channel.prototype.findKey = function(time) {
   // Empty channel
   if (this.keys.length === 0) {
@@ -123,30 +168,50 @@ Channel.prototype.findKey = function(time) {
   return key;
 };
 
+/**
+ * Action is a data structure that represents an independent
+ * animation clip.
+ *
+ * `Action.create()` is prefered to create a new Action.
+ *
+ * @class Action
+ * @constructor
+ * @param {number} id
+ */
 function Action(id) {
   /**
    * ID of this action
-   * @type {Number}
+   * @type {number}
    */
   this.id = id;
   /**
-   * Duration of this action (time between first and last key)
-   * @type {Number}
+   * Duration of this action (time between first and last key).
+   * @type {number}
    */
   this.duration = 0;
   /**
-   * Channel list
-   * @type {Array.<Channel>}
+   * Channel list.
+   * @type {array<module:engine/animation/action~Channel>}
    */
   this.channels = [];
   /**
    * <Path, Channel> map
+   * @type {object}
    */
   this.channelMap = {};
 
   // Internal caches
   this._latestChannel = null;
 }
+/**
+ * Insert a new channel.
+ * @memberof Action#
+ * @method channel
+ * @see Channel
+ * @param  {string} path        Path of the channel.
+ * @param  {CHANNEL_TYPE} type  Type of this channel.
+ * @return {module:engine/animation/action~Action}             Self for chaining.
+ */
 Action.prototype.channel = function(path, type) {
   var channel = new Channel(path, this, type);
 
@@ -157,6 +222,15 @@ Action.prototype.channel = function(path, type) {
 
   return this;
 };
+/**
+ * Insert a new key to the last inserted channel.
+ * @memberof Action#
+ * @method key
+ * @param  {number} time      Time of the key.
+ * @param  {*} value          Value of the key.
+ * @param  {function} easing  Easing function.
+ * @return {module:engine/animation/action~Action}           Self for chaining
+ */
 Action.prototype.key = function(time, value, easing) {
   if (!this._latestChannel) {
     console.log('[Warning]: can not insert key without a channel!');
@@ -167,14 +241,35 @@ Action.prototype.key = function(time, value, easing) {
 
   return this;
 };
+/**
+ * Find a channel by path.
+ * @memberof Action#
+ * @method findChannel
+ * @param  {string} path
+ * @return {module:engine/animation/action~Channel}
+ */
 Action.prototype.findChannel = function(path) {
   return this.channelMap[path];
 };
 var ActionUID = 0;
+/**
+ * Create a new action.
+ * @return {module:engine/animation/action~Action}
+ */
 Action.create = function create() {
   return new Action(ActionUID++);
 };
 
+/**
+ * Action player controls and plays an action defination.
+ *
+ * Usually you only need to run an action using {@link Scene#runAction}.
+ *
+ * @class ActionPlayer
+ * @constructor
+ * @param {module:engine/animation/action~Action} action Action to play.
+ * @param {object} target Target object this action is apply to.
+ */
 function ActionPlayer(action, target) {
   EventEmitter.call(this);
 
@@ -185,28 +280,28 @@ function ActionPlayer(action, target) {
 
   /**
    * Play speed (-1: reverse, 0: stop, 1: forward)
-   * @type {Number}
+   * @type {number}
    * @default 1
    */
   this.speed = 1;
 
   /**
    * Current time
-   * @type {Number}
+   * @type {number}
    * @default 0
    */
   this.time = 0;
 
   /**
    * Whether this action is finished
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    */
   this.finished = false;
 
   /**
    * Loop the action or not
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    */
   this.looped = true;
@@ -339,10 +434,18 @@ ActionPlayer.prototype._step = function _step(delta) {
 };
 /**
  * Go to a specific time
- * @param  {Number} time
+ * @memberof ActionPlayer#
+ * @method goto
+ * @param  {number} time
  */
 ActionPlayer.prototype.goto = function goto(time) {};
 
+/**
+ * Create a player for actor
+ * @param  {module:engine/animation/action~Action} action
+ * @param  {object} target
+ * @return {module:engine/animation/action~ActionPlayer}
+ */
 ActionPlayer.create = function create(action, target) {
   return new ActionPlayer(action, target);
 };
@@ -351,11 +454,12 @@ ActionPlayer.create = function create(action, target) {
 Object.assign(Scene.prototype, {
   /**
    * Run an action on a target object
+   * @memberof Scene#
    * @method runAction
-   * @param {Action}  action Action to run
-   * @param {Object}  target Target object
-   * @param {String}  tag    Tag of this action player (default is '0')
-   * @return {ActionPlayer}  An ActionPlayer instance that runs the specific Action
+   * @param {module:engine/animation/action~Action}  action Action to run
+   * @param {object}  target Target object
+   * @param {string}  tag    Tag of this action player (default is '0')
+   * @return {module:engine/animation/action~ActionPlayer}  An ActionPlayer instance that runs the specific Action
    */
   runAction: function runAction(action, target, tag) {
     var t = tag || '0';

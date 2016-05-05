@@ -1,8 +1,15 @@
 /**
  * Animation system is consist of two powerful sub-systems:
- * 1. Tween : a classic but better tween engine
- * 2. Action: a Blender/Flash like, keyframe based
- *            timeline animation system.
+ *
+ * 1. Tween : a classic but better tween engine.
+ * 2. Action: a Blender/Flash like, keyframe based timeline animation system.
+ *
+ * @module engine/animation
+ *
+ * @requires engine/scene
+ * @requires engine/utils
+ * @requires engine/animation/tween
+ * @requires engine/animation/action
  */
 
 var Scene = require('engine/scene');
@@ -12,6 +19,13 @@ var Tween = require('./tween');
 var Action = require('./action').Action;
 
 Object.assign(Scene.prototype, {
+  /**
+   * Pause animations with specific tag.
+   * @memberof Scene#
+   * @method pauseAnimationsTagged
+   * @param  {string} tag
+   * @return {Scene}      Self for chaining.
+   */
   pauseAnimationsTagged: function pauseAnimationsTagged(tag) {
     if (this.animationSystem.anims[tag]) {
       utils.removeItems(this.animationSystem.activeTags, this.animationSystem.activeTags.indexOf(tag), 1);
@@ -21,6 +35,13 @@ Object.assign(Scene.prototype, {
     return this;
   },
 
+  /**
+   * Resume animations with specific tag.
+   * @memberof Scene#
+   * @method resumeAnimationsTagged
+   * @param  {string} tag
+   * @return {Scene}      Self for chaining.
+   */
   resumeAnimationsTagged: function resumeAnimationsTagged(tag) {
     if (this.animationSystem.anims[tag]) {
       utils.removeItems(this.animationSystem.deactiveTags, this.animationSystem.deactiveTags.indexOf(tag), 1);

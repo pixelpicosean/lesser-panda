@@ -1,15 +1,16 @@
 /**
- * General utils.
+ * Utilty functions for animation module.
+ * @module engine/animation/utils
  */
 
 /**
  * Get the real target and its property key from
  * a root context and full path of the target property.
- * @param  {Object} context  Root context that contains the target
- * @param  {String} fullPath Full path of the target property
- * @return {Array}           [target, key] or undefined if no property matches
+ * @param  {object} context  Root context that contains the target
+ * @param  {string} fullPath Full path of the target property
+ * @return {array}           [target, key] or undefined if no property matches
  */
-function getTargetAndKey(context, fullPath) {
+module.exports.getTargetAndKey = function getTargetAndKey(context, fullPath) {
   var path = fullPath.split('.');
   // Path is just the property key
   if (path.length === 1) {
@@ -33,8 +34,4 @@ function getTargetAndKey(context, fullPath) {
     }
     return [target, path[path.length - 1]];
   }
-}
-
-module.exports = {
-  getTargetAndKey: getTargetAndKey,
 };
