@@ -11,6 +11,7 @@ var Interpolation = easing.Interpolation;
 /**
  * Action type enums
  * @enum {number}
+ * @memberof Tween
  */
 var ACTION_TYPES = {
   REPEAT:   0,
@@ -358,6 +359,8 @@ Tween.create = function create(context) {
   }
   return t;
 };
+
+Tween.ACTION_TYPES = ACTION_TYPES;
 
 // Inject tween factory method
 Object.assign(Scene.prototype, {

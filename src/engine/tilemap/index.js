@@ -1,27 +1,3 @@
-/**
- * Tilemap
- *
- * You need a map data and a table of tileset textures to be able to
- * create a Tilemap instance.
- *
- * Map data is defined by an Array of layers.
- *
- * Tile layer data: {
- *   tileset: String
- *   tilesize: Number
- *   width: Number
- *   height: Number
- *   data: Array<Array<Number>>
- * }
- *
- * Tileset table is used to look up textures of layers.
- * A simple example would like this:
- * {
- *   'background.png': loader.resources['background.png'].texture,
- *   'buildings.png': loader.resources['buildings.png'].texture,
- * }
- */
-
 var PIXI = require('engine/pixi');
 
 var tilemap = require('./pixi-tilemap');
@@ -30,6 +6,40 @@ var CollisionLayer = require('./collision-layer');
 
 var tiledConverter = require('./tiled-converter');
 
+/**
+ * Tilemap
+ *
+ * You need a map data and a table of tileset textures to be able to
+ * create a Tilemap instance.
+ *
+ * Map data is defined by an Array of layers.
+ *
+ * Layer defination:
+ * ```
+ * {
+ *   tileset: string
+ *   tilesize: number
+ *   width: number
+ *   height: number
+ *   data: array<array<number>>
+ * }
+ * ```
+ *
+ * Tileset table is used to look up textures of layers.
+ * A simple example would like this:
+ * ```
+ * {
+ *   'background.png': loader.resources['background.png'].texture,
+ *   'buildings.png': loader.resources['buildings.png'].texture,
+ * }
+ * ```
+ *
+ * @class Tilemap
+ * @constructor
+ * @param {array<object>} data  List of layer definations.
+ * @param {object} tilesets     Table of tilesets.
+ * @param {number} [group]      Collision group of collision layer(if exists).
+ */
 function Tilemap(data, tilesets, group) {
   PIXI.Container.call(this);
 
@@ -43,6 +53,11 @@ function Tilemap(data, tilesets, group) {
 Tilemap.prototype = Object.create(PIXI.Container.prototype);
 Tilemap.prototype.constructor = Tilemap;
 
+/**
+ * Destroy this tilemap instance and free the memory.
+ * @memberof Tilemap#
+ * @method destroy
+ */
 Tilemap.prototype.destroy = function() {
   this.tilesets = null;
   this.collisionLayer.destroy();
@@ -51,6 +66,13 @@ Tilemap.prototype.destroy = function() {
   PIXI.Container.prototype.destroy.call(this);
 };
 
+/**
+ * Add this tilemap to a scene.
+ * @memberof Tilemap#
+ * @method addTo
+ * @param {Scene} scene               Scene to add to.
+ * @param {PIXI.Container} container  Container to add tilemap to.
+ */
 Tilemap.prototype.addTo = function(scene, container) {
   PIXI.Container.prototype.addTo.call(this, container);
 
@@ -61,6 +83,11 @@ Tilemap.prototype.addTo = function(scene, container) {
   return this;
 };
 
+/**
+ * Create layers for this tilemap.
+ * @memberof Tilemap#
+ * @private
+ */
 Tilemap.prototype.createLayers = function() {
   var i, layerDef, data, tilesize, tileset, layer, texture, textures;
   var r, q;
@@ -106,13 +133,28 @@ Tilemap.prototype.createLayers = function() {
  * 1. Only one tileset per layer
  * 2. Add a custom property "tileset" and set its value to name of the image
  *
+ * @memberof Tilemap
+ *
  * @param  {JSON} json        Map data
- * @param  {Object} tilesets  Tileset table
- * @param  {Number} group     Collision group
+ * @param  {object} tilesets  Tileset table
+ * @param  {number} group     Collision group
  * @return {Tilemap}          Tilemap instance
  */
 Tilemap.fromTiledJson = function(json, tilesets, group) {
   return new Tilemap(tiledConverter(json), tilesets, group);
 };
 
+/**
+ * Tilemap rendering and collision support.
+ *
+ * @see Tilemap
+ *
+ * @exports engine/tilemap
+ *
+ * @requires engine/pixi
+ * @requires engine/tilemap/pixi-tilemap
+ * @requires engine/tilemap/filmstrip
+ * @requires engine/tilemap/collision-layer
+ * @requires engine/tilemap/tiled-converter
+ */
 module.exports = Tilemap;
