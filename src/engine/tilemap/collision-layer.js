@@ -74,7 +74,12 @@ function CollisionLayer(def, group) {
   this.tilesize = def.tilesize;
   this.width = def.width;
   this.height = def.height;
-  this.data = utils.lift(def.data, this.width, this.height);
+  if (typeof(def.data[0]) === 'number') {
+    this.data = utils.lift(def.data, this.width, this.height);
+  }
+  else {
+    this.data = def.data;
+  }
 
   this.group = group;
   this.bodies = [];
