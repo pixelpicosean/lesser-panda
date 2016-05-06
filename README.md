@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Add more component factory methods to Actor.
 - Fix inline documents.
 - Add `start` function to `core` module as a easy replacement of `startWithScene`.
 - `canvasquery` module is removed.
