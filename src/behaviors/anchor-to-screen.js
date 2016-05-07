@@ -2,9 +2,7 @@
  * Anchor object to screen left/right/top/bottom,
  * by percentage or pixel.
  *
- * Note: `right` will override `left`, and
- * `bottom` will over `top`. So only zero or one property
- * should be set on each axis.
+ * Note: Set both `right` and `left` will stretch the width of target.
  */
 
 import engine from 'engine/core';
@@ -39,30 +37,70 @@ export default class AnchorToScreen extends Behavior {
   applyAnchor() {
     const bounds = this.target.sprite.getLocalBounds();
 
+    let left, right, top, bottom, width, height;
+
+    // x-axis
     if (this.left !== undefined) {
-      this.target.position.x = this.left + bounds.x;
+      // this.target.position.x = this.left + bounds.x;
+      left = this.left;
     }
     else if (this.leftPct !== undefined) {
-      this.target.position.x = engine.width * this.leftPct - bounds.x;
+      // this.target.position.x = engine.width * this.leftPct - bounds.x;
+      left = engine.width * this.leftPct;
     }
     if (this.right !== undefined) {
-      this.target.position.x = engine.width - this.right - (bounds.x + bounds.width);
+      // this.target.position.x = engine.width - this.right - (bounds.x + bounds.width);
+      right = engine.width - this.right;
     }
     else if (this.rightPct !== undefined) {
-      this.target.position.x = engine.width * (1 - this.rightPct) - (bounds.x + bounds.width);
+      // this.target.position.x = engine.width * (1 - this.rightPct) - (bounds.x + bounds.width);
+      right = engine.width * (1 - this.rightPct);
+    }
+    // Stretch if both left and right is set
+    if (left !== undefined && right !== undefined) {
+      width = right - left;
     }
 
+    if (width !== undefined) {
+      this.target.sprite.width = width;
+    }
+    if (left !== undefined) {
+      this.target.position.x = left - bounds.x;
+    }
+    else if (right !== undefined) {
+      this.target.position.x = right - (bounds.x + bounds.width);
+    }
+
+    // y-axis
     if (this.top !== undefined) {
-      this.target.position.y = this.top + bounds.y;
+      // this.target.position.y = this.top + bounds.y;
+      top = this.top;
     }
     else if (this.topPct !== undefined) {
-      this.target.position.y = engine.height * this.topPct - bounds.y;
+      // this.target.position.y = engine.height * this.topPct - bounds.y;
+      top = engine.height * this.topPct;
     }
     if (this.bottom !== undefined) {
-      this.target.position.y = engine.height - this.bottom - (bounds.y + bounds.height);
+      // this.target.position.y = engine.height - this.bottom - (bounds.y + bounds.height);
+      bottom = engine.height - this.bottom;
     }
     else if (this.bottomPct !== undefined) {
-      this.target.position.y = engine.height * (1 - this.bottomPct) - (bounds.y + bounds.height);
+      // this.target.position.y = engine.height * (1 - this.bottomPct) - (bounds.y + bounds.height);
+      bottom = engine.height * (1 - this.bottomPct);
+    }
+    // Stretch if both top and bottom is set
+    if (top !== undefined && bottom !== undefined) {
+      height = bottom - top;
+    }
+
+    if (height !== undefined) {
+      this.target.sprite.height = height;
+    }
+    if (top !== undefined) {
+      this.target.position.y = top - bounds.y;
+    }
+    else if (bottom !== undefined) {
+      this.target.position.y = bottom - (bounds.y + bounds.height);
     }
   }
 
