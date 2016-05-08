@@ -437,6 +437,56 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
 };
 
 /**
+ * Initialize `sprite` as TilingSprite.
+ * @method initTilingSprite
+ * @memberof Actor#
+ * @param  {object} settings
+ * @return {Actor}        self for chaining
+ */
+Actor.prototype.initTilingSprite = function initTilingSprite(settings) {
+  this.addTilingSprite(settings, null, 'sprite');
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+/**
+ * Add a tiling-sprite instance.
+ * @method addTilingSprite
+ * @memberof Actor#
+ * @param {object} settings
+ * @param {object} settings.texture   Texture for this sprite.
+ * @param {object} [settings.width]   Width of the sprite, default to texture size.
+ * @param {object} [settings.height]  Height of the sprite, default to texture size.
+ * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
+ * @return {Actor}              Self for chaining
+ */
+Actor.prototype.addTilingSprite = function addTilingSprite(settings, parentNode, key) {
+  var width = Number.isFinite(settings.width) ? settings.width : settings.texture.width;
+  var height = Number.isFinite(settings.height) ? settings.height : settings.texture.height;
+
+  // Create instance
+  var inst = new PIXI.extras.TilingSprite(settings.texture, width, height);
+  inst.anchor.set(0.5);
+
+  // Add the instance to the parent
+  if (parentNode && this[parentNode] && (parentNode !== key)) {
+    this[parentNode].addChild(inst);
+  }
+
+  // Assign as a property if required
+  if (key) {
+    this[key] = inst;
+  }
+
+  return this;
+};
+
+/**
  * Initialize `sprite` as Text.
  * @method initText
  * @memberof Actor#
