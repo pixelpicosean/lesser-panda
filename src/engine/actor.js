@@ -459,6 +459,7 @@ Actor.prototype.initText = function initText(settings) {
  * @memberof Actor#
  * @param {object} settings
  * @param {string} [settings.text] Content of this text.
+ * @param {string} [settings.resolution] Text resolution, recommend set to `core.resolution` for best result.
  * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
  * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
  * @return {Actor}              Self for chaining.
@@ -466,6 +467,50 @@ Actor.prototype.initText = function initText(settings) {
 Actor.prototype.addText = function addText(settings, parentNode, key) {
   // Create instance
   var inst = new PIXI.Text(settings.text, settings, settings.resolution || 1);
+
+  // Add the instance to the parent
+  if (parentNode && this[parentNode] && (parentNode !== key)) {
+    this[parentNode].addChild(inst);
+  }
+
+  // Assign as a property if required
+  if (key) {
+    this[key] = inst;
+  }
+
+  return this;
+};
+
+/**
+ * Initialize `sprite` as BitmapText.
+ * @method initBitmapText
+ * @memberof Actor#
+ * @param  {object} settings  BitmapText settings.
+ * @return {Actor}            Self for chaining.
+ */
+Actor.prototype.initBitmapText = function initBitmapText(settings) {
+  this.addBitmapText(settings, null, 'sprite');
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+/**
+ * Add a bitmap text instance.
+ * @method addBitmapText
+ * @memberof Actor#
+ * @param {object} settings
+ * @param {string} [settings.text] Content of this text.
+ * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
+ * @return {Actor}              Self for chaining.
+ */
+Actor.prototype.addBitmapText = function addBitmapText(settings, parentNode, key) {
+  // Create instance
+  var inst = new PIXI.extras.BitmapText(settings.text, settings);
 
   // Add the instance to the parent
   if (parentNode && this[parentNode] && (parentNode !== key)) {
