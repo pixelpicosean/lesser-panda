@@ -14,6 +14,14 @@ var config = require('game/config').default;
  */
 var core = new EventEmitter();
 
+// Fetch device info and setup
+if (config.renderer && config.renderer.resolution) {
+  core.resolution = chooseProperResolution(config.renderer.resolution);
+}
+else {
+  core.resolution = 1;
+}
+
 // - Private properties and methods
 var nextScene = null;
 var loopId = 0;
@@ -51,8 +59,7 @@ function boot() {
   core.view.addEventListener('touchstart', focus);
 
   // Config and create renderer
-  core.resolution = Renderer.resolution = rendererConfig.resolution =
-    chooseProperResolution(rendererConfig.resolution);
+  Renderer.resolution = rendererConfig.resolution = core.resolution;
 
   Renderer.init(core.width, core.height, rendererConfig);
   startLoop();
