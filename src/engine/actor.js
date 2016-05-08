@@ -437,6 +437,50 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
 };
 
 /**
+ * Initialize `sprite` as Text.
+ * @method initText
+ * @memberof Actor#
+ * @param  {object} settings  Text settings.
+ * @return {Actor}            Self for chaining.
+ */
+Actor.prototype.initText = function initText(settings) {
+  this.addText(settings, null, 'sprite');
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+/**
+ * Add a text instance.
+ * @method addText
+ * @memberof Actor#
+ * @param {object} settings
+ * @param {string} [settings.text] Content of this text.
+ * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
+ * @return {Actor}              Self for chaining.
+ */
+Actor.prototype.addText = function addText(settings, parentNode, key) {
+  // Create instance
+  var inst = new PIXI.Text(settings.text, settings, settings.resolution || 1);
+
+  // Add the instance to the parent
+  if (parentNode && this[parentNode] && (parentNode !== key)) {
+    this[parentNode].addChild(inst);
+  }
+
+  // Assign as a property if required
+  if (key) {
+    this[key] = inst;
+  }
+
+  return this;
+};
+
+/**
  * Initialize `body`
  * @method initBody
  * @memberof Actor#
