@@ -159,4 +159,18 @@ loader.addMiddleware = function addMiddleware(fn) {
   middlewares.push(fn);
 };
 
+/**
+ * Get texture by key.
+ * @param  {array<string>|string} key Key is the either an array like [atlas_key, sprite_key] for sprites in an atlas or a simple string refer to a independent texture.
+ * @return {PIXI.Texture}
+ */
+loader.getTexture = function getTexture(key) {
+  if (Array.isArray(key)) {
+    return loader.resources[key[0]].textures[key[1]];
+  }
+  else if (typeof(key) === 'string') {
+    return loader.resources[key].texture;
+  }
+}
+
 module.exports = loader;
