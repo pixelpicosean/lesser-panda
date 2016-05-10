@@ -211,7 +211,7 @@ Object.assign(Scene.prototype, {
 
     if (settings_.name) {
       a.name = settings_.name;
-      this.namedActors[settings_.name] = a;
+      this.actorSystem.namedActors[settings_.name] = a;
     }
 
     return a;
