@@ -409,6 +409,8 @@ Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key, re
   }
   inst.endFill();
 
+  setupInst(inst, settings_);
+
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
     if (parentNode && this[parentNode] && (parentNode !== key)) {
@@ -470,6 +472,8 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
     }
   }
 
+  setupInst(inst, settings_);
+
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
     if (parentNode && this[parentNode] && (parentNode !== key)) {
@@ -527,6 +531,8 @@ Actor.prototype.addTilingSprite = function addTilingSprite(settings, parentNode,
   var inst = new PIXI.extras.TilingSprite(texture, width, height);
   inst.anchor.set(0.5);
 
+  setupInst(inst, settings);
+
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
     if (parentNode && this[parentNode] && (parentNode !== key)) {
@@ -578,6 +584,8 @@ Actor.prototype.addText = function addText(settings, parentNode, key, returnInst
   // Create instance
   var inst = new PIXI.Text(settings.text, settings, settings.resolution || 1);
 
+  setupInst(inst, settings);
+
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
     if (parentNode && this[parentNode] && (parentNode !== key)) {
@@ -627,6 +635,8 @@ Actor.prototype.initBitmapText = function initBitmapText(settings) {
 Actor.prototype.addBitmapText = function addBitmapText(settings, parentNode, key, returnInst) {
   // Create instance
   var inst = new PIXI.extras.BitmapText(settings.text, settings);
+
+  setupInst(inst, settings);
 
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
@@ -907,6 +917,14 @@ function raw(obj, key, value) {
 function vector(obj, key, value) {
   obj[key].copy(value);
 }
+function blendMode(obj, key, value) {
+  if (Number.isFinite(value)) {
+    obj[key] = value;
+  }
+  else {
+    obj[key] = PIXI.BLEND_MODES[value];
+  }
+}
 
 var SETTING_FUNCS = {
   // Empty
@@ -924,8 +942,15 @@ var SETTING_FUNCS = {
 
   // Sprite
   anchor: vector,
-  blendMode: raw,
+  blendMode: blendMode,
   tint: raw,
+
+  // Graphics
+  boundsPadding: raw,
+
+  // TilingSprite
+  tilePosition: vector,
+  tileScale: vector,
 };
 
 function setupInst(obj, settings) {
