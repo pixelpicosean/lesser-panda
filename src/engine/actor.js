@@ -247,10 +247,11 @@ Actor.prototype.remove = function remove() {
  * Initialize `sprite` as an empty visual node(PIXI.Container).
  * @method initEmpty
  * @memberof Actor#
- * @return {Actor}        self for chaining
+ * @param {object} [settings] Sprite settings.
+ * @return {Actor}            Self for chaining.
  */
-Actor.prototype.initEmpty = function initEmpty() {
-  this.addEmpty(null, 'sprite');
+Actor.prototype.initEmpty = function initEmpty(settings) {
+  this.addEmpty(settings, null, 'sprite', false);
   this.sprite.position = this.position;
 
   if (this.layer) {
@@ -263,14 +264,17 @@ Actor.prototype.initEmpty = function initEmpty() {
  * Add an empty visual node instance(PIXI.Container).
  * @method addEmpty
  * @memberof Actor#
+ * @param {object} [settings]                   Sprite settings.
  * @param {string|PIXI.Container} [parentNode]  Which visual node to add to, default is 'sprite'.
  * @param {string} [key]                        Which key to assign to. (make it a property of this Actor)
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.Container}
  */
-Actor.prototype.addEmpty = function addEmpty(parentNode, key, returnInst) {
+Actor.prototype.addEmpty = function addEmpty(settings, parentNode, key, returnInst) {
   // Create instance
   var inst = new PIXI.Container();
+
+  setupInst(inst, settings);
 
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
@@ -294,11 +298,12 @@ Actor.prototype.addEmpty = function addEmpty(parentNode, key, returnInst) {
  * Initialize `sprite` as Sprite.
  * @method initSprite
  * @memberof Actor#
- * @param  {PIXI.Texture|object|array|string} texture
- * @return {Actor}        self for chaining
+ * @param   {object} settings
+ * @param   {PIXI.Texture|array|string} settings.texture
+ * @return  {Actor}                                       Self for chaining.
  */
-Actor.prototype.initSprite = function initSprite(texture) {
-  this.addSprite(texture, null, 'sprite');
+Actor.prototype.initSprite = function initSprite(settings) {
+  this.addSprite(settings, null, 'sprite');
   this.sprite.position = this.position;
 
   if (this.layer) {
@@ -311,18 +316,21 @@ Actor.prototype.initSprite = function initSprite(texture) {
  * Add a sprite instance.
  * @method addSprite
  * @memberof Actor#
- * @param {PIXI.Texture|object|array|string} texture Texture or setting object that has a `texture` field(can be both Texture instance or texture path/path_array).
+ * @param {object} settings
+ * @param {PIXI.Texture|array|string} texture Texture or setting object that has a `texture` field(can be both Texture instance or texture path/path_array).
  * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
  * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
  * @param {boolean} [returnInst]  Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.Sprite}
  */
-Actor.prototype.addSprite = function addSprite(texture, parentNode, key, returnInst) {
-  var tex = textureFrom(texture);
+Actor.prototype.addSprite = function addSprite(settings, parentNode, key, returnInst) {
+  var tex = textureFrom(settings.texture);
 
   // Create instance
   var inst = new PIXI.Sprite(tex);
   inst.anchor.set(0.5);
+
+  setupInst(inst, settings);
 
   // Add the instance to the parent
   if (typeof(parentNode) === 'string') {
@@ -892,3 +900,38 @@ Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
  * @requires module:engine/behavior
  */
 module.exports = Actor;
+
+function raw(obj, key, value) {
+  obj[key] = value;
+}
+function vector(obj, key, value) {
+  obj[key].copy(value);
+}
+
+var SETTING_FUNCS = {
+  // Empty
+  alpha: raw,
+  width: raw,
+  height: raw,
+  rotation: raw,
+  visible: raw,
+  x: raw,
+  y: raw,
+  pivot: vector,
+  position: vector,
+  scale: vector,
+  skew: vector,
+
+  // Sprite
+  anchor: vector,
+  blendMode: raw,
+  tint: raw,
+};
+
+function setupInst(obj, settings) {
+  var k, func;
+  for (k in settings) {
+    func = SETTING_FUNCS[k];
+    func && func(obj, k, settings[k]);
+  }
+}
