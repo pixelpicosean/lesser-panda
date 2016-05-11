@@ -3,6 +3,7 @@ var Vector = require('engine/vector');
 var PIXI = require('engine/pixi');
 var physics = require('engine/physics');
 var Behavior = require('engine/behavior');
+var loader = require('engine/loader');
 
 var DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),
@@ -10,6 +11,23 @@ var DEFAULT_POLYGON_VERTICES = [
   Vector.create( 4,  4),
   Vector.create(-4,  4),
 ];
+
+function textureFrom(data) {
+  if (data instanceof PIXI.Texture) {
+    return data;
+  }
+  else if (data.texture instanceof PIXI.Texture) {
+    return data.texture;
+  }
+  else {
+    if (typeof(data) === 'string' || Array.isArray(data)) {
+      return loader.getTexture(data);
+    }
+    else if (typeof(data.texture) === 'string' || Array.isArray(data.texture)) {
+      return loader.getTexture(data.texture);
+    }
+  }
+}
 
 /**
  * Base object that may contain a PIXI.Container instance(as `sprite`)
@@ -229,10 +247,11 @@ Actor.prototype.remove = function remove() {
  * Initialize `sprite` as an empty visual node(PIXI.Container).
  * @method initEmpty
  * @memberof Actor#
- * @return {Actor}        self for chaining
+ * @param {object} [settings] Sprite settings.
+ * @return {Actor}            Self for chaining.
  */
-Actor.prototype.initEmpty = function initEmpty() {
-  this.addEmpty(null, 'sprite');
+Actor.prototype.initEmpty = function initEmpty(settings) {
+  this.addEmpty(settings, null, 'sprite', false);
   this.sprite.position = this.position;
 
   if (this.layer) {
@@ -245,17 +264,26 @@ Actor.prototype.initEmpty = function initEmpty() {
  * Add an empty visual node instance(PIXI.Container).
  * @method addEmpty
  * @memberof Actor#
- * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
- * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
- * @return {Actor}              Self for chaining
+ * @param {object} [settings]                   Sprite settings.
+ * @param {string|PIXI.Container} [parentNode]  Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]                        Which key to assign to. (make it a property of this Actor)
+ * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.Container}
  */
-Actor.prototype.addEmpty = function addEmpty(parentNode, key) {
+Actor.prototype.addEmpty = function addEmpty(settings, parentNode, key, returnInst) {
   // Create instance
   var inst = new PIXI.Container();
 
+  setupInst(inst, settings);
+
   // Add the instance to the parent
-  if (parentNode && this[parentNode] && (parentNode !== key)) {
-    this[parentNode].addChild(inst);
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
   }
 
   // Assign as a property if required
@@ -263,18 +291,19 @@ Actor.prototype.addEmpty = function addEmpty(parentNode, key) {
     this[key] = inst;
   }
 
-  return this;
+  return returnInst ? inst : this;
 };
 
 /**
  * Initialize `sprite` as Sprite.
  * @method initSprite
  * @memberof Actor#
- * @param  {PIXI.Texture} texture
- * @return {Actor}        self for chaining
+ * @param   {object} settings
+ * @param   {PIXI.Texture|array|string} settings.texture
+ * @return  {Actor}                                       Self for chaining.
  */
-Actor.prototype.initSprite = function initSprite(texture) {
-  this.addSprite(texture, null, 'sprite');
+Actor.prototype.initSprite = function initSprite(settings) {
+  this.addSprite(settings, null, 'sprite');
   this.sprite.position = this.position;
 
   if (this.layer) {
@@ -287,19 +316,30 @@ Actor.prototype.initSprite = function initSprite(texture) {
  * Add a sprite instance.
  * @method addSprite
  * @memberof Actor#
- * @param {PIXI.Texture} texture
- * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {object} settings
+ * @param {PIXI.Texture|array|string} texture Texture or setting object that has a `texture` field(can be both Texture instance or texture path/path_array).
+ * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
  * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
- * @return {Actor}              Self for chaining
+ * @param {boolean} [returnInst]  Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.Sprite}
  */
-Actor.prototype.addSprite = function addSprite(texture, parentNode, key) {
+Actor.prototype.addSprite = function addSprite(settings, parentNode, key, returnInst) {
+  var tex = textureFrom(settings.texture);
+
   // Create instance
-  var inst = new PIXI.Sprite(texture);
+  var inst = new PIXI.Sprite(tex);
   inst.anchor.set(0.5);
 
+  setupInst(inst, settings);
+
   // Add the instance to the parent
-  if (parentNode && this[parentNode] && (parentNode !== key)) {
-    this[parentNode].addChild(inst);
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
   }
 
   // Assign as a property if required
@@ -307,7 +347,7 @@ Actor.prototype.addSprite = function addSprite(texture, parentNode, key) {
     this[key] = inst;
   }
 
-  return this;
+  return returnInst ? inst : this;
 };
 
 /**
@@ -340,11 +380,12 @@ Actor.prototype.initGraphics = function initGraphics(settings, parentNode, key) 
  * @param [settings.height] {number} default 8, for 'Box' shapes
  * @param [settings.radius] {number} default 8, for 'Circle' shapes
  * @param [settings.points] {array<engine/vector>} vertices for 'Polygon' shapes
- * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
  * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
- * @return {Actor}              Self for chaining
+ * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.Graphics}
  */
-Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key) {
+Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key, returnInst) {
   // Create instance
   var settings_ = settings || {};
 
@@ -368,9 +409,16 @@ Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key) {
   }
   inst.endFill();
 
+  setupInst(inst, settings_);
+
   // Add the instance to the parent
-  if (parentNode && this[parentNode] && (parentNode !== key)) {
-    this[parentNode].addChild(inst);
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
   }
 
   // Assign as a property if required
@@ -378,7 +426,7 @@ Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key) {
     this[key] = inst;
   }
 
-  return this;
+  return returnInst ? inst : this;
 };
 
 /**
@@ -405,11 +453,12 @@ Actor.prototype.initAnimatedSprite = function initAnimatedSprite(settings_) {
  * @method addAnimatedSprite
  * @memberof Actor#
  * @param settings {object}
- * @param {string} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
  * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
- * @return {Actor}              Self for chaining
+ * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.extra.AnimatedSprite}
  */
-Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentNode, key) {
+Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentNode, key, returnInst) {
   // Create instance
   var settings_ = settings || {};
 
@@ -423,9 +472,16 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
     }
   }
 
+  setupInst(inst, settings_);
+
   // Add the instance to the parent
-  if (parentNode && this[parentNode] && (parentNode !== key)) {
-    this[parentNode].addChild(inst);
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
   }
 
   // Assign as a property if required
@@ -433,7 +489,246 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
     this[key] = inst;
   }
 
+  return returnInst ? inst : this;
+};
+
+/**
+ * Initialize `sprite` as TilingSprite.
+ * @method initTilingSprite
+ * @memberof Actor#
+ * @param  {object} settings
+ * @return {Actor}        self for chaining
+ */
+Actor.prototype.initTilingSprite = function initTilingSprite(settings) {
+  this.addTilingSprite(settings, null, 'sprite');
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
   return this;
+};
+/**
+ * Add a tiling-sprite instance.
+ * @method addTilingSprite
+ * @memberof Actor#
+ * @param {object} settings
+ * @param {object} settings.texture   Texture for this sprite.
+ * @param {object} [settings.width]   Width of the sprite, default to texture size.
+ * @param {object} [settings.height]  Height of the sprite, default to texture size.
+ * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
+ * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.extras.TilingSprite}
+ */
+Actor.prototype.addTilingSprite = function addTilingSprite(settings, parentNode, key, returnInst) {
+  var texture = textureFrom(settings.texture);
+  var width = Number.isFinite(settings.width) ? settings.width : texture.width;
+  var height = Number.isFinite(settings.height) ? settings.height : texture.height;
+
+  // Create instance
+  var inst = new PIXI.extras.TilingSprite(texture, width, height);
+  inst.anchor.set(0.5);
+
+  setupInst(inst, settings);
+
+  // Add the instance to the parent
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
+  }
+
+  // Assign as a property if required
+  if (key) {
+    this[key] = inst;
+  }
+
+  return returnInst ? inst : this;
+};
+
+/**
+ * Initialize `sprite` as Text.
+ * @method initText
+ * @memberof Actor#
+ * @param  {object} settings  Text settings.
+ * @return {Actor}            Self for chaining.
+ */
+Actor.prototype.initText = function initText(settings) {
+  this.addText(settings, null, 'sprite');
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+/**
+ * Add a text instance.
+ * @method addText
+ * @memberof Actor#
+ * @param {object} settings
+ * @param {string} [settings.text] Content of this text.
+ * @param {string} [settings.resolution] Text resolution, recommend set to `core.resolution` for best result.
+ * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
+ * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.Text}
+ */
+Actor.prototype.addText = function addText(settings, parentNode, key, returnInst) {
+  // Create instance
+  var inst = new PIXI.Text(settings.text, settings, settings.resolution || 1);
+
+  setupInst(inst, settings);
+
+  // Add the instance to the parent
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
+  }
+
+  // Assign as a property if required
+  if (key) {
+    this[key] = inst;
+  }
+
+  return returnInst ? inst : this;
+};
+
+/**
+ * Initialize `sprite` as BitmapText.
+ * @method initBitmapText
+ * @memberof Actor#
+ * @param  {object} settings  BitmapText settings.
+ * @return {Actor}            Self for chaining.
+ */
+Actor.prototype.initBitmapText = function initBitmapText(settings) {
+  this.addBitmapText(settings, null, 'sprite');
+  this.sprite.position = this.position;
+
+  if (this.layer) {
+    this.layer.addChild(this.sprite);
+  }
+
+  return this;
+};
+/**
+ * Add a bitmap text instance.
+ * @method addBitmapText
+ * @memberof Actor#
+ * @param {object} settings
+ * @param {string} [settings.text] Content of this text.
+ * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
+ * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
+ * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
+ * @return {Actor|PIXI.extras.BitmapText}
+ */
+Actor.prototype.addBitmapText = function addBitmapText(settings, parentNode, key, returnInst) {
+  // Create instance
+  var inst = new PIXI.extras.BitmapText(settings.text, settings);
+
+  setupInst(inst, settings);
+
+  // Add the instance to the parent
+  if (typeof(parentNode) === 'string') {
+    if (parentNode && this[parentNode] && (parentNode !== key)) {
+      this[parentNode].addChild(inst);
+    }
+  }
+  else if (parentNode) {
+    parentNode.addChild(inst);
+  }
+
+  // Assign as a property if required
+  if (key) {
+    this[key] = inst;
+  }
+
+  return returnInst ? inst : this;
+};
+
+/**
+ * Initialize this Actor from data, including hierarchy and physics body.
+ * You can use this method to spawn actors from pure data, which may be defined
+ * manually or exported from the built-in game editor in the future.
+ *
+ * @example
+ * scene.spawnActor(Actor, 100, 100, 'stage')
+ *   .initFromData({
+ *     // Define sprite hierarchy
+ *     sprite: {
+ *       // Type name should match the `add*` methods
+ *       type: 'Sprite',
+ *       texture: ['atlas_key', 'sprite_key'],
+ *       // Add children
+ *       children: [
+ *         // Define display objects as usual
+ *         {
+ *           type: 'Graphics',
+ *           shape: 'Box',
+ *           width: 10,
+ *           height: 16,
+ *           color: 0xffffff,
+ *         },
+ *         {
+ *           type: 'Text',
+ *           text: 'Player 1',
+ *           font: '16px Verdana',
+ *           fill: 'green',
+ *           key: 'nameText',
+ *         },
+ *       ],
+ *     },
+ *     // Add empty body field to enable it
+ *     body: {},
+ *   });
+ *
+ * @method initFromData
+ * @memberof Actor#
+ * @param  {object} data
+ * @return {Actor} Self for chaining.
+ */
+Actor.prototype.initFromData = function initFromData(data) {
+  var i, sprData = data.sprite, bodyData = data.body;
+
+  // Sprite
+  if (sprData) {
+    // Root sprite
+    this['init' + sprData.type](sprData);
+
+    // Children
+    if (Array.isArray(sprData.children)) {
+      for (i = 0; i < sprData.children.length; i++) {
+        this._addChildFromData(sprData.children[i], this.sprite);
+      }
+    }
+  }
+
+  // Body
+  if (bodyData) {
+    this.initBody(bodyData);
+  }
+
+  return this;
+};
+
+Actor.prototype._addChildFromData = function _addChildFromData(data, parent) {
+  var inst = this['add' + data.type](data, parent, data.key, true);
+
+  if (Array.isArray(data.children)) {
+    for (i = 0; i < data.children.length; i++) {
+      this._addChildFromData(data.children[i], inst);
+    }
+  }
 };
 
 /**
@@ -615,3 +910,53 @@ Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
  * @requires module:engine/behavior
  */
 module.exports = Actor;
+
+/**
+ * Component property setting function
+ * @private
+ * @param  {object} obj      Target to setup.
+ * @param  {object} settings Settings
+ */
+function setupInst(obj, settings) {
+  var k, func;
+  for (k in settings) {
+    switch (k) {
+      // Directly set
+      // - Empty
+      case 'alpha':
+      case 'width':
+      case 'height':
+      case 'rotation':
+      case 'visible':
+      case 'x':
+      case 'y':
+      // - Sprite
+      case 'tint':
+      // - Graphics
+      case 'boundsPadding':
+        obj[k] = settings[k];
+        break;
+
+      // Set vector
+      // - Empty
+      case 'pivot':
+      case 'position':
+      case 'scale':
+      case 'skew':
+
+      // - Sprite
+      case 'anchor':
+
+      // - TilingSprite
+      case 'tilePosition':
+      case 'tileScale':
+        obj[k].copy(settings[k]);
+        break;
+
+      // Set blend mode
+      case 'blendMode':
+        obj.blendMode = PIXI.BLEND_MODES[settings[k]];
+        break;
+    }
+  }
+}
