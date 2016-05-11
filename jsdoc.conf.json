@@ -30,17 +30,18 @@
         "copyright"     : "Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.",
         "disqus": "",
         "footer"        : "<span class=\"jsdoc-message\">Made with ♥ by Sean Bohan</span>",
-        "googleAnalytics": "",
+        "googleAnalytics": "UA-57114930-3",
+        "includeDate"   : false,
         "linenums"      : true,
         "meta": {
-            "title": "",
+            "title": "Lesser Panda",
             "description": "",
             "keyword": ""
         },
         "monospaceLinks": false,
         "navType"       : "inline",
         "openGraph": {
-            "title": "",
+            "title": "Lesser Panda",
             "type": "website",
             "image": "",
             "site_name": "",
@@ -60,7 +61,6 @@
         "recurse"       : true,
         "private"       : false,
         "lenient"       : true,
-        "destination"   : "./docs",
-        "template"      : "./node_modules/jaguarjs-jsdoc"
+        "destination"   : "./docs"
     }
 }
