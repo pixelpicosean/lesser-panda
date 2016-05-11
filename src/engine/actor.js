@@ -911,52 +911,52 @@ Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
  */
 module.exports = Actor;
 
-function raw(obj, key, value) {
-  obj[key] = value;
-}
-function vector(obj, key, value) {
-  obj[key].copy(value);
-}
-function blendMode(obj, key, value) {
-  if (Number.isFinite(value)) {
-    obj[key] = value;
-  }
-  else {
-    obj[key] = PIXI.BLEND_MODES[value];
-  }
-}
-
-var SETTING_FUNCS = {
-  // Empty
-  alpha: raw,
-  width: raw,
-  height: raw,
-  rotation: raw,
-  visible: raw,
-  x: raw,
-  y: raw,
-  pivot: vector,
-  position: vector,
-  scale: vector,
-  skew: vector,
-
-  // Sprite
-  anchor: vector,
-  blendMode: blendMode,
-  tint: raw,
-
-  // Graphics
-  boundsPadding: raw,
-
-  // TilingSprite
-  tilePosition: vector,
-  tileScale: vector,
-};
-
+/**
+ * Component property setting function
+ * @private
+ * @param  {object} obj      Target to setup.
+ * @param  {object} settings Settings
+ */
 function setupInst(obj, settings) {
   var k, func;
   for (k in settings) {
-    func = SETTING_FUNCS[k];
-    func && func(obj, k, settings[k]);
+    switch (k) {
+      // Directly set
+      // - Empty
+      case 'alpha':
+      case 'width':
+      case 'height':
+      case 'rotation':
+      case 'visible':
+      case 'x':
+      case 'y':
+      // - Sprite
+      case 'tint':
+      // - Graphics
+      case 'boundsPadding':
+        obj[k] = settings[k];
+        break;
+
+      // Set vector
+      // - Empty
+      case 'pivot':
+      case 'position':
+      case 'scale':
+      case 'skew':
+
+      // - Sprite
+      case 'anchor':
+
+      // - TilingSprite
+      case 'tilePosition':
+      case 'tileScale':
+        obj[k].copy(settings[k]);
+        break;
+
+      // Set blend mode
+      case 'blendMode':
+        obj.blendMode = PIXI.BLEND_MODES[settings[k]];
+        break;
+    }
   }
 }
