@@ -317,7 +317,7 @@ Actor.prototype.initSprite = function initSprite(settings) {
  * @method addSprite
  * @memberof Actor#
  * @param {object} settings
- * @param {PIXI.Texture|array|string} texture Texture or setting object that has a `texture` field(can be both Texture instance or texture path/path_array).
+ * @param {PIXI.Texture|array|string} settings.texture Texture or setting object that has a `texture` field(can be both Texture instance or texture path/path_array).
  * @param {string|PIXI.Container} [parentNode] Which visual node to add to, default is 'sprite'.
  * @param {string} [key]        Which key to assign to. (make it a property of this Actor)
  * @param {boolean} [returnInst]  Whether return the newly created instance instead of Actor?
