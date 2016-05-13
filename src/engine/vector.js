@@ -1,3 +1,5 @@
+var utils = require('engine/utils');
+
 /**
  * Vector instance pool
  * @private
@@ -236,8 +238,8 @@ Vector.prototype.normalize = function normalize() {
  * @return {Vector}       Self for chaining.
  */
 Vector.prototype.limit = function limit(vector) {
-  this.x = this.x.limit(-vector.x, vector.x);
-  this.y = this.y.limit(-vector.y, vector.y);
+  this.x = utils.clamp(this.x, -vector.x, vector.x);
+  this.y = utils.clamp(this.y, -vector.y, vector.y);
   return this;
 };
 
