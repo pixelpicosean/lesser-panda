@@ -116,7 +116,7 @@ Vector.prototype.multiply = function multiply(x, y) {
  */
 Vector.prototype.divide = function divide(x, y) {
   this.x /= x instanceof Vector ? x.x : x;
-  this.y /= x instanceof Vector ? x.y : y;
+  this.y /= x instanceof Vector ? x.y : (y || ((y !== 0) ? x : 0));
   return this;
 };
 
