@@ -9,6 +9,8 @@ import Vector from 'engine/vector';
 import { clamp } from 'engine/utils';
 
 export default class AsteroidsMove extends Behavior {
+  type = 'AsteroidsMove'
+
   defaultSettings = {
     /* Whether use keyboard to control */
     useKeyboard: true,
