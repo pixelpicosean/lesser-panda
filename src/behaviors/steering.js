@@ -121,6 +121,25 @@ export default class Steering extends Behavior {
 
     return targetWorld.subtract(this.target.position);
   }
+
+  interpose(agentA, agentB) {
+    let midPoint = agentA.position.clone().add(agentB.position)
+      .divide(2);
+
+    let timeToReachMidPoint = this.target.position.distance(midPoint) / this.maxSpeed;
+
+    let aPos = agentA.body.velocity.clone().multiply(timeToReachMidPoint)
+      .add(agentA.position);
+    let bPos = agentB.body.velocity.clone().multiply(timeToReachMidPoint)
+      .add(agentB.position);
+
+    midPoint.copy(aPos).add(bPos).divide(2);
+
+    Vector.recycle(aPos);
+    Vector.recycle(bPos);
+
+    return this.arrive(midPoint, 1);
+  }
 }
 
 function pointToWorldSpace(point, heading, side, localPosition) {
