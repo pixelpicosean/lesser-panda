@@ -1,4 +1,4 @@
-import engine from 'engine/core';
+import core from 'engine/core';
 import Scene from 'engine/scene';
 import PIXI from 'engine/pixi';
 import loader from 'engine/loader';
@@ -15,10 +15,10 @@ class Main extends Scene {
       font: '16px KenPixel',
     }).addTo(this.stage);
     text.position
-      .set(engine.width * 0.5, engine.height * 0.5)
+      .set(core.width * 0.5, core.height * 0.5)
       .subtract(text.width * 0.5, text.height * 0.5);
   }
 };
-engine.addScene('Main', Main);
+core.addScene('Main', Main);
 
-engine.startWithScene('Loading');
+core.startWithScene('Loading');
