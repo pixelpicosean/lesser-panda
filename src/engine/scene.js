@@ -330,6 +330,22 @@ Scene.registerSystem('Actor', {
       }
     }
   },
+  freeze: function freeze(scene) {
+    // Cleanup
+    var i, key, actors, actor;
+    for (key in scene.actorSystem.actors) {
+      if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
+
+      actors = scene.actorSystem.actors[key];
+      for (i = 0; i < actors.length; i++) {
+        actor = actors[i];
+
+        if (actor.removed) {
+          utils.removeItems(actors, i--, 1);
+        }
+      }
+    }
+  },
 });
 
 /**
