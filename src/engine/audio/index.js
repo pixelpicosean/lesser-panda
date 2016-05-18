@@ -117,13 +117,17 @@ var audio = Object.assign(new EventEmitter(), {
     return _snd_cache;
   },
 });
+var mutedBeforePause = false;
 core.on('pause', function() {
-  // TODO: pause audio instead of mute
+  if (audio.muted) {
+    mutedBeforePause = true;
+  }
   audio.mute();
 });
 core.on('resume', function() {
-  // TODO: resume audio instead of unmute
-  audio.unmute();
+  if (!mutedBeforePause) {
+    audio.unmute();
+  }
 });
 
 /**
