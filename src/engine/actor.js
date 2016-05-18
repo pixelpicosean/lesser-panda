@@ -438,7 +438,7 @@ Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key, re
  * @param settings.anims {array<{ name, frames, settings }>}
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initAnimatedSprite = function initAnimatedSprite(settings_) {
+Actor.prototype.initAnimatedSprite = function initAnimatedSprite(settings) {
   this.addAnimatedSprite(settings, null, 'sprite');
   this.sprite.position = this.position;
 
