@@ -83,6 +83,9 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Add `rotate-around-point` behavior
+- Add `steering` behavior
+- Add `face-the-mouse` behavior
 - Actor component factory methods now accept settings of all built-in properties.
 - Add `getTexture` function to `engine.loader` to be able to get texture from string.
 - Add more component factory methods to Actor.
