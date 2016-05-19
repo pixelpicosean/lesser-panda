@@ -468,7 +468,7 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
   var anims = settings_.anims;
   if (Array.isArray(anims)) {
     for (var i = 0; i < anims.length; i++) {
-      this.sprite.addAnim(anims[i].name, anims[i].frames, anims[i].settings);
+      inst.addAnim(anims[i].name, anims[i].frames, anims[i].settings);
     }
   }
 
