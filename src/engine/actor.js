@@ -950,7 +950,8 @@ function setupInst(obj, settings) {
       // - TilingSprite
       case 'tilePosition':
       case 'tileScale':
-        obj[k].copy(settings[k]);
+        obj[k].x = settings[k].x || 0;
+        obj[k].y = settings[k].y || 0;
         break;
 
       // Set blend mode
