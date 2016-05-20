@@ -205,10 +205,27 @@ Object.assign(Scene.prototype, {
       return null;
     }
 
-    var a = new actor(settings_).addTo(this, this[layerName]);
+    // Create instance
+    var a;
+    if (actor.canBePooled) {
+      a = actor.create(settings_);
+    }
+    else {
+      a = new actor(settings_);
+    }
+    a.CTOR = actor;
+
+    // Add actor components
+    a.scene = this;
+    a.layer = this[layerName];
+    a.sprite && a.layer.addChild(a.sprite);
+    a.body && this.world.addBody(a.body);
     a.position.set(x, y);
+
+    // Add to actor system
     this.addActor(a, settings_.tag);
 
+    // Keep a reference if it has a name
     if (settings_.name) {
       a.name = settings_.name;
       this.actorSystem.namedActors[settings_.name] = a;
@@ -241,6 +258,8 @@ Object.assign(Scene.prototype, {
       actor.removed = false;
       this.actorSystem.actors[t].push(actor);
     }
+
+    actor.ready();
   },
 
   /**
@@ -325,6 +344,7 @@ Scene.registerSystem('Actor', {
         }
 
         if (actor.removed) {
+          actor.CTOR.canBePooled && actor.CTOR.recycle(actor);
           utils.removeItems(actors, i--, 1);
         }
       }
@@ -341,6 +361,7 @@ Scene.registerSystem('Actor', {
         actor = actors[i];
 
         if (actor.removed) {
+          actor.CTOR.canBePooled && actor.CTOR.recycle(actor);
           utils.removeItems(actors, i--, 1);
         }
       }

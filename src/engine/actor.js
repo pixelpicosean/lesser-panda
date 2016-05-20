@@ -154,11 +154,18 @@ function Actor(name) {
    * @private
    */
   this._rotation = 0;
+
+  /**
+   * Reference to constructor
+   * @type {function}
+   */
+  this.CTOR = Actor;
 }
 Actor.prototype = Object.create(EventEmitter.prototype);
 Actor.prototype.constructor = Actor;
 
 Actor.uid = 0;
+Actor.canBePooled = false;
 
 /**
  * Rotation
@@ -203,14 +210,14 @@ Actor.prototype.update = function update(dtMS, dtSec) {};
  * @memberof Actor#
  */
 Actor.prototype.remove = function remove() {
-  this.removed = true;
-
   if (this.sprite) {
     this.sprite.remove();
   }
   if (this.body) {
     this.body.remove();
   }
+
+  this.scene && this.scene.removeActor(this);
 
   this.scene = null;
   this.layer = null;

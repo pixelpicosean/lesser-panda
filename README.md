@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- `Actor` spawn/remove behavior changed, now it's possible to maunally create `Actor` instance and add to any scene instead of calling `spawnActor`. Object pool support is included.
 - Change `Actor.prepare` to `Actor.ready`.
 - Fix some Actor component create methods.
 - Add `rotate-around-point` behavior
