@@ -83,6 +83,8 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Change `Actor.prepare` to `Actor.ready`.
+- Fix some Actor component create methods.
 - Add `rotate-around-point` behavior
 - Add `steering` behavior
 - Add `face-the-mouse` behavior

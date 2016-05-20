@@ -182,36 +182,11 @@ Object.defineProperty(Actor.prototype, 'rotation', {
 });
 
 /**
- * Add to the scene and a container
- * @method addTo
- * @memberof Actor#
- * @param {Scene} scene
- * @param {PIXI.Container} layer
- * @return {Actor} Actor itself for chaining
- */
-Actor.prototype.addTo = function addTo(scene, layer) {
-  this.scene = scene;
-  this.layer = layer;
-
-  if (this.sprite) {
-    this.layer.addChild(this.sprite);
-  }
-  if (this.body) {
-    this.scene.world.addBody(this.body);
-  }
-
-  this.prepare();
-
-  return this;
-};
-
-/**
- * Will be called by `addTo` method after the Actor components are
- * properly added.
- * @method prepare
+ * Will be called after the Actor is properly added to a scene.
+ * @method ready
  * @memberof Actor#
  */
-Actor.prototype.prepare = function prepare() {};
+Actor.prototype.ready = function ready() {};
 
 /**
  * Update method to be called each frame
