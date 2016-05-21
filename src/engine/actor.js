@@ -915,6 +915,7 @@ function setupInst(obj, settings) {
       case 'visible':
       case 'x':
       case 'y':
+      case 'interactive':
       // - Sprite
       case 'tint':
       // - Graphics
