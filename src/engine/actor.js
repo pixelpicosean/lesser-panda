@@ -13,10 +13,13 @@ var DEFAULT_POLYGON_VERTICES = [
 ];
 
 function textureFrom(data) {
-  if (data instanceof PIXI.Texture) {
+  if (!data) {
+    return undefined;
+  }
+  else if (data instanceof PIXI.Texture) {
     return data;
   }
-  else if (data.texture instanceof PIXI.Texture) {
+  else if (data.texture && data.texture instanceof PIXI.Texture) {
     return data.texture;
   }
   else {
