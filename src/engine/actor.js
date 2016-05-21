@@ -818,6 +818,7 @@ Actor.prototype.behave = function behave(behv, settings) {
   // Setup
   behavior.addTo(this);
   behavior.setup(settings || {});
+  behavior.activate();
 
   return this;
 };
@@ -877,7 +878,7 @@ Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
   var i, behv;
   for (i = 0; i < this.behaviorList.length; i++) {
     behv = this.behaviorList[i];
-    behv.update && behv.update(dtMS, dtSec);
+    behv.isActive && behv.update && behv.update(dtMS, dtSec);
   }
 };
 
