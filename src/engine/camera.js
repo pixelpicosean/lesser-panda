@@ -194,8 +194,11 @@ Camera.prototype.setTarget = function setTarget(target, lerp) {
  */
 Camera.prototype.setPosition = function setPosition(x, y) {
   this._setPosition(x, y);
-  this.sensor.x = x - this.sensor.width * 0.5;
-  this.sensor.y = y - this.sensor.height * 0.5;
+
+  if (this.target) {
+    this.sensor.x = x - this.sensor.width * 0.5;
+    this.sensor.y = y - this.sensor.height * 0.5;
+  }
 };
 
 Camera.prototype._setPosition = function _setPosition(x, y) {
@@ -289,8 +292,6 @@ Camera.prototype._startShake = function _startShake() {
  * @private
  */
 Camera.prototype.moveSensor = function moveSensor() {
-  if (!this.target) return;
-
   var targetBounds = this.target.getLocalBounds();
 
   // Resize sensor to fit the target
@@ -331,6 +332,8 @@ Camera.prototype.moveSensor = function moveSensor() {
  * @private
  */
 Camera.prototype.moveCamera = function moveCamera(dt) {
+  if (!this.target) return;
+
   this.speed.x = utils.clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
   this.speed.y = utils.clamp(this.position.y - (this.sensor.y + this.sensor.height * 0.5), -this.maxSpeed, this.maxSpeed);
 
@@ -372,7 +375,9 @@ Camera.prototype.remove = function remove() {
 Camera.prototype.update = function update(_, delta) {
   this.delta = delta;
 
-  this.moveSensor(this.delta);
+  if (this.target) {
+    this.moveSensor(this.delta);
+  }
   this.moveCamera(this.delta);
 
   if (this.container) {

@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Fixed `Camera` to be able to work without any targets.
 - Add `poolable` module to `utils`.
 - Improve the `FireBullet` behavior, now it has `ammo` support built-in.
 - `Behavior` no longer inherits from `EventEmitter`.
