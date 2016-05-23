@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Add `poolable` module to `utils`.
 - Improve the `FireBullet` behavior, now it has `ammo` support built-in.
 - `Behavior` no longer inherits from `EventEmitter`.
 - `Actor` spawn/remove behavior changed, now it's possible to maunally create `Actor` instance and add to any scene instead of calling `spawnActor`. Object pool support is included.
