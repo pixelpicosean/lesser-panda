@@ -221,11 +221,11 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
 
   var shapes = {};
   for (i = 0; i < edges.length; i++) {
-    if (!shapes[edges[i]]) {
-      shapes[edges[i]] = [edges[i]];
+    if (!shapes[edges[i][2]]) {
+      shapes[edges[i][2]] = [edges[i]];
     }
     else {
-      shapes[edges[i]].push(edges[i]);
+      shapes[edges[i][2]].push(edges[i]);
     }
   }
 
