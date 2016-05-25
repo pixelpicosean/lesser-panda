@@ -266,7 +266,7 @@ Loader.prototype._handleBaseUrl = function (url) {
     var parsedUrl = urlParser.parse(url);
 
     // absolute url, just use it as is.
-    if (parsedUrl.protocol || parsedUrl.pathname.indexOf('//') === 0) {
+    if (parsedUrl.protocol || !parsedUrl.pathname || parsedUrl.pathname.indexOf('//') === 0) {
         return url;
     }
 
@@ -418,17 +418,17 @@ Loader.prototype._onLoad = function (resource) {
 
         this._numToLoad--;
 
-        // do completion check
-        if (this._numToLoad === 0) {
-            this.progress = 100;
-            this._onComplete();
-        }
-
         if (resource.error) {
             this.emit('error', resource.error, this, resource);
         }
         else {
             this.emit('load', this, resource);
+        }
+
+        // do completion check
+        if (this._numToLoad === 0) {
+            this.progress = 100;
+            this._onComplete();
         }
     });
 
