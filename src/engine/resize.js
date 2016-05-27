@@ -4,12 +4,12 @@
 var pRatio = 1.0, cRatio = 1.0;
 
 /**
- * Calculate how to scale a content to fill its container in `inner-box` mode.
+ * Calculate how to scale a content to fill its container in `outer-box` mode.
  * @param  {Vector} containerSize Size of container.
- * @param  {Vector} contentSize   [description]
+ * @param  {Vector} contentSize
  * @return {object} { left , top , scale }
  */
-module.exports.innerBoxResize = function innerBoxResize(containerSize, contentSize) {
+module.exports.outerBoxResize = function innerBoxResize(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 
@@ -27,23 +27,23 @@ module.exports.innerBoxResize = function innerBoxResize(containerSize, contentSi
 };
 
 /**
- * Calculate how to scale a content to fill its container in `outer-box` mode.
+ * Calculate how to scale a content to fill its container in `inner-box` mode.
  * @param  {Vector} containerSize Size of container.
- * @param  {Vector} contentSize   [description]
+ * @param  {Vector} contentSize
  * @return {object} { left , top , scale }
  */
-module.exports.outerBoxResize = function outerBoxResize(containerSize, contentSize) {
+module.exports.innerBoxResize = function outerBoxResize(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 
   var result = { left: 0, top: 0, scale: 1, };
   if (pRatio < cRatio) {
     result.scale = containerSize.y / contentSize.y;
-    result.x = (containerSize.x - contentSize.x * result.scale) * 0.5;
+    result.left = (containerSize.x - contentSize.x * result.scale) * 0.5;
   }
   else {
     result.scale = containerSize.x / contentSize.x;
-    result.y = (containerSize.y - contentSize.y * result.scale) * 0.5;
+    result.top = (containerSize.y - contentSize.y * result.scale) * 0.5;
   }
 
   return result;
