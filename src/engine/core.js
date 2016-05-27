@@ -52,6 +52,7 @@ function boot() {
   }, config.renderer);
 
   core.view = document.getElementById(rendererConfig.canvasId);
+  core.containerView = document.getElementById('container');
 
   // Keep focus when mouse/touch event occurs on the canvas
   function focus() { window.focus() }
@@ -162,7 +163,7 @@ function boot() {
     div.style.margin = 'auto';
     div.style.display = 'none';
     div.style.color = config.rotatePromptFontColor || 'black';
-    div.id = 'lp-rotate';
+    div.className = 'center';
     core.rotatePromptElm = div;
     document.body.appendChild(div);
 
@@ -194,7 +195,7 @@ function boot() {
       }
 
       // Hide game view
-      core.view.style.display = core.rotatePromptVisible ? 'none' : 'block';
+      core.view.style.display = core.rotatePromptVisible ? 'none' : 'inline-block';
       // Show rotate view
       core.rotatePromptElm.style.backgroundColor = config.rotatePromptBGColor || 'black';
       core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-box' : 'none';
@@ -388,6 +389,13 @@ Object.assign(core, {
    * @type {HTMLCanvasElement}
    */
   view: null,
+
+  /**
+   * Div that contains game canvas.
+   * @memberof module:engine/core
+   * @type {HTMLCanvasElement}
+   */
+  containerView: null,
 
   /**
    * Size of game content.
@@ -678,6 +686,8 @@ function _letterBoxResize(first) {
   // Resize the view
   core.view.style.width = (core.viewSize.x * result.scale) + 'px';
   core.view.style.height = (core.viewSize.y * result.scale) + 'px';
+  core.containerView.style.width = windowSize.x + 'px';
+  core.containerView.style.height = windowSize.y + 'px';
 
   _alignToWindowCenter(core.view, core.viewSize.x * result.scale, core.viewSize.y * result.scale);
 
