@@ -83,6 +83,8 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Device patch is removed since resizing now works without hack.
+- Canvas resizing is fixed and improved, and useless `never` resize mode is deprecated.
 - Fixed `Camera` to be able to work without any targets.
 - Add `poolable` module to `utils`.
 - Improve the `FireBullet` behavior, now it has `ammo` support built-in.
