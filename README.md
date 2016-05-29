@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Add `vertical` and `horizontal` settings to WrapAroundScreen behavior.
 - Device patch is removed since resizing now works without hack.
 - Canvas resizing is fixed and improved, and useless `never` resize mode is deprecated.
 - Fixed `Camera` to be able to work without any targets.

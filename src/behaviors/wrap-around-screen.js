@@ -1,17 +1,17 @@
 /**
- * Wrap around the screen, works with or without camera
- * TODO: take target size into account
- *
- * @protocol {
- *   position: Vector
- * }
+ * Wrap around the screen, works with or without camera.
  */
 
 import engine from 'engine/core';
 import Behavior from 'engine/behavior';
 
 export default class WrapAroundScreen extends Behavior {
-  type = 'WrapAroundScreen'
+  type = 'WrapAroundScreen';
+
+  defaultSettings = {
+    vertical: true,
+    horizontal: true,
+  };
 
   constructor() {
     super();
@@ -53,17 +53,21 @@ export default class WrapAroundScreen extends Behavior {
     this.targetTop = this.targetBounds.y + this.target.position.y;
     this.targetBottom = this.targetBounds.y + this.targetBounds.height + this.target.position.y;
 
-    if (this.targetRight < this.left) {
-      this.target.position.x += this.width;
+    if (this.horizontal) {
+      if (this.targetRight < this.left) {
+        this.target.position.x += this.width;
+      }
+      else if (this.targetLeft > this.right) {
+        this.target.position.x -= this.width;
+      }
     }
-    else if (this.targetLeft > this.right) {
-      this.target.position.x -= this.width;
-    }
-    if (this.targetBottom < this.up) {
-      this.target.position.y += this.height;
-    }
-    else if (this.targetTop > this.bottom) {
-      this.target.position.y -= this.height;
+    if (this.vertical) {
+      if (this.targetBottom < this.up) {
+        this.target.position.y += this.height;
+      }
+      else if (this.targetTop > this.bottom) {
+        this.target.position.y -= this.height;
+      }
     }
   }
 }
