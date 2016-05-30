@@ -189,10 +189,10 @@ Object.assign(Scene.prototype, {
    * @method spawnActor
    * @memberOf Scene#
    * @param  {Actor} actor      Actor class
-   * @param  {number} x
-   * @param  {number} y
-   * @param  {string} layerName Name of the layer to add to(key of a PIXI.Container instance in this scene)
-   * @param  {object} settings  Custom settings
+   * @param  {number} [x]
+   * @param  {number} [y]
+   * @param  {string} [layerName] Name of the layer to add to(key of a PIXI.Container instance in this scene)
+   * @param  {object} [settings]  Custom settings
    * @param  {string} [settings.name] Name of this actor
    * @param  {string} [settings.tag]  Tag of this actor
    * @return {Actor}            Actor instance
@@ -200,9 +200,9 @@ Object.assign(Scene.prototype, {
   spawnActor: function spawnActor(actor, x, y, layerName, settings) {
     var settings_ = settings || {};
 
-    if (!this[layerName]) {
-      console.log('Layer ' + layerName + ' does not exist!');
-      return null;
+    var layerName_ = layerName;
+    if (!this[layerName_]) {
+      layerName_ = 'stage';
     }
 
     // Create instance
@@ -217,10 +217,10 @@ Object.assign(Scene.prototype, {
 
     // Add actor components
     a.scene = this;
-    a.layer = this[layerName];
+    a.layer = this[layerName_];
     a.sprite && a.layer.addChild(a.sprite);
     a.body && this.world.addBody(a.body);
-    a.position.set(x, y);
+    a.position.set(x || 0, y || 0);
 
     // Add to actor system
     this.addActor(a, settings_.tag);
