@@ -69,6 +69,10 @@ Renderer.resize = function(w, h) {
 Renderer.render = function(scene) {
   this.instance.render(scene.stage);
 };
+Renderer.createLayer = function(scene, name, parent) {
+  var parentKey = parent || 'stage';
+  scene[name] = new core.Container().addTo(scene[parentKey]);
+};
 
 // Inject as sub-system of scene
 var Scene = require('engine/scene');

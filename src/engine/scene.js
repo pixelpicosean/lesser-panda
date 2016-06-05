@@ -1,6 +1,7 @@
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
 var utils = require('engine/utils');
+var renderer = require('engine/renderer');
 var config = require('game/config').default;
 
 /**
@@ -149,6 +150,16 @@ Scene.prototype.pause = function pause() {};
  * @memberof Scene#
  */
 Scene.prototype.resume = function resume() {};
+
+/**
+ * Create a new layer
+ * @param {string} name      Name of this layer
+ * @param {string} [parent]  Key of parent layer, default is `stage`.
+ */
+Scene.prototype.createLayer = function createLayer(name, parent) {
+  renderer.createLayer(this, name, parent);
+  return this;
+};
 
 Object.assign(Scene, {
   /**

@@ -47,6 +47,16 @@ var Renderer = {
   render: function render(scene) {
     console.log('[Warning]: Renderer does not render!');
   },
+  /**
+   * Add a layer to a scene
+   * @abstract
+   * @param  {Scene} scene      Target scene to add layer to.
+   * @param  {string} name      Name of this layer
+   * @param  {string} [parent]  Key of parent layer, default is `stage`.
+   */
+  createLayer: function createLayer(scene, name, parent) {
+    console.log('[Warning]: Renderer cannot create layer!');
+  },
 };
 
 module.exports = Renderer;
