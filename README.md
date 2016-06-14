@@ -83,6 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Fixes collision map so that maps with holes are not properly supported.
 - Add `Scene.createLayer` method to simplify layer creating.
 - Position, layer and settings parameters of `Scene.spawnActor` are not optional.
 - Add `vertical` and `horizontal` settings to WrapAroundScreen behavior.
