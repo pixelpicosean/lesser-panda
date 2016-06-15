@@ -8,6 +8,7 @@ LesserPanda has a lot of features, and the list is still growing:
 
 - Super fast Canvas and WebGL rendering powered by PIXI.js.
 - Tilemap rendering.
+- Import tile collider shape from Tiled map.
 - Fixed game loop with customizable `FPS` and `frame skips`.
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
@@ -83,6 +84,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Completely support tile collider shapes defined from **Tiled** editor, tilemap based workflow is hugely improved.
 - Fixes collision map so that maps with holes are not properly supported.
 - Add `Scene.createLayer` method to simplify layer creating.
 - Position, layer and settings parameters of `Scene.spawnActor` are not optional.
