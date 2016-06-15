@@ -81,6 +81,7 @@ function CollisionLayer(def, group) {
   }
 
   this.group = group;
+  this.collisionTileShapes = def.collisionTileShapes;
   this.bodies = [];
 
   this.generateShapes();
@@ -107,19 +108,24 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
         x = mx * j; // left
         y = my * i; // top
 
-        v0 = { x: x,      y: y + my }; // left-bottom
-        v1 = { x: x,      y: y      }; // left-top
-        v2 = { x: x + mx, y: y      }; // right-top
-        v3 = { x: x + mx, y: y + my }; // right-bottom
+        var polygon = this.collisionTileShapes[grid[i][j] - 1];
+        var vs = Array(polygon.length);
+        var es = Array(polygon.length);
+        for (var p = 0; p < polygon.length; p++) {
+          vs[p] = { x: polygon[p].x + x, y: polygon[p].y + y };
+        }
 
-        e0 = [v0, v1, tag, false];
-        e1 = [v1, v2, tag, false];
-        e2 = [v2, v3, tag, false];
-        e3 = [v3, v0, tag, false];
+        for (var p = 0; p < polygon.length; p++) {
+          if (p === polygon.length - 1) {
+            es[p] = [vs[p], vs[0], tag, false];
+          }
+          else {
+            es[p] = [vs[p], vs[p + 1], tag, false];
+          }
 
-        edges.push(e0, e1, e2, e3);
-
-        taggedGroups[tag] = [e0, e1, e2, e3];
+          edges.push(es[p]);
+        }
+        taggedGroups[tag] = es;
       }
     }
   }
