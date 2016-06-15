@@ -84,6 +84,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Improved `Body` setup.
 - Deprecated `Body.anchor` since it's not supported by SAT solver.
 - Completely support tile collider shapes defined from **Tiled** editor, tilemap based workflow is hugely improved.
 - Fixes collision map so that maps with holes are not properly supported.

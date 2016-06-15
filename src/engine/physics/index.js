@@ -582,7 +582,7 @@ function Body(properties) {
   this._lastTop = 0;
   this._lastBottom = 0;
 
-  Object.assign(this, properties);
+  setupBody(this, properties);
 
   if (config.solver === 'SAT' && this.shape.type === BOX) {
     this.shape = this.shape.toPolygon();
@@ -597,6 +597,35 @@ function Body(properties) {
   }
 }
 Body.uid = 0;
+
+function setupBody(obj, settings) {
+  for (var k in settings) {
+    switch (k) {
+      // Set value
+      case 'mass':
+      case 'damping':
+      case 'rotation':
+      case 'shape':
+      case 'collisionGroup':
+      case 'collideAgainst':
+      case 'collide':
+        obj[k] = settings[k];
+        break;
+
+      // Set vector
+      case 'position':
+      case 'velocity':
+      case 'force':
+        obj[k].x = settings[k].x || 0;
+        obj[k].y = settings[k].y || 0;
+        break;
+      case 'velocityLimit':
+        obj[k].x = settings[k].x || 400;
+        obj[k].y = settings[k].y || 400;
+        break;
+    }
+  }
+}
 
 /**
  * Rotation of this body, and equals the rotation of its shape(if exists).
