@@ -15,6 +15,54 @@ function normalizeCollisionTileID(tiles, firstgid) {
   return tiles;
 }
 
+function normalizeTilePolygon(def) {
+  var polygon;
+  if (def.width !== 0 && def.height !== 0) {
+    polygon = [
+      { x: def.x, y: def.y + def.height },
+      { x: def.x, y: def.y },
+      { x: def.x + def.width, y: def.y },
+      { x: def.x + def.width, y: def.y + def.height },
+    ];
+  }
+  else {
+    if (Array.isArray(def.polygon)) {
+      if (!utils.isClockwise(def.polygon)) {
+        def.polygon.reverse();
+      }
+      polygon = def.polygon;
+    }
+  }
+
+  // Force positions of vertices are positive
+  var i, xFix = 0, yFix = 0, p;
+  for (i = 0; i < polygon.length; i++) {
+    p = polygon[i];
+    if (p.x < 0) {
+      xFix = (xFix < -p.x) ? -p.x : xFix;
+    }
+    if (p.y < 0) {
+      yFix = (yFix < -p.y) ? -p.y : yFix;
+    }
+  }
+
+  for (i = 0; i < polygon.length; i++) {
+    p = polygon[i];
+    p.x += xFix;
+    p.y += yFix;
+  }
+
+  return polygon;
+}
+
+function normalizeCollisionTileShapes(tileDef) {
+  var shapeDefs = Array(Object.keys(tileDef).length);
+  for (var k in tileDef) {
+    shapeDefs[parseInt(k)] = normalizeTilePolygon(tileDef[k].objectgroup.objects[0]);
+  }
+  return shapeDefs;
+}
+
 function convertLayer(layer, tilesize, firstGIDs) {
   var collision = layer.name.indexOf('collision') > -1;
 
@@ -51,7 +99,7 @@ function convertLayer(layer, tilesize, firstGIDs) {
  * @return {array<object>}
  */
 module.exports = function(map) {
-  var i, result = [];
+  var i, result = [], collisionTileShapes;
 
   // Fetch basic informations
   var tilesize = map.tilewidth;
@@ -63,6 +111,8 @@ module.exports = function(map) {
   var firstGIDs = {};
   for (i = 0; i < map.tilesets.length; i++) {
     if (map.tilesets[i].name.indexOf('collision') > -1) {
+      // Parse collision tile shapes
+      collisionTileShapes = normalizeCollisionTileShapes(map.tilesets[i].tiles);
       firstGIDs['collision'] = map.tilesets[i].firstgid;
     }
     else {
@@ -71,14 +121,21 @@ module.exports = function(map) {
   }
 
   // Parse layers
-  var layer;
+  var layer, nLayer;
   for (i = 0; i < map.layers.length; i++) {
     layer = map.layers[i];
     if (layer.type === 'objectgroup') {
       console.log('Object layer is currently not supported!');
     }
     else if (layer.type === 'tilelayer') {
-      result.push(convertLayer(layer, tilesize, firstGIDs));
+      nLayer = convertLayer(layer, tilesize, firstGIDs);
+
+      // Add tile shape define to collision layer
+      if (layer.name.indexOf('collision') > -1) {
+        nLayer.collisionTileShapes = collisionTileShapes;
+      }
+
+      result.push(nLayer);
     }
   }
 
