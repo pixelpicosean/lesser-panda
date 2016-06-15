@@ -22,3 +22,14 @@ module.exports.lift = function lift(arr, w, h) {
   }
   return res;
 };
+
+module.exports.isClockwise = function isClockwise(vertices) {
+  var area = 0, i, v1, v2;
+  for (i = 0; i < vertices.length; i++) {
+    v1 = vertices[i];
+    v2 = vertices[(i + 1) % vertices.length];
+    area += (v2.x - v1.x) * (v2.y + v1.y);
+  }
+
+  return area < 0;
+}
