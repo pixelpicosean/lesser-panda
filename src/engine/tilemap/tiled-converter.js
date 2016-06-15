@@ -7,9 +7,10 @@ function normalizeImageTileID(tiles, firstgid) {
   return tiles;
 }
 
-function normalizeCollisionTileID(tiles) {
+function normalizeCollisionTileID(tiles, firstgid) {
   for (var i = 0; i < tiles.length; i++) {
-    tiles[i] = (tiles[i] > 0) ? 1 : 0;
+    tiles[i] = tiles[i] - firstgid + 1;
+    tiles[i] = (tiles[i] < 0) ? 0 : tiles[i];
   }
   return tiles;
 }
@@ -27,7 +28,7 @@ function convertLayer(layer, tilesize, firstGIDs) {
     data = utils.lift(normalizeImageTileID(layer.data, firstGIDs[tileset]), layer.width, layer.height);
   }
   else {
-    data = normalizeCollisionTileID(layer.data);
+    data = normalizeCollisionTileID(layer.data, firstGIDs['collision']);
   }
 
   return {
@@ -61,7 +62,12 @@ module.exports = function(map) {
   // Parse tileset info
   var firstGIDs = {};
   for (i = 0; i < map.tilesets.length; i++) {
-    firstGIDs[map.tilesets[i].image] = map.tilesets[i].firstgid;
+    if (map.tilesets[i].name.indexOf('collision') > -1) {
+      firstGIDs['collision'] = map.tilesets[i].firstgid;
+    }
+    else {
+      firstGIDs[map.tilesets[i].image] = map.tilesets[i].firstgid;
+    }
   }
 
   // Parse layers
