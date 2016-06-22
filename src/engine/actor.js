@@ -5,6 +5,7 @@ var physics = require('engine/physics');
 var Behavior = require('engine/behavior');
 var loader = require('engine/loader');
 var Scene = require('engine/scene');
+var utils = require('engine/utils');
 
 var DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),
