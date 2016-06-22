@@ -47,6 +47,7 @@ function Tilemap(data, tilesets, group) {
   this.data = data;
   this.collisionLayer = null;
   this.group = group;
+  this.actorLayers = [];
 
   this.createLayers();
 }
@@ -62,6 +63,7 @@ Tilemap.prototype.destroy = function() {
   this.tilesets = null;
   this.collisionLayer.destroy();
   this.layers.length = 0;
+  this.actorLayers.length = 0;
 
   PIXI.Container.prototype.destroy.call(this);
 };
@@ -80,6 +82,25 @@ Tilemap.prototype.addTo = function(scene, container) {
     this.collisionLayer.addTo(scene);
   }
 
+  // Create actor instances
+  var i, j, layer, act;
+  if (this.actorLayers.length > 0) {
+    for (i = 0; i < this.actorLayers.length; i++) {
+      layer = this.actorLayers[i];
+
+      // Create layer if not exist yet
+      if (!scene[layer.name]) {
+        scene.createLayers(layer.name, 'stage');
+      }
+
+      // Spawn actors
+      for (j = 0; j < layer.actors.length; j++) {
+        act = layer.actors[j];
+        scene.spawnActor(act[0], act[1], act[2], layer.name, act[3]);
+      }
+    }
+  }
+
   return this;
 };
 
@@ -96,6 +117,9 @@ Tilemap.prototype.createLayers = function() {
 
     if (layerDef.collision) {
       this.collisionLayer = new CollisionLayer(layerDef, this.group);
+    }
+    else if (layerDef.actors) {
+      this.actorLayers.push(layerDef);
     }
     else {
       tileset = this.tilesets[layerDef.tileset];
