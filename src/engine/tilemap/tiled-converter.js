@@ -89,6 +89,22 @@ function convertLayer(layer, tilesize, firstGIDs) {
   };
 }
 
+var EMPTY_SETTINGS = {};
+function parseActor(data) {
+  return [data.type || 'Actor', data.x, data.y, Object.assign({
+    name: data.name,
+    rotation: data.rotation,
+    visible: data.visible,
+  }, data.properties || EMPTY_SETTINGS)];
+}
+
+function parseActors(data) {
+  return {
+    name: data.name,
+    actors: data.objects.map(parseActor),
+  };
+}
+
 /**
  * Convert a tiled map data into LesserPanda built-in tilemap format.
  *
@@ -125,7 +141,7 @@ module.exports = function(map) {
   for (i = 0; i < map.layers.length; i++) {
     layer = map.layers[i];
     if (layer.type === 'objectgroup') {
-      console.log('Object layer is currently not supported!');
+      nLayer = parseActors(layer);
     }
     else if (layer.type === 'tilelayer') {
       nLayer = convertLayer(layer, tilesize, firstGIDs);
@@ -134,9 +150,8 @@ module.exports = function(map) {
       if (layer.name.indexOf('collision') > -1) {
         nLayer.collisionTileShapes = collisionTileShapes;
       }
-
-      result.push(nLayer);
     }
+    result.push(nLayer);
   }
 
   return result;
