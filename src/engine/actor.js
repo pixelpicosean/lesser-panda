@@ -4,6 +4,7 @@ var PIXI = require('engine/pixi');
 var physics = require('engine/physics');
 var Behavior = require('engine/behavior');
 var loader = require('engine/loader');
+var Scene = require('engine/scene');
 
 var DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),
@@ -169,6 +170,16 @@ Actor.prototype.constructor = Actor;
 
 Actor.uid = 0;
 Actor.canBePooled = false;
+
+Actor.types = { Actor: Actor };
+Actor.register = function(type, ctor) {
+  if (!Actor.types[type]) {
+    Actor.types[type] = ctor;
+  }
+  else {
+    console.log('[WARNING]: "' + type + '" actor is already registered!');
+  }
+};
 
 /**
  * Rotation
@@ -948,3 +959,215 @@ function setupInst(obj, settings) {
     }
   }
 }
+
+// Actor system --------------------------------------------
+Object.assign(Scene.prototype, {
+  /**
+   * Spawn an Actor to this scene
+   * @method spawnActor
+   * @memberOf Scene#
+   * @param  {Actor} actor      Actor class
+   * @param  {number} [x]
+   * @param  {number} [y]
+   * @param  {string} [layerName] Name of the layer to add to(key of a PIXI.Container instance in this scene)
+   * @param  {object} [settings]  Custom settings
+   * @param  {string} [settings.name] Name of this actor
+   * @param  {string} [settings.tag]  Tag of this actor
+   * @return {Actor}            Actor instance
+   */
+  spawnActor: function spawnActor(actor_, x, y, layerName, settings) {
+    var settings_ = settings || {};
+
+    var layerName_ = layerName;
+    if (!this[layerName_]) {
+      layerName_ = 'stage';
+    }
+
+    // Create instance
+    var a, actor = actor_;
+
+    if (typeof(actor_) === 'string') {
+      actor = Actor.types[actor_];
+      if (!actor) {
+        console.log('[WARNING]: Actor type "' + actor_ + '" does not exist!');
+        return undefined;
+      }
+    }
+
+    if (actor.canBePooled) {
+      a = actor.create(settings_);
+    }
+    else {
+      a = new actor(settings_);
+    }
+    a.CTOR = actor;
+
+    // Add actor components
+    a.scene = this;
+    a.layer = this[layerName_];
+    a.sprite && a.layer.addChild(a.sprite);
+    a.body && this.world.addBody(a.body);
+    a.position.set(x || 0, y || 0);
+
+    // Add to actor system
+    this.addActor(a, settings_.tag);
+
+    // Keep a reference if it has a name
+    if (settings_.name) {
+      a.name = settings_.name;
+      this.actorSystem.namedActors[settings_.name] = a;
+    }
+
+    return a;
+  },
+
+  /**
+   * Add actor to this scene, so its `update()` function gets called every frame.
+   * @method addActor
+   * @memberOf Scene#
+   * @param {Actor} actor   Actor you want to add
+   * @param {string} tag    Tag of this actor, default is '0'
+   */
+  addActor: function addActor(actor, tag) {
+    var t = tag || '0';
+
+    actor.tag = t;
+
+    if (!this.actorSystem.actors[t]) {
+      // Create a new actor list
+      this.actorSystem.actors[t] = [];
+
+      // Active new tag by default
+      this.actorSystem.activeTags.push(t);
+    }
+
+    if (this.actorSystem.actors[t].indexOf(actor) < 0) {
+      actor.removed = false;
+      this.actorSystem.actors[t].push(actor);
+    }
+
+    actor.ready();
+  },
+
+  /**
+   * Remove actor from scene.
+   * @method removeActor
+   * @memberOf Scene#
+   * @param {Actor} actor
+   */
+  removeActor: function removeActor(actor) {
+    // Will remove in next frame
+    if (actor) actor.removed = true;
+
+    // Remove name based reference
+    if (actor.name) {
+      if (this.actorSystem.namedActors[actor.name] === actor) {
+        this.actorSystem.namedActors[actor.name] = null;
+      }
+    }
+  },
+
+  /**
+   * Pause actors with a specific tag.
+   * @method pauseActorsTagged
+   * @memberof Scene#
+   * @param  {string} tag
+   */
+  pauseActorsTagged: function pauseActorsTagged(tag) {
+    if (this.actorSystem.actors[tag]) {
+      utils.removeItems(this.actorSystem.activeTags, this.actorSystem.activeTags.indexOf(tag), 1);
+      this.actorSystem.deactiveTags.push(tag);
+    }
+
+    return this;
+  },
+
+  /**
+   * Resume actors with a specific tag.
+   * @method resumeActorsTagged
+   * @memberof Scene#
+   * @param  {string} tag
+   */
+  resumeActorsTagged: function resumeActorsTagged(tag) {
+    if (this.actorSystem.actors[tag]) {
+      utils.removeItems(this.actorSystem.deactiveTags, this.actorSystem.deactiveTags.indexOf(tag), 1);
+      this.actorSystem.activeTags.push(tag);
+    }
+
+    return this;
+  },
+});
+
+Scene.registerSystem('Actor', {
+  init: function init(scene) {
+    /**
+     * Actor system runtime data storage
+     */
+    scene.actorSystem = {
+      activeTags: ['0'],
+      deactiveTags: [],
+      actors: {
+        '0': [],
+      },
+      namedActors: {},
+    };
+  },
+  update: function update(scene, deltaMS, deltaSec) {
+    var i, key, actors, actor;
+    for (key in scene.actorSystem.actors) {
+      if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
+
+      actors = scene.actorSystem.actors[key];
+      for (i = 0; i < actors.length; i++) {
+        actor = actors[i];
+
+        if (!actor.removed) {
+          if (actor.behaviorList.length > 0) {
+            actor.updateBehaviors(deltaMS, deltaSec);
+          }
+          if (actor.canEverTick) {
+            actor.update(deltaMS, deltaSec);
+          }
+        }
+
+        if (actor.removed) {
+          actor.CTOR.canBePooled && actor.CTOR.recycle(actor);
+          utils.removeItems(actors, i--, 1);
+        }
+      }
+    }
+  },
+  freeze: function freeze(scene) {
+    // Cleanup
+    var i, key, actors, actor;
+    for (key in scene.actorSystem.actors) {
+      if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
+
+      actors = scene.actorSystem.actors[key];
+      for (i = 0; i < actors.length; i++) {
+        actor = actors[i];
+
+        if (actor.removed) {
+          actor.CTOR.canBePooled && actor.CTOR.recycle(actor);
+          utils.removeItems(actors, i--, 1);
+        }
+      }
+    }
+  },
+  freeze: function freeze(scene) {
+    // Cleanup
+    var i, key, actors, actor;
+    for (key in scene.actorSystem.actors) {
+      if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
+
+      actors = scene.actorSystem.actors[key];
+      for (i = 0; i < actors.length; i++) {
+        actor = actors[i];
+
+        if (actor.removed) {
+          utils.removeItems(actors, i--, 1);
+        }
+      }
+    }
+  },
+});
