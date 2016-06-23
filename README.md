@@ -84,6 +84,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Improve scale mode support for mobile devices, especially for iOS.
 - Add support of spawning actors using registered type name.
 - Add `Actor.register` function to register custom(subclass) `Actor` classes with a key.
 - Moved actor sub-system code into `actor` module, so scenes won't be able to spawn actors until you import the `actor` module.
