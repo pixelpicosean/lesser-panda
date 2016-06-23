@@ -93,10 +93,10 @@ function boot() {
 
   // Setup visibility change API
   var visibleResume = function() {
-    config.pauseOnHide && core.resume('visibility');
+    if (config.pauseOnHide) core.resume('visibility');
   };
   var visiblePause = function() {
-    config.pauseOnHide && core.pause('visibility');
+    if (config.pauseOnHide) core.pause('visibility');
   };
 
   // Main visibility API function
@@ -104,8 +104,8 @@ function boot() {
     var stateKey, eventKey;
     var keys = {
       hidden: "visibilitychange",
-      webkitHidden: "webkitvisibilitychange",
       mozHidden: "mozvisibilitychange",
+      webkitHidden: "webkitvisibilitychange",
       msHidden: "msvisibilitychange"
     };
     for (stateKey in keys) {
@@ -115,7 +115,7 @@ function boot() {
       }
     }
     return function(c) {
-      if (c) document.addEventListener(eventKey, c);
+      if (c) document.addEventListener(eventKey, c, false);
       return !document[stateKey];
     }
   })();
@@ -192,7 +192,7 @@ function boot() {
       }
 
       // Hide game view
-      core.view.style.display = core.rotatePromptVisible ? 'none' : 'inline-block';
+      core.view.style.display = core.rotatePromptVisible ? 'none' : 'block';
       // Show rotate view
       core.rotatePromptElm.style.backgroundColor = config.rotatePromptBGColor || 'black';
       core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-box' : 'none';
@@ -247,7 +247,8 @@ function chooseProperResolution(res) {
   }
 }
 function resizeRotatePrompt() {
-  _fullWindowStyle(core.rotatePromptElm);
+  core.rotatePromptElm.style.width = window.innerWidth + 'px';
+  core.rotatePromptElm.style.height = window.innerHeight + 'px';
   _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
 }
 
@@ -659,6 +660,7 @@ Object.defineProperty(core, 'paused', {
 
 // Resize functions
 var windowSize = { x: 1, y: 1 };
+var scaledWidth, scaledHeight;
 var result, container;
 function _letterBoxResize(first) {
   // Update sizes
@@ -669,18 +671,28 @@ function _letterBoxResize(first) {
   result = resize.outerBoxResize(windowSize, core.viewSize);
 
   // Resize the renderer once
-  first && Renderer.resize(core.viewSize.x, core.viewSize.y);
+  if (first) Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  scaledWidth = Math.floor(core.viewSize.x * result.scale);
+  scaledHeight = Math.floor(core.viewSize.y * result.scale);
 
   // Resize the view
-  core.view.style.width = (core.viewSize.x * result.scale) + 'px';
-  core.view.style.height = (core.viewSize.y * result.scale) + 'px';
-  core.containerView.style.width = windowSize.x + 'px';
-  core.containerView.style.height = windowSize.y + 'px';
+  core.view.style.width = scaledWidth + 'px';
+  core.view.style.height = scaledHeight + 'px';
 
-  _alignToWindowCenter(core.view, core.viewSize.x * result.scale, core.viewSize.y * result.scale);
+  // Resize the container
+  core.containerView.style.width = scaledWidth + 'px';
+  core.containerView.style.height = scaledHeight + 'px';
+  core.containerView.style.marginTop = Math.floor(result.top) + 'px';
+  core.containerView.style.marginLeft = Math.floor(result.left) + 'px';
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0);
+  }
 }
 function _cropResize() {
   // Update sizes
@@ -731,14 +743,8 @@ function _scaleOuterResize() {
 
 // CSS helpers
 function _alignToWindowCenter(el, w, h) {
-  el.style.position = 'absolute';
-  el.style.left = '50%';
-  el.style.top = '50%';
-  el.style.margin = '-' + Math.floor(h / 2) + 'px 0 0 -' + Math.floor(w / 2) + 'px';
-}
-function _fullWindowStyle(el) {
-  el.style.width = window.innerWidth + 'px';
-  el.style.height = window.innerHeight + 'px';
+  el.style.marginLeft = Math.floor((window.innerWidth - w) / 2) + 'px';
+  el.style.marginTop = Math.floor((window.innerHeight - h) / 2) + 'px';
 }
 function _noPageScroll() {
   document.ontouchmove = function(event) {
