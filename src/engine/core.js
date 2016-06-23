@@ -723,6 +723,11 @@ function _scaleInnerResize() {
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0);
+  }
 }
 function _scaleOuterResize() {
   // Update sizes
@@ -743,6 +748,11 @@ function _scaleOuterResize() {
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0);
+  }
 }
 
 // CSS helpers
