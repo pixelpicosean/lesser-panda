@@ -697,12 +697,19 @@ function _letterBoxResize(first) {
 function _cropResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
+  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
+  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
   Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0);
+  }
 }
 function _scaleInnerResize() {
   // Update sizes
