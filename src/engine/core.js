@@ -725,6 +725,8 @@ function _scaleInnerResize() {
 function _scaleOuterResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
+  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
+  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
   Renderer.resize(core.viewSize.x, core.viewSize.y);
