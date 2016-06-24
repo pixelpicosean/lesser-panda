@@ -165,16 +165,14 @@ function boot() {
 
     if (config.rotatePromptImg) {
       var img = new Image();
-      var me = this;
       img.onload = function() {
         div.image = img;
-        div.style.height = img.height + 'px';
         div.appendChild(img);
         resizeRotatePrompt();
       };
       img.src = config.rotatePromptImg;
       img.className = 'center';
-      img.style.maxWidth = '100%';
+      core.rotatePromptImg = img;
     }
 
     // Check orientation and display the rotate prompt if required
@@ -249,6 +247,20 @@ function resizeRotatePrompt() {
   core.rotatePromptElm.style.width = window.innerWidth + 'px';
   core.rotatePromptElm.style.height = window.innerHeight + 'px';
   _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
+
+  var imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
+  var windowRatio = window.innerWidth / window.innerHeight;
+  var w, h;
+  if (imgRatio < windowRatio) {
+    w = Math.floor(window.innerHeight * 0.8);
+    h = Math.floor(w / imgRatio);
+  }
+  else {
+    h = Math.floor(window.innerWidth * 0.8);
+    w = Math.floor(h * imgRatio);
+  }
+  core.rotatePromptImg.style.height = w + 'px';
+  core.rotatePromptImg.style.width = h + 'px';
 }
 
 // Update (fixed update implementation from Phaser by @photonstorm)
