@@ -691,7 +691,7 @@ function _letterBoxResize(first) {
 
   // Reset scroll for mobile devices
   if (device.mobile) {
-    window.scrollTo(0);
+    window.scrollTo(0, 1);
   }
 }
 function _cropResize() {
@@ -708,7 +708,7 @@ function _cropResize() {
 
   // Reset scroll for mobile devices
   if (device.mobile) {
-    window.scrollTo(0);
+    window.scrollTo(0, 1);
   }
 }
 function _scaleInnerResize() {
@@ -733,7 +733,7 @@ function _scaleInnerResize() {
 
   // Reset scroll for mobile devices
   if (device.mobile) {
-    window.scrollTo(0);
+    window.scrollTo(0, 1);
   }
 }
 function _scaleOuterResize() {
@@ -758,7 +758,7 @@ function _scaleOuterResize() {
 
   // Reset scroll for mobile devices
   if (device.mobile) {
-    window.scrollTo(0);
+    window.scrollTo(0, 1);
   }
 }
 
