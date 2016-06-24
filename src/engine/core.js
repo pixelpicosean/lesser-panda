@@ -160,7 +160,6 @@ function boot() {
     div.style.margin = 'auto';
     div.style.display = 'none';
     div.style.color = config.rotatePromptFontColor || 'black';
-    div.className = 'center';
     core.rotatePromptElm = div;
     document.body.appendChild(div);
 
@@ -174,7 +173,7 @@ function boot() {
         resizeRotatePrompt();
       };
       img.src = config.rotatePromptImg;
-      img.style.position = 'relative';
+      img.className = 'center';
       img.style.maxWidth = '100%';
     }
 
