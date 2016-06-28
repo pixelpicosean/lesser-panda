@@ -970,7 +970,7 @@ Object.assign(Scene.prototype, {
    * @param  {Actor} actor      Actor class
    * @param  {number} [x]
    * @param  {number} [y]
-   * @param  {string} [layerName] Name of the layer to add to(key of a PIXI.Container instance in this scene)
+   * @param  {string|PIXI.Container} [layerName] Name of the layer to add to(key of a PIXI.Container instance in this scene) or a PIXI.Container instance
    * @param  {object} [settings]  Custom settings
    * @param  {string} [settings.name] Name of this actor
    * @param  {string} [settings.tag]  Tag of this actor
@@ -979,9 +979,15 @@ Object.assign(Scene.prototype, {
   spawnActor: function spawnActor(actor_, x, y, layerName, settings) {
     var settings_ = settings || {};
 
-    var layerName_ = layerName;
-    if (!this[layerName_]) {
-      layerName_ = 'stage';
+    var layer, layerName_ = layerName || 'stage';
+    if (typeof(layerName_) === 'string') {
+      layer = this[layerName_];
+      if (!layer) {
+        layer = this.stage;
+      }
+    }
+    else if (layerName_ instanceof PIXI.Container) {
+      layer = layerName_;
     }
 
     // Create instance
@@ -1005,8 +1011,8 @@ Object.assign(Scene.prototype, {
 
     // Add actor components
     a.scene = this;
-    a.layer = this[layerName_];
-    a.sprite && a.layer.addChild(a.sprite);
+    a.layer = layer;
+    a.sprite && layer.addChild(a.sprite);
     a.body && this.world.addBody(a.body);
     a.position.set(x || 0, y || 0);
 
