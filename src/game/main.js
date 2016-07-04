@@ -10,7 +10,9 @@ loader.addAsset('KenPixel.fnt');
 PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 
 class Main extends Scene {
-  awake() {
+  constructor() {
+    super();
+
     this
       .createLayer('worldLayer')
         .createLayer('actLayer', 'worldLayer')
@@ -27,4 +29,4 @@ class Main extends Scene {
 };
 core.addScene('Main', Main);
 
-core.startWithScene('Loading');
+core.start();
