@@ -493,13 +493,18 @@ Object.assign(core, {
    * Switch to a scene.
    * @memberof module:engine/core
    * @param {string} name Name of the target scene.
+   * @param {boolean} newInstance Whether create new instance for this scene.
    */
-  setScene: function setScene(name) {
+  setScene: function setScene(name, newInstance) {
     var pair = core.scenes[name];
 
     if (!pair) {
       console.log('Scene [' + name + '] is not defined!');
       return;
+    }
+
+    if (!!newInstance) {
+      pair.inst = null;
     }
 
     nextScene = pair;
