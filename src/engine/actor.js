@@ -790,8 +790,6 @@ Actor.prototype.initBody = function initBody(settings_) {
   this.body = new physics.Body(bodySettings);
   this.body.position = this.position;
 
-  this.body.parent = this;
-
   if (this.scene) {
     this.scene.world.addBody(this.body);
   }
@@ -1012,8 +1010,14 @@ Object.assign(Scene.prototype, {
     // Add actor components
     a.scene = this;
     a.layer = layer;
-    a.sprite && layer.addChild(a.sprite);
-    a.body && this.world.addBody(a.body);
+    if (a.sprite) {
+      a.sprite.actor = a;
+      layer.addChild(a.sprite);
+    }
+    if (a.body) {
+      a.body.actor = a;
+      this.world.addBody(a.body);
+    }
     a.position.set(x || 0, y || 0);
 
     // Add to actor system
