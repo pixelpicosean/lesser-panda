@@ -609,6 +609,7 @@ function setupBody(obj, settings) {
       case 'collisionGroup':
       case 'collideAgainst':
       case 'collide':
+      case 'beforeCollide':
         obj[k] = settings[k];
         break;
 
