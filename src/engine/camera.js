@@ -381,7 +381,7 @@ Camera.prototype.update = function update(_, delta) {
   this.moveCamera(this.delta);
 
   if (this.container) {
-    this.container.scale.set(1 / this.zoom.x, 1 / this.zoom.y);
+    this.container.scale.set(this.zoom.x, this.zoom.y);
     this.container.rotation = -this.rotation;
   }
 };
