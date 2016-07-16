@@ -1,16 +1,10 @@
-var EventEmitter = require('engine/eventemitter3');
-
 /**
  * Behavior base class.
  *
  * @class Behavior
- * @extends {EventEmitter}
- *
  * @constructor
  */
 function Behavior() {
-  EventEmitter.call(this);
-
   /**
    * Type of this behavior
    * @type {string}
@@ -29,8 +23,6 @@ function Behavior() {
    */
   this.target = null;
 };
-Behavior.prototype = Object.create(EventEmitter.prototype);
-Behavior.prototype.constructor = Behavior;
 
 /**
  * Add to target

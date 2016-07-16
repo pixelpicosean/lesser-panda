@@ -8,6 +8,7 @@ LesserPanda has a lot of features, and the list is still growing:
 
 - Super fast Canvas and WebGL rendering powered by PIXI.js.
 - Tilemap rendering.
+- Import tile collider shape from Tiled map.
 - Fixed game loop with customizable `FPS` and `frame skips`.
 - Fast and powerful physics solution.
 - Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
@@ -83,6 +84,30 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Add second parameter to `core.setScene` to be able to create new instance for the next scene.
+- Improve scale mode support for mobile devices, especially for iOS.
+- Add support of spawning actors using registered type name.
+- Add `Actor.register` function to register custom(subclass) `Actor` classes with a key.
+- Moved actor sub-system code into `actor` module, so scenes won't be able to spawn actors until you import the `actor` module.
+- Improved `Body` setup.
+- Deprecated `Body.anchor` since it's not supported by SAT solver.
+- Completely support tile collider shapes defined from **Tiled** editor, tilemap based workflow is hugely improved.
+- Fixes collision map so that maps with holes are not properly supported.
+- Add `Scene.createLayer` method to simplify layer creating.
+- Position, layer and settings parameters of `Scene.spawnActor` are not optional.
+- Add `vertical` and `horizontal` settings to WrapAroundScreen behavior.
+- Device patch is removed since resizing now works without hack.
+- Canvas resizing is fixed and improved, and useless `never` resize mode is deprecated.
+- Fixed `Camera` to be able to work without any targets.
+- Add `poolable` module to `utils`.
+- Improve the `FireBullet` behavior, now it has `ammo` support built-in.
+- `Behavior` no longer inherits from `EventEmitter`.
+- `Actor` spawn/remove behavior changed, now it's possible to maunally create `Actor` instance and add to any scene instead of calling `spawnActor`. Object pool support is included.
+- Change `Actor.prepare` to `Actor.ready`.
+- Fix some Actor component create methods.
+- Add `rotate-around-point` behavior
+- Add `steering` behavior
+- Add `face-the-mouse` behavior
 - Actor component factory methods now accept settings of all built-in properties.
 - Add `getTexture` function to `engine.loader` to be able to get texture from string.
 - Add more component factory methods to Actor.

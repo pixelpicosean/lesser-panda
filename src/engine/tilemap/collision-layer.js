@@ -48,10 +48,9 @@ function pointInPolygon(point, vs) {
 /* p1 in p2 */
 function polygonInPolygon(p1, p2) {
   var inside = true;
-  var point = [0, 0];
-  for (var i = 0; i < p1.length - 1; i += 2) {
-    point[0] = p1[i];
-    point[1] = p1[i + 1];
+  var point;
+  for (var i = 0; i < p1.length; i++) {
+    point = p1[i];
     if (!pointInPolygon(point, p2)) {
       inside = false;
       break;
@@ -82,6 +81,7 @@ function CollisionLayer(def, group) {
   }
 
   this.group = group;
+  this.collisionTileShapes = def.collisionTileShapes;
   this.bodies = [];
 
   this.generateShapes();
@@ -108,19 +108,24 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
         x = mx * j; // left
         y = my * i; // top
 
-        v0 = { x: x,      y: y + my }; // left-bottom
-        v1 = { x: x,      y: y      }; // left-top
-        v2 = { x: x + mx, y: y      }; // right-top
-        v3 = { x: x + mx, y: y + my }; // right-bottom
+        var polygon = this.collisionTileShapes[grid[i][j] - 1];
+        var vs = Array(polygon.length);
+        var es = Array(polygon.length);
+        for (var p = 0; p < polygon.length; p++) {
+          vs[p] = { x: polygon[p].x + x, y: polygon[p].y + y };
+        }
 
-        e0 = [v0, v1, tag, false];
-        e1 = [v1, v2, tag, false];
-        e2 = [v2, v3, tag, false];
-        e3 = [v3, v0, tag, false];
+        for (var p = 0; p < polygon.length; p++) {
+          if (p === polygon.length - 1) {
+            es[p] = [vs[p], vs[0], tag, false];
+          }
+          else {
+            es[p] = [vs[p], vs[p + 1], tag, false];
+          }
 
-        edges.push(e0, e1, e2, e3);
-
-        taggedGroups[tag] = [e0, e1, e2, e3];
+          edges.push(es[p]);
+        }
+        taggedGroups[tag] = es;
       }
     }
   }
@@ -221,17 +226,58 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
 
   var shapes = {};
   for (i = 0; i < edges.length; i++) {
-    if (!shapes[edges[i]]) {
-      shapes[edges[i]] = [edges[i]];
+    if (!shapes[edges[i][2]]) {
+      shapes[edges[i][2]] = [edges[i]];
     }
     else {
-      shapes[edges[i]].push(edges[i]);
+      shapes[edges[i][2]].push(edges[i]);
     }
   }
 
+  function getNearestPoints(outside, inside) {
+    // FIXME: should the max value be the size of a tile?
+    var distSqr = Number.MAX_VALUE, calcDistSqr;
+    var x1, y1, x2, y2;
+    var pair = [0, 0];
+    for (var i = 0; i < outside.length; i++) {
+      for (var j = 0; j < inside.length; j++) {
+        x1 = outside[i][0];
+        y1 = outside[i][1];
+        x2 = inside[j][0];
+        y2 = inside[j][1];
+
+        calcDistSqr = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+        if (calcDistSqr < distSqr) {
+          distSqr = calcDistSqr;
+          pair[0] = i; pair[1] = j;
+        }
+      }
+    }
+
+    return pair;
+  }
+
+  function arrStartFromIdx(arr, idx) {
+    var result = arr.slice(idx);
+    return result.concat(arr.slice(0, idx));
+  }
+
+  function createZeroWidthPoints(outside, inside) {
+    var pair = getNearestPoints(outside, inside);
+
+    outside = arrStartFromIdx(outside, pair[0]);
+    inside = arrStartFromIdx(inside, pair[1]);
+
+    outside.push(outside[0]);
+    inside.push(inside[0]);
+
+    return outside.concat(inside);
+  }
+
   function getShapeVertices(shape) {
-    var temp_edges = shape.slice();
     var vertices = [];
+    var temp_edges = shape.slice();
+
     var edge = temp_edges[0];
     utilsG.removeItems(temp_edges, 0, 1);
     vertices.push([edge[0].x, edge[0].y]);
@@ -242,7 +288,27 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       vertices.push([edge[0].x, edge[0].y]);
       next_edge = findEdge(temp_edges, edge[1]);
     }
-    if (temp_edges.length === 0) return vertices;
+
+    // Without a hole
+    if (temp_edges.length === 0) {
+      return vertices;
+    }
+    // With holes inside
+    else {
+      // Calculate vertices of the hole inside
+      var holeVertices = getShapeVertices(temp_edges);
+
+      // Confirm vertices is outside and hole is inside
+      var tempVertices;
+      if (polygonInPolygon(vertices, holeVertices)) {
+        tempVertices = holeVertices;
+        holeVertices = vertices;
+        vertices = tempVertices;
+      }
+
+      // Create zero width points
+      return createZeroWidthPoints(vertices, holeVertices);
+    }
   }
 
   // Decomp polygons

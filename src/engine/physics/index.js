@@ -56,17 +56,15 @@ function erase(arr, obj) {
 
 // Update bounds of a Box body on last frame
 function updateBounds(body) {
-  body._lastLeft = body.last.x - body.shape.width * body.anchor.x;
+  body._lastLeft = body.last.x - body.shape.width * 0.5;
   body._lastRight = body._lastLeft + body.shape.width;
-  body._lastTop = body.last.y - body.shape.height * body.anchor.y;
+  body._lastTop = body.last.y - body.shape.height * 0.5;
   body._lastBottom = body._lastTop + body.shape.height;
 
-  body._left = body.position.x - body.shape.width * body.anchor.x;
+  body._left = body.position.x - body.shape.width * 0.5;
   body._right = body._left + body.shape.width;
-  body._top = body.position.y - body.shape.height * body.anchor.y;
+  body._top = body.position.y - body.shape.height * 0.5;
   body._bottom = body._top + body.shape.height;
-
-  body._center.set(body.position.x + body.shape.width * (0.5 - body.anchor.x), body.position.y + body.shape.height * (0.5 - body.anchor.y));
 }
 
 /**
@@ -385,8 +383,8 @@ AABBSolver.prototype.hitTest = function hitTest(a, b) {
       a._left >= b._right ||
       a._right <= b._left)) {
 
-      var distX = circle._center.x - utils.clamp(circle._center.x, box._left, box._right);
-      var distY = circle._center.y - utils.clamp(circle._center.y, box._top, box._bottom);
+      var distX = circle.position.x - utils.clamp(circle.position.x, box._left, box._right);
+      var distY = circle.position.y - utils.clamp(circle.position.y, box._top, box._bottom);
 
       return (distX * distX + distY * distY) < (circle.shape.radius * circle.shape.radius);
     }
@@ -409,25 +407,25 @@ AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
     a.shape.type === CIRC && b.shape.type === BOX) {
     if (lte(a._lastBottom, b._lastTop)) {
       if (a.collide(b, DOWN)) {
-        a.position.y = b.position.y - b.shape.height * b.anchor.y - a.shape.height * (1 - a.anchor.y);
+        a.position.y = b.position.y - b.shape.height * 0.5 - a.shape.height * 0.5;
         return true;
       }
     }
     else if (gte(a._lastTop, b._lastBottom)) {
       if (a.collide(b, UP)) {
-        a.position.y = b.position.y + b.shape.height * (1 - b.anchor.y) + a.shape.height * a.anchor.y;
+        a.position.y = b.position.y + b.shape.height * 0.5 + a.shape.height * 0.5;
         return true;
       }
     }
     else if (lte(a._lastRight, b._lastLeft)) {
       if (a.collide(b, RIGHT)) {
-        a.position.x = b.position.x - b.shape.width * b.anchor.x - a.shape.width * (1 - a.anchor.x);
+        a.position.x = b.position.x - b.shape.width * 0.5 - a.shape.width * 0.5;
         return true;
       }
     }
     else if (gte(a._lastLeft, b._lastRight)) {
       if (a.collide(b, LEFT)) {
-        a.position.x = b.position.x + b.shape.width * (1 - b.anchor.x) + a.shape.width * a.anchor.x;
+        a.position.x = b.position.x + b.shape.width * 0.5 + a.shape.width * 0.5;
         return true;
       }
     }
@@ -526,12 +524,6 @@ function Body(properties) {
    */
   this.position = Vector.create();
   /**
-   * Anchor of the shape.
-   * @type {Vector}
-   * @default (0.5, 0.5)
-   */
-  this.anchor = Vector.create(0.5);
-  /**
    * Last position of body.
    * @type {Vector}
    */
@@ -580,8 +572,6 @@ function Body(properties) {
   this.damping = 0;
 
   // Internal caches
-  this._center = Vector.create();
-
   this._left = 0;
   this._right = 0;
   this._top = 0;
@@ -592,7 +582,7 @@ function Body(properties) {
   this._lastTop = 0;
   this._lastBottom = 0;
 
-  Object.assign(this, properties);
+  setupBody(this, properties);
 
   if (config.solver === 'SAT' && this.shape.type === BOX) {
     this.shape = this.shape.toPolygon();
@@ -607,6 +597,36 @@ function Body(properties) {
   }
 }
 Body.uid = 0;
+
+function setupBody(obj, settings) {
+  for (var k in settings) {
+    switch (k) {
+      // Set value
+      case 'mass':
+      case 'damping':
+      case 'rotation':
+      case 'shape':
+      case 'collisionGroup':
+      case 'collideAgainst':
+      case 'collide':
+      case 'beforeCollide':
+        obj[k] = settings[k];
+        break;
+
+      // Set vector
+      case 'position':
+      case 'velocity':
+      case 'force':
+        obj[k].x = settings[k].x || 0;
+        obj[k].y = settings[k].y || 0;
+        break;
+      case 'velocityLimit':
+        obj[k].x = settings[k].x || 400;
+        obj[k].y = settings[k].y || 400;
+        break;
+    }
+  }
+}
 
 /**
  * Rotation of this body, and equals the rotation of its shape(if exists).
@@ -1127,9 +1147,6 @@ Response.prototype.clear = function clear() {
  *
  * Fore more realistic cases, you need a REAL rigid body physics engine
  * like [p2.js](https://github.com/schteppe/p2.js). Those will be supported in the future(maybe).
- *
- * NOTE: SAT solver currently not support custom `anchor`, it will ignore
- * {@link Body#anchor} and always treat it as (0.5, 0.5).
  *
  * Set `physics.solver` to `'SAT'` to enable.
  *

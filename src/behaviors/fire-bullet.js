@@ -1,7 +1,8 @@
 /**
- * Spawn bullets from target position
+ * Fire bullets to a specific direction
  *
- * @action fire Fire a bullet
+ * @action fire(position, direction)  Fire a bullet
+ * @action reload(amount=)            Reload ammo, fully or increasingly
  */
 
 import keyboard from 'engine/keyboard';
@@ -9,60 +10,89 @@ import Behavior from 'engine/behavior';
 import Vector from 'engine/vector';
 
 export default class FireBullet extends Behavior {
-  type = 'FireBullet'
+  type = 'FireBullet';
 
   defaultSettings = {
-    /* Whether use keyboard to control */
-    useKeyboard: true,
-    /* Press to fire, when `useKeyboard` is true */
-    key: 'X',
-
-    /* Fire continually or not */
-    rapid: true,
-    /* Time between 2 bullets, when `rapid` is true */
-    fireBetween: 400,
+    /* Fire when this event emit from target */
+    fireEvent: 'fire',
+    /* Reload when this event emit from target */
+    reloadEvent: 'reload',
 
     /* "Relative" to target rotation or "Absolute" value */
     directionMode: 'Relative',
-    /* Angle that applied to bullets, based on `directionMode` */
-    direction: 0,
 
-    /* Bullet emit function, `spawnBullet(position, direction)`, the context is target Actor */
-    spawnBullet: null,
-  }
+    /* Max ammo to  */
+    maxAmmo: 5,
 
-  get emitPoint() {
-    return this._emitPoint.set(this.offset, 0)
-      .rotate(this.dir);
-  }
+    /* Time between fires */
+    cooldown: 200,
+
+    /* Bullet class that accept `emitter` and `direction` */
+    bulletActor: null,
+    /* Which layer to add this bullet to */
+    bulletLayer: 'stage',
+  };
 
   constructor() {
     super();
 
-    this._emitPoint = Vector.create();
+    this.cdTimer = 0;
+    this.ammo = 0;
+
+    this.bulletConfig = {
+      emitter: null,
+      direction: 0,
+    };
+  }
+  setup(s) {
+    super.setup(s);
+
+    this.cdTimer = 0;
+    this.ammo = this.maxAmmo;
+  }
+
+  activate() {
+    this.target.on(this.fireEvent, this.fire, this);
+    this.target.on(this.reloadEvent, this.reload, this);
+    return super.activate();
+  }
+  deactivate() {
+    this.target.off(this.fireEvent, this.fire, this);
+    this.target.off(this.reloadEvent, this.reload, this);
+    return super.deactivate();
   }
 
   // Private
   update(dt) {
-    if (this.fireTimer > 0) {
-      this.fireTimer -= dt;
-    }
-
-    if (this.useKeyboard && keyboard.down(this.key)) {
-      this.fire();
+    if (this.cdTimer > 0) {
+      this.cdTimer -= dt;
     }
   }
 
   // Actions
-  fire() {
-    if (this.fireTimer > 0) return;
+  fire(position, direction) {
+    if (this.cdTimer > 0) return;
 
-    if (this.rapid) {
-      this.fireTimer = this.fireBetween;
+    this.bulletConfig.emitter = this.target;
+    this.bulletConfig.direction = (this.directionMode === 'Relative') ? (this.target.rotation + direction) : direction;
+
+    if (this.bulletActor && this.target && this.target.scene) {
+      if (this.ammo > 0) {
+        this.ammo -= 1;
+        this.target.emit('ammo', this.ammo);
+        this.cdTimer = this.cooldown;
+        this.target.scene.spawnActor(this.bulletActor, position.x, position.y, this.bulletLayer, this.bulletConfig);
+      }
     }
-
-    this.dir = (this.directionMode === 'Relative') ? this.target.rotation + this.direction : this.direction;
-    this.spawnBullet && this.spawnBullet.call(this.target, this.emitPoint, this.dir);
+  }
+  reload(amount) {
+    if (!amount) {
+      this.ammo = this.maxAmmo;
+    }
+    else {
+      this.ammo = amount;
+    }
+    this.target.emit('ammo', this.ammo);
   }
 }
 

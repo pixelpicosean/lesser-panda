@@ -6,8 +6,8 @@ var core = module.exports = require('./core');
 // Uncomment to import any plugins you want to use
 core.extras         = require('./extras');
 core.interaction    = require('./interaction');
-// core.filters        = require('./filters');
-// core.mesh           = require('./mesh');
+core.filters        = require('./filters');
+core.mesh           = require('./mesh');
 
 // Add some helpers
 var activeScene = null;
@@ -55,7 +55,6 @@ var config = require('game/config').default;
 
 Renderer.init = function(width, height, settings) {
   settings.view = document.getElementById(settings.canvasId);
-  settings.autoResize = (config.resizeMode === 'never' || config.resizeMode === 'dom') ? false : true;
 
   if (settings.webGL) {
     this.instance = core.autoDetectRenderer(width, height, settings);
@@ -69,6 +68,10 @@ Renderer.resize = function(w, h) {
 };
 Renderer.render = function(scene) {
   this.instance.render(scene.stage);
+};
+Renderer.createLayer = function(scene, name, parent) {
+  var parentKey = parent || 'stage';
+  scene[name] = new core.Container().addTo(scene[parentKey]);
 };
 
 // Inject as sub-system of scene
