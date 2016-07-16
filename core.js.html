@@ -129,6 +129,7 @@ function boot() {
   }, config.renderer);
 
   core.view = document.getElementById(rendererConfig.canvasId);
+  core.containerView = document.getElementById('container');
 
   // Keep focus when mouse/touch event occurs on the canvas
   function focus() { window.focus() }
@@ -155,9 +156,6 @@ function boot() {
     case 'scale-outer':
       resizeFunc = _scaleOuterResize;
       break;
-    case 'never':
-      resizeFunc = _neverResize;
-      break;
     default:
       resizeFunc = _letterBoxResize;
   }
@@ -172,10 +170,10 @@ function boot() {
 
   // Setup visibility change API
   var visibleResume = function() {
-    config.pauseOnHide &amp;&amp; core.resume('visibility');
+    if (config.pauseOnHide) core.resume('visibility');
   };
   var visiblePause = function() {
-    config.pauseOnHide &amp;&amp; core.pause('visibility');
+    if (config.pauseOnHide) core.pause('visibility');
   };
 
   // Main visibility API function
@@ -183,8 +181,8 @@ function boot() {
     var stateKey, eventKey;
     var keys = {
       hidden: "visibilitychange",
-      webkitHidden: "webkitvisibilitychange",
       mozHidden: "mozvisibilitychange",
+      webkitHidden: "webkitvisibilitychange",
       msHidden: "msvisibilitychange"
     };
     for (stateKey in keys) {
@@ -194,7 +192,7 @@ function boot() {
       }
     }
     return function(c) {
-      if (c) document.addEventListener(eventKey, c);
+      if (c) document.addEventListener(eventKey, c, false);
       return !document[stateKey];
     }
   })();
@@ -239,22 +237,19 @@ function boot() {
     div.style.margin = 'auto';
     div.style.display = 'none';
     div.style.color = config.rotatePromptFontColor || 'black';
-    div.id = 'lp-rotate';
     core.rotatePromptElm = div;
     document.body.appendChild(div);
 
     if (config.rotatePromptImg) {
       var img = new Image();
-      var me = this;
       img.onload = function() {
         div.image = img;
-        div.style.height = img.height + 'px';
         div.appendChild(img);
         resizeRotatePrompt();
       };
       img.src = config.rotatePromptImg;
-      img.style.position = 'relative';
-      img.style.maxWidth = '100%';
+      img.className = 'center';
+      core.rotatePromptImg = img;
     }
 
     // Check orientation and display the rotate prompt if required
@@ -326,17 +321,23 @@ function chooseProperResolution(res) {
   }
 }
 function resizeRotatePrompt() {
-  _fullWindowStyle(core.rotatePromptElm);
+  core.rotatePromptElm.style.width = window.innerWidth + 'px';
+  core.rotatePromptElm.style.height = window.innerHeight + 'px';
   _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
 
-  // if (core.rotatePromptElm.image) {
-  //   if (window.innerHeight &lt; core.rotatePromptElm.image.height) {
-  //     core.rotatePromptElm.image.style.height = window.innerHeight + 'px';
-  //     core.rotatePromptElm.image.style.width = 'auto';
-  //     core.rotatePromptElm.style.height = window.innerHeight + 'px';
-  //     core.rotatePromptElm.style.bottom = 'auto';
-  //   }
-  // }
+  var imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
+  var windowRatio = window.innerWidth / window.innerHeight;
+  var w, h;
+  if (imgRatio &lt; windowRatio) {
+    w = Math.floor(window.innerHeight * 0.8);
+    h = Math.floor(w / imgRatio);
+  }
+  else {
+    h = Math.floor(window.innerWidth * 0.8);
+    w = Math.floor(h * imgRatio);
+  }
+  core.rotatePromptImg.style.height = w + 'px';
+  core.rotatePromptImg.style.width = h + 'px';
 }
 
 // Update (fixed update implementation from Phaser by @photonstorm)
@@ -467,6 +468,13 @@ Object.assign(core, {
   view: null,
 
   /**
+   * Div that contains game canvas.
+   * @memberof module:engine/core
+   * @type {HTMLCanvasElement}
+   */
+  containerView: null,
+
+  /**
    * Size of game content.
    * @memberof module:engine/core
    * @type {Vector}
@@ -562,13 +570,18 @@ Object.assign(core, {
    * Switch to a scene.
    * @memberof module:engine/core
    * @param {string} name Name of the target scene.
+   * @param {boolean} newInstance Whether create new instance for this scene.
    */
-  setScene: function setScene(name) {
+  setScene: function setScene(name, newInstance) {
     var pair = core.scenes[name];
 
     if (!pair) {
       console.log('Scene [' + name + '] is not defined!');
       return;
+    }
+
+    if (!!newInstance) {
+      pair.inst = null;
     }
 
     nextScene = pair;
@@ -740,6 +753,7 @@ Object.defineProperty(core, 'paused', {
 
 // Resize functions
 var windowSize = { x: 1, y: 1 };
+var scaledWidth, scaledHeight;
 var result, container;
 function _letterBoxResize(first) {
   // Update sizes
@@ -747,35 +761,54 @@ function _letterBoxResize(first) {
   windowSize.y = window.innerHeight;
 
   // Use inner box scaling function to calculate correct size
-  result = resize.innerBoxResize(windowSize, core.viewSize);
+  result = resize.outerBoxResize(windowSize, core.viewSize);
 
   // Resize the renderer once
-  first &amp;&amp; Renderer.resize(core.viewSize.x, core.viewSize.y);
+  if (first) Renderer.resize(core.viewSize.x, core.viewSize.y);
+
+  scaledWidth = Math.floor(core.viewSize.x * result.scale);
+  scaledHeight = Math.floor(core.viewSize.y * result.scale);
 
   // Resize the view
-  core.view.style.width = (core.viewSize.x * result.scale) + 'px';
-  core.view.style.height = (core.viewSize.y * result.scale) + 'px';
+  core.view.style.width = scaledWidth + 'px';
+  core.view.style.height = scaledHeight + 'px';
 
-  _alignToWindowCenter(core.view, core.viewSize.x * result.scale, core.viewSize.y * result.scale);
+  // Resize the container
+  core.containerView.style.width = scaledWidth + 'px';
+  core.containerView.style.height = scaledHeight + 'px';
+  core.containerView.style.marginTop = Math.floor(result.top) + 'px';
+  core.containerView.style.marginLeft = Math.floor(result.left) + 'px';
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0, 1);
+  }
 }
 function _cropResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
+  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
+  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
   Renderer.resize(core.viewSize.x, core.viewSize.y);
 
-  _fullWindowStyle(core.view);
-
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0, 1);
+  }
 }
 function _scaleInnerResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
+  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
+  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
   Renderer.resize(core.viewSize.x, core.viewSize.y);
@@ -788,14 +821,19 @@ function _scaleInnerResize() {
     container.position.set(result.left, result.top);
   }
 
-  _fullWindowStyle(core.view);
-
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0, 1);
+  }
 }
 function _scaleOuterResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
+  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
+  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
   Renderer.resize(core.viewSize.x, core.viewSize.y);
@@ -808,28 +846,19 @@ function _scaleOuterResize() {
     container.position.set(result.left, result.top);
   }
 
-  _fullWindowStyle(core.view);
-
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
+
+  // Reset scroll for mobile devices
+  if (device.mobile) {
+    window.scrollTo(0, 1);
+  }
 }
-function _neverResize() {}
 
 // CSS helpers
 function _alignToWindowCenter(el, w, h) {
-  el.style.position = 'absolute';
-  el.style.left = '50%';
-  el.style.top = '50%';
-  el.style.margin = '-' + Math.floor(h / 2) + 'px 0 0 -' + Math.floor(w / 2) + 'px';
-}
-function _fullWindowStyle(el) {
-  el.style.position = 'absolute';
-  el.style.left = '0';
-  el.style.top = '0';
-  el.style.right = '0';
-  el.style.bottom = '0';
-  el.style.width = '100%';
-  el.style.height = '100%';
+  el.style.marginLeft = Math.floor((window.innerWidth - w) / 2) + 'px';
+  el.style.marginTop = Math.floor((window.innerHeight - h) / 2) + 'px';
 }
 function _noPageScroll() {
   document.ontouchmove = function(event) {

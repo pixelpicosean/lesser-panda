@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Lesser Panda Class: Polygon</title>
+	<title>Lesser Panda Source: utils/index.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -65,685 +65,183 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Polygon</h1>
+		<h1 class="page-title">Source: utils/index.js</h1>
+    
 <section>
-
-<header>
-    
-        <h2>
-            <span class="ancestors"><a href="module-engine_physics.html">engine/physics</a>~</span>
-        
-        Polygon
-        </h2>
-        
-            <div class="class-description"><p>Polygon</p></div>
-        
-    
-</header>
-
-
-<article>
-    <div class="container-overview">
-    
-        
-<hr>
-<dt>
-    <h4 class="name" id="Polygon"><span class="type-signature"></span>new Polygon(points)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Polygon collision shape.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>points</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array.&lt;<a href="Vector.html">Vector</a>></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Vertices that define the polygon.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-792">line 792</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="height">
-    <h4><span class="type-signature"></span>height<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Height of this polygon.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-802">line 802</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="offset">
-    <h4><span class="type-signature"></span>offset<span class="type-signature"> :<a href="Vector.html">Vector</a></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Offset of the vertices to the center.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type"><a href="Vector.html">Vector</a></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-833">line 833</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="points">
-    <h4><span class="type-signature"></span>points<span class="type-signature"> :array.&lt;<a href="Vector.html">Vector</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Vertices.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">array.&lt;<a href="Vector.html">Vector</a>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-808">line 808</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="width">
-    <h4><span class="type-signature"></span>width<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Width of this polygon.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-797">line 797</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="setOffset"><span class="type-signature"></span>setOffset(offset)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Set the current offset to apply to the <code>points</code> before applying the <code>rotation</code> rotation.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Vector.html">Vector</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The new offset vector</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-869">line 869</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>This for chaining</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Polygon</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-
-    
-</article>
-
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * Utility functions and constant variables.
+
+ * Some utils come from [playground] and [supermix]
+ *
+ * @module engine/utils
+ */
+
+// Math
+
+/**
+ * PI * 2
+ * @type {number}
+ */
+exports.PI_2 = Math.PI * 2;
+/**
+ * Half PI
+ * @type {number}
+ */
+exports.HALF_PI = Math.PI * 0.5;
+
+/**
+ * Force a value within the boundaries by clamping `x` to the range `[a, b]`.
+ *
+ * @param {number} x
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+exports.clamp = function clamp(x, a, b) {
+  return (x &lt; a) ? a : ((x > b) ? b : x);
+};
+
+/**
+ * Bring the value between min and max.
+ *
+ * Values larger than `max` are wrapped back to `min`
+ * and vice-versa.
+ *
+ * @param {number}  value value to process
+ * @param {number}  min lowest valid value
+ * @param {number}  max largest valid value
+ * @return {number} result
+ */
+exports.wrap = function wrap(value, min, max) {
+  if (value &lt; min) return max + (value % max);
+  if (value >= max) return value % max;
+  return value;
+};
+
+/**
+ * Bring the value between 0 and 2*PI.
+ *
+ * Valid values for the length of a circle in radians is
+ * 2*PI.
+ *
+ * @param {number}  val value to process
+ * @return {number} a value in 0..2*PI interval
+ */
+exports.circWrap = function circWrap(val) {
+  return wrap(val, 0, PI_2);
+};
+
+/**
+ * Converts a hex color number to an [R, G, B] array
+ *
+ * @param hex {number}
+ * @param  {number[]} [out=[]]
+ * @return {number[]} An array representing the [R, G, B] of the color.
+ */
+exports.hex2rgb = function hex2rgb(hex, out) {
+  out = out || [];
+
+  out[0] = (hex >> 16 &amp; 0xFF) / 255;
+  out[1] = (hex >> 8 &amp; 0xFF) / 255;
+  out[2] = (hex &amp; 0xFF) / 255;
+
+  return out;
+};
+
+/**
+ * Converts a hex color number to a string.
+ *
+ * @param hex {number}
+ * @return {string} The string color.
+ */
+exports.hex2string = function hex2string(hex) {
+  hex = hex.toString(16);
+  hex = '000000'.substr(0, 6 - hex.length) + hex;
+
+  return '#' + hex;
+};
+
+/**
+ * Converts a color as an [R, G, B] array to a hex number
+ *
+ * @param rgb {number[]}
+ * @return {number} The color number
+ */
+exports.rgb2hex = function rgb2hex(rgb) {
+  return ((rgb[0]*255 &lt;&lt; 16) + (rgb[1]*255 &lt;&lt; 8) + rgb[2]*255);
+};
+
+// Object
+
+/**
+ * Merge any number of associative arrays into first.
+ *
+ * All arguments are expected to be associative arrays.
+ * If same key appears multiple times the final value
+ * will come from last argument that contains it.
+ *
+ * @return {object} first argument
+ *
+ * @example
+ * merge({ a: { var_1: 1 } }, { a: { var_1: 2 } });
+ * // return { a: { var_1: 2 } }
+ */
+exports.merge = function merge(a) {
+  var a = 0, b, key, value;
+  for (i = 1; i &lt; arguments.length; i++) {
+    b = arguments[i];
+
+    for (key in b) {
+      value = b[key];
+
+      if (typeof a[key] !== 'undefined') {
+        if (typeof a[key] === 'object')
+          this.merge(a[key], value);
+        else
+          a[key] = value;
+      }
+      else {
+        a[key] = value;
+      }
+    }
+  }
+  return a;
+};
+
+// Array
+
+/**
+ * Remove items of an arry
+ *
+ * @param {array} arr The target array
+ * @param {number} startIdx The index to begin removing from (inclusive)
+ * @param {number} removeCount How many items to remove
+ */
+exports.removeItems = function removeItems(arr, startIdx, removeCount) {
+  var length = arr.length;
+
+  if (startIdx >= length || removeCount === 0) {
+    return;
+  }
+
+  removeCount = (startIdx+removeCount > length ? length-startIdx : removeCount);
+  for (var i = startIdx, len = length-removeCount; i &lt; len; ++i) {
+    arr[i] = arr[i + removeCount];
+  }
+
+  arr.length = len;
+};
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -753,10 +251,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

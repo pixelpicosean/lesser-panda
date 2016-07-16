@@ -96,6 +96,7 @@
 <ul>
 <li>Super fast Canvas and WebGL rendering powered by PIXI.js.</li>
 <li>Tilemap rendering.</li>
+<li>Import tile collider shape from Tiled map.</li>
 <li>Fixed game loop with customizable <code>FPS</code> and <code>frame skips</code>.</li>
 <li>Fast and powerful physics solution.</li>
 <li>Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.</li>
@@ -155,6 +156,30 @@
 <p>More behaviors are coming soon.</p>
 <h2>Progress</h2><p>There's a <a href="https://trello.com/b/6nzCTotX/lesserpanda">Trello board</a>, from which you will see what's coming next.<br>Github issue and milestone maybe better for progress tracking~</p>
 <h2>ChangeLog</h2><h3>0.4.1-dev</h3><ul>
+<li>Add second parameter to <code>core.setScene</code> to be able to create new instance for the next scene.</li>
+<li>Improve scale mode support for mobile devices, especially for iOS.</li>
+<li>Add support of spawning actors using registered type name.</li>
+<li>Add <code>Actor.register</code> function to register custom(subclass) <code>Actor</code> classes with a key.</li>
+<li>Moved actor sub-system code into <code>actor</code> module, so scenes won't be able to spawn actors until you import the <code>actor</code> module.</li>
+<li>Improved <code>Body</code> setup.</li>
+<li>Deprecated <code>Body.anchor</code> since it's not supported by SAT solver.</li>
+<li>Completely support tile collider shapes defined from <strong>Tiled</strong> editor, tilemap based workflow is hugely improved.</li>
+<li>Fixes collision map so that maps with holes are not properly supported.</li>
+<li>Add <code>Scene.createLayer</code> method to simplify layer creating.</li>
+<li>Position, layer and settings parameters of <code>Scene.spawnActor</code> are not optional.</li>
+<li>Add <code>vertical</code> and <code>horizontal</code> settings to WrapAroundScreen behavior.</li>
+<li>Device patch is removed since resizing now works without hack.</li>
+<li>Canvas resizing is fixed and improved, and useless <code>never</code> resize mode is deprecated.</li>
+<li>Fixed <code>Camera</code> to be able to work without any targets.</li>
+<li>Add <code>poolable</code> module to <code>utils</code>.</li>
+<li>Improve the <code>FireBullet</code> behavior, now it has <code>ammo</code> support built-in.</li>
+<li><code>Behavior</code> no longer inherits from <code>EventEmitter</code>.</li>
+<li><code>Actor</code> spawn/remove behavior changed, now it's possible to maunally create <code>Actor</code> instance and add to any scene instead of calling <code>spawnActor</code>. Object pool support is included.</li>
+<li>Change <code>Actor.prepare</code> to <code>Actor.ready</code>.</li>
+<li>Fix some Actor component create methods.</li>
+<li>Add <code>rotate-around-point</code> behavior</li>
+<li>Add <code>steering</code> behavior</li>
+<li>Add <code>face-the-mouse</code> behavior</li>
 <li>Actor component factory methods now accept settings of all built-in properties.</li>
 <li>Add <code>getTexture</code> function to <code>engine.loader</code> to be able to get texture from string.</li>
 <li>Add more component factory methods to Actor.</li>

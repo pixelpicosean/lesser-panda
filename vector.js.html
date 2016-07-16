@@ -75,7 +75,9 @@
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">/**
+            class="sunlight-highlight-javascript linenums">var utils = require('engine/utils');
+
+/**
  * Vector instance pool
  * @private
  * @static
@@ -193,7 +195,7 @@ Vector.prototype.multiply = function multiply(x, y) {
  */
 Vector.prototype.divide = function divide(x, y) {
   this.x /= x instanceof Vector ? x.x : x;
-  this.y /= x instanceof Vector ? x.y : y;
+  this.y /= x instanceof Vector ? x.y : (y || ((y !== 0) ? x : 0));
   return this;
 };
 
@@ -313,8 +315,8 @@ Vector.prototype.normalize = function normalize() {
  * @return {Vector}       Self for chaining.
  */
 Vector.prototype.limit = function limit(vector) {
-  this.x = this.x.limit(-vector.x, vector.x);
-  this.y = this.y.limit(-vector.y, vector.y);
+  this.x = utils.clamp(this.x, -vector.x, vector.x);
+  this.y = utils.clamp(this.y, -vector.y, vector.y);
   return this;
 };
 
