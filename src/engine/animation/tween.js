@@ -343,6 +343,9 @@ Tween.prototype.recycle = function recycle() {
 
 // Object recycle
 var pool = [];
+for (var i = 0; i < 20; i++) {
+  pool.push(new Tween(null));
+}
 
 /**
  * Tween factory method.
