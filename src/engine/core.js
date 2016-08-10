@@ -14,6 +14,306 @@ var config = require('game/config').default;
  */
 var core = new EventEmitter();
 
+// Public properties and methods
+Object.assign(core, {
+  /**
+   * Version text.
+   * @memberof module:engine/core
+   * @type {string}
+   */
+  version: 'v0.4.1-dev',
+
+  /**
+   * Main Canvas element.
+   * @memberof module:engine/core
+   * @type {HTMLCanvasElement}
+   */
+  view: null,
+
+  /**
+   * Div that contains game canvas.
+   * @memberof module:engine/core
+   * @type {HTMLCanvasElement}
+   */
+  containerView: null,
+
+  /**
+   * Size of game content.
+   * @memberof module:engine/core
+   * @type {Vector}
+   * @default (640, 400)
+   */
+  size: Vector.create(config.width || 640, config.height || 400),
+  /**
+   * Size of view (devicePixelRatio independent).
+   * @memberof module:engine/core
+   * @type {Vector}
+   */
+  viewSize: Vector.create(config.width || 640, config.height || 400),
+  /**
+   * Current resize function.
+   * @memberof module:engine/core
+   * @type {function}
+   */
+  resizeFunc: null,
+
+  /**
+   * Map of registered scenes.
+   * @memberof module:engine/core
+   * @type {object}
+   */
+  scenes: {},
+  /**
+   * Current activated scene.
+   * Note: this may be undefined during switching.
+   * Will be deprecated in future versions.
+   * @memberof module:engine/core
+   * @type {Scene}
+   */
+  scene: null,
+
+  /**
+   * Map that contains pause state of all kinds of reasons.
+   * See {@link core.pause} for more information.
+   * @memberof module:engine/core
+   * @type {object}
+   */
+  pauses: {},
+
+  /**
+   * Global time speed, whose value is between 0 and 1.
+   * @memberof module:engine/core
+   * @type {number}
+   * @default 1
+   */
+  speed: 1,
+  /**
+   * Delta time since last **update** (in milliseconds).
+   * This can be useful for time based updating.
+   * @memberof module:engine/core
+   * @type {number}
+   */
+  delta: 0,
+
+  /**
+   * Rotate prompt element for mobile devices.
+   * @memberof module:engine/core
+   * @type {HTMLElement}
+   */
+  rotatePromptElm: null,
+  /**
+   * Whether the rotate prompt is visible.
+   * @memberof module:engine/core
+   * @type {boolean}
+   */
+  rotatePromptVisible: false,
+
+  /**
+   * Register a new scene class.
+   * @memberof module:engine/core
+   *
+   * @example
+   * import core from 'engine/core';
+   * class MyScene extends Scene {}
+   * core.addScene('MyScene', MyScene);
+   *
+   * @param {string}    name  Name of this scene.
+   * @param {function}  ctor  Constructor of the scene.
+   */
+  addScene: function addScene(name, ctor) {
+    if (core.scenes[name]) {
+      console.log('Scene [' + name + '] is already defined!');
+      return;
+    }
+
+    var pair = { ctor: ctor, inst: null };
+    core.scenes[name] = pair;
+  },
+  /**
+   * Switch to a scene.
+   * @memberof module:engine/core
+   * @param {string} name Name of the target scene.
+   * @param {boolean} newInstance Whether create new instance for this scene.
+   */
+  setScene: function setScene(name, newInstance) {
+    var pair = core.scenes[name];
+
+    if (!pair) {
+      console.log('Scene [' + name + '] is not defined!');
+      return;
+    }
+
+    if (!!newInstance) {
+      pair.inst = null;
+    }
+
+    nextScene = pair;
+  },
+  /**
+   * Entrance of the game, set the first scene to boot with.
+   * Note: it's recommend to set the first scene to `Loading` or
+   * your customized loading scene, otherwise the assets won't get load.
+   *
+   * Simply use `core.start` instead if you don't want to start
+   * from a custom loading scene.
+   *
+   * @example
+   * // In the `game/main` module
+   * import core from 'engine/core';
+   * core.startWithScene('MyCustomLoading');
+   * // or simply use the default loading scene
+   * core.start();
+   *
+   * @memberof module:engine/core
+   * @param  {string} sceneName Name of the start scene
+   */
+  startWithScene: function startWithScene(sceneName) {
+    core.setScene(sceneName);
+
+    window.addEventListener('load', boot, false);
+    document.addEventListener('DOMContentLoaded', boot, false);
+  },
+  /**
+   * Start with `Loading` scene.
+   * @memberof module:engine/core
+   */
+  start: function start() {
+    core.startWithScene('Loading');
+  },
+
+  /**
+   * Pause the engine with a reason.
+   * @memberof module:engine/core
+   *
+   * @example
+   * import core from 'engine/core';
+   * // Pause when ad is playing
+   * core.pause('ad');
+   * // And resume after the ad finished
+   * core.resume('ad');
+   *
+   * @param {string} reason  The reason to pause, you have to pass
+   *                         the same reason when resume from this
+   *                         pause.
+   */
+  pause: function pause(reasonP) {
+    var i,
+      reason = reasonP || 'untitled',
+      alreadyPaused = false;
+
+    for (i in core.pauses) {
+      if (!core.pauses.hasOwnProperty(i)) continue;
+      // Do not pause again if game is paused by other reasons
+      if (core.pauses[i]) {
+        alreadyPaused = true;
+        break;
+      }
+    }
+
+    core.pauses[reason] = true;
+
+    if (!alreadyPaused) {
+      core.emit('pause', reason);
+    }
+  },
+  /**
+   * Unpause the engine.
+   * @memberof module:engine/core
+   * @param {string} reasonP Resume from pause tagged with this reason
+   * @param {boolean} force Whether force to resume
+   */
+  resume: function resume(reasonP, force) {
+    var i, reason = reasonP || 'untitled';
+
+    if (force) {
+      // Resume everything
+      for (i in core.pauses) {
+        if (!core.pauses.hasOwnProperty(i)) continue;
+        core.pauses[i] = false;
+      }
+      core.emit('resume');
+    }
+    else if (typeof(core.pauses[reason]) === 'boolean') {
+      core.pauses[reason] = false;
+      for (i in core.pauses) {
+        if (!core.pauses.hasOwnProperty(i)) continue;
+        // Do not resume if game is still paused by other reasons
+        if (core.pauses[i]) {
+          return;
+        }
+      }
+
+      core.emit('resume', reason);
+    }
+  },
+});
+
+/**
+ * Width of the game.
+ * Should keep the same to `config` settings.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'width', {
+  get: function() {
+    return this.size.x;
+  },
+});
+/**
+ * Height of the game.
+ * Should keep the same to `config` settings.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'height', {
+  get: function() {
+    return this.size.y;
+  },
+});
+/**
+ * Width of the game view, `devicePixelRatio` is not take into account.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'viewWidth', {
+  get: function() {
+    return this.viewSize.x;
+  },
+});
+/**
+ * Height of the game view, `devicePixelRatio` is not take into account.
+ * @memberof module:engine/core
+ * @type {number}
+ * @readonly
+ */
+Object.defineProperty(core, 'viewHeight', {
+  get: function() {
+    return this.viewSize.y;
+  },
+});
+/**
+ * Whether the game is currently paused by any reason.
+ * @memberof module:engine/core
+ * @type {boolean}
+ * @readonly
+ */
+Object.defineProperty(core, 'paused', {
+  get: function() {
+    // Paused by any reason?
+    for (var i in core.pauses) {
+      if (core.pauses[i]) {
+        return true;
+      }
+    }
+
+    // Totally unpaused
+    return false;
+  },
+});
+
 // Fetch device info and setup
 if (config.renderer && config.renderer.resolution) {
   core.resolution = chooseProperResolution(config.renderer.resolution);
@@ -373,306 +673,6 @@ function renderScene(scene) {
     }
   }
 }
-
-// Public properties and methods
-Object.assign(core, {
-  /**
-   * Version text.
-   * @memberof module:engine/core
-   * @type {string}
-   */
-  version: 'v0.4.1-dev',
-
-  /**
-   * Main Canvas element.
-   * @memberof module:engine/core
-   * @type {HTMLCanvasElement}
-   */
-  view: null,
-
-  /**
-   * Div that contains game canvas.
-   * @memberof module:engine/core
-   * @type {HTMLCanvasElement}
-   */
-  containerView: null,
-
-  /**
-   * Size of game content.
-   * @memberof module:engine/core
-   * @type {Vector}
-   * @default (640, 400)
-   */
-  size: Vector.create(config.width || 640, config.height || 400),
-  /**
-   * Size of view (devicePixelRatio independent).
-   * @memberof module:engine/core
-   * @type {Vector}
-   */
-  viewSize: Vector.create(config.width || 640, config.height || 400),
-  /**
-   * Current resize function.
-   * @memberof module:engine/core
-   * @type {function}
-   */
-  resizeFunc: null,
-
-  /**
-   * Map of registered scenes.
-   * @memberof module:engine/core
-   * @type {object}
-   */
-  scenes: {},
-  /**
-   * Current activated scene.
-   * Note: this may be undefined during switching.
-   * Will be deprecated in future versions.
-   * @memberof module:engine/core
-   * @type {Scene}
-   */
-  scene: null,
-
-  /**
-   * Map that contains pause state of all kinds of reasons.
-   * See {@link core.pause} for more information.
-   * @memberof module:engine/core
-   * @type {object}
-   */
-  pauses: {},
-
-  /**
-   * Global time speed, whose value is between 0 and 1.
-   * @memberof module:engine/core
-   * @type {number}
-   * @default 1
-   */
-  speed: 1,
-  /**
-   * Delta time since last **update** (in milliseconds).
-   * This can be useful for time based updating.
-   * @memberof module:engine/core
-   * @type {number}
-   */
-  delta: 0,
-
-  /**
-   * Rotate prompt element for mobile devices.
-   * @memberof module:engine/core
-   * @type {HTMLElement}
-   */
-  rotatePromptElm: null,
-  /**
-   * Whether the rotate prompt is visible.
-   * @memberof module:engine/core
-   * @type {boolean}
-   */
-  rotatePromptVisible: false,
-
-  /**
-   * Register a new scene class.
-   * @memberof module:engine/core
-   *
-   * @example
-   * import core from 'engine/core';
-   * class MyScene extends Scene {}
-   * core.addScene('MyScene', MyScene);
-   *
-   * @param {string}    name  Name of this scene.
-   * @param {function}  ctor  Constructor of the scene.
-   */
-  addScene: function addScene(name, ctor) {
-    if (core.scenes[name]) {
-      console.log('Scene [' + name + '] is already defined!');
-      return;
-    }
-
-    var pair = { ctor: ctor, inst: null };
-    core.scenes[name] = pair;
-  },
-  /**
-   * Switch to a scene.
-   * @memberof module:engine/core
-   * @param {string} name Name of the target scene.
-   * @param {boolean} newInstance Whether create new instance for this scene.
-   */
-  setScene: function setScene(name, newInstance) {
-    var pair = core.scenes[name];
-
-    if (!pair) {
-      console.log('Scene [' + name + '] is not defined!');
-      return;
-    }
-
-    if (!!newInstance) {
-      pair.inst = null;
-    }
-
-    nextScene = pair;
-  },
-  /**
-   * Entrance of the game, set the first scene to boot with.
-   * Note: it's recommend to set the first scene to `Loading` or
-   * your customized loading scene, otherwise the assets won't get load.
-   *
-   * Simply use `core.start` instead if you don't want to start
-   * from a custom loading scene.
-   *
-   * @example
-   * // In the `game/main` module
-   * import core from 'engine/core';
-   * core.startWithScene('MyCustomLoading');
-   * // or simply use the default loading scene
-   * core.start();
-   *
-   * @memberof module:engine/core
-   * @param  {string} sceneName Name of the start scene
-   */
-  startWithScene: function startWithScene(sceneName) {
-    core.setScene(sceneName);
-
-    window.addEventListener('load', boot, false);
-    document.addEventListener('DOMContentLoaded', boot, false);
-  },
-  /**
-   * Start with `Loading` scene.
-   * @memberof module:engine/core
-   */
-  start: function start() {
-    core.startWithScene('Loading');
-  },
-
-  /**
-   * Pause the engine with a reason.
-   * @memberof module:engine/core
-   *
-   * @example
-   * import core from 'engine/core';
-   * // Pause when ad is playing
-   * core.pause('ad');
-   * // And resume after the ad finished
-   * core.resume('ad');
-   *
-   * @param {string} reason  The reason to pause, you have to pass
-   *                         the same reason when resume from this
-   *                         pause.
-   */
-  pause: function pause(reasonP) {
-    var i,
-      reason = reasonP || 'untitled',
-      alreadyPaused = false;
-
-    for (i in core.pauses) {
-      if (!core.pauses.hasOwnProperty(i)) continue;
-      // Do not pause again if game is paused by other reasons
-      if (core.pauses[i]) {
-        alreadyPaused = true;
-        break;
-      }
-    }
-
-    core.pauses[reason] = true;
-
-    if (!alreadyPaused) {
-      core.emit('pause', reason);
-    }
-  },
-  /**
-   * Unpause the engine.
-   * @memberof module:engine/core
-   * @param {string} reasonP Resume from pause tagged with this reason
-   * @param {boolean} force Whether force to resume
-   */
-  resume: function resume(reasonP, force) {
-    var i, reason = reasonP || 'untitled';
-
-    if (force) {
-      // Resume everything
-      for (i in core.pauses) {
-        if (!core.pauses.hasOwnProperty(i)) continue;
-        core.pauses[i] = false;
-      }
-      core.emit('resume');
-    }
-    else if (typeof(core.pauses[reason]) === 'boolean') {
-      core.pauses[reason] = false;
-      for (i in core.pauses) {
-        if (!core.pauses.hasOwnProperty(i)) continue;
-        // Do not resume if game is still paused by other reasons
-        if (core.pauses[i]) {
-          return;
-        }
-      }
-
-      core.emit('resume', reason);
-    }
-  },
-});
-
-/**
- * Width of the game.
- * Should keep the same to `config` settings.
- * @memberof module:engine/core
- * @type {number}
- * @readonly
- */
-Object.defineProperty(core, 'width', {
-  get: function() {
-    return this.size.x;
-  },
-});
-/**
- * Height of the game.
- * Should keep the same to `config` settings.
- * @memberof module:engine/core
- * @type {number}
- * @readonly
- */
-Object.defineProperty(core, 'height', {
-  get: function() {
-    return this.size.y;
-  },
-});
-/**
- * Width of the game view, `devicePixelRatio` is not take into account.
- * @memberof module:engine/core
- * @type {number}
- * @readonly
- */
-Object.defineProperty(core, 'viewWidth', {
-  get: function() {
-    return this.viewSize.x;
-  },
-});
-/**
- * Height of the game view, `devicePixelRatio` is not take into account.
- * @memberof module:engine/core
- * @type {number}
- * @readonly
- */
-Object.defineProperty(core, 'viewHeight', {
-  get: function() {
-    return this.viewSize.y;
-  },
-});
-/**
- * Whether the game is currently paused by any reason.
- * @memberof module:engine/core
- * @type {boolean}
- * @readonly
- */
-Object.defineProperty(core, 'paused', {
-  get: function() {
-    // Paused by any reason?
-    for (var i in core.pauses) {
-      if (core.pauses[i]) {
-        return true;
-      }
-    }
-
-    // Totally unpaused
-    return false;
-  },
-});
 
 // Resize functions
 var windowSize = { x: 1, y: 1 };
