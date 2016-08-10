@@ -14,366 +14,6 @@ var config = require('game/config').default;
  */
 var core = new EventEmitter();
 
-// Fetch device info and setup
-if (config.renderer && config.renderer.resolution) {
-  core.resolution = chooseProperResolution(config.renderer.resolution);
-}
-else {
-  core.resolution = 1;
-}
-
-// - Private properties and methods
-var nextScene = null;
-var loopId = 0;
-var resizeFunc = _letterBoxResize;
-function startLoop() {
-  loopId = requestAnimationFrame(loop);
-}
-function loop(timestamp) {
-  loopId = requestAnimationFrame(loop);
-
-  // Do not update anything when paused
-  if (!core.paused) {
-    tickAndRender(core.scene, timestamp);
-  }
-}
-function endLoop() {
-  cancelAnimationFrame(loopId);
-}
-function boot() {
-  window.removeEventListener('load', boot);
-  document.removeEventListener('DOMContentLoaded', boot);
-
-  // Disable scroll
-  _noPageScroll();
-
-  var rendererConfig = Object.assign({
-    canvasId: 'game',
-  }, config.renderer);
-
-  core.view = document.getElementById(rendererConfig.canvasId);
-  core.containerView = document.getElementById('container');
-
-  // Keep focus when mouse/touch event occurs on the canvas
-  function focus() { window.focus() }
-  core.view.addEventListener('mousedown', focus);
-  core.view.addEventListener('touchstart', focus);
-
-  // Config and create renderer
-  Renderer.resolution = rendererConfig.resolution = core.resolution;
-
-  Renderer.init(core.width, core.height, rendererConfig);
-  startLoop();
-
-  // Pick a resize function
-  switch (config.resizeMode) {
-    case 'letter-box':
-      resizeFunc = _letterBoxResize;
-      break;
-    case 'crop':
-      resizeFunc = _cropResize;
-      break;
-    case 'scale-inner':
-      resizeFunc = _scaleInnerResize;
-      break;
-    case 'scale-outer':
-      resizeFunc = _scaleOuterResize;
-      break;
-    default:
-      resizeFunc = _letterBoxResize;
-  }
-  core.resizeFunc = resizeFunc;
-
-  // Listen to the resize and orientation events
-  window.addEventListener('resize', resizeFunc, false);
-  window.addEventListener('orientationchange', resizeFunc, false);
-
-  // Manually resize for the first time
-  resizeFunc(true);
-
-  // Setup visibility change API
-  var visibleResume = function() {
-    if (config.pauseOnHide) core.resume('visibility');
-  };
-  var visiblePause = function() {
-    if (config.pauseOnHide) core.pause('visibility');
-  };
-
-  // Main visibility API function
-  var vis = (function() {
-    var stateKey, eventKey;
-    var keys = {
-      hidden: "visibilitychange",
-      mozHidden: "mozvisibilitychange",
-      webkitHidden: "webkitvisibilitychange",
-      msHidden: "msvisibilitychange"
-    };
-    for (stateKey in keys) {
-      if (stateKey in document) {
-        eventKey = keys[stateKey];
-        break;
-      }
-    }
-    return function(c) {
-      if (c) document.addEventListener(eventKey, c, false);
-      return !document[stateKey];
-    }
-  })();
-
-  // Check if current tab is active or not
-  vis(function() {
-    if (vis()) {
-      // The setTimeout() is used due to a delay
-      // before the tab gains focus again, very important!
-      setTimeout(visibleResume, 300);
-    }
-    else {
-      visiblePause();
-    }
-  });
-
-  // Check if browser window has focus
-  if (window.addEventListener) {
-    window.addEventListener('focus', function() {
-      setTimeout(visibleResume, 300);
-    }, false);
-    window.addEventListener('blur', visiblePause, false);
-  }
-  else {
-    window.attachEvent("focus", function() {
-      setTimeout(visibleResume, 300);
-    });
-    window.attachEvent('blur', visiblePause);
-  }
-
-  // Create rotate prompt if required
-  if (device.mobile && config.showRotatePrompt) {
-    var div = document.createElement('div');
-    div.innerHTML = config.rotatePromptImg ? '' : config.rotatePromptMsg;
-    div.style.position = 'absolute';
-    div.style.height = '12px';
-    div.style.textAlign = 'center';
-    div.style.left = 0;
-    div.style.right = 0;
-    div.style.top = 0;
-    div.style.bottom = 0;
-    div.style.margin = 'auto';
-    div.style.display = 'none';
-    div.style.color = config.rotatePromptFontColor || 'black';
-    core.rotatePromptElm = div;
-    document.body.appendChild(div);
-
-    if (config.rotatePromptImg) {
-      var img = new Image();
-      img.onload = function() {
-        div.image = img;
-        div.appendChild(img);
-        resizeRotatePrompt();
-      };
-      img.src = config.rotatePromptImg;
-      img.className = 'center';
-      core.rotatePromptImg = img;
-    }
-
-    // Check orientation and display the rotate prompt if required
-    var isLandscape = (core.width / core.height >= 1);
-    core.on('resize', function() {
-      if (window.innerWidth < window.innerHeight && isLandscape) {
-        core.rotatePromptVisible = true;
-      }
-      else if (window.innerWidth > window.innerHeight && !isLandscape) {
-        core.rotatePromptVisible = true;
-      }
-      else {
-        core.rotatePromptVisible = false;
-      }
-
-      // Hide game view
-      core.view.style.display = core.rotatePromptVisible ? 'none' : 'block';
-      // Show rotate view
-      core.rotatePromptElm.style.backgroundColor = config.rotatePromptBGColor || 'black';
-      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-box' : 'none';
-      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-flex' : 'none';
-      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-ms-flexbox' : 'none';
-      core.rotatePromptElm.style.display = core.rotatePromptVisible ? 'flex' : 'none';
-      resizeRotatePrompt();
-
-      // Pause the game if orientation is not correct
-      if (core.rotatePromptVisible) {
-        core.pause('rotate');
-      }
-      else {
-        core.resume('rotate');
-      }
-    });
-  }
-
-  core.emit('boot');
-  core.emit('booted');
-}
-function getVendorAttribute(el, attr) {
-  var uc = attr.ucfirst();
-  return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
-}
-function chooseProperResolution(res) {
-  // Default value
-  if (!res) {
-    return 1;
-  }
-  // Numerical value
-  else if (typeof(res) === 'number') {
-    return res;
-  }
-  // Calculate based on window size and device pixel ratio
-  else {
-    res.values.sort(function(a, b) { return a - b });
-    var gameRatio = core.width / core.height;
-    var windowRatio = window.innerWidth / window.innerHeight;
-    var scale = res.retina ? window.devicePixelRatio : 1;
-    var result = res.values[0];
-    for (var i = 0; i < res.values.length; i++) {
-      result = res.values[i];
-
-      if ((gameRatio >= windowRatio && window.innerWidth * scale <= core.width * result) ||
-        (gameRatio < windowRatio && window.innerHeight * scale <= core.height * result)) {
-        break;
-      }
-    }
-
-    return result;
-  }
-}
-function resizeRotatePrompt() {
-  core.rotatePromptElm.style.width = window.innerWidth + 'px';
-  core.rotatePromptElm.style.height = window.innerHeight + 'px';
-  _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
-
-  var imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
-  var windowRatio = window.innerWidth / window.innerHeight;
-  var w, h;
-  if (imgRatio < windowRatio) {
-    w = Math.floor(window.innerHeight * 0.8);
-    h = Math.floor(w / imgRatio);
-  }
-  else {
-    h = Math.floor(window.innerWidth * 0.8);
-    w = Math.floor(h * imgRatio);
-  }
-  core.rotatePromptImg.style.height = w + 'px';
-  core.rotatePromptImg.style.width = h + 'px';
-}
-
-// Update (fixed update implementation from Phaser by @photonstorm)
-var spiraling = 0;
-var last = -1;
-var realDelta = 0;
-var deltaTime = 0;
-var desiredFPS = 30;
-var currentUpdateID = 0;
-var lastCount = 0;
-var step = 0;
-var slowStep = 0;
-var count = 0;
-/**
- * Update and render a scene
- * @private
- * @param  {Scene} scene      Scene to be updated
- * @param  {Number} timestamp Current time stamp
- */
-function tickAndRender(scene, timestamp) {
-  if (last > 0) {
-    realDelta = timestamp - last;
-  }
-  last = timestamp;
-
-  // If the logic time is spiraling upwards, skip a frame entirely
-  if (spiraling > 1) {
-    // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
-    deltaTime = 0;
-    spiraling = 0;
-
-    renderScene(scene);
-  }
-  else {
-    desiredFPS = scene ? scene.desiredFPS : 30;
-
-    // Step size
-    step = 1000.0 / desiredFPS;
-    slowStep = step * core.speed;
-
-    // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
-    deltaTime += Math.max(Math.min(step * 3, realDelta), 0);
-
-    // Call the game update logic multiple times if necessary to "catch up" with dropped frames
-    // unless forceSingleUpdate is true
-    count = 0;
-
-    while (deltaTime >= step) {
-      deltaTime -= step;
-      currentUpdateID = count;
-
-      // Fixed update with the timestep
-      core.delta = step;
-      Timer.update(slowStep);
-      updateScene(scene);
-
-      count += 1;
-    }
-
-    // Detect spiraling (if the catch-up loop isn't fast enough, the number of iterations will increase constantly)
-    if (count > lastCount) {
-      spiraling += 1;
-    }
-    else if (count < lastCount) {
-      // Looks like it caught up successfully, reset the spiral alert counter
-      spiraling = 0;
-    }
-
-    lastCount = count;
-
-    renderScene(scene);
-  }
-}
-function updateScene(scene) {
-  // Switch to new scene
-  if (nextScene) {
-    var pair = nextScene;
-    nextScene = null;
-
-    // Freeze current scene before switching
-    core.scene && core.scene._freeze();
-    core.scene = null;
-
-    // Create instance of scene if not exist
-    if (!pair.inst) {
-      pair.inst = new pair.ctor();
-    }
-
-    // Awake the scene
-    core.scene = pair.inst;
-    core.scene._awake();
-
-    // Resize container of the scene
-    resizeFunc();
-  }
-
-  // Update current scene
-  if (scene) {
-    scene._update(slowStep, slowStep * 0.001);
-  }
-}
-var skipFrameCounter = 0;
-function renderScene(scene) {
-  skipFrameCounter -= 1;
-  if (skipFrameCounter < 0) {
-    skipFrameCounter = (config.skipFrame || 0);
-
-    if (scene) {
-      Renderer.render(scene);
-    }
-  }
-}
-
 // Public properties and methods
 Object.assign(core, {
   /**
@@ -673,6 +313,370 @@ Object.defineProperty(core, 'paused', {
     return false;
   },
 });
+
+
+// Fetch device info and setup
+if (config.renderer && config.renderer.resolution) {
+  core.resolution = chooseProperResolution(config.renderer.resolution);
+}
+else {
+  core.resolution = 1;
+}
+
+// - Private properties and methods
+var nextScene = null;
+var loopId = 0;
+var resizeFunc = _letterBoxResize;
+function startLoop() {
+  loopId = requestAnimationFrame(loop);
+}
+function loop(timestamp) {
+  loopId = requestAnimationFrame(loop);
+
+  // Do not update anything when paused
+  if (!core.paused) {
+    tickAndRender(core.scene, timestamp);
+  }
+}
+function endLoop() {
+  cancelAnimationFrame(loopId);
+}
+function boot() {
+  window.removeEventListener('load', boot);
+  document.removeEventListener('DOMContentLoaded', boot);
+
+  // Disable scroll
+  _noPageScroll();
+
+  var rendererConfig = Object.assign({
+    canvasId: 'game',
+  }, config.renderer);
+
+  core.view = document.getElementById(rendererConfig.canvasId);
+  core.containerView = document.getElementById('container');
+
+  // Keep focus when mouse/touch event occurs on the canvas
+  function focus() { window.focus() }
+  core.view.addEventListener('mousedown', focus);
+  core.view.addEventListener('touchstart', focus);
+
+  // Config and create renderer
+  Renderer.resolution = rendererConfig.resolution = core.resolution;
+
+  Renderer.init(core.width, core.height, rendererConfig);
+  startLoop();
+
+  // Pick a resize function
+  switch (config.resizeMode) {
+    case 'letter-box':
+      resizeFunc = _letterBoxResize;
+      break;
+    case 'crop':
+      resizeFunc = _cropResize;
+      break;
+    case 'scale-inner':
+      resizeFunc = _scaleInnerResize;
+      break;
+    case 'scale-outer':
+      resizeFunc = _scaleOuterResize;
+      break;
+    default:
+      resizeFunc = _letterBoxResize;
+  }
+  core.resizeFunc = resizeFunc;
+
+  // Listen to the resize and orientation events
+  window.addEventListener('resize', resizeFunc, false);
+  window.addEventListener('orientationchange', resizeFunc, false);
+
+  // Manually resize for the first time
+  resizeFunc(true);
+
+  // Setup visibility change API
+  var visibleResume = function() {
+    if (config.pauseOnHide) core.resume('visibility');
+  };
+  var visiblePause = function() {
+    if (config.pauseOnHide) core.pause('visibility');
+  };
+
+  // Main visibility API function
+  var vis = (function() {
+    var stateKey, eventKey;
+    var keys = {
+      hidden: "visibilitychange",
+      mozHidden: "mozvisibilitychange",
+      webkitHidden: "webkitvisibilitychange",
+      msHidden: "msvisibilitychange"
+    };
+    for (stateKey in keys) {
+      if (stateKey in document) {
+        eventKey = keys[stateKey];
+        break;
+      }
+    }
+    return function(c) {
+      if (c) document.addEventListener(eventKey, c, false);
+      return !document[stateKey];
+    }
+  })();
+
+  // Check if current tab is active or not
+  vis(function() {
+    if (vis()) {
+      // The setTimeout() is used due to a delay
+      // before the tab gains focus again, very important!
+      setTimeout(visibleResume, 300);
+    }
+    else {
+      visiblePause();
+    }
+  });
+
+  // Check if browser window has focus
+  if (window.addEventListener) {
+    window.addEventListener('focus', function() {
+      setTimeout(visibleResume, 300);
+    }, false);
+    window.addEventListener('blur', visiblePause, false);
+  }
+  else {
+    window.attachEvent("focus", function() {
+      setTimeout(visibleResume, 300);
+    });
+    window.attachEvent('blur', visiblePause);
+  }
+
+  // Create rotate prompt if required
+  if (device.mobile && config.showRotatePrompt) {
+    var div = document.createElement('div');
+    div.innerHTML = config.rotatePromptImg ? '' : config.rotatePromptMsg;
+    div.style.position = 'absolute';
+    div.style.height = '12px';
+    div.style.textAlign = 'center';
+    div.style.left = 0;
+    div.style.right = 0;
+    div.style.top = 0;
+    div.style.bottom = 0;
+    div.style.margin = 'auto';
+    div.style.display = 'none';
+    div.style.color = config.rotatePromptFontColor || 'black';
+    core.rotatePromptElm = div;
+    document.body.appendChild(div);
+
+    if (config.rotatePromptImg) {
+      var img = new Image();
+      img.onload = function() {
+        div.image = img;
+        div.appendChild(img);
+        resizeRotatePrompt();
+      };
+      img.src = config.rotatePromptImg;
+      img.className = 'center';
+      core.rotatePromptImg = img;
+    }
+
+    // Check orientation and display the rotate prompt if required
+    var isLandscape = (core.width / core.height >= 1);
+    core.on('resize', function() {
+      if (window.innerWidth < window.innerHeight && isLandscape) {
+        core.rotatePromptVisible = true;
+      }
+      else if (window.innerWidth > window.innerHeight && !isLandscape) {
+        core.rotatePromptVisible = true;
+      }
+      else {
+        core.rotatePromptVisible = false;
+      }
+
+      // Hide game view
+      core.view.style.display = core.rotatePromptVisible ? 'none' : 'block';
+      // Show rotate view
+      core.rotatePromptElm.style.backgroundColor = config.rotatePromptBGColor || 'black';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-box' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-webkit-flex' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? '-ms-flexbox' : 'none';
+      core.rotatePromptElm.style.display = core.rotatePromptVisible ? 'flex' : 'none';
+      resizeRotatePrompt();
+
+      // Pause the game if orientation is not correct
+      if (core.rotatePromptVisible) {
+        core.pause('rotate');
+      }
+      else {
+        core.resume('rotate');
+      }
+    });
+  }
+
+  core.emit('boot');
+  core.emit('booted');
+}
+function getVendorAttribute(el, attr) {
+  var uc = attr.ucfirst();
+  return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
+}
+function chooseProperResolution(res) {
+  // Default value
+  if (!res) {
+    return 1;
+  }
+  // Numerical value
+  else if (typeof(res) === 'number') {
+    return res;
+  }
+  // Calculate based on window size and device pixel ratio
+  else {
+    res.values.sort(function(a, b) { return a - b });
+    var gameRatio = core.width / core.height;
+    var windowRatio = window.innerWidth / window.innerHeight;
+    var scale = res.retina ? window.devicePixelRatio : 1;
+    var result = res.values[0];
+    for (var i = 0; i < res.values.length; i++) {
+      result = res.values[i];
+
+      console.log(core.width + ',' + core.height);
+      console.log(`window(${window.innerWidth * scale})-game(${core.width * result})`);
+
+      if ((gameRatio >= windowRatio && window.innerWidth * scale <= core.width * result) ||
+        (gameRatio < windowRatio && window.innerHeight * scale <= core.height * result)) {
+        break;
+      }
+    }
+
+    return result;
+  }
+}
+function resizeRotatePrompt() {
+  core.rotatePromptElm.style.width = window.innerWidth + 'px';
+  core.rotatePromptElm.style.height = window.innerHeight + 'px';
+  _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
+
+  var imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
+  var windowRatio = window.innerWidth / window.innerHeight;
+  var w, h;
+  if (imgRatio < windowRatio) {
+    w = Math.floor(window.innerHeight * 0.8);
+    h = Math.floor(w / imgRatio);
+  }
+  else {
+    h = Math.floor(window.innerWidth * 0.8);
+    w = Math.floor(h * imgRatio);
+  }
+  core.rotatePromptImg.style.height = w + 'px';
+  core.rotatePromptImg.style.width = h + 'px';
+}
+
+// Update (fixed update implementation from Phaser by @photonstorm)
+var spiraling = 0;
+var last = -1;
+var realDelta = 0;
+var deltaTime = 0;
+var desiredFPS = 30;
+var currentUpdateID = 0;
+var lastCount = 0;
+var step = 0;
+var slowStep = 0;
+var count = 0;
+/**
+ * Update and render a scene
+ * @private
+ * @param  {Scene} scene      Scene to be updated
+ * @param  {Number} timestamp Current time stamp
+ */
+function tickAndRender(scene, timestamp) {
+  if (last > 0) {
+    realDelta = timestamp - last;
+  }
+  last = timestamp;
+
+  // If the logic time is spiraling upwards, skip a frame entirely
+  if (spiraling > 1) {
+    // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
+    deltaTime = 0;
+    spiraling = 0;
+
+    renderScene(scene);
+  }
+  else {
+    desiredFPS = scene ? scene.desiredFPS : 30;
+
+    // Step size
+    step = 1000.0 / desiredFPS;
+    slowStep = step * core.speed;
+
+    // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
+    deltaTime += Math.max(Math.min(step * 3, realDelta), 0);
+
+    // Call the game update logic multiple times if necessary to "catch up" with dropped frames
+    // unless forceSingleUpdate is true
+    count = 0;
+
+    while (deltaTime >= step) {
+      deltaTime -= step;
+      currentUpdateID = count;
+
+      // Fixed update with the timestep
+      core.delta = step;
+      Timer.update(slowStep);
+      updateScene(scene);
+
+      count += 1;
+    }
+
+    // Detect spiraling (if the catch-up loop isn't fast enough, the number of iterations will increase constantly)
+    if (count > lastCount) {
+      spiraling += 1;
+    }
+    else if (count < lastCount) {
+      // Looks like it caught up successfully, reset the spiral alert counter
+      spiraling = 0;
+    }
+
+    lastCount = count;
+
+    renderScene(scene);
+  }
+}
+function updateScene(scene) {
+  // Switch to new scene
+  if (nextScene) {
+    var pair = nextScene;
+    nextScene = null;
+
+    // Freeze current scene before switching
+    core.scene && core.scene._freeze();
+    core.scene = null;
+
+    // Create instance of scene if not exist
+    if (!pair.inst) {
+      pair.inst = new pair.ctor();
+    }
+
+    // Awake the scene
+    core.scene = pair.inst;
+    core.scene._awake();
+
+    // Resize container of the scene
+    resizeFunc();
+  }
+
+  // Update current scene
+  if (scene) {
+    scene._update(slowStep, slowStep * 0.001);
+  }
+}
+var skipFrameCounter = 0;
+function renderScene(scene) {
+  skipFrameCounter -= 1;
+  if (skipFrameCounter < 0) {
+    skipFrameCounter = (config.skipFrame || 0);
+
+    if (scene) {
+      Renderer.render(scene);
+    }
+  }
+}
 
 // Resize functions
 var windowSize = { x: 1, y: 1 };
