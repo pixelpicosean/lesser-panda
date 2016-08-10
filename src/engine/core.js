@@ -314,7 +314,6 @@ Object.defineProperty(core, 'paused', {
   },
 });
 
-
 // Fetch device info and setup
 if (config.renderer && config.renderer.resolution) {
   core.resolution = chooseProperResolution(config.renderer.resolution);
@@ -534,9 +533,6 @@ function chooseProperResolution(res) {
     var result = res.values[0];
     for (var i = 0; i < res.values.length; i++) {
       result = res.values[i];
-
-      console.log(core.width + ',' + core.height);
-      console.log(`window(${window.innerWidth * scale})-game(${core.width * result})`);
 
       if ((gameRatio >= windowRatio && window.innerWidth * scale <= core.width * result) ||
         (gameRatio < windowRatio && window.innerHeight * scale <= core.height * result)) {
