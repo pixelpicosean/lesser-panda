@@ -42,7 +42,7 @@ RectTileLayer.prototype.renderCanvas = function (renderer) {
 RectTileLayer.prototype.addRect = function (u, v, x, y, tileWidth, tileHeight, animX, animY) {
   var pb = this.pointsBuf;
   this.hasAnim = this.hasAnim || animX > 0 || animY > 0;
-  if (tileWidth == tileHeight) {
+  if (tileWidth === tileHeight) {
     pb.push(u);
     pb.push(v);
     pb.push(x);
@@ -51,10 +51,11 @@ RectTileLayer.prototype.addRect = function (u, v, x, y, tileWidth, tileHeight, a
     pb.push(tileHeight);
     pb.push(animX | 0);
     pb.push(animY | 0);
-  } else {
+  }
+  else {
     //horizontal line on squares
-    if (tileWidth % tileHeight == 0) {
-      for (var i=0;i<tileWidth/tileHeight;i++) {
+    if (tileWidth % tileHeight === 0) {
+      for (var i = 0; i < tileWidth / tileHeight; i++) {
         pb.push(u + i * tileHeight);
         pb.push(v);
         pb.push(x + i * tileHeight);
@@ -64,7 +65,8 @@ RectTileLayer.prototype.addRect = function (u, v, x, y, tileWidth, tileHeight, a
         pb.push(animX | 0);
         pb.push(animY | 0);
       }
-    } else {
+    }
+    else {
       //ok, ok, lets use rectangle. but its not working with square shader yet
       pb.push(u);
       pb.push(v);
@@ -81,17 +83,19 @@ RectTileLayer.prototype.addRect = function (u, v, x, y, tileWidth, tileHeight, a
 RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
   if (!this.texture || !this.texture.valid) return;
   var points = this.pointsBuf;
-  if (points.length == 0) return;
+  if (points.length === 0) return;
 
   var gl = renderer.gl;
   var tile = renderer.plugins.tile;
   var shader = tile.getShader(useSquare);
   gl.activeTexture(gl.TEXTURE0);
   var texture = this.texture.baseTexture;
-  if (!texture._glTextures[gl.id])
+  if (!texture._glTextures[gl.id]) {
     renderer.updateTexture(texture);
-  else
+  }
+  else {
     gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
+  }
   var ss =  shader.uniforms.samplerSize;
   ss.value[0] = 1.0 / texture.width;
   ss.value[1] = 1.0 / texture.height;
@@ -108,7 +112,7 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
   //if layer was changed, reupload vertices
   shader.bindBuffer(gl, vb);
   var vertices = points.length / 8 * shader.vertPerQuad;
-  if (this.modificationMarker != vertices) {
+  if (this.modificationMarker !== vertices) {
     this.modificationMarker = vertices;
     var vs = shader.stride * vertices;
     if (!this.vbBuffer || this.vbBuffer.byteLength < vs) {
@@ -137,11 +141,12 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
         arr[sz++] = points[i + 6];
         arr[sz++] = points[i + 7];
       }
-    } else {
+    }
+    else {
       var ww = texture.width, hh = texture.height;
       //var tint = 0xffffffff;
       var tint = -1;
-      for (var i=0;i<points.length;i+=8) {
+      for (var i = 0; i < points.length; i += 8) {
         var x = points[i+2], y = points[i+3];
         var w = points[i+4], h = points[i+5];
         var u = points[i], v = points[i+1];
@@ -186,15 +191,18 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
     }
     if (vs > this.vbArray.length/2 ) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, arr);
-    } else {
+    }
+    else {
       var view = arr.subarray(0, vs)
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
     }
   }
-  if (useSquare)
+  if (useSquare) {
     gl.drawArrays(gl.POINTS, 0, vertices);
-  else
+  }
+  else {
     gl.drawArrays(gl.TRIANGLES, 0, vertices);
+  }
 }
 
 module.exports = exports = RectTileLayer;

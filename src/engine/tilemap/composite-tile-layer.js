@@ -15,28 +15,31 @@ CompositeTileLayer.prototype.constructor = RectTileLayer;
 CompositeTileLayer.prototype.updateTransform = CompositeTileLayer.prototype.displayObjectUpdateTransform;
 
   //can be initialized multiple times
-CompositeTileLayer.prototype.initialize = function(zIndex, bitmaps, useSquare) {
+CompositeTileLayer.prototype.initialize = function(zIndex, tilesets, useSquare) {
   this.z = this.zIndex = zIndex;
   this.useSquare = useSquare;
-  bitmaps && this.setBitmaps(bitmaps);
+  tilesets && this.createLayers(tilesets);
 };
 
-CompositeTileLayer.prototype.setBitmaps = function(bitmaps) {
+CompositeTileLayer.prototype.createLayers = function(tilesets) {
   this.removeChildren();
-  for (var i=0;i<bitmaps.length;i++)
-    this.addChild(new RectTileLayer(this.zIndex, bitmaps[i]));
+  for (var i = 0; i < tilesets.length; i++) {
+    this.addChild(new RectTileLayer(this.zIndex, tilesets[i]));
+  }
   this.modificationMarker = 0;
 };
 
 CompositeTileLayer.prototype.clear = function () {
-  for (var i=0;i<this.children.length;i++)
+  for (var i = 0; i < this.children.length; i++) {
     this.children[i].clear();
+  }
   this.modificationMarker = 0;
 };
 
 CompositeTileLayer.prototype.addRect = function (num, u, v, x, y, tileWidth, tileHeight) {
-  if (this.children[num] && this.children[num].texture)
+  if (this.children[num] && this.children[num].texture) {
     this.children[num].addRect(u, v, x, y, tileWidth, tileHeight);
+  }
 };
 
 CompositeTileLayer.prototype.renderCanvas = function (renderer) {
@@ -52,10 +55,10 @@ CompositeTileLayer.prototype.renderCanvas = function (renderer) {
     );
   }
   var layers = this.children;
-  for (var i = 0; i < layers.length; i++)
+  for (var i = 0; i < layers.length; i++) {
     layers[i].renderCanvas(renderer);
+  }
 };
-
 
 CompositeTileLayer.prototype.renderWebGL = function(renderer) {
   var gl = renderer.gl;
@@ -69,8 +72,8 @@ CompositeTileLayer.prototype.renderWebGL = function(renderer) {
   tm.value = this._globalMat.toArray(true);
   if (this.useSquare) {
     var ps = shader.uniforms.pointScale;
-    ps.value[0] = this._globalMat.a >= 0?1:-1;
-    ps.value[1] = this._globalMat.d < 0?1:-1;
+    ps.value[0] = this._globalMat.a >= 0 ? 1 : -1;
+    ps.value[1] = this._globalMat.d < 0 ? 1 : -1;
     ps = shader.uniforms.projectionScale;
     ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
   }
@@ -80,18 +83,18 @@ CompositeTileLayer.prototype.renderWebGL = function(renderer) {
   //shader.syncUniform(shader.uniforms.animationFrame);
   shader.syncUniforms();
   var layers = this.children;
-  for (var i = 0; i < layers.length; i++)
+  for (var i = 0; i < layers.length; i++) {
     layers[i].renderWebGL(renderer, this.useSquare);
+  }
 };
-
 
 CompositeTileLayer.prototype.isModified = function(anim) {
   var layers = this.children;
-  if (this.modificationMarker != layers.length) {
+  if (this.modificationMarker !== layers.length) {
     return true;
   }
-  for (var i=0;i<layers.length;i++) {
-    if (layers[i].modificationMarker != layers[i].pointsBuf.length ||
+  for (var i = 0; i < layers.length; i++) {
+    if (layers[i].modificationMarker !== layers[i].pointsBuf.length ||
       anim && layers[i].hasAnim) {
       return true;
     }

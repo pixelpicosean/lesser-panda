@@ -4,8 +4,7 @@
  */
 var PIXI = require('engine/pixi');
 
-function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes)
-{
+function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
   this.vertSize = 7;
   this.vertPerQuad = 1;
   this.stride = this.vertSize * 4;
@@ -19,10 +18,8 @@ function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms,
     pointScale:         { type: '2f', value: new Float32Array([0, 0])},
     projectionScale:    { type: 'f', value: 1 }
   };
-  if (customUniforms)
-  {
-    for (var u in customUniforms)
-    {
+  if (customUniforms) {
+    for (var u in customUniforms) {
       uniforms[u] = customUniforms[u];
     }
   }
@@ -30,10 +27,8 @@ function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms,
     aVertexPosition:    0,
     aSize:              0
   };
-  if (customAttributes)
-  {
-    for (var a in customAttributes)
-    {
+  if (customAttributes) {
+    for (var a in customAttributes) {
       attributes[a] = customAttributes[a];
     }
   }
@@ -45,7 +40,7 @@ function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms,
 // constructor
 SquareTileShader.prototype = Object.create(PIXI.Shader.prototype);
 SquareTileShader.prototype.constructor = SquareTileShader;
-SquareTileShader.prototype.bindBuffer = function (gl, vb) {
+SquareTileShader.prototype.bindBuffer = function(gl, vb) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vb);
   gl.vertexAttribPointer(this.attributes.aVertexPosition, 4, gl.FLOAT, false, this.stride, 0);
   gl.vertexAttribPointer(this.attributes.aSize, 3, gl.FLOAT, false, this.stride, 4 * 4);
@@ -95,8 +90,7 @@ SquareTileShader.defaultFragmentSrc = [
   '}'
 ].join('\n');
 
-function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes)
-{
+function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
   this.vertSize = 6;
   this.vertPerQuad = 6;
   this.stride = this.vertSize * 4;
@@ -108,10 +102,8 @@ function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, c
       0, 1, 0,
       0, 0, 1]) }
   };
-  if (customUniforms)
-  {
-    for (var u in customUniforms)
-    {
+  if (customUniforms) {
+    for (var u in customUniforms) {
       uniforms[u] = customUniforms[u];
     }
   }
@@ -119,10 +111,8 @@ function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, c
     aVertexPosition:    0,
     aAnim:              0
   };
-  if (customAttributes)
-  {
-    for (var a in customAttributes)
-    {
+  if (customAttributes) {
+    for (var a in customAttributes) {
       attributes[a] = customAttributes[a];
     }
   }
@@ -134,7 +124,7 @@ function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, c
 // constructor
 RectTileShader.prototype = Object.create(PIXI.Shader.prototype);
 RectTileShader.prototype.constructor = RectTileShader;
-RectTileShader.prototype.bindBuffer = function (gl, vb) {
+RectTileShader.prototype.bindBuffer = function(gl, vb) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vb);
   gl.vertexAttribPointer(this.attributes.aVertexPosition, 4, gl.FLOAT, false, this.stride, 0);
   gl.vertexAttribPointer(this.attributes.aAnim, 2, gl.FLOAT, false, this.stride, 4 * 4);
@@ -206,8 +196,7 @@ TileRenderer.prototype.checkLeaks = function() {
 };
 
 TileRenderer.prototype.start = function() {
-  this.renderer.blendModeManager.setBlendMode( PIXI.BLEND_MODES.NORMAL );
-  //sorry, nothing
+  this.renderer.blendModeManager.setBlendMode(PIXI.BLEND_MODES.NORMAL);
 };
 
 TileRenderer.prototype.getVb = function(id) {

@@ -5,6 +5,7 @@ PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
 
 var CollisionLayer = require('./collision-layer');
 var CompositeTileLayer = require('./composite-tile-layer');
+var RectTileLayer = require('./rect-tile-layer');
 
 var filmstrip = require('./filmstrip');
 
