@@ -41,14 +41,14 @@ Scene.prototype.loadLevel = function(levelData, settings) {
     // Actor layer
     else if (layerData.type === 'actor') {
       // Create layer if not exist yet
-      if (!this[layerData.name]) {
-        this.createLayers(layerData.name, s.container);
+      if (!this[layerData.container]) {
+        this.createLayers(layerData.container, s.container);
       }
 
       // Spawn actors
       for (j = 0; j < layerData.actors.length; j++) {
         act = layerData.actors[j];
-        this.spawnActor(act[0], act[1], act[2], layerData.name, act[3]);
+        this.spawnActor(act[0], act[1], act[2], layerData.container, act[3]);
       }
     }
 
