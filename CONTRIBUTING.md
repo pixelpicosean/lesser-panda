@@ -5,11 +5,15 @@ if you are thinking of helping us.
 
 ## Contrinutions
 
+The development of LesserPanda is using Git-Flow, please always send PR
+to `develop` branch.
+
 ### Branches
 
-TODO:
-
-- List branches with descriptions
+- master: Stable
+- develop: Branch for development(latest)
+- feature/*: Branch for a specific feature, will be merged into `develop` while finished
+- doc: API doc branch
 
 ### Internal Documentation
 

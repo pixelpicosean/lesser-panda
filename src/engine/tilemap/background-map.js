@@ -4,28 +4,38 @@
  */
 var PIXI = require('engine/pixi');
 
-function RectTileLayer(zIndex, texture) {
-  PIXI.DisplayObject.apply(this, arguments);
-  this.initialize.apply(this, arguments);
+var TileRenderer = require('./tile-renderer');
+PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
+
+/**
+ * @private
+ */
+function RectTileLayer(tilesize, texture) {
+  PIXI.DisplayObject.call(this);
+
+  // Initialize
+  this.tilesize = tilesize;
+  this.texture = texture;
+
+  this.visible = false;
+
+  this.pointsBuf = [];
+  this.modificationMarker = 0;
+
+  this.uOffset = texture.frame.x;
+  this.vOffset = texture.frame.y;
+  this.tilesPerTilesetRow = Math.floor(texture.width / tilesize);
 }
 
 RectTileLayer.prototype = Object.create(PIXI.DisplayObject.prototype);
 RectTileLayer.prototype.constructor = RectTileLayer;
 
-RectTileLayer.prototype.initialize = function(zIndex, texture) {
-  this.texture = texture;
-  this.z = this.zIndex = zIndex;
-  this.pointsBuf = [];
-  this.visible = false;
-};
-
-RectTileLayer.prototype.clear = function () {
+RectTileLayer.prototype.clear = function() {
   this.pointsBuf.length = 0;
   this.modificationMarker = 0;
-  this.hasAnim = false;
 };
 
-RectTileLayer.prototype.renderCanvas = function (renderer) {
+RectTileLayer.prototype.renderCanvas = function(renderer) {
   if (!this.texture || !this.texture.valid) return;
   var points = this.pointsBuf;
   for (var i = 0, n = points.length; i < n; i += 8) {
@@ -39,45 +49,16 @@ RectTileLayer.prototype.renderCanvas = function (renderer) {
   }
 };
 
-RectTileLayer.prototype.addRect = function (u, v, x, y, tileWidth, tileHeight, animX, animY) {
+RectTileLayer.prototype.addTile = function(tileIdx, tx, ty) {
   var pb = this.pointsBuf;
-  this.hasAnim = this.hasAnim || animX > 0 || animY > 0;
-  if (tileWidth === tileHeight) {
-    pb.push(u);
-    pb.push(v);
-    pb.push(x);
-    pb.push(y);
-    pb.push(tileWidth);
-    pb.push(tileHeight);
-    pb.push(animX | 0);
-    pb.push(animY | 0);
-  }
-  else {
-    //horizontal line on squares
-    if (tileWidth % tileHeight === 0) {
-      for (var i = 0; i < tileWidth / tileHeight; i++) {
-        pb.push(u + i * tileHeight);
-        pb.push(v);
-        pb.push(x + i * tileHeight);
-        pb.push(y);
-        pb.push(tileHeight);
-        pb.push(tileHeight);
-        pb.push(animX | 0);
-        pb.push(animY | 0);
-      }
-    }
-    else {
-      //ok, ok, lets use rectangle. but its not working with square shader yet
-      pb.push(u);
-      pb.push(v);
-      pb.push(x);
-      pb.push(y);
-      pb.push(tileWidth);
-      pb.push(tileHeight);
-      pb.push(animX | 0);
-      pb.push(animY | 0);
-    }
-  }
+  pb.push(this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow));
+  pb.push(this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow));
+  pb.push(this.tilesize * tx);
+  pb.push(this.tilesize * ty);
+  pb.push(this.tilesize);
+  pb.push(this.tilesize);
+  pb.push(0);
+  pb.push(0);
 };
 
 RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
@@ -205,4 +186,105 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
   }
 }
 
-module.exports = exports = RectTileLayer;
+/**
+ * BackgroundMap
+ */
+function BackgroundMap(tilesize, data, tileset) {
+  PIXI.Container.call(this);
+
+  this.useSquare = true;
+  this.modificationMarker = 0;
+
+  this.map = new RectTileLayer(tilesize, tileset);
+  this.addChild(this.map);
+
+  // Initialize
+  this.tilesize = tilesize;
+  this.data = data;
+  this.tileset = tileset;
+
+  // Create tiles from data
+  var r, q, height = data.length, width = data[0].length, tileIdx;
+  for (r = 0; r < height; r++) {
+    for (q = 0; q < width; q++) {
+      if (data[r][q] === 0) continue;
+      this.map.addTile(data[r][q] - 1, q, r);
+    }
+  }
+}
+
+BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
+BackgroundMap.prototype.constructor = RectTileLayer;
+BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectUpdateTransform;
+
+BackgroundMap.prototype.clear = function() {
+  this.children[0].clear();
+  this.modificationMarker = 0;
+};
+
+BackgroundMap.prototype.addTile = function(tileIdx, tx, ty) {
+  if (this.children[0].texture) {
+    this.children[0].addTile(tileIdx, tx, ty);
+  }
+};
+
+BackgroundMap.prototype.renderCanvas = function(renderer) {
+  if (!renderer.dontUseTransform) {
+    var wt = this.worldTransform;
+    renderer.context.setTransform(
+      wt.a * renderer.resolution,
+      wt.b,
+      wt.c,
+      wt.d * renderer.resolution,
+      wt.tx * renderer.resolution,
+      wt.ty * renderer.resolution
+    );
+  }
+  var layers = this.children;
+  for (var i = 0; i < layers.length; i++) {
+    layers[i].renderCanvas(renderer);
+  }
+};
+
+BackgroundMap.prototype.renderWebGL = function(renderer) {
+  var gl = renderer.gl;
+  var shader = renderer.plugins.tile.getShader(this.useSquare);
+  renderer.setObjectRenderer(renderer.plugins.tile);
+  renderer.shaderManager.setShader(shader);
+  var tm = shader.uniforms.projectionMatrix;
+  //TODO: dont create new array, please
+  this._globalMat = this._globalMat || new PIXI.Matrix();
+  renderer.currentRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
+  tm.value = this._globalMat.toArray(true);
+  if (this.useSquare) {
+    var ps = shader.uniforms.pointScale;
+    ps.value[0] = this._globalMat.a >= 0 ? 1 : -1;
+    ps.value[1] = this._globalMat.d < 0 ? 1 : -1;
+    ps = shader.uniforms.projectionScale;
+    ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
+  }
+  var af = shader.uniforms.animationFrame.value;
+  af[0] = renderer.tileAnimX | 0;
+  af[1] = renderer.tileAnimY | 0;
+  //shader.syncUniform(shader.uniforms.animationFrame);
+  shader.syncUniforms();
+  var layers = this.children;
+  for (var i = 0; i < layers.length; i++) {
+    layers[i].renderWebGL(renderer, this.useSquare);
+  }
+};
+
+BackgroundMap.prototype.isModified = function(anim) {
+  if (this.children[0].modificationMarker !== this.children[0].pointsBuf.length ||
+    anim && this.children[0].hasAnim) {
+    return true;
+  }
+  return false;
+};
+
+BackgroundMap.prototype.clearModify = function() {
+  this.modificationMarker = this.children.length;
+  this.children[0].modificationMarker = this.children[0].pointsBuf.length;
+};
+
+module.exports = exports = BackgroundMap;

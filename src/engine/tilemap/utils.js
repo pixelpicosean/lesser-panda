@@ -5,8 +5,8 @@
  */
 
 /**
- * Lift an 2D array to 1D. (is that even a lifting?!)
- * @param  {array<array>} arr 2D array.
+ * Lift an 1D array to 2D.
+ * @param  {array<array>} arr 1D array.
  * @param  {number} w         How many elements in a row.
  * @param  {number} h         How many elements in a column.
  * @return {array}
