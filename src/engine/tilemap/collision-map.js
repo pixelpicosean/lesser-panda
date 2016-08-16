@@ -383,9 +383,9 @@ CollisionMap.prototype.generateShapes = function generateShapes() {
 /**
  * Destroy this layer.
  * @memberof CollisionMap#
- * @method destroy
+ * @method remove
  */
-CollisionMap.prototype.destroy = function() {
+CollisionMap.prototype.remove = function() {
   for (var i = 0; i < this.bodies.length; i++) {
     this.bodies[i].remove();
   }
@@ -417,4 +417,4 @@ CollisionMap.prototype.addTo = function(scene) {
  *
  * @see CollisionMap
  */
-module.exports = CollisionMap;
+module.exports = exports = CollisionMap;
