@@ -5,7 +5,6 @@ PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
 
 var CollisionLayer = require('./collision-layer');
 var CompositeTileLayer = require('./composite-tile-layer');
-var RectTileLayer = require('./rect-tile-layer');
 
 var filmstrip = require('./filmstrip');
 
@@ -50,8 +49,10 @@ function Tilemap(data, tilesets, group) {
 
   this.tilesets = tilesets;
   this.data = data;
-  this.collisionLayer = null;
+
   this.group = group;
+  this.collisionLayer = null;
+
   this.actorLayers = [];
 
   this.createLayers();
@@ -115,7 +116,7 @@ Tilemap.prototype.addTo = function(scene, container) {
  * @private
  */
 Tilemap.prototype.createLayers = function() {
-  var i, layerDef, data, tilesize, tileset, layer, texture, textures;
+  var i, tileIdx, layerDef, data, tilesize, tileset, layer, texture, textures;
   var r, q;
   for (i = 0; i < this.data.length; i++) {
     layerDef = this.data[i];
@@ -131,14 +132,16 @@ Tilemap.prototype.createLayers = function() {
       data = layerDef.data;
       tilesize = layerDef.tilesize;
 
-      textures = filmstrip(tileset, tilesize, tilesize);
+      var tilesetFrameX = tileset.frame.x;
+      var tilesetFrameY = tileset.frame.y;
+      var tilesPerRow = Math.floor(tileset.width / tilesize);
 
       layer = new CompositeTileLayer(0, [tileset], true);
       for (r = 0; r < layerDef.height; r++) {
         for (q = 0; q < layerDef.width; q++) {
           if (data[r][q] === 0) continue;
-          texture = textures[data[r][q] - 1];
-          layer.addRect(0, texture.frame.x, texture.frame.y, q * tilesize, r * tilesize, tilesize, tilesize);
+          tileIdx = data[r][q] - 1;
+          layer.addRect(0, tilesetFrameX + tilesize * Math.floor(tileIdx % tilesPerRow), tilesetFrameY + tilesize * Math.floor(tileIdx / tilesPerRow), q * tilesize, r * tilesize, tilesize, tilesize);
 
           this.addChild(layer);
         }
