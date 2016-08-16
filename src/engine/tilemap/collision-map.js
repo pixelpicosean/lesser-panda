@@ -402,6 +402,8 @@ CollisionMap.prototype.addTo = function(scene) {
   for (var i = 0; i < this.bodies.length; i++) {
     scene.world.addBody(this.bodies[i]);
   }
+
+  return this;
 };
 
 /**
