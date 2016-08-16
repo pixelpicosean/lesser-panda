@@ -1,8 +1,12 @@
 var PIXI = require('engine/pixi');
 
-var tilemap = require('./pixi-tilemap');
-var filmstrip = require('./filmstrip');
+var TileRenderer = require('./tile-renderer');
+PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
+
 var CollisionLayer = require('./collision-layer');
+var CompositeTileLayer = require('./composite-tile-layer');
+
+var filmstrip = require('./filmstrip');
 
 var tiledConverter = require('./tiled-converter');
 
@@ -128,7 +132,7 @@ Tilemap.prototype.createLayers = function() {
 
       textures = filmstrip(tileset, tilesize, tilesize);
 
-      layer = new tilemap.CompositeRectTileLayer(0, [tileset], true);
+      layer = new CompositeTileLayer(0, [tileset], true);
       for (r = 0; r < layerDef.height; r++) {
         for (q = 0; q < layerDef.width; q++) {
           if (data[r][q] === 0) continue;
