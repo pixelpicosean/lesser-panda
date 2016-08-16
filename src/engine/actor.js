@@ -1079,6 +1079,17 @@ Object.assign(Scene.prototype, {
   },
 
   /**
+   * Get actor with a name.
+   * @method getActorByName
+   * @memberof Scene#
+   * @param  {string} name  Name of the actor.
+   * @return {Actor}        Actor with the name or undefined if not found.
+   */
+  getActorByName: function getActorByName(name) {
+    return this.actorSystem.namedActors[name];
+  },
+
+  /**
    * Pause actors with a specific tag.
    * @method pauseActorsTagged
    * @memberof Scene#
