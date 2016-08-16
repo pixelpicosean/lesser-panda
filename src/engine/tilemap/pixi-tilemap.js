@@ -1,6 +1,6 @@
 /**
  * PIXI-tilemap made by Ivan Popelyshev
- * @version master/5276fa4
+ * Modified and fixed by Sean Bohan
  */
 var PIXI = require('engine/pixi');
 
@@ -90,7 +90,7 @@ var PIXI = require('engine/pixi');
         'uniform vec2 pointScale;',
 
         'void main(void){',
-        '   float margin = 1.0/vSize;',
+        '   float margin = 0.5/vSize;',
         '   vec2 clamped = vec2(clamp(gl_PointCoord.x, margin, 1.0 - margin), clamp(gl_PointCoord.y, margin, 1.0 - margin));',
         '   gl_FragColor = texture2D(uSampler, ((clamped-0.5) * pointScale + 0.5) * vSize * samplerSize + vTextureCoord);',
         '}'
@@ -303,7 +303,7 @@ var PIXI = require('engine/pixi');
                     pb.push(v);
                     pb.push(x + i * tileHeight);
                     pb.push(y);
-                    pb.push(tileWidth);
+                    pb.push(tileHeight);
                     pb.push(tileHeight);
                     pb.push(animX | 0);
                     pb.push(animY | 0);
@@ -505,10 +505,10 @@ var PIXI = require('engine/pixi');
         if (!renderer.dontUseTransform) {
             var wt = this.worldTransform;
             renderer.context.setTransform(
-                wt.a,
+                wt.a * renderer.resolution,
                 wt.b,
                 wt.c,
-                wt.d,
+                wt.d * renderer.resolution,
                 wt.tx * renderer.resolution,
                 wt.ty * renderer.resolution
             );
@@ -534,7 +534,7 @@ var PIXI = require('engine/pixi');
             ps.value[0] = this._globalMat.a >= 0?1:-1;
             ps.value[1] = this._globalMat.d < 0?1:-1;
             ps = shader.uniforms.projectionScale;
-            ps.value = Math.abs(this.worldTransform.a);
+            ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
         }
         var af = shader.uniforms.animationFrame.value;
         af[0] = renderer.tileAnimX | 0;

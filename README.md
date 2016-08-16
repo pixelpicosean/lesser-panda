@@ -84,6 +84,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Fix tilemap retina display.
 - Add second parameter to `core.setScene` to be able to create new instance for the next scene.
 - Improve scale mode support for mobile devices, especially for iOS.
 - Add support of spawning actors using registered type name.
