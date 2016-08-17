@@ -77,7 +77,7 @@ function convertLayer(layer, tilesize, firstGIDs, GIDRange) {
     data = utils.lift(normalizeImageTileID(layer.data, firstGIDs[tileset]), layer.width, layer.height);
 
     // Which parent this layer will be added to
-    parent = 'stage';
+    parent = undefined;
     if (layer.properties && layer.properties.parent) {
       parent = layer.properties.parent;
     }

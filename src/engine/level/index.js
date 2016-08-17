@@ -9,7 +9,7 @@ var DEFAULT_SETTINGS = {
 };
 
 Scene.prototype.loadLevel = function(levelData, settings) {
-  var i, j, layerData, tileset, s = Object.assign({}, settings, DEFAULT_SETTINGS);
+  var i, j, layerData, tileset, s = Object.assign({}, DEFAULT_SETTINGS, settings);
 
   // Remove existing background maps
   if (Array.isArray(this.backgroundMaps)) {

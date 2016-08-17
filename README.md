@@ -83,6 +83,10 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 0.4.1-1
+
+- Fix container issue while loading a Tiled map.
+
 ### 0.4.1
 
 - Optimize Tiled map converter by caching results.
