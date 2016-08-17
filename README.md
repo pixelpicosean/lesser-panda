@@ -49,9 +49,9 @@ A **weekly devlog** shows what happened to LesserPanda, read them at [wiki](http
 - `camera` 2D camera that can follow targets, zoom, rotate and shake.
 - `core` is the core of lesser-panda, which provides the base functionalities such as "loop" and "resize".
 - `device` tells what device the game is currently running.
-- `device-patch` includes patches to solve issues of specific devices.
 - `eventemitter3` is a fast EventEmitter implementation.
 - `keyboard` emits keyboard events, you need to subscribe to get noticed.
+- `level` makes Scene able to load level from data and import Tiled generated maps.
 - `loader` provides assets loading functon `addAsset(path, key, settings)`
 - `physics` provides AABB based collision detection and response.
 - `reactive` is a wrapper of Kefir.js, which is used for Reactive Programming.
@@ -60,6 +60,7 @@ A **weekly devlog** shows what happened to LesserPanda, read them at [wiki](http
 - `rnd` is a random number generator.
 - `scene` exports the Scene class. Scenes should all be sub-classes of it.
 - `timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
+- `tilemap` provides `BackgroundMap` and `CollisionMap` to support **square tile map** rendering and collision.
 - `utils` provides some math functions and helpers.
 - `vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
 
@@ -82,9 +83,10 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
-### 0.4.1-dev
+### 0.4.1
 
-- Improve Tiled map importer, which is now called `tiledToMap` and convert to latest `level` format.
+- Optimize Tiled map converter by caching results.
+- Improve Tiled map converter, which is now called `tiledToMap` and convert to latest `level` format.
 - Add `level` module that can load a level from data.
 - Add `Scene.getActorByName` method.
 - Tilemap huge rework, now has a way much cleaner API design.
