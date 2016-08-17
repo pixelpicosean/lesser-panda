@@ -1,3 +1,4 @@
+var loader = require('engine/loader');
 var utils = require('./utils');
 
 function normalizeImageTileID(tiles, firstgid) {
@@ -127,17 +128,35 @@ function parseActors(data) {
   };
 }
 
+var cache = [];
+
 /**
  * Convert a tiled map data into LesserPanda built-in tilemap format.
  *
- * @exports engine/tilemap/tiled-converter
- * @requires engine/tilemap/utils
+ * @exports engine/level/tiled-converter
+ * @requires engine/level/utils
+ * @requires engine/loader
  *
- * @param  {object} map     Map data.
+ * @param  {object|string} map Data object or resource id of the map.
  * @return {array<object>}
  */
-module.exports = exports = function tiledToMap(map) {
-  var i, result = [], collisionTileShapes;
+module.exports = exports = function tiledToMap(map_) {
+  var i;
+
+  // Get map data from resources if a key is given
+  var map = map_;
+  if (typeof(map) === 'string') {
+    map = loader.resources[map].data;
+  }
+
+  // Return the result from cache if already converted
+  for (i = 0; i < cache.length; i++) {
+    if (cache[i][0] === map) {
+      return cache[i][1];
+    }
+  }
+
+  var result = [], collisionTileShapes;
 
   // Fetch basic informations
   var tilesize = map.tilewidth;
@@ -176,6 +195,9 @@ module.exports = exports = function tiledToMap(map) {
     }
     result.push(nLayer);
   }
+
+  // Cache this map
+  cache.push([map, result]);
 
   return result;
 };
