@@ -1,5 +1,4 @@
-var utils = require('./utils');
-var utilsG = require('engine/utils');
+var utils = require('engine/utils');
 var physics = require('engine/physics');
 var Vector = require('engine/vector');
 var decomp = require('./decomp');
@@ -59,39 +58,168 @@ function polygonInPolygon(p1, p2) {
   return inside;
 }
 
-/**
- * CollisionLayer is a specific tile layer, which is used to support
- * collision of a tilemap.
- *
- * @class CollisionLayer
- * @constructor
- *
- * @param {object} def   Map data.
- * @param {number} group Collision group for this layer.
- */
-function CollisionLayer(def, group) {
-  this.tilesize = def.tilesize;
-  this.width = def.width;
-  this.height = def.height;
-  if (typeof(def.data[0]) === 'number') {
-    this.data = utils.lift(def.data, this.width, this.height);
+function isEdgeEqual(e1, e2) {
+  var d1 = (e1[0].x - e2[1].x)*(e1[0].x - e2[1].x) + (e1[0].y - e2[1].y)*(e1[0].y - e2[1].y);
+  var d2 = (e2[0].x - e1[1].x)*(e2[0].x - e1[1].x) + (e2[0].y - e1[1].y)*(e2[0].y - e1[1].y);
+  if (d1 < 0.25 && d2 < 0.25) return true;
+}
+
+function findEdge(edge_list, point) {
+  for (var i = 0; i < edge_list.length; i++) {
+    var edge = edge_list[i];
+    var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
+    if (d < 0.25) return i;
   }
-  else {
-    this.data = def.data;
+  return -1;
+}
+
+function getNearestPoints(outside, inside) {
+  // FIXME: should the max value be the size of a tile?
+  var distSqr = Number.MAX_VALUE, calcDistSqr;
+  var x1, y1, x2, y2;
+  var pair = [0, 0];
+  for (var i = 0; i < outside.length; i++) {
+    for (var j = 0; j < inside.length; j++) {
+      x1 = outside[i][0];
+      y1 = outside[i][1];
+      x2 = inside[j][0];
+      y2 = inside[j][1];
+
+      calcDistSqr = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+      if (calcDistSqr < distSqr) {
+        distSqr = calcDistSqr;
+        pair[0] = i; pair[1] = j;
+      }
+    }
   }
 
+  return pair;
+}
+
+function arrStartFromIdx(arr, idx) {
+  var result = arr.slice(idx);
+  return result.concat(arr.slice(0, idx));
+}
+
+function createZeroWidthPoints(outside, inside) {
+  var pair = getNearestPoints(outside, inside);
+
+  outside = arrStartFromIdx(outside, pair[0]);
+  inside = arrStartFromIdx(inside, pair[1]);
+
+  outside.push(outside[0]);
+  inside.push(inside[0]);
+
+  return outside.concat(inside);
+}
+
+function getShapeVertices(shape) {
+  var vertices = [];
+  var temp_edges = shape.slice();
+
+  var edge = temp_edges[0];
+  utils.removeItems(temp_edges, 0, 1);
+  vertices.push([edge[0].x, edge[0].y]);
+  var next_edge = findEdge(temp_edges, edge[1]);
+  while (next_edge >= 0) {
+    edge = temp_edges[next_edge];
+    utils.removeItems(temp_edges, next_edge, 1);
+    vertices.push([edge[0].x, edge[0].y]);
+    next_edge = findEdge(temp_edges, edge[1]);
+  }
+
+  // Without a hole
+  if (temp_edges.length === 0) {
+    return vertices;
+  }
+  // With holes inside
+  else {
+    // Calculate vertices of the hole inside
+    var holeVertices = getShapeVertices(temp_edges);
+
+    // Confirm vertices is outside and hole is inside
+    var tempVertices;
+    if (polygonInPolygon(vertices, holeVertices)) {
+      tempVertices = holeVertices;
+      holeVertices = vertices;
+      vertices = tempVertices;
+    }
+
+    // Create zero width points
+    return createZeroWidthPoints(vertices, holeVertices);
+  }
+}
+
+function genDefaultTileShapes(tilesize) {
+  return [
+    // Rectangle
+    [
+      { x:        0, y: tilesize },
+      { x:        0, y:        0 },
+      { x: tilesize, y:        0 },
+      { x: tilesize, y: tilesize },
+    ],
+    // Triangle
+    [
+      { x: tilesize, y: tilesize },
+      { x:        0, y: tilesize },
+      { x:        0, y:        0 },
+    ],
+    // Triangle
+    [
+      { x:        0, y: tilesize },
+      { x: tilesize, y:        0 },
+      { x: tilesize, y: tilesize },
+    ],
+    // Triangle
+    [
+      { x: tilesize, y:        0 },
+      { x:        0, y: tilesize },
+      { x:        0, y:        0 },
+    ],
+    // Triangle
+    [
+      { x:        0, y:        0 },
+      { x: tilesize, y:        0 },
+      { x: tilesize, y: tilesize },
+    ],
+  ];
+}
+
+/**
+ * CollisionMap is a specific tile layer, which is used to support
+ * collision of a tilemap.
+ *
+ * @class CollisionMap
+ * @constructor
+ *
+ * @param {number} tilesize     Tile size.
+ * @param {Array}  data         Map data as a 2D array.
+ * @param {number} group        Collision group for this layer.
+ * @param {Array}  [tileShapes] Tile shape list.
+ */
+function CollisionMap(tilesize, data, group, tileShapes) {
+  this.tilesize = tilesize;
+
+  this.width = data[0].length;
+  this.height = data.length;
+
+  this.data = data;
+
   this.group = group;
-  this.collisionTileShapes = def.collisionTileShapes;
+  this.tileShapes = tileShapes || genDefaultTileShapes(tilesize);
+
   this.bodies = [];
 
   this.generateShapes();
 }
+
 /**
  * Generate bodies.
- * @memberof CollisionLayer#
+ * @memberof CollisionMap#
  * @method generateShapes
  */
-CollisionLayer.prototype.generateShapes = function generateShapes() {
+CollisionMap.prototype.generateShapes = function generateShapes() {
   var i, j;
 
   // Create edges
@@ -108,7 +236,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
         x = mx * j; // left
         y = my * i; // top
 
-        var polygon = this.collisionTileShapes[grid[i][j] - 1];
+        var polygon = this.tileShapes[grid[i][j] - 1];
         var vs = Array(polygon.length);
         var es = Array(polygon.length);
         for (var p = 0; p < polygon.length; p++) {
@@ -130,12 +258,6 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     }
   }
 
-  function isEdgeEqual(e1, e2) {
-    var d1 = (e1[0].x - e2[1].x)*(e1[0].x - e2[1].x) + (e1[0].y - e2[1].y)*(e1[0].y - e2[1].y);
-    var d2 = (e2[0].x - e1[1].x)*(e2[0].x - e1[1].x) + (e2[0].y - e1[1].y)*(e2[0].y - e1[1].y);
-    if (d1 < 0.25 && d2 < 0.25) return true;
-  }
-
   // Go through all edges and delete all instances of the ones that appear more than once
   var e1, e2, t1, t2, g1, g2, k;
   for (i = edges.length - 1; i >= 0; i--) {
@@ -144,8 +266,8 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
       e2 = edges[j];
       if (isEdgeEqual(e1, e2)) {
         // Remove edges
-        utilsG.removeItems(edges, i, 1);
-        utilsG.removeItems(edges, j, 1);
+        utils.removeItems(edges, i, 1);
+        utils.removeItems(edges, j, 1);
 
         // Merge tags
         t1 = e1[2];
@@ -190,15 +312,6 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     }
   }
 
-  function findEdge(edge_list, point) {
-    for (var i = 0; i < edge_list.length; i++) {
-      var edge = edge_list[i];
-      var d = (edge[0].x - point.x)*(edge[0].x - point.x) + (edge[0].y - point.y)*(edge[0].y - point.y);
-      if (d < 0.25) return i;
-    }
-    return -1;
-  }
-
   // Remove extra edges
   var edge_list_size = edges.length, last_edge_list_size = 0, edge;
   var p1, p2, p3, p3Idx;
@@ -215,7 +328,7 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
         if (Math.abs((p1.y - p2.y)*(p1.x - p3.x) - (p1.y - p3.y)*(p1.x - p2.x)) < 0.025) {
           edge[1].x = p3.x;
           edge[1].y = p3.y;
-          utilsG.removeItems(edges, p3Idx, 1);
+          utils.removeItems(edges, p3Idx, 1);
           i -= 1;
           break;
         }
@@ -231,83 +344,6 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
     }
     else {
       shapes[edges[i][2]].push(edges[i]);
-    }
-  }
-
-  function getNearestPoints(outside, inside) {
-    // FIXME: should the max value be the size of a tile?
-    var distSqr = Number.MAX_VALUE, calcDistSqr;
-    var x1, y1, x2, y2;
-    var pair = [0, 0];
-    for (var i = 0; i < outside.length; i++) {
-      for (var j = 0; j < inside.length; j++) {
-        x1 = outside[i][0];
-        y1 = outside[i][1];
-        x2 = inside[j][0];
-        y2 = inside[j][1];
-
-        calcDistSqr = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-        if (calcDistSqr < distSqr) {
-          distSqr = calcDistSqr;
-          pair[0] = i; pair[1] = j;
-        }
-      }
-    }
-
-    return pair;
-  }
-
-  function arrStartFromIdx(arr, idx) {
-    var result = arr.slice(idx);
-    return result.concat(arr.slice(0, idx));
-  }
-
-  function createZeroWidthPoints(outside, inside) {
-    var pair = getNearestPoints(outside, inside);
-
-    outside = arrStartFromIdx(outside, pair[0]);
-    inside = arrStartFromIdx(inside, pair[1]);
-
-    outside.push(outside[0]);
-    inside.push(inside[0]);
-
-    return outside.concat(inside);
-  }
-
-  function getShapeVertices(shape) {
-    var vertices = [];
-    var temp_edges = shape.slice();
-
-    var edge = temp_edges[0];
-    utilsG.removeItems(temp_edges, 0, 1);
-    vertices.push([edge[0].x, edge[0].y]);
-    var next_edge = findEdge(temp_edges, edge[1]);
-    while (next_edge >= 0) {
-      edge = temp_edges[next_edge];
-      utilsG.removeItems(temp_edges, next_edge, 1);
-      vertices.push([edge[0].x, edge[0].y]);
-      next_edge = findEdge(temp_edges, edge[1]);
-    }
-
-    // Without a hole
-    if (temp_edges.length === 0) {
-      return vertices;
-    }
-    // With holes inside
-    else {
-      // Calculate vertices of the hole inside
-      var holeVertices = getShapeVertices(temp_edges);
-
-      // Confirm vertices is outside and hole is inside
-      var tempVertices;
-      if (polygonInPolygon(vertices, holeVertices)) {
-        tempVertices = holeVertices;
-        holeVertices = vertices;
-        vertices = tempVertices;
-      }
-
-      // Create zero width points
-      return createZeroWidthPoints(vertices, holeVertices);
     }
   }
 
@@ -346,10 +382,10 @@ CollisionLayer.prototype.generateShapes = function generateShapes() {
 
 /**
  * Destroy this layer.
- * @memberof CollisionLayer#
- * @method destroy
+ * @memberof CollisionMap#
+ * @method remove
  */
-CollisionLayer.prototype.destroy = function() {
+CollisionMap.prototype.remove = function() {
   for (var i = 0; i < this.bodies.length; i++) {
     this.bodies[i].remove();
   }
@@ -358,15 +394,17 @@ CollisionLayer.prototype.destroy = function() {
 
 /**
  * Add this layer to a scene.
- * @memberof CollisionLayer#
+ * @memberof CollisionMap#
  * @method addTo
  */
-CollisionLayer.prototype.addTo = function(scene) {
+CollisionMap.prototype.addTo = function(scene) {
   this.scene = scene;
 
   for (var i = 0; i < this.bodies.length; i++) {
     scene.world.addBody(this.bodies[i]);
   }
+
+  return this;
 };
 
 /**
@@ -375,9 +413,8 @@ CollisionLayer.prototype.addTo = function(scene) {
  * @requires engine/physics
  * @requires engine/pixi
  * @requires engine/utils
- * @requires engine/tilemap/utils
  * @requires engine/tilemap/decomp
  *
- * @see CollisionLayer
+ * @see CollisionMap
  */
-module.exports = CollisionLayer;
+module.exports = exports = CollisionMap;
