@@ -68,5 +68,4 @@ Scene.prototype.loadLevel = function(levelData, settings) {
       console.log('"' + layerData.type + '" layer is not supported!');
     }
   }
-
 };

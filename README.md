@@ -84,6 +84,8 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.1-dev
 
+- Improve Tiled map importer, which is now called `tiledToMap` and convert to latest `level` format.
+- Add `level` module that can load a level from data.
 - Add `Scene.getActorByName` method.
 - Tilemap huge rework, now has a way much cleaner API design.
 - Fix tilemap retina display.
