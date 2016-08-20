@@ -1,3 +1,4 @@
+var loader = require('engine/loader');
 var utils = require('./utils');
 
 function normalizeImageTileID(tiles, firstgid) {
@@ -63,30 +64,51 @@ function normalizeCollisionTileShapes(tileDef) {
   return shapeDefs;
 }
 
-function convertLayer(layer, tilesize, firstGIDs) {
+function convertLayer(layer, tilesize, firstGIDs, GIDRange) {
   var collision = layer.name.indexOf('collision') > -1;
 
-  var tileset, data;
+  var tileset, data, parent;
+
+  // Tile map
   if (!collision) {
-    if (!layer.properties || !layer.properties.tileset) {
-      throw 'Tiled converter error: cannot find "tileset" property of layer "' + layer.name + '"';
+
+    // Find tileset of this map
+    tileset = tilesetOfTile(layer.data[0], GIDRange);
+    data = utils.lift(normalizeImageTileID(layer.data, firstGIDs[tileset]), layer.width, layer.height);
+
+    // Which parent this layer will be added to
+    parent = undefined;
+    if (layer.properties && layer.properties.parent) {
+      parent = layer.properties.parent;
     }
 
-    tileset = layer.properties.tileset;
-    data = utils.lift(normalizeImageTileID(layer.data, firstGIDs[tileset]), layer.width, layer.height);
-  }
-  else {
-    data = normalizeCollisionTileID(layer.data, firstGIDs['collision']);
+    return {
+      type: 'tile',
+      tilesize: tilesize,
+      tileset: tileset,
+      data: data,
+      parent: parent,
+    };
   }
 
-  return {
-    tilesize: tilesize,
-    tileset: tileset,
-    width: layer.width,
-    height: layer.height,
-    data: data,
-    collision: collision,
-  };
+  // Collision map
+  else {
+    data = utils.lift(normalizeCollisionTileID(layer.data, firstGIDs['collision']), layer.width, layer.height);
+
+    return {
+      type: 'collision',
+      tilesize: tilesize,
+      data: data,
+    };
+  }
+}
+
+function tilesetOfTile(tileGID, GIDRange) {
+  for (var k in GIDRange) {
+    if (tileGID >= GIDRange[k][0] || tileGID <= GIDRange[k][1]) {
+      return k;
+    }
+  }
 }
 
 var EMPTY_SETTINGS = {};
@@ -100,22 +122,41 @@ function parseActor(data) {
 
 function parseActors(data) {
   return {
-    name: data.name,
+    type: 'actor',
+    container: data.name,
     actors: data.objects.map(parseActor),
   };
 }
 
+var cache = [];
+
 /**
  * Convert a tiled map data into LesserPanda built-in tilemap format.
  *
- * @exports engine/tilemap/tiled-converter
- * @requires engine/tilemap/utils
+ * @exports engine/level/tiled-converter
+ * @requires engine/level/utils
+ * @requires engine/loader
  *
- * @param  {object} map     Map data.
+ * @param  {object|string} map Data object or resource id of the map.
  * @return {array<object>}
  */
-module.exports = function(map) {
-  var i, result = [], collisionTileShapes;
+module.exports = exports = function tiledToMap(map_) {
+  var i;
+
+  // Get map data from resources if a key is given
+  var map = map_;
+  if (typeof(map) === 'string') {
+    map = loader.resources[map].data;
+  }
+
+  // Return the result from cache if already converted
+  for (i = 0; i < cache.length; i++) {
+    if (cache[i][0] === map) {
+      return cache[i][1];
+    }
+  }
+
+  var result = [], collisionTileShapes;
 
   // Fetch basic informations
   var tilesize = map.tilewidth;
@@ -124,7 +165,7 @@ module.exports = function(map) {
   }
 
   // Parse tileset info
-  var firstGIDs = {};
+  var firstGIDs = {}, GIDRange = {};
   for (i = 0; i < map.tilesets.length; i++) {
     if (map.tilesets[i].name.indexOf('collision') > -1) {
       // Parse collision tile shapes
@@ -133,6 +174,7 @@ module.exports = function(map) {
     }
     else {
       firstGIDs[map.tilesets[i].image] = map.tilesets[i].firstgid;
+      GIDRange[map.tilesets[i].image] = [map.tilesets[i].firstgid, map.tilesets[i].firstgid + map.tilesets[i].tilecount];
     }
   }
 
@@ -144,7 +186,7 @@ module.exports = function(map) {
       nLayer = parseActors(layer);
     }
     else if (layer.type === 'tilelayer') {
-      nLayer = convertLayer(layer, tilesize, firstGIDs);
+      nLayer = convertLayer(layer, tilesize, firstGIDs, GIDRange);
 
       // Add tile shape define to collision layer
       if (layer.name.indexOf('collision') > -1) {
@@ -153,6 +195,9 @@ module.exports = function(map) {
     }
     result.push(nLayer);
   }
+
+  // Cache this map
+  cache.push([map, result]);
 
   return result;
 };

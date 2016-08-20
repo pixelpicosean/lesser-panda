@@ -1,12 +1,12 @@
 /**
- * Tilemap utilty functions.
+ * Level utilty functions.
  *
- * @module engine/tilemap/utils
+ * @module engine/level/utils
  */
 
 /**
- * Lift an 2D array to 1D. (is that even a lifting?!)
- * @param  {array<array>} arr 2D array.
+ * Convert a 1D array to 2D.
+ * @param  {array<array>} arr Array to convert.
  * @param  {number} w         How many elements in a row.
  * @param  {number} h         How many elements in a column.
  * @return {array}
