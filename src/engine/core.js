@@ -21,7 +21,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v0.4.1-dev',
+  version: 'v0.4.1-1',
 
   /**
    * Main Canvas element.
