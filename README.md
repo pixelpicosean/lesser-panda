@@ -83,6 +83,10 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 0.4.2-dev
+
+- Remove listeners when stop a `Tween` to prevent issues caused by object pooling.
+
 ### 0.4.1-1
 
 - Fix container issue while loading a Tiled map.

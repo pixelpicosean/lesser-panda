@@ -100,6 +100,35 @@ function Tween(context) {
 Tween.prototype = Object.create(EventEmitter.prototype);
 Tween.prototype.constructor = Tween;
 
+Tween.prototype.init = function(context) {
+  this.removeAllListeners();
+
+  this.context = context;
+
+  this.actions.length = 0;
+  this.index = -1;
+  this.current = null;
+  this.currentAction = null;
+
+  this.delta = 0;
+  this.duration = 500;
+  this.progress = 0;
+
+  this.easing = Easing.Linear.None;
+  this.interpolation = Interpolation.Linear;
+
+  this.finished = false;
+  this.removed = false;
+  this.paused = false;
+
+  this.repeatCount = 0;
+  this.propCtx.length = 0;
+  this.propKey.length = 0;
+  this.before.length = 0;
+  this.change.length = 0;
+  this.types.length = 0;
+};
+
 /**
  * Add a new action to the tween
  * @memberof Tween#
@@ -167,6 +196,7 @@ Tween.prototype.wait = function wait(time) {
  */
 Tween.prototype.stop = function stop() {
   this.removed = true;
+  this.removeAllListeners();
   return this;
 };
 
@@ -353,13 +383,11 @@ for (var i = 0; i < 20; i++) {
  * @return {module:engine/animation/tween~Tween}
  */
 Tween.create = function create(context) {
-  var t = pool.shift();
+  var t = pool.pop();
   if (!t) {
     t = new Tween(context);
   }
-  else {
-    Tween.call(t, context);
-  }
+  t.init(context);
   return t;
 };
 
