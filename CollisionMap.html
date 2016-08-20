@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Lesser Panda Class: Box</title>
+	<title>Lesser Panda Class: CollisionMap</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -77,18 +77,16 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Box</h1>
+	<h1 class="page-title">Class: CollisionMap</h1>
 <section>
 
 <header>
     
         <h2>
-            <span class="ancestors"><a href="module-engine_physics.html">engine/physics</a>~</span>
-        
-        Box
+        CollisionMap
         </h2>
         
-            <div class="class-description"><p>Box</p></div>
+            <div class="class-description"><p>CollisionMap</p></div>
         
     
 </header>
@@ -100,7 +98,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Box"><span class="type-signature"></span>new Box(<span class="optional">width</span>, <span class="optional">height</span>)</h4>
+    <h4 class="name" id="CollisionMap"><span class="type-signature"></span>new CollisionMap(tilesize, data, group, <span class="optional">tileShapes</span>)</h4>
     
     
 </dt>
@@ -108,7 +106,7 @@
 
     
     <div class="description">
-        <p>Box shape for physic body.</p>
+        <p>CollisionMap is a specific tile layer, which is used to support<br>collision of a tilemap.</p>
     </div>
     
 
@@ -145,7 +143,7 @@
 
         <tr>
             
-                <td class="name"><code>width</code></td>
+                <td class="name"><code>tilesize</code></td>
             
 
             <td class="type">
@@ -161,8 +159,6 @@
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
 
                 
 
@@ -172,20 +168,84 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Tile size.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>height</code></td>
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Map data as a 2D array.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>group</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Collision group for this layer.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tileShapes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
 
 
 
@@ -206,7 +266,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>Tile shape list.</p></td>
         </tr>
 
     
@@ -250,8 +310,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-987">line 987</a>
+				<a href="tilemap_collision-map.js.html">tilemap/collision-map.js</a>,
+				 <a href="tilemap_collision-map.js.html#sunlight-1-line-201">line 201</a>
 			</li>
 		</ul>
 	</dd>
@@ -294,82 +354,37 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
+
+    
+        <h3 class="subsection-title">Methods</h3>
 
         <dl>
             
 <hr>
-<dt class="name" id="height">
-    <h4><span class="type-signature"></span>height<span class="type-signature"></span></h4>
-
+<dt>
+    <h4 class="name" id="addTo"><span class="type-signature"></span>addTo()</h4>
+    
     
 </dt>
 <dd>
+
     
     <div class="description">
-        <p>Height of rectangle.</p>
+        <p>Add this layer to a scene.</p>
     </div>
     
 
     
 
     
+
+    
+    
+
+    
 <dl class="details">
     
 
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>height</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
-    
-
 	
 
 	
@@ -392,13 +407,6 @@
 
 	
 
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>50</li>
-		</ul>
-	</dd>
 	
 
 
@@ -408,8 +416,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-999">line 999</a>
+				<a href="tilemap_collision-map.js.html">tilemap/collision-map.js</a>,
+				 <a href="tilemap_collision-map.js.html#sunlight-1-line-395">line 395</a>
 			</li>
 		</ul>
 	</dd>
@@ -422,6 +430,18 @@
 	
 </dl>
 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -429,29 +449,24 @@
         
             
 <hr>
-<dt class="name" id="rotation">
-    <h4><span class="type-signature"></span>rotation<span class="type-signature"> :number</span></h4>
-
+<dt>
+    <h4 class="name" id="generateShapes"><span class="type-signature"></span>generateShapes()</h4>
+    
     
 </dt>
 <dd>
+
     
     <div class="description">
-        <p>Rotation</p>
+        <p>Generate bodies.</p>
     </div>
     
 
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
 
+    
 
-
-            </li>
-        </ul>
+    
     
 
     
@@ -489,8 +504,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-1005">line 1005</a>
+				<a href="tilemap_collision-map.js.html">tilemap/collision-map.js</a>,
+				 <a href="tilemap_collision-map.js.html#sunlight-1-line-217">line 217</a>
 			</li>
 		</ul>
 	</dd>
@@ -503,6 +518,18 @@
 	
 </dl>
 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -510,29 +537,24 @@
         
             
 <hr>
-<dt class="name" id="type">
-    <h4><span class="type-signature">&lt;constant> </span>type<span class="type-signature"> :number</span></h4>
-
+<dt>
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove()</h4>
+    
     
 </dt>
 <dd>
+
     
     <div class="description">
-        <p>Type of this shape, should always be <code>BOX</code>.</p>
+        <p>Destroy this layer.</p>
     </div>
     
 
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
 
+    
 
-
-            </li>
-        </ul>
+    
     
 
     
@@ -570,8 +592,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-1012">line 1012</a>
+				<a href="tilemap_collision-map.js.html">tilemap/collision-map.js</a>,
+				 <a href="tilemap_collision-map.js.html#sunlight-1-line-383">line 383</a>
 			</li>
 		</ul>
 	</dd>
@@ -586,87 +608,6 @@
 
 
     
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="width">
-    <h4><span class="type-signature"></span>width<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Width of rectangle.</p>
-    </div>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>width</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
-    
-
-	
-
-	
-
-	
 
     
 
@@ -676,51 +617,12 @@
 
     
 
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>50</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="physics_index.js.html">physics/index.js</a>,
-				 <a href="physics_index.js.html#sunlight-1-line-993">line 993</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
+    
 
     
 </dd>
 
         </dl>
-    
-
     
 
     
