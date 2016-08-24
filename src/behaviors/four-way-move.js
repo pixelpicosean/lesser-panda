@@ -7,9 +7,9 @@ import Behavior from 'engine/behavior';
 import Vector from 'engine/vector';
 
 export default class FourWayMove extends Behavior {
-  type = 'FourWayMove'
+  static TYPE = 'FourWayMove';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     /* Move speed */
     speed: 200,
 
@@ -23,7 +23,7 @@ export default class FourWayMove extends Behavior {
     upKey: 'UP',
     /* Hold to move down, when `useKeyboard` is true */
     downKey: 'DOWN',
-  }
+  };
 
   constructor() {
     super();
