@@ -23,7 +23,7 @@ export default class AnchorToScreen extends Behavior {
     right: undefined,
     top: undefined,
     bottom: undefined,
-  }
+  };
 
   ready() {
     this.calc('left');
