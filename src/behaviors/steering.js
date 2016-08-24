@@ -11,9 +11,9 @@ const VELOCITY_ESP = 0.001;
 const VELOCITY_ESP_SQ = VELOCITY_ESP * VELOCITY_ESP;
 
 export default class Steering extends Behavior {
-  type = 'Steering'
+  static TYPE = 'Steering';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     maxSpeed: 100,
 
     // Flee
@@ -23,11 +23,9 @@ export default class Steering extends Behavior {
     wanderJitter: 100,
     wanderRadius: 100,
     wanderDistance: 10,
-  }
+  };
 
-  setup(settings) {
-    super.setup(settings);
-
+  ready() {
     // Init variables
     this.force = Vector.create();
     this.wanderTarget = Vector.create();
