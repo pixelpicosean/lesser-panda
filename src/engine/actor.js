@@ -148,12 +148,6 @@ function Actor(name) {
   this.behaviorList = [];
 
   /**
-   * Type-behavior map
-   * @type {object}
-   */
-  this.behaviors = {};
-
-  /**
    * Rotation cache
    * @type {number}
    * @private
@@ -803,13 +797,22 @@ Actor.prototype.initBody = function initBody(settings_) {
  * @method behave
  * @memberof Actor#
  * @param {string|Behavior|object}  behavior  Behavior type or constructor or instance
+ * @param {string}                  key       Key of the behavior instance to assigned to this Actor
  * @param {object}                  settings  Settings for this behavior
  * @return {Actor} Self for chaining
  */
-Actor.prototype.behave = function behave(behv, settings) {
+Actor.prototype.behave = function behave(behv, key, settings) {
   var behavior = behv;
   if (typeof(behv) === 'string') {
     behavior = Behavior.behaviors[behv];
+  }
+
+  var DEFAULT_SETTINGS = behavior.DEFAULT_SETTINGS;
+
+  // Key for this behavior instance
+  if (!key) {
+    console.log('Cannot add a behavior without key!');
+    return;
   }
 
   // Create instance if the behavior is a function(constructor)
@@ -817,61 +820,13 @@ Actor.prototype.behave = function behave(behv, settings) {
     behavior = new behavior();
   }
 
-  if (this.behaviors[behavior.type]) {
-    console.log('An instance of behavior "' + behavior.type + '" is already added!');
-    return this;
-  }
-
   this.behaviorList.push(behavior);
-  this.behaviors[behavior.type] = behavior;
+  this[key] = behavior;
 
   // Setup
-  behavior.addTo(this);
-  behavior.setup(settings || {});
-  behavior.activate();
-
-  return this;
-};
-
-/**
- * Get a behavior instance by its type
- * @method getBehaviorByType
- * @memberof Actor#
- * @param  {string} type  Type of the behavior to be activated
- * @return {Behavior}     Behavior of the type, return undefined no one exists.
- */
-Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
-  return this.behaviors[type];
-};
-
-/**
- * Activate a behavior by its type
- * @method activateBehavior
- * @memberof Actor#
- * @param  {string} type  Type of the behavior to be activated
- * @return {Actor}        Self for chaining
- */
-Actor.prototype.activateBehavior = function activateBehavior(type) {
-  var behv = this.behaviors[type];
-  if (behv) {
-    behv.activate();
-  }
-
-  return this;
-};
-
-/**
- * De-activate a behavior by its type
- * @method deactivateBehavior
- * @memberof Actor#
- * @param  {string} type  Type of the behavior to be de-activated
- * @return {Actor}        Self for chaining
- */
-Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
-  var behv = this.behaviors[type];
-  if (behv) {
-    behv.deactivate();
-  }
+  behavior.target = this;
+  Object.assign(behavior, DEFAULT_SETTINGS, settings);
+  behavior.ready();
 
   return this;
 };
@@ -1057,6 +1012,7 @@ Object.assign(Scene.prototype, {
       this.actorSystem.actors[t].push(actor);
     }
 
+    actor.emit('ready');
     actor.ready();
   },
 
@@ -1076,6 +1032,8 @@ Object.assign(Scene.prototype, {
         this.actorSystem.namedActors[actor.name] = null;
       }
     }
+
+    actor.emit('remove');
   },
 
   /**
