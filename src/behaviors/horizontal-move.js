@@ -1,18 +1,14 @@
 /**
  * Make the target object able to move horizontally.
- *
- * @protocol {
- *   position: Vector
- * }
  */
 
 import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 
 export default class HorizontalMove extends Behavior {
-  type = 'HorizontalMove'
+  static TYPE = 'HorizontalMove';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     /* Move speed */
     speed: 200,
 
@@ -30,7 +26,7 @@ export default class HorizontalMove extends Behavior {
     leftKey: 'LEFT',
     /* Hold to move right, when `useKeyboard` is true */
     rightKey: 'RIGHT',
-  }
+  };
 
   constructor() {
     super();
@@ -40,9 +36,7 @@ export default class HorizontalMove extends Behavior {
     this.right = 0;
     this.hasRange = false;
   }
-  setup(settings) {
-    super.setup(settings);
-
+  ready() {
     this.hasRange = Number.isFinite(this.range);
     if (this.hasRange) {
       this.left = this.target.position.x - this.range * this.startPct;
