@@ -85,6 +85,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.2-dev
 
+- Improve the design of behavior system.
 - Remove listeners when stop a `Tween` to prevent issues caused by object pooling.
 
 ### 0.4.1-1
