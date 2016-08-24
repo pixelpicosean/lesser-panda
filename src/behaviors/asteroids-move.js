@@ -49,7 +49,7 @@ export default class AsteroidsMove extends Behavior {
     this.turnSpeed = 0;
     this.turning = 0;
   }
-  ready() {
+  awake() {
     this.target.body.damping = this.damping;
   }
   update(_, dt) {

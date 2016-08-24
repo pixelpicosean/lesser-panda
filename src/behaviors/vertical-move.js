@@ -40,7 +40,7 @@ export default class VerticalMove extends Behavior {
     this.bottom = 0;
     this.hasRange = false;
   }
-  ready() {
+  awake() {
     this.hasRange = Number.isFinite(this.range);
     if (this.hasRange) {
       this.top = this.target.position.y - this.range * this.startPct;

@@ -36,7 +36,7 @@ export default class FireBullet extends Behavior {
       direction: 0,
     };
   }
-  ready() {
+  awake() {
     this.cdTimer = 0;
     this.ammo = this.maxAmmo;
   }

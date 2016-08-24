@@ -20,7 +20,7 @@ export default class RotateAroundPoint extends Behavior {
     this.center = Vector.create();
     this.rotation = 0;
   }
-  ready() {
+  awake() {
     this.radius = this.target.position.distance(this.center);
   }
   update(_, dt) {

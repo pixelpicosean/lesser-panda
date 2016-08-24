@@ -32,7 +32,7 @@ export default class Health extends Behavior {
     return this.invincibleTimer > 0;
   }
 
-  ready() {
+  awake() {
     // Init variables
     this.health = this.maxHealth;
     this.invincibleTimer = 0;

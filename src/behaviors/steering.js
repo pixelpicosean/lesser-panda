@@ -25,7 +25,7 @@ export default class Steering extends Behavior {
     wanderDistance: 10,
   };
 
-  ready() {
+  awake() {
     // Init variables
     this.force = Vector.create();
     this.wanderTarget = Vector.create();

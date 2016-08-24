@@ -36,7 +36,7 @@ export default class HorizontalMove extends Behavior {
     this.right = 0;
     this.hasRange = false;
   }
-  ready() {
+  awake() {
     this.hasRange = Number.isFinite(this.range);
     if (this.hasRange) {
       this.left = this.target.position.x - this.range * this.startPct;

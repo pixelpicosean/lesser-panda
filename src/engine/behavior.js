@@ -20,11 +20,11 @@ function Behavior() {
 Behavior.TYPE = 'Behavior';
 
 /**
- * Ready callback
+ * Initialization
  * @memberof Behavior#
- * @method ready
+ * @method awake
  */
-Behavior.prototype.ready = function() {};
+Behavior.prototype.awake = function() {};
 /**
  * Activate this behavior
  * @memberof Behavior#

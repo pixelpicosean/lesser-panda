@@ -25,7 +25,7 @@ export default class AnchorToScreen extends Behavior {
     bottom: undefined,
   };
 
-  ready() {
+  awake() {
     this.calc('left');
     this.calc('right');
     this.calc('top');
