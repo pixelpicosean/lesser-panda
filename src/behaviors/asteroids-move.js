@@ -9,9 +9,9 @@ import Vector from 'engine/vector';
 import { clamp } from 'engine/utils';
 
 export default class AsteroidsMove extends Behavior {
-  type = 'AsteroidsMove'
+  static TYPE = 'AsteroidsMove';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     /* Whether use keyboard to control */
     useKeyboard: true,
     /* Hold to push forward, when `useKeyboard` is true */
@@ -49,9 +49,7 @@ export default class AsteroidsMove extends Behavior {
     this.turnSpeed = 0;
     this.turning = 0;
   }
-  setup(settings) {
-    super.setup(settings);
-
+  ready() {
     this.target.body.damping = this.damping;
   }
   update(_, dt) {

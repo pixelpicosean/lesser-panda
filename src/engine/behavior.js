@@ -6,16 +6,10 @@
  */
 function Behavior() {
   /**
-   * Type of this behavior
-   * @type {string}
-   */
-  this.type = '';
-
-  /**
    * Whether this behavior is currently activated
    * @type {boolean}
    */
-  this.isActive = false;
+  this.isActive = true;
 
   /**
    * Target Actor instance
@@ -23,36 +17,21 @@ function Behavior() {
    */
   this.target = null;
 };
+Behavior.TYPE = 'Behavior';
 
 /**
- * Add to target
+ * Ready callback
  * @memberof Behavior#
- * @method addTo
- * @param {object} target Any objects meet this behavior's requirement
- * @return {Behavior} Behavior itself for chaining
+ * @method ready
  */
-Behavior.prototype.addTo = function addTo(target) {
-  this.target = target;
-  return this;
-};
-/**
- * Setup the behavior
- * @memberof Behavior#
- * @method setup
- * @param {object} settings
- * @return {Behavior} Self for chaining
- */
-Behavior.prototype.setup = function setup(settings) {
-  // Merge settings
-  Object.assign(this, this.defaultSettings || {}, settings);
-};
+Behavior.prototype.ready = function() {};
 /**
  * Activate this behavior
  * @memberof Behavior#
  * @method activate
  * @return {Behavior} Behavior itself for chaining
  */
-Behavior.prototype.activate = function activate() {
+Behavior.prototype.activate = function() {
   this.isActive = true;
   return this;
 };
@@ -62,7 +41,7 @@ Behavior.prototype.activate = function activate() {
  * @method deactivate
  * @return {Behavior} Behavior itself for chaining
  */
-Behavior.prototype.deactivate = function deactivate() {
+Behavior.prototype.deactivate = function() {
   this.isActive = false;
   return this;
 };
@@ -98,4 +77,4 @@ Behavior.register = function(type, behv) {
  *
  * @requires module:engine/eventemitter3
  */
-module.exports = Behavior;
+module.exports = exports = Behavior;

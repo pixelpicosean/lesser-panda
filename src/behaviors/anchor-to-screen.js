@@ -16,16 +16,16 @@ function pct2Num(pctStr) {
 }
 
 export default class AnchorToScreen extends Behavior {
-  defaultSettings = {
+  static TYPE = 'AnchorToScreen';
+
+  static DEFAULT_SETTINGS = {
     left: undefined,
     right: undefined,
     top: undefined,
     bottom: undefined,
-  }
+  };
 
-  setup(settings) {
-    super.setup(settings);
-
+  ready() {
     this.calc('left');
     this.calc('right');
     this.calc('top');

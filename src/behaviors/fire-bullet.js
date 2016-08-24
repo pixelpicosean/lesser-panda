@@ -1,8 +1,5 @@
 /**
  * Fire bullets to a specific direction
- *
- * @action fire(position, direction)  Fire a bullet
- * @action reload(amount=)            Reload ammo, fully or increasingly
  */
 
 import keyboard from 'engine/keyboard';
@@ -10,14 +7,9 @@ import Behavior from 'engine/behavior';
 import Vector from 'engine/vector';
 
 export default class FireBullet extends Behavior {
-  type = 'FireBullet';
+  static TYPE = 'FireBullet';
 
-  defaultSettings = {
-    /* Fire when this event emit from target */
-    fireEvent: 'fire',
-    /* Reload when this event emit from target */
-    reloadEvent: 'reload',
-
+  static DEFAULT_SETTINGS = {
     /* "Relative" to target rotation or "Absolute" value */
     directionMode: 'Relative',
 
@@ -44,22 +36,9 @@ export default class FireBullet extends Behavior {
       direction: 0,
     };
   }
-  setup(s) {
-    super.setup(s);
-
+  ready() {
     this.cdTimer = 0;
     this.ammo = this.maxAmmo;
-  }
-
-  activate() {
-    this.target.on(this.fireEvent, this.fire, this);
-    this.target.on(this.reloadEvent, this.reload, this);
-    return super.activate();
-  }
-  deactivate() {
-    this.target.off(this.fireEvent, this.fire, this);
-    this.target.off(this.reloadEvent, this.reload, this);
-    return super.deactivate();
   }
 
   // Private

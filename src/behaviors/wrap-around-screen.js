@@ -6,9 +6,9 @@ import engine from 'engine/core';
 import Behavior from 'engine/behavior';
 
 export default class WrapAroundScreen extends Behavior {
-  type = 'WrapAroundScreen';
+  static TYPE = 'WrapAroundScreen';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     vertical: true,
     horizontal: true,
   };

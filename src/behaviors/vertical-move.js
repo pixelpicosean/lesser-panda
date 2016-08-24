@@ -10,9 +10,9 @@ import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 
 export default class VerticalMove extends Behavior {
-  type = 'VerticalMove'
+  static TYPE = 'VerticalMove';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     /* Move speed */
     speed: 200,
 
@@ -30,7 +30,7 @@ export default class VerticalMove extends Behavior {
     upKey: 'UP',
     /* Hold to move down, when `useKeyboard` is true */
     downKey: 'DOWN',
-  }
+  };
 
   constructor() {
     super();
@@ -40,9 +40,7 @@ export default class VerticalMove extends Behavior {
     this.bottom = 0;
     this.hasRange = false;
   }
-  setup(settings) {
-    super.setup(settings);
-
+  ready() {
     this.hasRange = Number.isFinite(this.range);
     if (this.hasRange) {
       this.top = this.target.position.y - this.range * this.startPct;

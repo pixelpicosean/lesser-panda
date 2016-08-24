@@ -1,10 +1,7 @@
 /**
  * Health management
  *
- * @protocol *
- *
  * @event heal
- * @event fullHeal
  * @event receiveDamage
  * @event kill
  * @event health Health is changed
@@ -14,16 +11,14 @@ import Behavior from 'engine/behavior';
 import { clamp } from 'engine/utils';
 
 export default class Health extends Behavior {
-  type = 'Health'
+  static TYPE = 'Health';
 
-  defaultSettings = {
-    /* Health value at the beginning */
-    startHealth: 3,
+  static DEFAULT_SETTINGS = {
     /* Max health value */
     maxHealth: 3,
     damageInvincibleTime: 0,
     healInvincibleTime: 0,
-  }
+  };
 
   get health() {
     return this._health;
@@ -33,14 +28,15 @@ export default class Health extends Behavior {
     this.target.emit('health', v);
   }
 
-  setup(settings) {
-    super.setup(settings);
-
-    // Init variables
-    this.health = this.startHealth;
-    this.invincibleTimer = 0;
+  get invincible() {
+    return this.invincibleTimer > 0;
   }
 
+  ready() {
+    // Init variables
+    this.health = this.maxHealth;
+    this.invincibleTimer = 0;
+  }
   update(dt) {
     if (this.invincibleTimer > 0) {
       this.invincibleTimer -= dt;
@@ -56,7 +52,7 @@ export default class Health extends Behavior {
   // Reset health to maxHealth
   fullHeal() {
     this.health = this.maxHealth;
-    this.target.emit('fullHeal');
+    this.target.emit('heal');
   }
   // Received damages
   receiveDamage(dmg) {
@@ -64,12 +60,13 @@ export default class Health extends Behavior {
 
     this.health = clamp(this.health - dmg, 0, this.maxHealth);
 
+    this.target.emit('receiveDamage', dmg);
+
     if (this.health === 0) {
       this.kill();
       return;
     }
 
-    this.target.emit('receiveDamage', dmg);
     this.invincibleTimer = this.damageInvincibleTime;
   }
   // Health is 0

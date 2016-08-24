@@ -6,7 +6,7 @@ import renderer from 'engine/renderer';
 import Behavior from 'engine/behavior';
 
 export default class FaceTheMouse extends Behavior {
-  type = 'FaceTheMouse'
+  static TYPE = 'FaceTheMouse';
 
   constructor() {
     super();
