@@ -15,7 +15,7 @@ function Behavior() {
    * Target Actor instance
    * @type {Actor}
    */
-  this.target = null;
+  this.actor = null;
 };
 Behavior.TYPE = 'Behavior';
 

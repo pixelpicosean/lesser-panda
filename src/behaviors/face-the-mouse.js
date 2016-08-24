@@ -14,8 +14,8 @@ export default class FaceTheMouse extends Behavior {
     this.posCache = this.mousePos.clone();
   }
   update(_, dt) {
-    this.target.rotation = this.posCache.copy(this.mousePos)
-      .subtract(this.target.position)
+    this.actor.rotation = this.posCache.copy(this.mousePos)
+      .subtract(this.actor.position)
       .angle();
   }
 }

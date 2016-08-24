@@ -52,15 +52,15 @@ export default class FireBullet extends Behavior {
   fire(position, direction) {
     if (this.cdTimer > 0) return;
 
-    this.bulletConfig.emitter = this.target;
-    this.bulletConfig.direction = (this.directionMode === 'Relative') ? (this.target.rotation + direction) : direction;
+    this.bulletConfig.emitter = this.actor;
+    this.bulletConfig.direction = (this.directionMode === 'Relative') ? (this.actor.rotation + direction) : direction;
 
-    if (this.bulletActor && this.target && this.target.scene) {
+    if (this.bulletActor && this.actor && this.actor.scene) {
       if (this.ammo > 0) {
         this.ammo -= 1;
-        this.target.emit('ammo', this.ammo);
+        this.actor.emit('ammo', this.ammo);
         this.cdTimer = this.cooldown;
-        this.target.scene.spawnActor(this.bulletActor, position.x, position.y, this.bulletLayer, this.bulletConfig);
+        this.actor.scene.spawnActor(this.bulletActor, position.x, position.y, this.bulletLayer, this.bulletConfig);
       }
     }
   }
@@ -71,7 +71,7 @@ export default class FireBullet extends Behavior {
     else {
       this.ammo = amount;
     }
-    this.target.emit('ammo', this.ammo);
+    this.actor.emit('ammo', this.ammo);
   }
 }
 

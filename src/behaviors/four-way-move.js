@@ -45,8 +45,8 @@ export default class FourWayMove extends Behavior {
 
     this.dir.normalize();
 
-    this.target.position.x += this.dir.x * this.speed * dt;
-    this.target.position.y += this.dir.y * this.speed * dt;
+    this.actor.position.x += this.dir.x * this.speed * dt;
+    this.actor.position.y += this.dir.y * this.speed * dt;
   }
 
   // Actors

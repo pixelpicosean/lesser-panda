@@ -21,12 +21,12 @@ export default class RotateAroundPoint extends Behavior {
     this.rotation = 0;
   }
   awake() {
-    this.radius = this.target.position.distance(this.center);
+    this.radius = this.actor.position.distance(this.center);
   }
   update(_, dt) {
     this.rotation += (dt * this.speed);
 
-    this.target.position.set(this.radius, 0)
+    this.actor.position.set(this.radius, 0)
       .rotate(this.rotation)
       .add(this.center);
   }

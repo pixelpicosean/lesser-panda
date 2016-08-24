@@ -25,7 +25,7 @@ export default class Health extends Behavior {
   }
   set health(v) {
     this._health = v;
-    this.target.emit('health', v);
+    this.actor.emit('health', v);
   }
 
   get invincible() {
@@ -47,12 +47,12 @@ export default class Health extends Behavior {
   // Recover some health
   heal(v) {
     this.health = clamp(this.health + v, 1, this.maxHealth);
-    this.target.emit('heal', v);
+    this.actor.emit('heal', v);
   }
   // Reset health to maxHealth
   fullHeal() {
     this.health = this.maxHealth;
-    this.target.emit('heal');
+    this.actor.emit('heal');
   }
   // Received damages
   receiveDamage(dmg) {
@@ -60,7 +60,7 @@ export default class Health extends Behavior {
 
     this.health = clamp(this.health - dmg, 0, this.maxHealth);
 
-    this.target.emit('receiveDamage', dmg);
+    this.actor.emit('receiveDamage', dmg);
 
     if (this.health === 0) {
       this.kill();
@@ -71,7 +71,7 @@ export default class Health extends Behavior {
   }
   // Health is 0
   kill() {
-    this.target.emit('kill');
+    this.actor.emit('kill');
   }
 }
 

@@ -39,7 +39,7 @@ export default class HorizontalMove extends Behavior {
   awake() {
     this.hasRange = Number.isFinite(this.range);
     if (this.hasRange) {
-      this.left = this.target.position.x - this.range * this.startPct;
+      this.left = this.actor.position.x - this.range * this.startPct;
       this.right = this.left + this.range;
     }
   }
@@ -50,18 +50,18 @@ export default class HorizontalMove extends Behavior {
       if (keyboard.down(this.rightKey)) this.dir += 1;
     }
 
-    this.target.position.x += this.dir * this.speed * dt;
+    this.actor.position.x += this.dir * this.speed * dt;
 
     if (this.dir !== 0 && this.hasRange) {
-      if (this.target.position.x > this.right) {
-        this.target.position.x = this.right;
+      if (this.actor.position.x > this.right) {
+        this.actor.position.x = this.right;
         this.dir = 0;
-        this.target.emit('reachEnd');
+        this.actor.emit('reachEnd');
       }
-      else if (this.target.position.x < this.left) {
-        this.target.position.x = this.left;
+      else if (this.actor.position.x < this.left) {
+        this.actor.position.x = this.left;
         this.dir = 0;
-        this.target.emit('reachStart');
+        this.actor.emit('reachStart');
       }
     }
   }
