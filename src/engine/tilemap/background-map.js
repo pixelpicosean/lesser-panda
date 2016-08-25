@@ -1,7 +1,3 @@
-/**
- * Based on PIXI-tilemap by Ivan Popelyshev
- * Modified by Sean Bohan
- */
 var PIXI = require('engine/pixi');
 
 var TileRenderer = require('./tile-renderer');
@@ -187,7 +183,14 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
 }
 
 /**
- * BackgroundMap
+ * TileMap for rendering rectangle tile based maps.
+ *
+ * Based on PIXI-tilemap by Ivan Popelyshev
+ * Modified by Sean Bohan.
+ *
+ * @class BackgroundMap
+ *
+ * @constructor
  */
 function BackgroundMap(tilesize, data, tileset) {
   PIXI.Container.call(this);
@@ -217,17 +220,33 @@ BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
 BackgroundMap.prototype.constructor = RectTileLayer;
 BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectUpdateTransform;
 
+/**
+ * Clear the map
+ * @memberof BackgroundMap#
+ * @method clear
+ */
 BackgroundMap.prototype.clear = function() {
   this.children[0].clear();
   this.modificationMarker = 0;
 };
 
+/**
+ * Add tile at a position(in tile grid)
+ * @memberof BackgroundMap#
+ * @method addTile
+ */
 BackgroundMap.prototype.addTile = function(tileIdx, tx, ty) {
   if (this.children[0].texture) {
     this.children[0].addTile(tileIdx, tx, ty);
   }
 };
 
+/**
+ * Render to canvas context
+ * @memberof BackgroundMap#
+ * @method renderCanvas
+ * @private
+ */
 BackgroundMap.prototype.renderCanvas = function(renderer) {
   if (!renderer.dontUseTransform) {
     var wt = this.worldTransform;
@@ -246,6 +265,12 @@ BackgroundMap.prototype.renderCanvas = function(renderer) {
   }
 };
 
+/**
+ * Render to WebGL context
+ * @memberof BackgroundMap#
+ * @method renderWebGL
+ * @private
+ */
 BackgroundMap.prototype.renderWebGL = function(renderer) {
   var gl = renderer.gl;
   var shader = renderer.plugins.tile.getShader(this.useSquare);
@@ -274,6 +299,11 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
   }
 };
 
+/**
+ * Whether the map is modified (tiles are changed)
+ * @memberof BackgroundMap#
+ * @method isModified
+ */
 BackgroundMap.prototype.isModified = function(anim) {
   if (this.children[0].modificationMarker !== this.children[0].pointsBuf.length ||
     anim && this.children[0].hasAnim) {
@@ -282,9 +312,21 @@ BackgroundMap.prototype.isModified = function(anim) {
   return false;
 };
 
+/**
+ * Set the tilemap as not modiried
+ * @memberof BackgroundMap#
+ * @method clearModify
+ */
 BackgroundMap.prototype.clearModify = function() {
   this.modificationMarker = this.children.length;
   this.children[0].modificationMarker = this.children[0].pointsBuf.length;
 };
 
+/**
+ * @exports engine/tilemap/background-map
+ *
+ * @see BackgroundMap
+ *
+ * @requires module:engine/pixi
+ */
 module.exports = exports = BackgroundMap;

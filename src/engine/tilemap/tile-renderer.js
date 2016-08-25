@@ -1,7 +1,3 @@
-/**
- * Based on PIXI-tilemap by Ivan Popelyshev
- * Modified by Sean Bohan
- */
 var PIXI = require('engine/pixi');
 
 function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
@@ -234,4 +230,9 @@ TileRenderer.prototype.destroy = function () {
   this.squareShader = null;
 };
 
+/**
+ * @exports engine/tilemap/tile-renderer
+ *
+ * @requires module:engine/pixi
+ */
 module.exports = exports = TileRenderer;
