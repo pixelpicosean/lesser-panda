@@ -4,48 +4,65 @@ var TileRenderer = require('./tile-renderer');
 PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
 
 /**
- * @private
+ * TileMap for rendering rectangle tile based maps.
+ *
+ * Based on PIXI-tilemap by Ivan Popelyshev
+ * Modified by Sean Bohan.
+ *
+ * @class BackgroundMap
+ *
+ * @constructor
  */
-function RectTileLayer(tilesize, texture) {
+function BackgroundMap(tilesize, data, tileset) {
   PIXI.DisplayObject.call(this);
 
   // Initialize
   this.tilesize = tilesize;
-  this.texture = texture;
+  this.data = data;
+  this.tileset = tileset;
 
   this.visible = false;
 
   this.pointsBuf = [];
   this.modificationMarker = 0;
 
-  this.uOffset = texture.frame.x;
-  this.vOffset = texture.frame.y;
-  this.tilesPerTilesetRow = Math.floor(texture.width / tilesize);
+  this.uOffset = tileset.frame.x;
+  this.vOffset = tileset.frame.y;
+  this.tilesPerTilesetRow = Math.floor(tileset.width / tilesize);
+
+  this.useSquare = true;
+  this.modificationMarker = 0;
+
+  // Create tiles from data
+  var r, q, height = data.length, width = data[0].length, tileIdx;
+  for (r = 0; r < height; r++) {
+    for (q = 0; q < width; q++) {
+      if (data[r][q] === 0) continue;
+      this.addTile(data[r][q] - 1, q, r);
+    }
+  }
 }
 
-RectTileLayer.prototype = Object.create(PIXI.DisplayObject.prototype);
-RectTileLayer.prototype.constructor = RectTileLayer;
+BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
+BackgroundMap.prototype.constructor = BackgroundMap;
+BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectUpdateTransform;
 
-RectTileLayer.prototype.clear = function() {
+/**
+ * Clear the map
+ * @memberof BackgroundMap#
+ * @method clear
+ */
+BackgroundMap.prototype.clear = function() {
   this.pointsBuf.length = 0;
   this.modificationMarker = 0;
 };
 
-RectTileLayer.prototype.renderCanvas = function(renderer) {
-  if (!this.texture || !this.texture.valid) return;
-  var points = this.pointsBuf;
-  for (var i = 0, n = points.length; i < n; i += 8) {
-    var x1 = points[i], y1 = points[i+1];
-    var x2 = points[i+2], y2 = points[i+3];
-    var w = points[i+4];
-    var h = points[i+5];
-    x1 += points[i+6] * (renderer.tileAnimX | 0);
-    y1 += points[i+7] * (renderer.tileAnimY | 0);
-    renderer.context.drawImage(this.texture.baseTexture.source, x1, y1, w, h, x2, y2, w, h);
-  }
-};
-
-RectTileLayer.prototype.addTile = function(tileIdx, tx, ty) {
+/**
+ * Add tile at a position(in tile grid)
+ * @memberof BackgroundMap#
+ * @method addTile
+ */
+BackgroundMap.prototype.addTile = function(tileIdx, tx, ty) {
   var pb = this.pointsBuf;
   pb.push(this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow));
   pb.push(this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow));
@@ -57,25 +74,83 @@ RectTileLayer.prototype.addTile = function(tileIdx, tx, ty) {
   pb.push(0);
 };
 
-RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
-  if (!this.texture || !this.texture.valid) return;
+/**
+ * Render to canvas context
+ * @memberof BackgroundMap#
+ * @method renderCanvas
+ * @private
+ */
+BackgroundMap.prototype.renderCanvas = function(renderer) {
+  if (!renderer.dontUseTransform) {
+    var wt = this.worldTransform;
+    renderer.context.setTransform(
+      wt.a * renderer.resolution,
+      wt.b,
+      wt.c,
+      wt.d * renderer.resolution,
+      wt.tx * renderer.resolution,
+      wt.ty * renderer.resolution
+    );
+  }
+
+  if (!this.tileset || !this.tileset.valid) return;
+  var points = this.pointsBuf;
+  for (var i = 0, n = points.length; i < n; i += 8) {
+    var x1 = points[i], y1 = points[i+1];
+    var x2 = points[i+2], y2 = points[i+3];
+    var w = points[i+4];
+    var h = points[i+5];
+    x1 += points[i+6] * (renderer.tileAnimX | 0);
+    y1 += points[i+7] * (renderer.tileAnimY | 0);
+    renderer.context.drawImage(this.tileset.baseTexture.source, x1, y1, w, h, x2, y2, w, h);
+  }
+};
+
+/**
+ * Render to WebGL context
+ * @memberof BackgroundMap#
+ * @method renderWebGL
+ * @private
+ */
+BackgroundMap.prototype.renderWebGL = function(renderer) {
+  var gl = renderer.gl;
+  var tile = renderer.plugins.tile;
+  var shader = tile.getShader(this.useSquare);
+  renderer.setObjectRenderer(renderer.plugins.tile);
+  renderer.shaderManager.setShader(shader);
+  var tm = shader.uniforms.projectionMatrix;
+  //TODO: dont create new array, please
+  this._globalMat = this._globalMat || new PIXI.Matrix();
+  renderer.currentRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
+  tm.value = this._globalMat.toArray(true);
+  if (this.useSquare) {
+    var ps = shader.uniforms.pointScale;
+    ps.value[0] = this._globalMat.a >= 0 ? 1 : -1;
+    ps.value[1] = this._globalMat.d < 0 ? 1 : -1;
+    ps = shader.uniforms.projectionScale;
+    ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
+  }
+  var af = shader.uniforms.animationFrame.value;
+  af[0] = renderer.tileAnimX | 0;
+  af[1] = renderer.tileAnimY | 0;
+  //shader.syncUniform(shader.uniforms.animationFrame);
+  shader.syncUniforms();
+
+  if (!this.tileset || !this.tileset.valid) return;
   var points = this.pointsBuf;
   if (points.length === 0) return;
 
-  var gl = renderer.gl;
-  var tile = renderer.plugins.tile;
-  var shader = tile.getShader(useSquare);
   gl.activeTexture(gl.TEXTURE0);
-  var texture = this.texture.baseTexture;
-  if (!texture._glTextures[gl.id]) {
-    renderer.updateTexture(texture);
+  var tileset = this.tileset.baseTexture;
+  if (!tileset._glTextures[gl.id]) {
+    renderer.updateTexture(tileset);
   }
   else {
-    gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
+    gl.bindTexture(gl.TEXTURE_2D, tileset._glTextures[gl.id]);
   }
   var ss =  shader.uniforms.samplerSize;
-  ss.value[0] = 1.0 / texture.width;
-  ss.value[1] = 1.0 / texture.height;
+  ss.value[0] = 1.0 / tileset.width;
+  ss.value[1] = 1.0 / tileset.height;
   shader.syncUniform(ss);
   //lost context! recover!
   var vb = tile.getVb(this.vbId);
@@ -108,7 +183,7 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
     //upload vertices!
     var sz = 0;
     //var tint = 0xffffffff;
-    if (useSquare) {
+    if (this.useSquare) {
       for (var i = 0; i < points.length; i += 8) {
         arr[sz++] = points[i + 2];
         arr[sz++] = points[i + 3];
@@ -120,7 +195,7 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
       }
     }
     else {
-      var ww = texture.width, hh = texture.height;
+      var ww = tileset.width, hh = tileset.height;
       //var tint = 0xffffffff;
       var tint = -1;
       for (var i = 0; i < points.length; i += 8) {
@@ -174,128 +249,11 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
     }
   }
-  if (useSquare) {
+  if (this.useSquare) {
     gl.drawArrays(gl.POINTS, 0, vertices);
   }
   else {
     gl.drawArrays(gl.TRIANGLES, 0, vertices);
-  }
-}
-
-/**
- * TileMap for rendering rectangle tile based maps.
- *
- * Based on PIXI-tilemap by Ivan Popelyshev
- * Modified by Sean Bohan.
- *
- * @class BackgroundMap
- *
- * @constructor
- */
-function BackgroundMap(tilesize, data, tileset) {
-  PIXI.Container.call(this);
-
-  this.useSquare = true;
-  this.modificationMarker = 0;
-
-  this.map = new RectTileLayer(tilesize, tileset);
-  this.addChild(this.map);
-
-  // Initialize
-  this.tilesize = tilesize;
-  this.data = data;
-  this.tileset = tileset;
-
-  // Create tiles from data
-  var r, q, height = data.length, width = data[0].length, tileIdx;
-  for (r = 0; r < height; r++) {
-    for (q = 0; q < width; q++) {
-      if (data[r][q] === 0) continue;
-      this.map.addTile(data[r][q] - 1, q, r);
-    }
-  }
-}
-
-BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
-BackgroundMap.prototype.constructor = RectTileLayer;
-BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectUpdateTransform;
-
-/**
- * Clear the map
- * @memberof BackgroundMap#
- * @method clear
- */
-BackgroundMap.prototype.clear = function() {
-  this.children[0].clear();
-  this.modificationMarker = 0;
-};
-
-/**
- * Add tile at a position(in tile grid)
- * @memberof BackgroundMap#
- * @method addTile
- */
-BackgroundMap.prototype.addTile = function(tileIdx, tx, ty) {
-  if (this.children[0].texture) {
-    this.children[0].addTile(tileIdx, tx, ty);
-  }
-};
-
-/**
- * Render to canvas context
- * @memberof BackgroundMap#
- * @method renderCanvas
- * @private
- */
-BackgroundMap.prototype.renderCanvas = function(renderer) {
-  if (!renderer.dontUseTransform) {
-    var wt = this.worldTransform;
-    renderer.context.setTransform(
-      wt.a * renderer.resolution,
-      wt.b,
-      wt.c,
-      wt.d * renderer.resolution,
-      wt.tx * renderer.resolution,
-      wt.ty * renderer.resolution
-    );
-  }
-  var layers = this.children;
-  for (var i = 0; i < layers.length; i++) {
-    layers[i].renderCanvas(renderer);
-  }
-};
-
-/**
- * Render to WebGL context
- * @memberof BackgroundMap#
- * @method renderWebGL
- * @private
- */
-BackgroundMap.prototype.renderWebGL = function(renderer) {
-  var gl = renderer.gl;
-  var shader = renderer.plugins.tile.getShader(this.useSquare);
-  renderer.setObjectRenderer(renderer.plugins.tile);
-  renderer.shaderManager.setShader(shader);
-  var tm = shader.uniforms.projectionMatrix;
-  //TODO: dont create new array, please
-  this._globalMat = this._globalMat || new PIXI.Matrix();
-  renderer.currentRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
-  tm.value = this._globalMat.toArray(true);
-  if (this.useSquare) {
-    var ps = shader.uniforms.pointScale;
-    ps.value[0] = this._globalMat.a >= 0 ? 1 : -1;
-    ps.value[1] = this._globalMat.d < 0 ? 1 : -1;
-    ps = shader.uniforms.projectionScale;
-    ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
-  }
-  var af = shader.uniforms.animationFrame.value;
-  af[0] = renderer.tileAnimX | 0;
-  af[1] = renderer.tileAnimY | 0;
-  //shader.syncUniform(shader.uniforms.animationFrame);
-  shader.syncUniforms();
-  var layers = this.children;
-  for (var i = 0; i < layers.length; i++) {
-    layers[i].renderWebGL(renderer, this.useSquare);
   }
 };
 
@@ -305,8 +263,7 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
  * @method isModified
  */
 BackgroundMap.prototype.isModified = function(anim) {
-  if (this.children[0].modificationMarker !== this.children[0].pointsBuf.length ||
-    anim && this.children[0].hasAnim) {
+  if (this.modificationMarker !== this.pointsBuf.length || anim) {
     return true;
   }
   return false;
@@ -318,8 +275,7 @@ BackgroundMap.prototype.isModified = function(anim) {
  * @method clearModify
  */
 BackgroundMap.prototype.clearModify = function() {
-  this.modificationMarker = this.children.length;
-  this.children[0].modificationMarker = this.children[0].pointsBuf.length;
+  this.modificationMarker = this.pointsBuf.length;
 };
 
 /**
