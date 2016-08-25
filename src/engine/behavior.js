@@ -20,7 +20,7 @@ function Behavior() {
 Behavior.TYPE = 'Behavior';
 
 /**
- * Initialization
+ * Called once when the behavior is added to an actor.
  * @memberof Behavior#
  * @method awake
  */

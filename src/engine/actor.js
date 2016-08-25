@@ -797,11 +797,15 @@ Actor.prototype.initBody = function initBody(settings_) {
  * @method behave
  * @memberof Actor#
  * @param {string|Behavior|object}  behavior  Behavior type or constructor or instance
- * @param {string}                  key       Key of the behavior instance to assigned to this Actor
  * @param {object}                  settings  Settings for this behavior
+ * @param {string}                  [key]     Key of the behavior instance to assigned to this Actor
+ *                                            By default, behavior called `Health` will be set as `bHealth`.
+ *                                            So you can access it at any time from the Actor with `this.bHealth`.
+ *                                            Be aware that if you want to add same behavior more than once, remember
+ *                                            to give it a key explicitly, or the last one will be overrided.
  * @return {Actor} Self for chaining
  */
-Actor.prototype.behave = function behave(behv, key, settings) {
+Actor.prototype.behave = function behave(behv, settings, key) {
   var behavior = behv;
   if (typeof(behv) === 'string') {
     behavior = Behavior.behaviors[behv];
@@ -811,8 +815,7 @@ Actor.prototype.behave = function behave(behv, key, settings) {
 
   // Key for this behavior instance
   if (!key) {
-    console.log('Cannot add a behavior without key!');
-    return;
+    key = 'b' + behavior.TYPE;
   }
 
   // Create instance if the behavior is a function(constructor)
@@ -824,9 +827,9 @@ Actor.prototype.behave = function behave(behv, key, settings) {
   this[key] = behavior;
 
   // Setup
-  behavior.target = this;
+  behavior.actor = this;
   Object.assign(behavior, DEFAULT_SETTINGS, settings);
-  behavior.ready();
+  behavior.awake();
 
   return this;
 };
