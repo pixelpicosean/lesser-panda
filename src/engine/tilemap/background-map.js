@@ -34,11 +34,23 @@ function BackgroundMap(tilesize, data, tileset) {
   this.modificationMarker = 0;
 
   // Create tiles from data
+  var pb = this.pointsBuf;
+
   var r, q, height = data.length, width = data[0].length, tileIdx;
   for (r = 0; r < height; r++) {
     for (q = 0; q < width; q++) {
-      if (data[r][q] === 0) continue;
-      this.addTile(data[r][q] - 1, q, r);
+      tileIdx = data[r][q] - 1;
+
+      if (tileIdx >= 0) {
+        pb.push(this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow));
+        pb.push(this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow));
+        pb.push(this.tilesize * q);
+        pb.push(this.tilesize * r);
+        pb.push(this.tilesize);
+        pb.push(this.tilesize);
+        pb.push(0);
+        pb.push(0);
+      }
     }
   }
 }
@@ -55,23 +67,6 @@ BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectU
 BackgroundMap.prototype.clear = function() {
   this.pointsBuf.length = 0;
   this.modificationMarker = 0;
-};
-
-/**
- * Add tile at a position(in tile grid)
- * @memberof BackgroundMap#
- * @method addTile
- */
-BackgroundMap.prototype.addTile = function(tileIdx, tx, ty) {
-  var pb = this.pointsBuf;
-  pb.push(this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow));
-  pb.push(this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow));
-  pb.push(this.tilesize * tx);
-  pb.push(this.tilesize * ty);
-  pb.push(this.tilesize);
-  pb.push(this.tilesize);
-  pb.push(0);
-  pb.push(0);
 };
 
 /**
@@ -263,10 +258,7 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
  * @method isModified
  */
 BackgroundMap.prototype.isModified = function(anim) {
-  if (this.modificationMarker !== this.pointsBuf.length || anim) {
-    return true;
-  }
-  return false;
+  return this.modificationMarker !== this.pointsBuf.length;
 };
 
 /**
