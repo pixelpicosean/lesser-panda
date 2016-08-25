@@ -373,9 +373,10 @@ CollisionMap.prototype.generateShapes = function generateShapes() {
   var body
   for (i = 0; i < polygonPoints.length; i++) {
     body = new physics.Body({
+      isStatic: true,
       shape: new physics.Polygon(polygonPoints[i]),
+      collisionGroup: this.group,
     });
-    body.collisionGroup = this.group;
     this.bodies.push(body);
   }
 };

@@ -300,14 +300,15 @@ World.prototype.update = function update(delta) {
     }
 
     for (j = this.collisionGroups[i].length - 1; j >= 0; j--) {
+      body = this.collisionGroups[i][j];
       if (useSpatialHash) {
-        if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst > 0) {
-          this.collide(this.collisionGroups[i][j]);
+        if (body && (!body.isStatic) && body.collideAgainst > 0) {
+          this.collide(body);
         }
       }
       else {
-        if (this.collisionGroups[i][j] && this.collisionGroups[i][j].collideAgainst.length > 0) {
-          this.collide(this.collisionGroups[i][j]);
+        if (body && (!body.isStatic) && body.collideAgainst.length > 0) {
+          this.collide(body);
         }
       }
     }
@@ -509,6 +510,12 @@ function Body(properties) {
    */
   this.id = Body.uid++;
   /**
+   * Static body won't move or response to any collision
+   * @type {Boolean}
+   * @default false
+   */
+  this.isStatic = false;
+  /**
    * Body's physic world.
    * @type {World}
    */
@@ -609,6 +616,7 @@ function setupBody(obj, settings) {
       case 'collisionGroup':
       case 'collideAgainst':
       case 'collide':
+      case 'isStatic':
       case 'beforeCollide':
         obj[k] = settings[k];
         break;
@@ -734,6 +742,12 @@ Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
 Body.prototype.addTo = function addTo(world) {
   if (this.world) return;
   world.addBody(this);
+
+  // Static body only needs to update bounds once
+  if (this.isStatic) {
+    updateBounds(this);
+  }
+
   return this;
 };
 
@@ -761,7 +775,8 @@ Body.prototype.removeCollision = function removeCollision() {
  * @protected
  */
 Body.prototype.update = function update(delta) {
-  if (!this.world) return;
+  // Static and removed bodies won't get updated
+  if (!this.world || this.isStatic) return;
 
   if (this.mass !== 0) {
     this.velocity.add(
