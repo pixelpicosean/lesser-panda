@@ -215,11 +215,11 @@ function CollisionMap(tilesize, data, group, tileShapes) {
 }
 
 /**
- * Generate bodies.
+ * Generate collision bodies.
  * @memberof CollisionMap#
  * @method generateShapes
  */
-CollisionMap.prototype.generateShapes = function generateShapes() {
+CollisionMap.prototype.generateShapes = function() {
   var i, j;
 
   // Create edges
@@ -373,15 +373,16 @@ CollisionMap.prototype.generateShapes = function generateShapes() {
   var body
   for (i = 0; i < polygonPoints.length; i++) {
     body = new physics.Body({
+      isStatic: true,
       shape: new physics.Polygon(polygonPoints[i]),
+      collisionGroup: this.group,
     });
-    body.collisionGroup = this.group;
     this.bodies.push(body);
   }
 };
 
 /**
- * Destroy this layer.
+ * Remove collisions.
  * @memberof CollisionMap#
  * @method remove
  */

@@ -11,9 +11,9 @@ const VELOCITY_ESP = 0.001;
 const VELOCITY_ESP_SQ = VELOCITY_ESP * VELOCITY_ESP;
 
 export default class Steering extends Behavior {
-  type = 'Steering'
+  static TYPE = 'Steering';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     maxSpeed: 100,
 
     // Flee
@@ -23,11 +23,9 @@ export default class Steering extends Behavior {
     wanderJitter: 100,
     wanderRadius: 100,
     wanderDistance: 10,
-  }
+  };
 
-  setup(settings) {
-    super.setup(settings);
-
+  awake() {
     // Init variables
     this.force = Vector.create();
     this.wanderTarget = Vector.create();
@@ -40,8 +38,8 @@ export default class Steering extends Behavior {
 
   update(_, dt) {
     // Update heading and side
-    if (this.target.body.velocity.squaredLength() > VELOCITY_ESP_SQ) {
-      this.heading.copy(this.target.body.velocity).normalize();
+    if (this.actor.body.velocity.squaredLength() > VELOCITY_ESP_SQ) {
+      this.heading.copy(this.actor.body.velocity).normalize();
       this.side.copy(this.heading).perp();
     }
   }
@@ -49,27 +47,27 @@ export default class Steering extends Behavior {
   // Actions
   seek(targetPos) {
     let desiredVel = targetPos.clone()
-      .subtract(this.target.position)
+      .subtract(this.actor.position)
       .normalize()
       .multiply(this.maxSpeed);
 
-    return desiredVel.subtract(this.target.body.velocity);
+    return desiredVel.subtract(this.actor.body.velocity);
   }
   flee(targetPos) {
     // Do nothing when distance is large enough
-    if (this.target.position.squaredDistance(targetPos) > this.panicDistanceSq) {
+    if (this.actor.position.squaredDistance(targetPos) > this.panicDistanceSq) {
       return Vector.create();
     }
 
-    let desiredVel = this.target.position.clone()
+    let desiredVel = this.actor.position.clone()
       .subtract(targetPos)
       .normalize()
       .multiply(this.maxSpeed);
 
-    return desiredVel.subtract(this.target.body.velocity);
+    return desiredVel.subtract(this.actor.body.velocity);
   }
   arrive(targetPos, deceleration) {
-    let toTarget = targetPos.clone().subtract(this.target.position);
+    let toTarget = targetPos.clone().subtract(this.actor.position);
     let dist = toTarget.length();
 
     // Distance is larger than minimal distance
@@ -79,16 +77,16 @@ export default class Steering extends Behavior {
 
       let desiredVel = toTarget.multiply(speed).divide(dist);
 
-      return desiredVel.subtract(this.target.body.velocity);
+      return desiredVel.subtract(this.actor.body.velocity);
     }
     else {
       return toTarget.set(0);
     }
   }
   pursuit(evader) {
-    let toEvader = evader.position.clone().subtract(this.target.position);
+    let toEvader = evader.position.clone().subtract(this.actor.position);
 
-    let selfHeading = this.target.body.velocity.clone().normalize();
+    let selfHeading = this.actor.body.velocity.clone().normalize();
     let evaderHeading = evader.body.velocity.clone().normalize();
 
     let relativeHeading = selfHeading
@@ -104,7 +102,7 @@ export default class Steering extends Behavior {
       .add(evader.position));
   }
   evade(pursuer) {
-    let toPursuer = pursuer.position.clone().subtract(this.target.position);
+    let toPursuer = pursuer.position.clone().subtract(this.actor.position);
 
     let lookAheadTime = toPursuer.length() / (this.maxSpeed + pursuer.body.velocity.length());
 
@@ -117,16 +115,16 @@ export default class Steering extends Behavior {
       .multiply(this.wanderRadius);
 
     let targetLocal = this.wanderTarget.clone().add(this.wanderDistance, 0);
-    let targetWorld = pointToWorldSpace(targetLocal, this.heading, this.side, this.target.position);
+    let targetWorld = pointToWorldSpace(targetLocal, this.heading, this.side, this.actor.position);
 
-    return targetWorld.subtract(this.target.position);
+    return targetWorld.subtract(this.actor.position);
   }
 
   interpose(agentA, agentB) {
     let midPoint = agentA.position.clone().add(agentB.position)
       .divide(2);
 
-    let timeToReachMidPoint = this.target.position.distance(midPoint) / this.maxSpeed;
+    let timeToReachMidPoint = this.actor.position.distance(midPoint) / this.maxSpeed;
 
     let aPos = agentA.body.velocity.clone().multiply(timeToReachMidPoint)
       .add(agentA.position);

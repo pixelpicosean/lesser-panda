@@ -6,7 +6,7 @@ import renderer from 'engine/renderer';
 import Behavior from 'engine/behavior';
 
 export default class FaceTheMouse extends Behavior {
-  type = 'FaceTheMouse'
+  static TYPE = 'FaceTheMouse';
 
   constructor() {
     super();
@@ -14,8 +14,8 @@ export default class FaceTheMouse extends Behavior {
     this.posCache = this.mousePos.clone();
   }
   update(_, dt) {
-    this.target.rotation = this.posCache.copy(this.mousePos)
-      .subtract(this.target.position)
+    this.actor.rotation = this.posCache.copy(this.mousePos)
+      .subtract(this.actor.position)
       .angle();
   }
 }

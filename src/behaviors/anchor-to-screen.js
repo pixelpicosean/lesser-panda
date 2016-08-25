@@ -16,16 +16,16 @@ function pct2Num(pctStr) {
 }
 
 export default class AnchorToScreen extends Behavior {
-  defaultSettings = {
+  static TYPE = 'AnchorToScreen';
+
+  static DEFAULT_SETTINGS = {
     left: undefined,
     right: undefined,
     top: undefined,
     bottom: undefined,
-  }
+  };
 
-  setup(settings) {
-    super.setup(settings);
-
+  awake() {
     this.calc('left');
     this.calc('right');
     this.calc('top');
@@ -35,25 +35,25 @@ export default class AnchorToScreen extends Behavior {
     this.applyAnchor();
   }
   applyAnchor() {
-    const bounds = this.target.sprite.getLocalBounds();
+    const bounds = this.actor.sprite.getLocalBounds();
 
     let left, right, top, bottom, width, height;
 
     // x-axis
     if (this.left !== undefined) {
-      // this.target.position.x = this.left + bounds.x;
+      // this.actor.position.x = this.left + bounds.x;
       left = this.left;
     }
     else if (this.leftPct !== undefined) {
-      // this.target.position.x = engine.width * this.leftPct - bounds.x;
+      // this.actor.position.x = engine.width * this.leftPct - bounds.x;
       left = engine.width * this.leftPct;
     }
     if (this.right !== undefined) {
-      // this.target.position.x = engine.width - this.right - (bounds.x + bounds.width);
+      // this.actor.position.x = engine.width - this.right - (bounds.x + bounds.width);
       right = engine.width - this.right;
     }
     else if (this.rightPct !== undefined) {
-      // this.target.position.x = engine.width * (1 - this.rightPct) - (bounds.x + bounds.width);
+      // this.actor.position.x = engine.width * (1 - this.rightPct) - (bounds.x + bounds.width);
       right = engine.width * (1 - this.rightPct);
     }
     // Stretch if both left and right is set
@@ -62,30 +62,30 @@ export default class AnchorToScreen extends Behavior {
     }
 
     if (width !== undefined) {
-      this.target.sprite.width = width;
+      this.actor.sprite.width = width;
     }
     if (left !== undefined) {
-      this.target.position.x = left - bounds.x;
+      this.actor.position.x = left - bounds.x;
     }
     else if (right !== undefined) {
-      this.target.position.x = right - (bounds.x + bounds.width);
+      this.actor.position.x = right - (bounds.x + bounds.width);
     }
 
     // y-axis
     if (this.top !== undefined) {
-      // this.target.position.y = this.top + bounds.y;
+      // this.actor.position.y = this.top + bounds.y;
       top = this.top;
     }
     else if (this.topPct !== undefined) {
-      // this.target.position.y = engine.height * this.topPct - bounds.y;
+      // this.actor.position.y = engine.height * this.topPct - bounds.y;
       top = engine.height * this.topPct;
     }
     if (this.bottom !== undefined) {
-      // this.target.position.y = engine.height - this.bottom - (bounds.y + bounds.height);
+      // this.actor.position.y = engine.height - this.bottom - (bounds.y + bounds.height);
       bottom = engine.height - this.bottom;
     }
     else if (this.bottomPct !== undefined) {
-      // this.target.position.y = engine.height * (1 - this.bottomPct) - (bounds.y + bounds.height);
+      // this.actor.position.y = engine.height * (1 - this.bottomPct) - (bounds.y + bounds.height);
       bottom = engine.height * (1 - this.bottomPct);
     }
     // Stretch if both top and bottom is set
@@ -94,13 +94,13 @@ export default class AnchorToScreen extends Behavior {
     }
 
     if (height !== undefined) {
-      this.target.sprite.height = height;
+      this.actor.sprite.height = height;
     }
     if (top !== undefined) {
-      this.target.position.y = top - bounds.y;
+      this.actor.position.y = top - bounds.y;
     }
     else if (bottom !== undefined) {
-      this.target.position.y = bottom - (bounds.y + bounds.height);
+      this.actor.position.y = bottom - (bounds.y + bounds.height);
     }
   }
 

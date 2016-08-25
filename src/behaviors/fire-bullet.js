@@ -1,8 +1,5 @@
 /**
  * Fire bullets to a specific direction
- *
- * @action fire(position, direction)  Fire a bullet
- * @action reload(amount=)            Reload ammo, fully or increasingly
  */
 
 import keyboard from 'engine/keyboard';
@@ -10,14 +7,9 @@ import Behavior from 'engine/behavior';
 import Vector from 'engine/vector';
 
 export default class FireBullet extends Behavior {
-  type = 'FireBullet';
+  static TYPE = 'FireBullet';
 
-  defaultSettings = {
-    /* Fire when this event emit from target */
-    fireEvent: 'fire',
-    /* Reload when this event emit from target */
-    reloadEvent: 'reload',
-
+  static DEFAULT_SETTINGS = {
     /* "Relative" to target rotation or "Absolute" value */
     directionMode: 'Relative',
 
@@ -44,22 +36,9 @@ export default class FireBullet extends Behavior {
       direction: 0,
     };
   }
-  setup(s) {
-    super.setup(s);
-
+  awake() {
     this.cdTimer = 0;
     this.ammo = this.maxAmmo;
-  }
-
-  activate() {
-    this.target.on(this.fireEvent, this.fire, this);
-    this.target.on(this.reloadEvent, this.reload, this);
-    return super.activate();
-  }
-  deactivate() {
-    this.target.off(this.fireEvent, this.fire, this);
-    this.target.off(this.reloadEvent, this.reload, this);
-    return super.deactivate();
   }
 
   // Private
@@ -73,15 +52,15 @@ export default class FireBullet extends Behavior {
   fire(position, direction) {
     if (this.cdTimer > 0) return;
 
-    this.bulletConfig.emitter = this.target;
-    this.bulletConfig.direction = (this.directionMode === 'Relative') ? (this.target.rotation + direction) : direction;
+    this.bulletConfig.emitter = this.actor;
+    this.bulletConfig.direction = (this.directionMode === 'Relative') ? (this.actor.rotation + direction) : direction;
 
-    if (this.bulletActor && this.target && this.target.scene) {
+    if (this.bulletActor && this.actor && this.actor.scene) {
       if (this.ammo > 0) {
         this.ammo -= 1;
-        this.target.emit('ammo', this.ammo);
+        this.actor.emit('ammo', this.ammo);
         this.cdTimer = this.cooldown;
-        this.target.scene.spawnActor(this.bulletActor, position.x, position.y, this.bulletLayer, this.bulletConfig);
+        this.actor.scene.spawnActor(this.bulletActor, position.x, position.y, this.bulletLayer, this.bulletConfig);
       }
     }
   }
@@ -92,7 +71,7 @@ export default class FireBullet extends Behavior {
     else {
       this.ammo = amount;
     }
-    this.target.emit('ammo', this.ammo);
+    this.actor.emit('ammo', this.ammo);
   }
 }
 
