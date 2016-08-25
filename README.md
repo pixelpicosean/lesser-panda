@@ -83,6 +83,12 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 0.4.2-dev
+
+- Add `isStatic` field to `physics.Body` to identify bodies don't move and response to the collisions, which also improves the performance of `CollisionMap`.
+- Improve the design of behavior system.
+- Remove listeners when stop a `Tween` to prevent issues caused by object pooling.
+
 ### 0.4.1-1
 
 - Fix container issue while loading a Tiled map.

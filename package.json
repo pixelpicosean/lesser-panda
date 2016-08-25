@@ -1,10 +1,10 @@
 {
   "name": "lesser-panda",
-  "version": "0.4.1-dev",
+  "version": "0.4.2-dev",
   "description": "A module based HTML5 game engine designed to be flexible and powerful.",
   "dependencies": {},
   "devDependencies": {
-    "ink-docstrap": "^1.1.4",
+    "ink-docstrap": "^1.2.1",
     "jsdoc": "^3.4.0"
   },
   "scripts": {
