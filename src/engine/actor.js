@@ -937,17 +937,6 @@ Object.assign(Scene.prototype, {
   spawnActor: function spawnActor(actor_, x, y, layerName, settings) {
     var settings_ = settings || {};
 
-    var layer, layerName_ = layerName || 'stage';
-    if (typeof(layerName_) === 'string') {
-      layer = this[layerName_];
-      if (!layer) {
-        layer = this.stage;
-      }
-    }
-    else if (layerName_ instanceof PIXI.Container) {
-      layer = layerName_;
-    }
-
     // Create instance
     var a, actor = actor_;
 
@@ -967,27 +956,11 @@ Object.assign(Scene.prototype, {
     }
     a.CTOR = actor;
 
-    // Add actor components
-    a.scene = this;
-    a.layer = layer;
-    if (a.sprite) {
-      a.sprite.actor = a;
-      layer.addChild(a.sprite);
-    }
-    if (a.body) {
-      a.body.actor = a;
-      this.world.addBody(a.body);
-    }
-    a.position.set(x || 0, y || 0);
+    // Set actor position
+    a.position.set(x | 0, y | 0);
 
     // Add to actor system
-    this.addActor(a, settings_.tag);
-
-    // Keep a reference if it has a name
-    if (settings_.name) {
-      a.name = settings_.name;
-      this.actorSystem.namedActors[settings_.name] = a;
-    }
+    this.addActor(a, layerName, settings_.name, settings_.tag);
 
     return a;
   },
@@ -997,11 +970,38 @@ Object.assign(Scene.prototype, {
    * @method addActor
    * @memberOf Scene#
    * @param {Actor} actor   Actor you want to add
+   * @param {string|PIXI.Container} [layer] Name of the layer to add to(key of a PIXI.Container instance in this scene) or a PIXI.Container instance
+   * @param {string} name   Name of this actor
    * @param {string} tag    Tag of this actor, default is '0'
    */
-  addActor: function addActor(actor, tag) {
-    var t = tag || '0';
+  addActor: function addActor(actor, layer, name, tag) {
+    actor.scene = this;
 
+    // Add sprite to a layer if required
+    var layer_ = layer || 'stage';
+    if (typeof(layer_) === 'string') {
+      layer_ = this[layer_] || this.stage;
+    }
+    actor.layer = layer_;
+    if (actor.sprite) {
+      actor.sprite.actor = actor;
+      layer_.addChild(actor.sprite);
+    }
+
+    // Add body to the world if required
+    if (actor.body) {
+      actor.body.actor = actor;
+      this.world.addBody(actor.body);
+    }
+
+    // Keep a reference if it has a name
+    if (typeof(name) === 'string') {
+      actor.name = name;
+      this.actorSystem.namedActors[name] = actor;
+    }
+
+    // Tag this actor
+    var t = tag || '0';
     actor.tag = t;
 
     if (!this.actorSystem.actors[t]) {
@@ -1030,6 +1030,8 @@ Object.assign(Scene.prototype, {
   removeActor: function removeActor(actor) {
     // Will remove in next frame
     if (actor) actor.removed = true;
+
+    actor.scene = null;
 
     // Remove name based reference
     if (actor.name) {
