@@ -1,3 +1,5 @@
+'use strict';
+
 var EventEmitter = require('engine/eventemitter3');
 var Scene = require('engine/scene');
 var utils = require('engine/utils');

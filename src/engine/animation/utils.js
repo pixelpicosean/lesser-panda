@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Utilty functions for animation module.
  * @module engine/animation/utils

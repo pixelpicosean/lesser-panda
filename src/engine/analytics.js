@@ -1,3 +1,5 @@
+'use strict';
+
 var device = require('engine/device');
 var config = require('game/config').default;
 

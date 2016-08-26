@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * An instance of `RandomDataGenerator` is exported as `engine/rnd`.
  *

@@ -1,3 +1,5 @@
+'use strict';
+
 function fetchDeviceInfo() {
   var device = {};
 

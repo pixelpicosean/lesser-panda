@@ -1,3 +1,5 @@
+'use strict';
+
 var loader = require('engine/loader');
 var utils = require('./utils');
 

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Animation system is consist of two powerful sub-systems:
  *

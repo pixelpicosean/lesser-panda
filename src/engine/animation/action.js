@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Action module provides functionalities to create Flash/Blender like
  * key based animation.
