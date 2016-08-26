@@ -25,7 +25,7 @@ function BackgroundMap(tilesize, data, tileset) {
   this.tileset = tileset;
   this.data = null;
 
-  this.pointsBuf = null;
+  this.pointsBuf = new Array(512);
   this.modificationMarker = 0;
 
   this.uOffset = tileset.frame.x;
@@ -115,8 +115,8 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
   if (tilesToRender !== this.tilesInRenderBuffer) {
     this.tilesInRenderBuffer = tilesToRender;
 
-    // Re-allocate the point buffer for rendering
-    this.pointsBuf = new Uint32Array(tilesToRender * 8);
+    // Resize the point buffer for rendering
+    this.pointsBuf.length = tilesToRender * 8;
 
     // Render point buffer needs update
     needUpdateRTB = true;
@@ -148,10 +148,10 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
           pb[index++] = 0;
         }
         else {
-          pb[index++] = this.uOffset;
-          pb[index++] = this.vOffset;
-          pb[index++] = this.tilesize * q;
-          pb[index++] = this.tilesize * r;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
           pb[index++] = 0;
           pb[index++] = 0;
           pb[index++] = 0;
