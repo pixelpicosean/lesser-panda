@@ -42,7 +42,7 @@ function BackgroundMap(tilesize, data, tileset) {
    * Whether this map wraps at the edges.
    * @type {Boolean}
    */
-  this.isRepeat = true;
+  this.isRepeat = false;
 
   /**
    * Whether tile is square(width = height). Performance of squared
@@ -255,18 +255,22 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
     var r, q, nr, nq, maxR, maxQ, tileIdx, pb = this.pointsBuf, index = 0, widthInTile = this.widthInTile, heightInTile = this.heightInTile;
     maxR = Math.min(topLeftR + tilesPerCol + 1, heightInTile);
     maxQ = Math.min(topLeftQ + tilesPerRow + 1, widthInTile);
-    for (r = topLeftR; r < topLeftR + tilesPerCol + 1; r++) {
-      for (q = topLeftQ; q < topLeftQ + tilesPerRow + 1; q++) {
+    for (r = topLeftR - 1; r < topLeftR + tilesPerCol + 1; r++) {
+      for (q = topLeftQ - 1; q < topLeftQ + tilesPerRow + 1; q++) {
         tileIdx = -1;
 
         if (this.isRepeat) {
+          // Normalize row and column
           nr = (r < 0) ? (r % heightInTile + heightInTile) : (r % heightInTile);
+          if (nr === heightInTile) nr = 0;
           nq = (q < 0) ? (q % widthInTile + widthInTile) : (q % widthInTile);
+          if (nq === widthInTile) nq = 0;
 
+          // Read tileIdx from map data
           tileIdx = this.data[nr][nq] - 1;
         }
         // Not repeat and within the range
-        else if (r < maxR && q < maxQ) {
+        else if (r > -1 && q > -1 && r < maxR && q < maxQ) {
           tileIdx = this.data[r][q] - 1;
         }
 
@@ -302,12 +306,11 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
  * @return {number}
  */
 BackgroundMap.prototype.getColAt = function(x) {
-  var q = Math.floor(x / this.tilesize);
   if (this.isRepeat) {
-    return q % this.widthInTile;
+    return Math.floor(x / this.tilesize);
   }
   else {
-    return utils.clamp(q, 0, this.widthInTile - 1);
+    return utils.clamp(Math.floor(x / this.tilesize), 0, this.widthInTile - 1);
   }
 };
 
@@ -319,12 +322,11 @@ BackgroundMap.prototype.getColAt = function(x) {
  * @return {number}
  */
 BackgroundMap.prototype.getRowAt = function(y) {
-  var r = Math.floor(y / this.tilesize);
   if (this.isRepeat) {
-    return r % this.heightInTile;
+    return Math.floor(y / this.tilesize);
   }
   else {
-    return utils.clamp(r, 0, this.heightInTile - 1);
+    return utils.clamp(Math.floor(y / this.tilesize), 0, this.heightInTile - 1);
   }
 };
 
