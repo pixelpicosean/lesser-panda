@@ -1,6 +1,8 @@
 'use strict';
 
 var PIXI = require('engine/pixi');
+var core = require('engine/core');
+var utils = require('engine/utils');
 
 var TileRenderer = require('./tile-renderer');
 PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
@@ -16,16 +18,14 @@ PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
  * @constructor
  */
 function BackgroundMap(tilesize, data, tileset) {
-  PIXI.DisplayObject.call(this);
+  PIXI.Container.call(this);
 
   // Initialize
   this.tilesize = tilesize;
-  this.data = data;
   this.tileset = tileset;
+  this.data = null;
 
-  this.visible = false;
-
-  this.pointsBuf = [];
+  this.pointsBuf = null;
   this.modificationMarker = 0;
 
   this.uOffset = tileset.frame.x;
@@ -35,31 +35,41 @@ function BackgroundMap(tilesize, data, tileset) {
   this.useSquare = true;
   this.modificationMarker = 0;
 
-  // Create tiles from data
-  var pb = this.pointsBuf;
+  this.tilesInRenderBuffer = 0;
+  this.firstRenderTileLoc = { q: 0, r: 0 };
 
-  var r, q, height = data.length, width = data[0].length, tileIdx;
-  for (r = 0; r < height; r++) {
-    for (q = 0; q < width; q++) {
-      tileIdx = data[r][q] - 1;
-
-      if (tileIdx >= 0) {
-        pb.push(this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow));
-        pb.push(this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow));
-        pb.push(this.tilesize * q);
-        pb.push(this.tilesize * r);
-        pb.push(this.tilesize);
-        pb.push(this.tilesize);
-        pb.push(0);
-        pb.push(0);
-      }
-    }
-  }
+  this.setData(data);
 }
 
 BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
 BackgroundMap.prototype.constructor = BackgroundMap;
-BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectUpdateTransform;
+
+Object.defineProperty(BackgroundMap.prototype, 'totalTilesInRow', {
+  get: function() {
+    if (Array.isArray(this.data) && (this.data.length > 0) && Array.isArray(this.data[0])) {
+      return this.data[0].length;
+    }
+    else {
+      return 0;
+    }
+  }
+});
+
+Object.defineProperty(BackgroundMap.prototype, 'totalTilesInColumn', {
+  get: function() {
+    if (Array.isArray(this.data)) {
+      return this.data.length;
+    }
+    else {
+      return 0;
+    }
+  }
+});
+
+BackgroundMap.prototype.setData = function(data) {
+  this.data = data;
+  this.modificationMarker = 0;
+};
 
 /**
  * Clear the map
@@ -67,8 +77,96 @@ BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectU
  * @method clear
  */
 BackgroundMap.prototype.clear = function() {
-  this.pointsBuf.length = 0;
+  this.data = [[]];
   this.modificationMarker = 0;
+};
+
+/**
+ * Update transform of this map.
+ * @memberof BackgroundMap#
+ * @method updateTransform
+ */
+BackgroundMap.prototype.updateTransform = function() {
+  BackgroundMap.prototype.displayObjectUpdateTransform.call(this);
+
+  this.updateRenderTileBuffer();
+};
+
+BackgroundMap.prototype.updateRenderTileBuffer = function() {
+  var topLeftX = -this.worldTransform.tx;
+  var topLeftY = -this.worldTransform.ty;
+
+  var bottomRightX = topLeftX + core.width;
+  var bottomRightY = topLeftY + core.height;
+
+  var topLeftQ = this.getColAt(topLeftX);
+  var topLeftR = this.getRowAt(topLeftY);
+
+  var bottomRightQ = this.getColAt(bottomRightX);
+  var bottomRightR = this.getRowAt(bottomRightY);
+
+  var tilesPerRow = bottomRightQ - topLeftQ + 1;
+  var tilesPerCol = bottomRightR - topLeftR + 1;
+
+  var tilesToRender = tilesPerRow * tilesPerCol;
+  var needUpdateRTB = false;
+
+  // Check whether tile to be rendered changes
+  if (tilesToRender !== this.tilesInRenderBuffer) {
+    this.tilesInRenderBuffer = tilesToRender;
+
+    // Re-allocate the point buffer for rendering
+    this.pointsBuf = new Uint32Array(tilesToRender * 8);
+
+    // Render point buffer needs update
+    needUpdateRTB = true;
+  }
+
+  // Check whether first tile to render changes
+  if (this.firstRenderTileLoc.q !== topLeftQ || this.firstRenderTileLoc.r !== topLeftR) {
+    // Render point buffer needs update
+    needUpdateRTB = true;
+  }
+
+  // Update render tile buffer if required
+  if (needUpdateRTB) {
+    var r, q, maxR, maxQ, tileIdx, pb = this.pointsBuf, index = 0;
+    maxR = Math.min(topLeftR + tilesPerCol + 1, this.totalTilesInColumn);
+    maxQ = Math.min(topLeftQ + tilesPerRow + 1, this.totalTilesInRow);
+    for (r = topLeftR; r < maxR; r++) {
+      for (q = topLeftQ; q < maxQ; q++) {
+        tileIdx = this.data[r][q] - 1;
+
+        if (tileIdx >= 0) {
+          pb[index++] = this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow);
+          pb[index++] = this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow);
+          pb[index++] = this.tilesize * q;
+          pb[index++] = this.tilesize * r;
+          pb[index++] = this.tilesize;
+          pb[index++] = this.tilesize;
+          pb[index++] = 0;
+          pb[index++] = 0;
+        }
+        else {
+          pb[index++] = this.uOffset;
+          pb[index++] = this.vOffset;
+          pb[index++] = this.tilesize * q;
+          pb[index++] = this.tilesize * r;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+        }
+      }
+    }
+  }
+};
+
+BackgroundMap.prototype.getColAt = function(x) {
+  return utils.clamp(Math.floor(x / this.tilesize), 0, this.totalTilesInRow - 1);
+};
+BackgroundMap.prototype.getRowAt = function(y) {
+  return utils.clamp(Math.floor(y / this.tilesize), 0, this.totalTilesInColumn - 1);
 };
 
 /**
@@ -252,24 +350,6 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
   else {
     gl.drawArrays(gl.TRIANGLES, 0, vertices);
   }
-};
-
-/**
- * Whether the map is modified (tiles are changed)
- * @memberof BackgroundMap#
- * @method isModified
- */
-BackgroundMap.prototype.isModified = function(anim) {
-  return this.modificationMarker !== this.pointsBuf.length;
-};
-
-/**
- * Set the tilemap as not modiried
- * @memberof BackgroundMap#
- * @method clearModify
- */
-BackgroundMap.prototype.clearModify = function() {
-  this.modificationMarker = this.pointsBuf.length;
 };
 
 /**
