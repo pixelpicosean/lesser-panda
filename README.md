@@ -85,6 +85,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.2-dev
 
+- Add `getTile` and `setTile` method to `BackgroundMap`.
 - Optimize `BackgroundMap` rendering, by drawing the visible part only.
 - Force code running in strict mode.
 - [CLI] Use webpack-dev-server instead of browser-sync for live-reloading, performs a little bit slower but will display error in browser console.

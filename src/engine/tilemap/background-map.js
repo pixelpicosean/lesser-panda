@@ -116,6 +116,47 @@ BackgroundMap.prototype.setData = function(data) {
 };
 
 /**
+ * Set the tile at the pixel coordinates.
+ * @param {number} x
+ * @param {number} y
+ * @param {number} tileIdx New tile index
+ */
+BackgroundMap.prototype.setTile = function(x, y, tileIdx) {
+  if (x < 0 || x > this.totalTilesInRow * this.tilesize || y < 0 || y > this.totalTilesInColumn * this.tilesize) {
+    console.log('Cannot set a tile since the coordinate is out of range!');
+    return;
+  }
+
+  // Calculate tile coordinate
+  var tx = Math.floor(x / this.tilesize);
+  var ty = Math.floor(y / this.tilesize);
+
+  // Update map data
+  this.data[ty][tx] = tileIdx;
+
+  // Request buffer re-upload
+  this.modificationMarker = 0;
+};
+
+/**
+ * Get the tile at pixel coordinates.
+ * @param  {number} x
+ * @param  {number} y
+ * @return {number}   Tile at the coordinates, 0 if no one is found.
+ */
+BackgroundMap.prototype.getTile = function(x, y) {
+  if (x < 0 || x > this.totalTilesInRow * this.tilesize || y < 0 || y > this.totalTilesInColumn * this.tilesize) {
+    return 0;
+  }
+
+  // Calculate tile coordinate
+  var tx = Math.floor(x / this.tilesize);
+  var ty = Math.floor(y / this.tilesize);
+
+  return this.data[ty][tx];
+};
+
+/**
  * Clear the map
  * @memberof BackgroundMap#
  * @method clear
@@ -153,7 +194,7 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
   var tilesPerCol = bottomRightR - topLeftR + 1;
 
   var tilesToRender = tilesPerRow * tilesPerCol;
-  var needUpdateRTB = false;
+  var needUpdateRTB = (this.modificationMarker === 0);
 
   // Check whether tile to be rendered changes
   if (tilesToRender !== this.tilesInRenderBuffer) {
