@@ -20,20 +20,48 @@ PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
 function BackgroundMap(tilesize, data, tileset) {
   PIXI.Container.call(this);
 
-  // Initialize
+  /**
+   * Size of each tile
+   * @type {number}
+   */
   this.tilesize = tilesize;
+  /**
+   * Tileset of this map
+   * @type {PIXI.Texture}
+   */
   this.tileset = tileset;
-  this.data = null;
+  /**
+   * Map data, a 2D array
+   * @type {Array}
+   */
+  this.data = [[]];
 
+  /**
+   * Whether tile is square(width = height). Performance of squared
+   * tiles is better than non-squared ones.
+   *
+   * Note: Currently only squared tiles are supported.
+   *
+   * @type {Boolean}
+   */
+  this.useSquare = true;
+
+  /**
+   * Points buffer for rendering
+   * @type {Array}
+   * @private
+   */
   this.pointsBuf = new Array(512);
+  /**
+   * Marker that shows whether the rendering buffers need update
+   * @type {Number}
+   * @private
+   */
   this.modificationMarker = 0;
 
   this.uOffset = tileset.frame.x;
   this.vOffset = tileset.frame.y;
   this.tilesPerTilesetRow = Math.floor(tileset.width / tilesize);
-
-  this.useSquare = true;
-  this.modificationMarker = 0;
 
   this.tilesInRenderBuffer = 0;
   this.firstRenderTileLoc = { q: 0, r: 0 };
@@ -44,6 +72,11 @@ function BackgroundMap(tilesize, data, tileset) {
 BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
 BackgroundMap.prototype.constructor = BackgroundMap;
 
+/**
+ * How many tiles are there in a row.
+ * @memberof BackgroundMap#
+ * @readonly
+ */
 Object.defineProperty(BackgroundMap.prototype, 'totalTilesInRow', {
   get: function() {
     if (Array.isArray(this.data) && (this.data.length > 0) && Array.isArray(this.data[0])) {
@@ -55,6 +88,11 @@ Object.defineProperty(BackgroundMap.prototype, 'totalTilesInRow', {
   }
 });
 
+/**
+ * How many tiles are there in a column.
+ * @memberof BackgroundMap#
+ * @readonly
+ */
 Object.defineProperty(BackgroundMap.prototype, 'totalTilesInColumn', {
   get: function() {
     if (Array.isArray(this.data)) {
@@ -66,6 +104,12 @@ Object.defineProperty(BackgroundMap.prototype, 'totalTilesInColumn', {
   }
 });
 
+/**
+ * Set new data to this map.
+ * @memberof BackgroundMap#
+ * @method setData
+ * @param {Array} data New map data.
+ */
 BackgroundMap.prototype.setData = function(data) {
   this.data = data;
   this.modificationMarker = 0;
@@ -162,9 +206,24 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
   }
 };
 
+/**
+ * Get the tile column at a x location
+ * @memberof BackgroundMap#
+ * @method getColAt
+ * @param  {number} x Location to be tested
+ * @return {number}
+ */
 BackgroundMap.prototype.getColAt = function(x) {
   return utils.clamp(Math.floor(x / this.tilesize), 0, this.totalTilesInRow - 1);
 };
+
+/**
+ * Get the tile row at a y location
+ * @memberof BackgroundMap#
+ * @method getRowAt
+ * @param  {number} y Location to be tested
+ * @return {number}
+ */
 BackgroundMap.prototype.getRowAt = function(y) {
   return utils.clamp(Math.floor(y / this.tilesize), 0, this.totalTilesInColumn - 1);
 };
