@@ -156,7 +156,13 @@
 </ul>
 <p>More behaviors are coming soon.</p>
 <h2>Progress</h2><p>There's a <a href="https://trello.com/b/6nzCTotX/lesserpanda">Trello board</a>, from which you will see what's coming next.<br>Github issue and milestone maybe better for progress tracking~</p>
-<h2>ChangeLog</h2><h3>0.4.2-dev</h3><ul>
+<h2>ChangeLog</h2><h3>0.4.2</h3><ul>
+<li>Give <code>BackgroundMap</code> ability to repeat.</li>
+<li>Add <code>width</code>, <code>height</code>, <code>widthInTile</code> and <code>heightInTile</code> properties to <code>BackgroundMap</code>.</li>
+<li>Add <code>getTile</code> and <code>setTile</code> method to <code>BackgroundMap</code>.</li>
+<li>Optimize <code>BackgroundMap</code> rendering, by drawing the visible part only.</li>
+<li>Force code running in strict mode.</li>
+<li>[CLI] Use webpack-dev-server instead of browser-sync for live-reloading, performs a little bit slower but will display error in browser console.</li>
 <li>Add <code>isStatic</code> field to <code>physics.Body</code> to identify bodies don't move and response to the collisions, which also improves the performance of <code>CollisionMap</code>.</li>
 <li>Improve the design of behavior system.</li>
 <li>Remove listeners when stop a <code>Tween</code> to prevent issues caused by object pooling.</li>

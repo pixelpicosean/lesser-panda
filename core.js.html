@@ -75,7 +75,9 @@
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">require('engine/polyfill');
+            class="sunlight-highlight-javascript linenums">'use strict';
+
+require('engine/polyfill');
 
 var EventEmitter = require('engine/eventemitter3');
 var Renderer = require('engine/renderer');
@@ -98,7 +100,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v0.4.1-1',
+  version: 'v0.4.2',
 
   /**
    * Main Canvas element.
