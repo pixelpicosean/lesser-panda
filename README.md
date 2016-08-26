@@ -83,7 +83,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
-### 0.4.2-dev
+### 0.4.2
 
 - Give `BackgroundMap` ability to repeat.
 - Add `width`, `height`, `widthInTile` and `heightInTile` properties to `BackgroundMap`.
