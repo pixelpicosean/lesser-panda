@@ -1,3 +1,5 @@
+'use strict';
+
 var EventEmitter = require('engine/eventemitter3');
 var Vector = require('engine/vector');
 var PIXI = require('engine/pixi');
@@ -146,12 +148,6 @@ function Actor(name) {
    * @type {array}
    */
   this.behaviorList = [];
-
-  /**
-   * Type-behavior map
-   * @type {object}
-   */
-  this.behaviors = {};
 
   /**
    * Rotation cache
@@ -804,12 +800,24 @@ Actor.prototype.initBody = function initBody(settings_) {
  * @memberof Actor#
  * @param {string|Behavior|object}  behavior  Behavior type or constructor or instance
  * @param {object}                  settings  Settings for this behavior
+ * @param {string}                  [key]     Key of the behavior instance to assigned to this Actor
+ *                                            By default, behavior called `Health` will be set as `bHealth`.
+ *                                            So you can access it at any time from the Actor with `this.bHealth`.
+ *                                            Be aware that if you want to add same behavior more than once, remember
+ *                                            to give it a key explicitly, or the last one will be overrided.
  * @return {Actor} Self for chaining
  */
-Actor.prototype.behave = function behave(behv, settings) {
+Actor.prototype.behave = function behave(behv, settings, key) {
   var behavior = behv;
   if (typeof(behv) === 'string') {
     behavior = Behavior.behaviors[behv];
+  }
+
+  var DEFAULT_SETTINGS = behavior.DEFAULT_SETTINGS;
+
+  // Key for this behavior instance
+  if (!key) {
+    key = 'b' + behavior.TYPE;
   }
 
   // Create instance if the behavior is a function(constructor)
@@ -817,61 +825,13 @@ Actor.prototype.behave = function behave(behv, settings) {
     behavior = new behavior();
   }
 
-  if (this.behaviors[behavior.type]) {
-    console.log('An instance of behavior "' + behavior.type + '" is already added!');
-    return this;
-  }
-
   this.behaviorList.push(behavior);
-  this.behaviors[behavior.type] = behavior;
+  this[key] = behavior;
 
   // Setup
-  behavior.addTo(this);
-  behavior.setup(settings || {});
-  behavior.activate();
-
-  return this;
-};
-
-/**
- * Get a behavior instance by its type
- * @method getBehaviorByType
- * @memberof Actor#
- * @param  {string} type  Type of the behavior to be activated
- * @return {Behavior}     Behavior of the type, return undefined no one exists.
- */
-Actor.prototype.getBehaviorByType = function getBehaviorByType(type) {
-  return this.behaviors[type];
-};
-
-/**
- * Activate a behavior by its type
- * @method activateBehavior
- * @memberof Actor#
- * @param  {string} type  Type of the behavior to be activated
- * @return {Actor}        Self for chaining
- */
-Actor.prototype.activateBehavior = function activateBehavior(type) {
-  var behv = this.behaviors[type];
-  if (behv) {
-    behv.activate();
-  }
-
-  return this;
-};
-
-/**
- * De-activate a behavior by its type
- * @method deactivateBehavior
- * @memberof Actor#
- * @param  {string} type  Type of the behavior to be de-activated
- * @return {Actor}        Self for chaining
- */
-Actor.prototype.deactivateBehavior = function deactivateBehavior(type) {
-  var behv = this.behaviors[type];
-  if (behv) {
-    behv.deactivate();
-  }
+  behavior.actor = this;
+  Object.assign(behavior, DEFAULT_SETTINGS, settings);
+  behavior.awake();
 
   return this;
 };
@@ -977,17 +937,6 @@ Object.assign(Scene.prototype, {
   spawnActor: function spawnActor(actor_, x, y, layerName, settings) {
     var settings_ = settings || {};
 
-    var layer, layerName_ = layerName || 'stage';
-    if (typeof(layerName_) === 'string') {
-      layer = this[layerName_];
-      if (!layer) {
-        layer = this.stage;
-      }
-    }
-    else if (layerName_ instanceof PIXI.Container) {
-      layer = layerName_;
-    }
-
     // Create instance
     var a, actor = actor_;
 
@@ -1007,27 +956,11 @@ Object.assign(Scene.prototype, {
     }
     a.CTOR = actor;
 
-    // Add actor components
-    a.scene = this;
-    a.layer = layer;
-    if (a.sprite) {
-      a.sprite.actor = a;
-      layer.addChild(a.sprite);
-    }
-    if (a.body) {
-      a.body.actor = a;
-      this.world.addBody(a.body);
-    }
-    a.position.set(x || 0, y || 0);
+    // Set actor position
+    a.position.set(x | 0, y | 0);
 
     // Add to actor system
-    this.addActor(a, settings_.tag);
-
-    // Keep a reference if it has a name
-    if (settings_.name) {
-      a.name = settings_.name;
-      this.actorSystem.namedActors[settings_.name] = a;
-    }
+    this.addActor(a, layerName, settings_.name, settings_.tag);
 
     return a;
   },
@@ -1037,11 +970,38 @@ Object.assign(Scene.prototype, {
    * @method addActor
    * @memberOf Scene#
    * @param {Actor} actor   Actor you want to add
+   * @param {string|PIXI.Container} [layer] Name of the layer to add to(key of a PIXI.Container instance in this scene) or a PIXI.Container instance
+   * @param {string} name   Name of this actor
    * @param {string} tag    Tag of this actor, default is '0'
    */
-  addActor: function addActor(actor, tag) {
-    var t = tag || '0';
+  addActor: function addActor(actor, layer, name, tag) {
+    actor.scene = this;
 
+    // Add sprite to a layer if required
+    var layer_ = layer || 'stage';
+    if (typeof(layer_) === 'string') {
+      layer_ = this[layer_] || this.stage;
+    }
+    actor.layer = layer_;
+    if (actor.sprite) {
+      actor.sprite.actor = actor;
+      layer_.addChild(actor.sprite);
+    }
+
+    // Add body to the world if required
+    if (actor.body) {
+      actor.body.actor = actor;
+      this.world.addBody(actor.body);
+    }
+
+    // Keep a reference if it has a name
+    if (typeof(name) === 'string') {
+      actor.name = name;
+      this.actorSystem.namedActors[name] = actor;
+    }
+
+    // Tag this actor
+    var t = tag || '0';
     actor.tag = t;
 
     if (!this.actorSystem.actors[t]) {
@@ -1057,6 +1017,7 @@ Object.assign(Scene.prototype, {
       this.actorSystem.actors[t].push(actor);
     }
 
+    actor.emit('ready');
     actor.ready();
   },
 
@@ -1070,12 +1031,16 @@ Object.assign(Scene.prototype, {
     // Will remove in next frame
     if (actor) actor.removed = true;
 
+    actor.scene = null;
+
     // Remove name based reference
     if (actor.name) {
       if (this.actorSystem.namedActors[actor.name] === actor) {
         this.actorSystem.namedActors[actor.name] = null;
       }
     }
+
+    actor.emit('remove');
   },
 
   /**

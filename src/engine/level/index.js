@@ -1,3 +1,5 @@
+'use strict';
+
 var Scene = require('engine/scene');
 var CollisionMap = require('engine/tilemap/collision-map');
 var BackgroundMap = require('engine/tilemap/background-map');
@@ -9,7 +11,7 @@ var DEFAULT_SETTINGS = {
 };
 
 Scene.prototype.loadLevel = function(levelData, settings) {
-  var i, j, layerData, tileset, s = Object.assign({}, DEFAULT_SETTINGS, settings);
+  var i, j, layerData, tileset, act, s = Object.assign({}, DEFAULT_SETTINGS, settings);
 
   // Remove existing background maps
   if (Array.isArray(this.backgroundMaps)) {

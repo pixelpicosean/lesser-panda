@@ -1,3 +1,5 @@
+'use strict';
+
 var Scalar = require('./Scalar');
 
 module.exports = Line;

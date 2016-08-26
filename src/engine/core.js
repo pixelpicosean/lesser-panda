@@ -1,3 +1,5 @@
+'use strict';
+
 require('engine/polyfill');
 
 var EventEmitter = require('engine/eventemitter3');
@@ -21,7 +23,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v0.4.1-1',
+  version: 'v0.4.2',
 
   /**
    * Main Canvas element.

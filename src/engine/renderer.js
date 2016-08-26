@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Renderer interface.
  *

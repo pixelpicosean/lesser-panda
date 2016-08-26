@@ -1,3 +1,5 @@
+'use strict';
+
 var EventEmitter = require('engine/eventemitter3'),
     _url = require('./url'),
     // tests is CORS is supported in XHR, if not we need to use XDR

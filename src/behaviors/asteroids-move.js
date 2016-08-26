@@ -9,9 +9,9 @@ import Vector from 'engine/vector';
 import { clamp } from 'engine/utils';
 
 export default class AsteroidsMove extends Behavior {
-  type = 'AsteroidsMove'
+  static TYPE = 'AsteroidsMove';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     /* Whether use keyboard to control */
     useKeyboard: true,
     /* Hold to push forward, when `useKeyboard` is true */
@@ -49,14 +49,12 @@ export default class AsteroidsMove extends Behavior {
     this.turnSpeed = 0;
     this.turning = 0;
   }
-  setup(settings) {
-    super.setup(settings);
-
-    this.target.body.damping = this.damping;
+  awake() {
+    this.actor.body.damping = this.damping;
   }
   update(_, dt) {
     if (this.useKeyboard) {
-      this.target.body.force.set(0);
+      this.actor.body.force.set(0);
       this.turning = 0;
       if (keyboard.down(this.forwardKey)) this.pushForward();
       if (keyboard.down(this.backwardKey)) this.pushBackward();
@@ -71,20 +69,20 @@ export default class AsteroidsMove extends Behavior {
     if (this.angularDamping !== 0) {
       this.turnSpeed *= Math.pow(1 - this.angularDamping, dt);
     }
-    this.target.rotation += this.turnSpeed * dt;
-    this.dir.set(1, 0).rotate(this.target.rotation);
+    this.actor.rotation += this.turnSpeed * dt;
+    this.dir.set(1, 0).rotate(this.actor.rotation);
   }
 
   // Actions
   // Move forward
   pushForward() {
-    this.target.body.force
+    this.actor.body.force
       .copy(this.dir)
       .multiply(this.forwardForce)
   }
   // Move backward
   pushBackward() {
-    this.target.body.force
+    this.actor.body.force
       .copy(this.dir)
       .multiply(-this.backwardForce)
   }

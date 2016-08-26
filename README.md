@@ -83,6 +83,18 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 0.4.2
+
+- Give `BackgroundMap` ability to repeat.
+- Add `width`, `height`, `widthInTile` and `heightInTile` properties to `BackgroundMap`.
+- Add `getTile` and `setTile` method to `BackgroundMap`.
+- Optimize `BackgroundMap` rendering, by drawing the visible part only.
+- Force code running in strict mode.
+- [CLI] Use webpack-dev-server instead of browser-sync for live-reloading, performs a little bit slower but will display error in browser console.
+- Add `isStatic` field to `physics.Body` to identify bodies don't move and response to the collisions, which also improves the performance of `CollisionMap`.
+- Improve the design of behavior system.
+- Remove listeners when stop a `Tween` to prevent issues caused by object pooling.
+
 ### 0.4.1-1
 
 - Fix container issue while loading a Tiled map.

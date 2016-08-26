@@ -1,87 +1,409 @@
-/**
- * Based on PIXI-tilemap by Ivan Popelyshev
- * Modified by Sean Bohan
- */
+'use strict';
+
 var PIXI = require('engine/pixi');
+var core = require('engine/core');
+var utils = require('engine/utils');
 
 var TileRenderer = require('./tile-renderer');
 PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
 
+var matrixArrayCache = new Float32Array(9);
+
 /**
- * @private
+ * TileMap for rendering rectangle tile based maps.
+ *
+ * Based on PIXI-tilemap by Ivan Popelyshev
+ * Modified by Sean Bohan.
+ *
+ * @class BackgroundMap
+ *
+ * @constructor
  */
-function RectTileLayer(tilesize, texture) {
-  PIXI.DisplayObject.call(this);
+function BackgroundMap(tilesize, data, tileset) {
+  PIXI.Container.call(this);
 
-  // Initialize
+  /**
+   * Size of each tile
+   * @type {number}
+   */
   this.tilesize = tilesize;
-  this.texture = texture;
+  /**
+   * Tileset of this map
+   * @type {PIXI.Texture}
+   */
+  this.tileset = tileset;
+  /**
+   * Map data, a 2D array
+   * @type {Array}
+   */
+  this.data = [[]];
 
-  this.visible = false;
+  /**
+   * Whether this map wraps at the edges.
+   * @type {Boolean}
+   */
+  this.isRepeat = false;
 
-  this.pointsBuf = [];
+  /**
+   * Whether tile is square(width = height). Performance of squared
+   * tiles is better than non-squared ones.
+   *
+   * Note: Currently only squared tiles are supported.
+   *
+   * @type {Boolean}
+   */
+  this.useSquare = true;
+
+  /**
+   * Points buffer for rendering
+   * @type {Array}
+   * @private
+   */
+  this.pointsBuf = new Array(512);
+  /**
+   * Marker that shows whether the rendering buffers need update
+   * @type {Number}
+   * @private
+   */
   this.modificationMarker = 0;
 
-  this.uOffset = texture.frame.x;
-  this.vOffset = texture.frame.y;
-  this.tilesPerTilesetRow = Math.floor(texture.width / tilesize);
+  this.uOffset = tileset.frame.x;
+  this.vOffset = tileset.frame.y;
+  this.tilesPerTilesetRow = Math.floor(tileset.width / tilesize);
+
+  this.tilesInRenderBuffer = 0;
+  this.lastCornerCoord = { tlq: 0, tlr: 0, brq: 0, brr: 0 };
+
+  this.globalMat = new PIXI.Matrix();
+
+  this.setData(data);
 }
 
-RectTileLayer.prototype = Object.create(PIXI.DisplayObject.prototype);
-RectTileLayer.prototype.constructor = RectTileLayer;
+BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
+BackgroundMap.prototype.constructor = BackgroundMap;
 
-RectTileLayer.prototype.clear = function() {
-  this.pointsBuf.length = 0;
+Object.defineProperties(BackgroundMap.prototype, {
+  /**
+   * Width of this map in pixel.
+   * @memberof BackgroundMap#
+   * @readonly
+   */
+  width: {
+    get: function() {
+      return this.widthInTile * this.tilesize;
+    },
+  },
+  /**
+   * Height of this map in pixel.
+   * @memberof BackgroundMap#
+   * @readonly
+   */
+  height: {
+    get: function() {
+      return this.heightInTile * this.tilesize;
+    },
+  },
+  /**
+   * Width of this map in tile.
+   * @memberof BackgroundMap#
+   * @readonly
+   */
+  widthInTile: {
+    get: function() {
+      if (Array.isArray(this.data) && (this.data.length > 0) && Array.isArray(this.data[0])) {
+        return this.data[0].length;
+      }
+      else {
+        return 0;
+      }
+    },
+  },
+  /**
+   * Height of this map in tile.
+   * @memberof BackgroundMap#
+   * @readonly
+   */
+  heightInTile: {
+    get: function() {
+      if (Array.isArray(this.data)) {
+        return this.data.length;
+      }
+      else {
+        return 0;
+      }
+    },
+  },
+});
+
+/**
+ * Set new data to this map.
+ * @memberof BackgroundMap#
+ * @method setData
+ * @param {Array} data New map data.
+ */
+BackgroundMap.prototype.setData = function(data) {
+  this.data = data;
   this.modificationMarker = 0;
 };
 
-RectTileLayer.prototype.renderCanvas = function(renderer) {
-  if (!this.texture || !this.texture.valid) return;
+/**
+ * Set the tile at the pixel coordinates.
+ * @param {number} x
+ * @param {number} y
+ * @param {number} tileIdx New tile index
+ */
+BackgroundMap.prototype.setTile = function(x, y, tileIdx) {
+  if (x < 0 || x > this.widthInTile * this.tilesize || y < 0 || y > this.heightInTile * this.tilesize) {
+    console.log('Cannot set a tile since the coordinate is out of range!');
+    return;
+  }
+
+  // Calculate tile coordinate
+  var tx = Math.floor(x / this.tilesize);
+  var ty = Math.floor(y / this.tilesize);
+
+  // Update map data
+  this.data[ty][tx] = tileIdx;
+
+  // Request buffer re-upload
+  this.modificationMarker = 0;
+};
+
+/**
+ * Get the tile at pixel coordinates.
+ * @param  {number} x
+ * @param  {number} y
+ * @return {number}   Tile at the coordinates, 0 if no one is found.
+ */
+BackgroundMap.prototype.getTile = function(x, y) {
+  if (x < 0 || x > this.widthInTile * this.tilesize || y < 0 || y > this.heightInTile * this.tilesize) {
+    return 0;
+  }
+
+  // Calculate tile coordinate
+  var tx = Math.floor(x / this.tilesize);
+  var ty = Math.floor(y / this.tilesize);
+
+  return this.data[ty][tx];
+};
+
+/**
+ * Clear the map
+ * @memberof BackgroundMap#
+ * @method clear
+ */
+BackgroundMap.prototype.clear = function() {
+  this.data = [[]];
+  this.modificationMarker = 0;
+};
+
+/**
+ * Update transform of this map.
+ * @memberof BackgroundMap#
+ * @method updateTransform
+ */
+BackgroundMap.prototype.updateTransform = function() {
+  BackgroundMap.prototype.displayObjectUpdateTransform.call(this);
+
+  this.updateRenderTileBuffer();
+};
+
+BackgroundMap.prototype.updateRenderTileBuffer = function() {
+  var topLeftX = -this.worldTransform.tx;
+  var topLeftY = -this.worldTransform.ty;
+
+  var bottomRightX = topLeftX + core.width;
+  var bottomRightY = topLeftY + core.height;
+
+  var topLeftQ = this.getColAt(topLeftX);
+  var topLeftR = this.getRowAt(topLeftY);
+
+  var bottomRightQ = this.getColAt(bottomRightX);
+  var bottomRightR = this.getRowAt(bottomRightY);
+
+  var tilesPerRow = Math.ceil(core.width / this.tilesize);
+  var tilesPerCol = Math.ceil(core.height / this.tilesize);
+
+  var tilesToRender = tilesPerRow * tilesPerCol;
+  var needUpdateRTB = (this.modificationMarker === 0);
+
+  // Check whether tile to be rendered changes
+  if (tilesToRender !== this.tilesInRenderBuffer) {
+    this.tilesInRenderBuffer = tilesToRender;
+
+    // Resize the point buffer for rendering
+    this.pointsBuf.length = tilesToRender * 6;
+
+    // Render point buffer needs update
+    needUpdateRTB = true;
+  }
+
+  // Check whether cornor tile coord changes
+  if (this.lastCornerCoord.tlq !== topLeftQ || this.lastCornerCoord.tlr !== topLeftR ||
+    this.lastCornerCoord.brq !== bottomRightQ || this.lastCornerCoord.brr !== bottomRightR) {
+    this.lastCornerCoord.tlq = topLeftQ;
+    this.lastCornerCoord.tlr = topLeftR;
+    this.lastCornerCoord.brq = bottomRightQ;
+    this.lastCornerCoord.brr = bottomRightR;
+
+    // Render point buffer needs update
+    needUpdateRTB = true;
+  }
+
+  // Update render tile buffer if required
+  if (needUpdateRTB) {
+    var r, q, nr, nq, maxR, maxQ, tileIdx, pb = this.pointsBuf, index = 0, widthInTile = this.widthInTile, heightInTile = this.heightInTile;
+    maxR = Math.min(topLeftR + tilesPerCol + 1, heightInTile);
+    maxQ = Math.min(topLeftQ + tilesPerRow + 1, widthInTile);
+    for (r = topLeftR - 1; r < topLeftR + tilesPerCol + 1; r++) {
+      for (q = topLeftQ - 1; q < topLeftQ + tilesPerRow + 1; q++) {
+        tileIdx = -1;
+
+        if (this.isRepeat) {
+          // Normalize row and column
+          nr = (r < 0) ? (r % heightInTile + heightInTile) : (r % heightInTile);
+          if (nr === heightInTile) nr = 0;
+          nq = (q < 0) ? (q % widthInTile + widthInTile) : (q % widthInTile);
+          if (nq === widthInTile) nq = 0;
+
+          // Read tileIdx from map data
+          tileIdx = this.data[nr][nq] - 1;
+        }
+        // Not repeat and within the range
+        else if (r > -1 && q > -1 && r < maxR && q < maxQ) {
+          tileIdx = this.data[r][q] - 1;
+        }
+
+        if (tileIdx >= 0) {
+          pb[index++] = this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow);
+          pb[index++] = this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow);
+          pb[index++] = this.tilesize * q;
+          pb[index++] = this.tilesize * r;
+          pb[index++] = this.tilesize;
+          pb[index++] = this.tilesize;
+        }
+        else {
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+          pb[index++] = 0;
+        }
+      }
+    }
+
+    // Mark as modified
+    this.modificationMarker = 0;
+  }
+};
+
+/**
+ * Get the tile column at a x location
+ * @memberof BackgroundMap#
+ * @method getColAt
+ * @param  {number} x Location to be tested
+ * @return {number}
+ */
+BackgroundMap.prototype.getColAt = function(x) {
+  if (this.isRepeat) {
+    return Math.floor(x / this.tilesize);
+  }
+  else {
+    return utils.clamp(Math.floor(x / this.tilesize), 0, this.widthInTile - 1);
+  }
+};
+
+/**
+ * Get the tile row at a y location
+ * @memberof BackgroundMap#
+ * @method getRowAt
+ * @param  {number} y Location to be tested
+ * @return {number}
+ */
+BackgroundMap.prototype.getRowAt = function(y) {
+  if (this.isRepeat) {
+    return Math.floor(y / this.tilesize);
+  }
+  else {
+    return utils.clamp(Math.floor(y / this.tilesize), 0, this.heightInTile - 1);
+  }
+};
+
+/**
+ * Render to canvas context
+ * @memberof BackgroundMap#
+ * @method renderCanvas
+ * @private
+ */
+BackgroundMap.prototype.renderCanvas = function(renderer) {
+  if (!renderer.dontUseTransform) {
+    var wt = this.worldTransform;
+    renderer.context.setTransform(
+      wt.a * renderer.resolution,
+      wt.b,
+      wt.c,
+      wt.d * renderer.resolution,
+      wt.tx * renderer.resolution,
+      wt.ty * renderer.resolution
+    );
+  }
+
+  if (!this.tileset || !this.tileset.valid) return;
   var points = this.pointsBuf;
-  for (var i = 0, n = points.length; i < n; i += 8) {
+  for (var i = 0, n = points.length; i < n; i += 6) {
     var x1 = points[i], y1 = points[i+1];
     var x2 = points[i+2], y2 = points[i+3];
     var w = points[i+4];
     var h = points[i+5];
-    x1 += points[i+6] * (renderer.tileAnimX | 0);
-    y1 += points[i+7] * (renderer.tileAnimY | 0);
-    renderer.context.drawImage(this.texture.baseTexture.source, x1, y1, w, h, x2, y2, w, h);
+    renderer.context.drawImage(this.tileset.baseTexture.source, x1, y1, w, h, x2, y2, w, h);
   }
 };
 
-RectTileLayer.prototype.addTile = function(tileIdx, tx, ty) {
-  var pb = this.pointsBuf;
-  pb.push(this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow));
-  pb.push(this.vOffset + this.tilesize * Math.floor(tileIdx / this.tilesPerTilesetRow));
-  pb.push(this.tilesize * tx);
-  pb.push(this.tilesize * ty);
-  pb.push(this.tilesize);
-  pb.push(this.tilesize);
-  pb.push(0);
-  pb.push(0);
-};
-
-RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
-  if (!this.texture || !this.texture.valid) return;
-  var points = this.pointsBuf;
-  if (points.length === 0) return;
-
+/**
+ * Render to WebGL context
+ * @memberof BackgroundMap#
+ * @method renderWebGL
+ * @private
+ */
+BackgroundMap.prototype.renderWebGL = function(renderer) {
   var gl = renderer.gl;
   var tile = renderer.plugins.tile;
-  var shader = tile.getShader(useSquare);
+  var shader = tile.getShader(this.useSquare);
+  renderer.setObjectRenderer(renderer.plugins.tile);
+  renderer.shaderManager.setShader(shader);
+
+  // Update transform
+  var tm = shader.uniforms.projectionMatrix;
+  renderer.currentRenderTarget.projectionMatrix.copy(this.globalMat).append(this.worldTransform);
+  tm.value = this.globalMat.toArray(true, matrixArrayCache);
+  if (this.useSquare) {
+    var ps = shader.uniforms.pointScale;
+    ps.value[0] = this.globalMat.a >= 0 ? 1 : -1;
+    ps.value[1] = this.globalMat.d < 0 ? 1 : -1;
+    ps = shader.uniforms.projectionScale;
+    ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
+  }
+  shader.syncUniforms();
+
+  // Won't render if tileset not set or no tile is inserted
+  if (!this.tileset || !this.tileset.valid || (this.pointsBuf.length === 0)) return;
+
+  // Bind tileset
   gl.activeTexture(gl.TEXTURE0);
-  var texture = this.texture.baseTexture;
-  if (!texture._glTextures[gl.id]) {
-    renderer.updateTexture(texture);
+  var tileset = this.tileset.baseTexture;
+  if (!tileset._glTextures[gl.id]) {
+    renderer.updateTexture(tileset);
   }
   else {
-    gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
+    gl.bindTexture(gl.TEXTURE_2D, tileset._glTextures[gl.id]);
   }
   var ss =  shader.uniforms.samplerSize;
-  ss.value[0] = 1.0 / texture.width;
-  ss.value[1] = 1.0 / texture.height;
+  ss.value[0] = 1.0 / tileset.width;
+  ss.value[1] = 1.0 / tileset.height;
   shader.syncUniform(ss);
-  //lost context! recover!
+
+  // Recover if context is lost
   var vb = tile.getVb(this.vbId);
   if (!vb) {
     vb = tile.createVb();
@@ -90,9 +412,11 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
     this.modificationMarker = 0;
   }
   vb = vb.vb;
-  //if layer was changed, reupload vertices
+
+  // If layer was changed, reupload vertices
+  var points = this.pointsBuf;
   shader.bindBuffer(gl, vb);
-  var vertices = points.length / 8 * shader.vertPerQuad;
+  var vertices = points.length / 6 * shader.vertPerQuad;
   if (this.modificationMarker !== vertices) {
     this.modificationMarker = vertices;
     var vs = shader.stride * vertices;
@@ -109,68 +433,50 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
     }
 
     var arr = this.vbArray, ints = this.vbInts;
-    //upload vertices!
+    // Upload vertices!
     var sz = 0;
-    //var tint = 0xffffffff;
-    if (useSquare) {
-      for (var i = 0; i < points.length; i += 8) {
+    if (this.useSquare) {
+      for (var i = 0; i < points.length; i += 6) {
         arr[sz++] = points[i + 2];
         arr[sz++] = points[i + 3];
         arr[sz++] = points[i + 0];
         arr[sz++] = points[i + 1];
         arr[sz++] = points[i + 4];
-        arr[sz++] = points[i + 6];
-        arr[sz++] = points[i + 7];
       }
     }
     else {
-      var ww = texture.width, hh = texture.height;
-      //var tint = 0xffffffff;
-      var tint = -1;
-      for (var i = 0; i < points.length; i += 8) {
+      var ww = tileset.width, hh = tileset.height;
+      for (var i = 0; i < points.length; i += 6) {
         var x = points[i+2], y = points[i+3];
         var w = points[i+4], h = points[i+5];
         var u = points[i], v = points[i+1];
-        var animX = points[i+6], animY = points[i+7];
         arr[sz++] = x;
         arr[sz++] = y;
         arr[sz++] = u;
         arr[sz++] = v;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x + w;
         arr[sz++] = y;
         arr[sz++] = u + w;
         arr[sz++] = v;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x + w;
         arr[sz++] = y + h;
         arr[sz++] = u + w;
         arr[sz++] = v + h;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x;
         arr[sz++] = y;
         arr[sz++] = u;
         arr[sz++] = v;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x + w;
         arr[sz++] = y + h;
         arr[sz++] = u + w;
         arr[sz++] = v + h;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x;
         arr[sz++] = y + h;
         arr[sz++] = u;
         arr[sz++] = v + h;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
       }
     }
-    if (vs > this.vbArray.length/2 ) {
+    if (vs > this.vbArray.length / 2) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, arr);
     }
     else {
@@ -178,113 +484,19 @@ RectTileLayer.prototype.renderWebGL = function(renderer, useSquare) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
     }
   }
-  if (useSquare) {
+  if (this.useSquare) {
     gl.drawArrays(gl.POINTS, 0, vertices);
   }
   else {
     gl.drawArrays(gl.TRIANGLES, 0, vertices);
   }
-}
+};
 
 /**
- * BackgroundMap
+ * @exports engine/tilemap/background-map
+ *
+ * @see BackgroundMap
+ *
+ * @requires module:engine/pixi
  */
-function BackgroundMap(tilesize, data, tileset) {
-  PIXI.Container.call(this);
-
-  this.useSquare = true;
-  this.modificationMarker = 0;
-
-  this.map = new RectTileLayer(tilesize, tileset);
-  this.addChild(this.map);
-
-  // Initialize
-  this.tilesize = tilesize;
-  this.data = data;
-  this.tileset = tileset;
-
-  // Create tiles from data
-  var r, q, height = data.length, width = data[0].length, tileIdx;
-  for (r = 0; r < height; r++) {
-    for (q = 0; q < width; q++) {
-      if (data[r][q] === 0) continue;
-      this.map.addTile(data[r][q] - 1, q, r);
-    }
-  }
-}
-
-BackgroundMap.prototype = Object.create(PIXI.Container.prototype);
-BackgroundMap.prototype.constructor = RectTileLayer;
-BackgroundMap.prototype.updateTransform = BackgroundMap.prototype.displayObjectUpdateTransform;
-
-BackgroundMap.prototype.clear = function() {
-  this.children[0].clear();
-  this.modificationMarker = 0;
-};
-
-BackgroundMap.prototype.addTile = function(tileIdx, tx, ty) {
-  if (this.children[0].texture) {
-    this.children[0].addTile(tileIdx, tx, ty);
-  }
-};
-
-BackgroundMap.prototype.renderCanvas = function(renderer) {
-  if (!renderer.dontUseTransform) {
-    var wt = this.worldTransform;
-    renderer.context.setTransform(
-      wt.a * renderer.resolution,
-      wt.b,
-      wt.c,
-      wt.d * renderer.resolution,
-      wt.tx * renderer.resolution,
-      wt.ty * renderer.resolution
-    );
-  }
-  var layers = this.children;
-  for (var i = 0; i < layers.length; i++) {
-    layers[i].renderCanvas(renderer);
-  }
-};
-
-BackgroundMap.prototype.renderWebGL = function(renderer) {
-  var gl = renderer.gl;
-  var shader = renderer.plugins.tile.getShader(this.useSquare);
-  renderer.setObjectRenderer(renderer.plugins.tile);
-  renderer.shaderManager.setShader(shader);
-  var tm = shader.uniforms.projectionMatrix;
-  //TODO: dont create new array, please
-  this._globalMat = this._globalMat || new PIXI.Matrix();
-  renderer.currentRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
-  tm.value = this._globalMat.toArray(true);
-  if (this.useSquare) {
-    var ps = shader.uniforms.pointScale;
-    ps.value[0] = this._globalMat.a >= 0 ? 1 : -1;
-    ps.value[1] = this._globalMat.d < 0 ? 1 : -1;
-    ps = shader.uniforms.projectionScale;
-    ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
-  }
-  var af = shader.uniforms.animationFrame.value;
-  af[0] = renderer.tileAnimX | 0;
-  af[1] = renderer.tileAnimY | 0;
-  //shader.syncUniform(shader.uniforms.animationFrame);
-  shader.syncUniforms();
-  var layers = this.children;
-  for (var i = 0; i < layers.length; i++) {
-    layers[i].renderWebGL(renderer, this.useSquare);
-  }
-};
-
-BackgroundMap.prototype.isModified = function(anim) {
-  if (this.children[0].modificationMarker !== this.children[0].pointsBuf.length ||
-    anim && this.children[0].hasAnim) {
-    return true;
-  }
-  return false;
-};
-
-BackgroundMap.prototype.clearModify = function() {
-  this.modificationMarker = this.children.length;
-  this.children[0].modificationMarker = this.children[0].pointsBuf.length;
-};
-
 module.exports = exports = BackgroundMap;

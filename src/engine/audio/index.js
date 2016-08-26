@@ -1,3 +1,5 @@
+'use strict';
+
 var core = require('engine/core');
 var howler = require('./howler.core');
 var loader = require('engine/loader');

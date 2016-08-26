@@ -10,9 +10,9 @@ import keyboard from 'engine/keyboard';
 import Behavior from 'engine/behavior';
 
 export default class VerticalMove extends Behavior {
-  type = 'VerticalMove'
+  static TYPE = 'VerticalMove';
 
-  defaultSettings = {
+  static DEFAULT_SETTINGS = {
     /* Move speed */
     speed: 200,
 
@@ -30,7 +30,7 @@ export default class VerticalMove extends Behavior {
     upKey: 'UP',
     /* Hold to move down, when `useKeyboard` is true */
     downKey: 'DOWN',
-  }
+  };
 
   constructor() {
     super();
@@ -40,12 +40,10 @@ export default class VerticalMove extends Behavior {
     this.bottom = 0;
     this.hasRange = false;
   }
-  setup(settings) {
-    super.setup(settings);
-
+  awake() {
     this.hasRange = Number.isFinite(this.range);
     if (this.hasRange) {
-      this.top = this.target.position.y - this.range * this.startPct;
+      this.top = this.actor.position.y - this.range * this.startPct;
       this.bottom = this.top + this.range;
     }
   }
@@ -56,18 +54,18 @@ export default class VerticalMove extends Behavior {
       if (keyboard.down(this.downKey)) this.dir += 1;
     }
 
-    this.target.position.y += this.dir * this.speed * dt;
+    this.actor.position.y += this.dir * this.speed * dt;
 
     if (this.dir !== 0 && this.hasRange) {
-      if (this.target.position.y > this.bottom) {
-        this.target.position.y = this.bottom;
+      if (this.actor.position.y > this.bottom) {
+        this.actor.position.y = this.bottom;
         this.dir = 0;
-        this.target.emit('reachEnd');
+        this.actor.emit('reachEnd');
       }
-      else if (this.target.position.y < this.top) {
-        this.target.position.y = this.top;
+      else if (this.actor.position.y < this.top) {
+        this.actor.position.y = this.top;
         this.dir = 0;
-        this.target.emit('reachStart');
+        this.actor.emit('reachStart');
       }
     }
   }
