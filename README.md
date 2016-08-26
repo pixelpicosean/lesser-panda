@@ -85,6 +85,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.2-dev
 
+- Give `BackgroundMap` ability to repeat.
 - Add `width`, `height`, `widthInTile` and `heightInTile` properties to `BackgroundMap`.
 - Add `getTile` and `setTile` method to `BackgroundMap`.
 - Optimize `BackgroundMap` rendering, by drawing the visible part only.
