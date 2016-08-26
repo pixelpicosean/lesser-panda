@@ -7,6 +7,8 @@ var utils = require('engine/utils');
 var TileRenderer = require('./tile-renderer');
 PIXI.WebGLRenderer.registerPlugin('tile', TileRenderer);
 
+var matrixArrayCache = new Float32Array(9);
+
 /**
  * TileMap for rendering rectangle tile based maps.
  *
@@ -37,6 +39,12 @@ function BackgroundMap(tilesize, data, tileset) {
   this.data = [[]];
 
   /**
+   * Whether this map wraps at the edges.
+   * @type {Boolean}
+   */
+  this.isRepeat = true;
+
+  /**
    * Whether tile is square(width = height). Performance of squared
    * tiles is better than non-squared ones.
    *
@@ -64,7 +72,9 @@ function BackgroundMap(tilesize, data, tileset) {
   this.tilesPerTilesetRow = Math.floor(tileset.width / tilesize);
 
   this.tilesInRenderBuffer = 0;
-  this.firstRenderTileLoc = { q: 0, r: 0 };
+  this.lastCornerCoord = { tlq: 0, tlr: 0, brq: 0, brr: 0 };
+
+  this.globalMat = new PIXI.Matrix();
 
   this.setData(data);
 }
@@ -211,8 +221,8 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
   var bottomRightQ = this.getColAt(bottomRightX);
   var bottomRightR = this.getRowAt(bottomRightY);
 
-  var tilesPerRow = bottomRightQ - topLeftQ + 1;
-  var tilesPerCol = bottomRightR - topLeftR + 1;
+  var tilesPerRow = Math.ceil(core.width / this.tilesize);
+  var tilesPerCol = Math.ceil(core.height / this.tilesize);
 
   var tilesToRender = tilesPerRow * tilesPerCol;
   var needUpdateRTB = (this.modificationMarker === 0);
@@ -228,20 +238,37 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
     needUpdateRTB = true;
   }
 
-  // Check whether first tile to render changes
-  if (this.firstRenderTileLoc.q !== topLeftQ || this.firstRenderTileLoc.r !== topLeftR) {
+  // Check whether cornor tile coord changes
+  if (this.lastCornerCoord.tlq !== topLeftQ || this.lastCornerCoord.tlr !== topLeftR ||
+    this.lastCornerCoord.brq !== bottomRightQ || this.lastCornerCoord.brr !== bottomRightR) {
+    this.lastCornerCoord.tlq = topLeftQ;
+    this.lastCornerCoord.tlr = topLeftR;
+    this.lastCornerCoord.brq = bottomRightQ;
+    this.lastCornerCoord.brr = bottomRightR;
+
     // Render point buffer needs update
     needUpdateRTB = true;
   }
 
   // Update render tile buffer if required
   if (needUpdateRTB) {
-    var r, q, maxR, maxQ, tileIdx, pb = this.pointsBuf, index = 0;
-    maxR = Math.min(topLeftR + tilesPerCol + 1, this.heightInTile);
-    maxQ = Math.min(topLeftQ + tilesPerRow + 1, this.widthInTile);
-    for (r = topLeftR; r < maxR; r++) {
-      for (q = topLeftQ; q < maxQ; q++) {
-        tileIdx = this.data[r][q] - 1;
+    var r, q, nr, nq, maxR, maxQ, tileIdx, pb = this.pointsBuf, index = 0, widthInTile = this.widthInTile, heightInTile = this.heightInTile;
+    maxR = Math.min(topLeftR + tilesPerCol + 1, heightInTile);
+    maxQ = Math.min(topLeftQ + tilesPerRow + 1, widthInTile);
+    for (r = topLeftR; r < topLeftR + tilesPerCol + 1; r++) {
+      for (q = topLeftQ; q < topLeftQ + tilesPerRow + 1; q++) {
+        tileIdx = -1;
+
+        if (this.isRepeat) {
+          nr = (r < 0) ? (r % heightInTile + heightInTile) : (r % heightInTile);
+          nq = (q < 0) ? (q % widthInTile + widthInTile) : (q % widthInTile);
+
+          tileIdx = this.data[nr][nq] - 1;
+        }
+        // Not repeat and within the range
+        else if (r < maxR && q < maxQ) {
+          tileIdx = this.data[r][q] - 1;
+        }
 
         if (tileIdx >= 0) {
           pb[index++] = this.uOffset + this.tilesize * Math.floor(tileIdx % this.tilesPerTilesetRow);
@@ -261,6 +288,9 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
         }
       }
     }
+
+    // Mark as modified
+    this.modificationMarker = 0;
   }
 };
 
@@ -272,7 +302,13 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
  * @return {number}
  */
 BackgroundMap.prototype.getColAt = function(x) {
-  return utils.clamp(Math.floor(x / this.tilesize), 0, this.widthInTile - 1);
+  var q = Math.floor(x / this.tilesize);
+  if (this.isRepeat) {
+    return q % this.widthInTile;
+  }
+  else {
+    return utils.clamp(q, 0, this.widthInTile - 1);
+  }
 };
 
 /**
@@ -283,7 +319,13 @@ BackgroundMap.prototype.getColAt = function(x) {
  * @return {number}
  */
 BackgroundMap.prototype.getRowAt = function(y) {
-  return utils.clamp(Math.floor(y / this.tilesize), 0, this.heightInTile - 1);
+  var r = Math.floor(y / this.tilesize);
+  if (this.isRepeat) {
+    return r % this.heightInTile;
+  }
+  else {
+    return utils.clamp(r, 0, this.heightInTile - 1);
+  }
 };
 
 /**
@@ -331,14 +373,12 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
 
   // Update transform
   var tm = shader.uniforms.projectionMatrix;
-  //TODO: dont create new array, please
-  this._globalMat = this._globalMat || new PIXI.Matrix();
-  renderer.currentRenderTarget.projectionMatrix.copy(this._globalMat).append(this.worldTransform);
-  tm.value = this._globalMat.toArray(true);
+  renderer.currentRenderTarget.projectionMatrix.copy(this.globalMat).append(this.worldTransform);
+  tm.value = this.globalMat.toArray(true, matrixArrayCache);
   if (this.useSquare) {
     var ps = shader.uniforms.pointScale;
-    ps.value[0] = this._globalMat.a >= 0 ? 1 : -1;
-    ps.value[1] = this._globalMat.d < 0 ? 1 : -1;
+    ps.value[0] = this.globalMat.a >= 0 ? 1 : -1;
+    ps.value[1] = this.globalMat.d < 0 ? 1 : -1;
     ps = shader.uniforms.projectionScale;
     ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
   }
@@ -391,9 +431,8 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
     }
 
     var arr = this.vbArray, ints = this.vbInts;
-    //upload vertices!
+    // Upload vertices!
     var sz = 0;
-    //var tint = 0xffffffff;
     if (this.useSquare) {
       for (var i = 0; i < points.length; i += 6) {
         arr[sz++] = points[i + 2];
@@ -405,8 +444,6 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
     }
     else {
       var ww = tileset.width, hh = tileset.height;
-      //var tint = 0xffffffff;
-      var tint = -1;
       for (var i = 0; i < points.length; i += 6) {
         var x = points[i+2], y = points[i+3];
         var w = points[i+4], h = points[i+5];
