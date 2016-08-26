@@ -222,7 +222,7 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
     this.tilesInRenderBuffer = tilesToRender;
 
     // Resize the point buffer for rendering
-    this.pointsBuf.length = tilesToRender * 8;
+    this.pointsBuf.length = tilesToRender * 6;
 
     // Render point buffer needs update
     needUpdateRTB = true;
@@ -250,12 +250,8 @@ BackgroundMap.prototype.updateRenderTileBuffer = function() {
           pb[index++] = this.tilesize * r;
           pb[index++] = this.tilesize;
           pb[index++] = this.tilesize;
-          pb[index++] = 0;
-          pb[index++] = 0;
         }
         else {
-          pb[index++] = 0;
-          pb[index++] = 0;
           pb[index++] = 0;
           pb[index++] = 0;
           pb[index++] = 0;
@@ -311,13 +307,11 @@ BackgroundMap.prototype.renderCanvas = function(renderer) {
 
   if (!this.tileset || !this.tileset.valid) return;
   var points = this.pointsBuf;
-  for (var i = 0, n = points.length; i < n; i += 8) {
+  for (var i = 0, n = points.length; i < n; i += 6) {
     var x1 = points[i], y1 = points[i+1];
     var x2 = points[i+2], y2 = points[i+3];
     var w = points[i+4];
     var h = points[i+5];
-    x1 += points[i+6] * (renderer.tileAnimX | 0);
-    y1 += points[i+7] * (renderer.tileAnimY | 0);
     renderer.context.drawImage(this.tileset.baseTexture.source, x1, y1, w, h, x2, y2, w, h);
   }
 };
@@ -334,6 +328,8 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
   var shader = tile.getShader(this.useSquare);
   renderer.setObjectRenderer(renderer.plugins.tile);
   renderer.shaderManager.setShader(shader);
+
+  // Update transform
   var tm = shader.uniforms.projectionMatrix;
   //TODO: dont create new array, please
   this._globalMat = this._globalMat || new PIXI.Matrix();
@@ -346,16 +342,12 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
     ps = shader.uniforms.projectionScale;
     ps.value = Math.abs(this.worldTransform.a) * renderer.resolution;
   }
-  var af = shader.uniforms.animationFrame.value;
-  af[0] = renderer.tileAnimX | 0;
-  af[1] = renderer.tileAnimY | 0;
-  //shader.syncUniform(shader.uniforms.animationFrame);
   shader.syncUniforms();
 
-  if (!this.tileset || !this.tileset.valid) return;
-  var points = this.pointsBuf;
-  if (points.length === 0) return;
+  // Won't render if tileset not set or no tile is inserted
+  if (!this.tileset || !this.tileset.valid || (this.pointsBuf.length === 0)) return;
 
+  // Bind tileset
   gl.activeTexture(gl.TEXTURE0);
   var tileset = this.tileset.baseTexture;
   if (!tileset._glTextures[gl.id]) {
@@ -368,7 +360,8 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
   ss.value[0] = 1.0 / tileset.width;
   ss.value[1] = 1.0 / tileset.height;
   shader.syncUniform(ss);
-  //lost context! recover!
+
+  // Recover if context is lost
   var vb = tile.getVb(this.vbId);
   if (!vb) {
     vb = tile.createVb();
@@ -377,9 +370,11 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
     this.modificationMarker = 0;
   }
   vb = vb.vb;
-  //if layer was changed, reupload vertices
+
+  // If layer was changed, reupload vertices
+  var points = this.pointsBuf;
   shader.bindBuffer(gl, vb);
-  var vertices = points.length / 8 * shader.vertPerQuad;
+  var vertices = points.length / 6 * shader.vertPerQuad;
   if (this.modificationMarker !== vertices) {
     this.modificationMarker = vertices;
     var vs = shader.stride * vertices;
@@ -400,64 +395,49 @@ BackgroundMap.prototype.renderWebGL = function(renderer) {
     var sz = 0;
     //var tint = 0xffffffff;
     if (this.useSquare) {
-      for (var i = 0; i < points.length; i += 8) {
+      for (var i = 0; i < points.length; i += 6) {
         arr[sz++] = points[i + 2];
         arr[sz++] = points[i + 3];
         arr[sz++] = points[i + 0];
         arr[sz++] = points[i + 1];
         arr[sz++] = points[i + 4];
-        arr[sz++] = points[i + 6];
-        arr[sz++] = points[i + 7];
       }
     }
     else {
       var ww = tileset.width, hh = tileset.height;
       //var tint = 0xffffffff;
       var tint = -1;
-      for (var i = 0; i < points.length; i += 8) {
+      for (var i = 0; i < points.length; i += 6) {
         var x = points[i+2], y = points[i+3];
         var w = points[i+4], h = points[i+5];
         var u = points[i], v = points[i+1];
-        var animX = points[i+6], animY = points[i+7];
         arr[sz++] = x;
         arr[sz++] = y;
         arr[sz++] = u;
         arr[sz++] = v;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x + w;
         arr[sz++] = y;
         arr[sz++] = u + w;
         arr[sz++] = v;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x + w;
         arr[sz++] = y + h;
         arr[sz++] = u + w;
         arr[sz++] = v + h;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x;
         arr[sz++] = y;
         arr[sz++] = u;
         arr[sz++] = v;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x + w;
         arr[sz++] = y + h;
         arr[sz++] = u + w;
         arr[sz++] = v + h;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
         arr[sz++] = x;
         arr[sz++] = y + h;
         arr[sz++] = u;
         arr[sz++] = v + h;
-        arr[sz++] = animX;
-        arr[sz++] = animY;
       }
     }
-    if (vs > this.vbArray.length/2 ) {
+    if (vs > this.vbArray.length / 2) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, arr);
     }
     else {

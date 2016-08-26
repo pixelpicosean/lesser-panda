@@ -3,12 +3,11 @@
 var PIXI = require('engine/pixi');
 
 function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
-  this.vertSize = 7;
+  this.vertSize = 5;
   this.vertPerQuad = 1;
   this.stride = this.vertSize * 4;
   var uniforms = {
     uSampler:           { type: 'sampler2D', value: 0 },
-    animationFrame:     { type: '2f', value: new Float32Array([0, 0]) },
     samplerSize:        { type: '2f', value: new Float32Array([0, 0]) },
     projectionMatrix:   { type: 'mat3', value: new Float32Array([1, 0, 0,
       0, 1, 0,
@@ -57,7 +56,6 @@ SquareTileShader.defaultVertexSrc = [
 
   'uniform mat3 projectionMatrix;',
   'uniform vec2 samplerSize;',
-  'uniform vec2 animationFrame;',
   'uniform float projectionScale;',
 
   'varying vec2 vTextureCoord;',
@@ -66,7 +64,7 @@ SquareTileShader.defaultVertexSrc = [
   'void main(void){',
   '   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition.xy + aSize.x * 0.5, 1.0)).xy, 0.0, 1.0);',
   '   gl_PointSize = aSize.x * projectionScale;',
-  '   vTextureCoord = (aVertexPosition.zw + aSize.yz * animationFrame ) * samplerSize;',
+  '   vTextureCoord = aVertexPosition.zw * samplerSize;',
   '   vSize = aSize.x;',
   '}'
 ].join('\n');
@@ -89,12 +87,11 @@ SquareTileShader.defaultFragmentSrc = [
 ].join('\n');
 
 function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
-  this.vertSize = 6;
+  this.vertSize = 4;
   this.vertPerQuad = 6;
   this.stride = this.vertSize * 4;
   var uniforms = {
     uSampler:           { type: 'sampler2D', value: 0 },
-    animationFrame:     { type: '2f', value: new Float32Array([0, 0]) },
     samplerSize:        { type: '2f', value: new Float32Array([0, 0]) },
     projectionMatrix:   { type: 'mat3', value: new Float32Array([1, 0, 0,
       0, 1, 0,
@@ -107,7 +104,6 @@ function RectTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, c
   }
   var attributes = {
     aVertexPosition:    0,
-    aAnim:              0
   };
   if (customAttributes) {
     for (var a in customAttributes) {
@@ -125,7 +121,6 @@ RectTileShader.prototype.constructor = RectTileShader;
 RectTileShader.prototype.bindBuffer = function(gl, vb) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vb);
   gl.vertexAttribPointer(this.attributes.aVertexPosition, 4, gl.FLOAT, false, this.stride, 0);
-  gl.vertexAttribPointer(this.attributes.aAnim, 2, gl.FLOAT, false, this.stride, 4 * 4);
 };
 
 /**
@@ -137,17 +132,15 @@ RectTileShader.prototype.bindBuffer = function(gl, vb) {
 RectTileShader.defaultVertexSrc = [
   'precision lowp float;',
   'attribute vec4 aVertexPosition;',
-  'attribute vec2 aAnim;',
 
   'uniform mat3 projectionMatrix;',
   'uniform vec2 samplerSize;',
-  'uniform vec2 animationFrame;',
 
   'varying vec2 vTextureCoord;',
 
   'void main(void){',
   '   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition.xy, 1.0)).xy, 0.0, 1.0);',
-  '   vTextureCoord = (aVertexPosition.zw + aAnim * animationFrame ) * samplerSize;',
+  '   vTextureCoord = aVertexPosition.zw * samplerSize;',
   '}'
 ].join('\n');
 
