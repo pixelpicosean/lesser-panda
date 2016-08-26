@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Number.isFinite
  * Copyright (c) 2014 marlun78

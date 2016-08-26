@@ -1,3 +1,5 @@
+'use strict';
+
 var EventEmitter = require('engine/eventemitter3');
 var engine = require('engine/core');
 var utils = require('engine/utils');
@@ -48,7 +50,9 @@ Scene.prototype.constructor = Scene;
  * @protected
  */
 Scene.prototype._awake = function _awake() {
-  for (var i in this.updateOrder) {
+  var i, sys;
+
+  for (i in this.updateOrder) {
     sys = Scene.systems[this.updateOrder[i]];
     sys.awake && sys.awake(this);
   }

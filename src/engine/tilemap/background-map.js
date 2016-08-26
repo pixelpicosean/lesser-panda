@@ -1,3 +1,5 @@
+'use strict';
+
 var PIXI = require('engine/pixi');
 
 var TileRenderer = require('./tile-renderer');

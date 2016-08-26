@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Simple physics simulation and collision support.
  *

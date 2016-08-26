@@ -1,3 +1,5 @@
+'use strict';
+
 var storage = require('./storage');
 
 var Data = require('./data');

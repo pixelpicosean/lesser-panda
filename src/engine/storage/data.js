@@ -1,3 +1,5 @@
+'use strict';
+
 var Eventemitter = require('engine/eventemitter3');
 
 /**

@@ -1,3 +1,5 @@
+'use strict';
+
 var Scene = require('engine/scene');
 var utils = require('engine/utils');
 

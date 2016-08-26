@@ -1,3 +1,5 @@
+'use strict';
+
 require('engine/polyfill');
 var utils = require('engine/utils');
 

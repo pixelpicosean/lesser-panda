@@ -1,3 +1,5 @@
+'use strict';
+
 var PIXI = require('engine/pixi');
 
 function SquareTileShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {

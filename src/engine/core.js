@@ -1,3 +1,5 @@
+'use strict';
+
 require('engine/polyfill');
 
 var EventEmitter = require('engine/eventemitter3');

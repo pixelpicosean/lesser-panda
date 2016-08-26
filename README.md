@@ -85,6 +85,8 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 0.4.2-dev
 
+- Force code running in strict mode.
+- [CLI] Use webpack-dev-server instead of browser-sync for live-reloading, performs a little bit slower but will display error in browser console.
 - Add `isStatic` field to `physics.Body` to identify bodies don't move and response to the collisions, which also improves the performance of `CollisionMap`.
 - Improve the design of behavior system.
 - Remove listeners when stop a `Tween` to prevent issues caused by object pooling.

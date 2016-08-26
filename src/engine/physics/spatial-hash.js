@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Classic Spatial hash implementation
  *

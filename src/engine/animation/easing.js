@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Easing and interpolation functions for variable lerping.
  *

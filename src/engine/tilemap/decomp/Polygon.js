@@ -1,3 +1,5 @@
+'use strict';
+
 var Line = require("./Line")
 ,   Point = require("./Point")
 ,   Scalar = require("./Scalar")

@@ -1,3 +1,5 @@
+'use strict';
+
 var engine = require('engine/core');
 var Vector = require('engine/vector');
 var Timer = require('engine/timer');

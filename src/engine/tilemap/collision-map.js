@@ -1,3 +1,5 @@
+'use strict';
+
 var utils = require('engine/utils');
 var physics = require('engine/physics');
 var Vector = require('engine/vector');

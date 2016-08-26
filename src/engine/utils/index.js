@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Utility functions and constant variables.
 

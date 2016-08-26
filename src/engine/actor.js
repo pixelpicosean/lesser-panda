@@ -1,3 +1,5 @@
+'use strict';
+
 var EventEmitter = require('engine/eventemitter3');
 var Vector = require('engine/vector');
 var PIXI = require('engine/pixi');

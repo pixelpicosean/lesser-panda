@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Level utilty functions.
  *
