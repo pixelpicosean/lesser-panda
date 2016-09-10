@@ -50,7 +50,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @private
    * @return {number}
    */
-  rnd: function rnd() {
+  rnd: function() {
     var t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
 
     this.c = t | 0;
@@ -69,7 +69,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#sow
    * @param {any[]} seeds - The array of seeds: the `toString()` of each value is used.
    */
-  sow: function sow(seeds) {
+  sow: function(seeds) {
     // Always reset to default seed
     this.s0 = this.hash(' ');
     this.s1 = this.hash(this.s0);
@@ -101,7 +101,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {any} data
    * @return {number} hashed value.
    */
-  hash: function hash(data) {
+  hash: function(data) {
     var h, i, n;
     n = 0xefc8249d;
     data = data.toString();
@@ -126,7 +126,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#integer
    * @return {number} A random integer between 0 and 2^32.
    */
-  integer: function integer() {
+  integer: function() {
     return this.rnd.apply(this) * 0x100000000;// 2^32
   },
 
@@ -136,7 +136,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#frac
    * @return {number} A random real number between 0 and 1.
    */
-  frac: function frac() {
+  frac: function() {
     return this.rnd.apply(this) + (this.rnd.apply(this) * 0x200000 | 0) * 1.1102230246251565e-16;   // 2^-53
   },
 
@@ -146,7 +146,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#real
    * @return {number} A random real number between 0 and 2^32.
    */
-  real: function real() {
+  real: function() {
     return this.integer() + this.frac();
   },
 
@@ -158,7 +158,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {number} max - The maximum value in the range.
    * @return {number} A random number between min and max.
    */
-  integerInRange: function integerInRange(min, max) {
+  integerInRange: function(min, max) {
     return Math.floor(this.realInRange(0, max - min + 1) + min);
   },
 
@@ -171,7 +171,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {number} max - The maximum value in the range.
    * @return {number} A random number between min and max.
    */
-  between: function between(min, max) {
+  between: function(min, max) {
     return this.integerInRange(min, max);
   },
 
@@ -183,7 +183,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {number} max - The maximum value in the range.
    * @return {number} A random number between min and max.
    */
-  realInRange: function realInRange(min, max) {
+  realInRange: function(min, max) {
     return this.frac() * (max - min) + min;
   },
 
@@ -193,7 +193,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#normal
    * @return {number} A random real number between -1 and 1.
    */
-  normal: function normal() {
+  normal: function() {
     return 1 - 2 * this.frac();
   },
 
@@ -203,7 +203,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#uuid
    * @return {string} A valid RFC4122 version4 ID hex string
    */
-  uuid: function uuid() {
+  uuid: function() {
     var a = '';
     var b = '';
 
@@ -219,7 +219,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {Array} ary - An Array to pick a random member of.
    * @return {any} A random member of the array.
    */
-  pick: function pick(ary) {
+  pick: function(ary) {
     return ary[this.integerInRange(0, ary.length - 1)];
   },
 
@@ -230,7 +230,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {Array} ary - An Array to pick a random member of.
    * @return {any} A random member of the array.
    */
-  weightedPick: function weightedPick(ary) {
+  weightedPick: function(ary) {
     return ary[~~(Math.pow(this.frac(), 2) * (ary.length - 1) + 0.5)];
   },
 
@@ -251,7 +251,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {string} [state] - Generator state to be set.
    * @return {string} The current state of the generator.
    */
-  state: function state(state) {
+  state: function(state) {
     if (typeof state === 'string' && state.match(/^!rnd/)) {
       state = state.split(',');
 

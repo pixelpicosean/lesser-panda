@@ -118,7 +118,7 @@ function Channel(path, owner, type) {
  * @method insert
  * @param  {module:engine/animation/action~Key} key Key to insert.
  */
-Channel.prototype.insert = function insert(key) {
+Channel.prototype.insert = function(key) {
   this.keys.push(key);
 
   // Sort keys based on their times
@@ -320,7 +320,7 @@ function ActionPlayer(action, target) {
 ActionPlayer.prototype = Object.create(EventEmitter.prototype);
 ActionPlayer.prototype.constructor = ActionPlayer;
 
-ActionPlayer.prototype._step = function _step(delta) {
+ActionPlayer.prototype._step = function(delta) {
   var c, channel;
   var keys, keyIdx, key, nextKey;
   var length, progress, mod, change;
@@ -440,7 +440,7 @@ ActionPlayer.prototype._step = function _step(delta) {
  * @method goto
  * @param  {number} time
  */
-ActionPlayer.prototype.goto = function goto(time) {};
+ActionPlayer.prototype.goto = function(time) {};
 
 /**
  * Create a player for actor
@@ -448,7 +448,7 @@ ActionPlayer.prototype.goto = function goto(time) {};
  * @param  {object} target
  * @return {module:engine/animation/action~ActionPlayer}
  */
-ActionPlayer.create = function create(action, target) {
+ActionPlayer.create = function(action, target) {
   return new ActionPlayer(action, target);
 };
 
@@ -463,7 +463,7 @@ Object.assign(Scene.prototype, {
    * @param {string}  tag    Tag of this action player (default is '0')
    * @return {module:engine/animation/action~ActionPlayer}  An ActionPlayer instance that runs the specific Action
    */
-  runAction: function runAction(action, target, tag) {
+  runAction: function(action, target, tag) {
     var t = tag || '0';
 
     if (!this.animationSystem.anims[t]) {

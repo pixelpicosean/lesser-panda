@@ -67,7 +67,7 @@ function Timer(ms) {
  * @memberof Timer#
  * @param {number} ms
  */
-Timer.prototype.set = function set(ms) {
+Timer.prototype.set = function(ms) {
   if (typeof ms !== 'number') {
     this.duration = 0;
   }
@@ -82,7 +82,7 @@ Timer.prototype.set = function set(ms) {
  * @method reset
  * @memberof Timer#
  */
-Timer.prototype.reset = function reset() {
+Timer.prototype.reset = function() {
   this.removed = false;
   this._count = this.duration;
   return this;
@@ -93,7 +93,7 @@ Timer.prototype.reset = function reset() {
  * @method pause
  * @memberof Timer#
  */
-Timer.prototype.pause = function pause() {
+Timer.prototype.pause = function() {
   this.paused = true;
   return this;
 };
@@ -103,7 +103,7 @@ Timer.prototype.pause = function pause() {
  * @method resume
  * @memberof Timer#
  */
-Timer.prototype.resume = function resume() {
+Timer.prototype.resume = function() {
   this.paused = false;
   return this;
 };
@@ -115,7 +115,7 @@ Timer.prototype.resume = function resume() {
  * @protected
  * @param  {number} delta Delta time
  */
-Timer.prototype.update = function update(delta) {
+Timer.prototype.update = function(delta) {
   if (this.removed || this.paused) return;
 
   this._count -= delta;
@@ -206,7 +206,7 @@ Object.assign(Timer, {
    * @method update
    * @protected
    */
-  update: function update(delta) {
+  update: function(delta) {
     this.delta = delta;
 
     this.now += delta;
@@ -238,7 +238,7 @@ Object.assign(Timer, {
    * @param {string}    tag       Tag of this timer, default is '0'
    * @return {Timer}
    */
-  later: function later(wait, callback, context, tag) {
+  later: function(wait, callback, context, tag) {
     var t = tag || '0';
     var timer = createTimer(wait);
 
@@ -266,7 +266,7 @@ Object.assign(Timer, {
    * @method laterSec
    * @see Timer.later
    */
-  laterSec: function laterSec(wait, callback, context, tag) {
+  laterSec: function(wait, callback, context, tag) {
     this.later(Math.floor(wait * 1000), callback, context, tag);
   },
 
@@ -280,7 +280,7 @@ Object.assign(Timer, {
    * @param {string}    tag       Tag of this timer, default is '0'
    * @return {Timer}
    */
-  interval: function interval(interval, callback, context, tag) {
+  interval: function(interval, callback, context, tag) {
     var t = tag || '0';
     var timer = createTimer(interval);
 
@@ -308,7 +308,7 @@ Object.assign(Timer, {
    * @method intervalSec
    * @see Timer.interval
    */
-  intervalSec: function intervalSec(interval, callback, context, tag) {
+  intervalSec: function(interval, callback, context, tag) {
     this.later(Math.floor(interval * 1000), callback, context, tag);
   },
 
@@ -318,7 +318,7 @@ Object.assign(Timer, {
    * @method remove
    * @param {Timer} timer
    */
-  remove: function remove(timer) {
+  remove: function(timer) {
     if (timer) timer.removed = true;
   },
 
@@ -328,7 +328,7 @@ Object.assign(Timer, {
    * @method pauseTimersTagged
    * @param  {string} tag
    */
-  pauseTimersTagged: function pauseTimersTagged(tag) {
+  pauseTimersTagged: function(tag) {
     if (this.timers[tag]) {
       utils.removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
       this.deactiveTags.push(tag);
@@ -343,7 +343,7 @@ Object.assign(Timer, {
    * @method resumeTimersTagged
    * @param  {string} tag
    */
-  resumeTimersTagged: function resumeTimersTagged(tag) {
+  resumeTimersTagged: function(tag) {
     if (this.timers[tag]) {
       utils.removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);
       this.activeTags.push(tag);

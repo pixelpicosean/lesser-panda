@@ -133,7 +133,7 @@ function World(x, y) {
  * @method addBody
  * @param {Body} body
  */
-World.prototype.addBody = function addBody(body) {
+World.prototype.addBody = function(body) {
   body.world = this;
   body._remove = false;
   if (this.bodies.indexOf(body) === -1) {
@@ -148,7 +148,7 @@ World.prototype.addBody = function addBody(body) {
  * @method removeBody
  * @param {Body} body
  */
-World.prototype.removeBody = function removeBody(body) {
+World.prototype.removeBody = function(body) {
   if (!body.world) return;
   body.world = null;
   body._remove = true;
@@ -160,7 +160,7 @@ World.prototype.removeBody = function removeBody(body) {
  * @method addBodyCollision
  * @param {Body} body
  */
-World.prototype.addBodyCollision = function addBodyCollision(body) {
+World.prototype.addBodyCollision = function(body) {
   if (typeof body.collisionGroup !== 'number') return;
   this.collisionGroups[body.collisionGroup] = this.collisionGroups[body.collisionGroup] || [];
   if (this.collisionGroups[body.collisionGroup].indexOf(body) !== -1) return;
@@ -173,7 +173,7 @@ World.prototype.addBodyCollision = function addBodyCollision(body) {
  * @method removeBodyCollision
  * @param {Body} body
  */
-World.prototype.removeBodyCollision = function removeBodyCollision(body) {
+World.prototype.removeBodyCollision = function(body) {
   if (typeof body.collisionGroup !== 'number') return;
   if (!this.collisionGroups[body.collisionGroup]) return;
   if (this.collisionGroups[body.collisionGroup].indexOf(body) === -1) return;
@@ -187,7 +187,7 @@ World.prototype.removeBodyCollision = function removeBodyCollision(body) {
  * @private
  * @param {Body} body
  */
-World.prototype.collide = function collide(body) {
+World.prototype.collide = function(body) {
   var g, i, b, group;
   var key;
 
@@ -258,7 +258,7 @@ World.prototype.collide = function collide(body) {
  * @method update
  * @protected
  */
-World.prototype.preUpdate = function preUpdate(delta) {
+World.prototype.preUpdate = function(delta) {
   var i;
   for (i = 0; i < this.bodies.length; i++) {
     if (this.bodies[i]._remove) {
@@ -282,7 +282,7 @@ World.prototype.preUpdate = function preUpdate(delta) {
  * @method update
  * @protected
  */
-World.prototype.update = function update(delta) {
+World.prototype.update = function(delta) {
   var i, j, body;
   var useSpatialHash = config.broadPhase === 'SpatialHash';
   for (i = 0; i < this.bodies.length; i++) {
@@ -322,7 +322,7 @@ World.prototype.update = function update(delta) {
  * @memberof World#
  * @method cleanup
  */
-World.prototype.cleanup = function cleanup() {
+World.prototype.cleanup = function() {
   this.bodies.length = 0;
   this.collisionGroups = {};
 };
@@ -350,7 +350,7 @@ function AABBSolver() {}
  * @param {Body} b
  * @return {boolean} return true if bodies hit.
  */
-AABBSolver.prototype.hitTest = function hitTest(a, b) {
+AABBSolver.prototype.hitTest = function(a, b) {
   // Skip when shape is not available
   if (!a.shape || !b.shape) return false;
 
@@ -404,7 +404,7 @@ AABBSolver.prototype.hitTest = function hitTest(a, b) {
  * @param {Body} b
  * @return {boolean}
  */
-AABBSolver.prototype.hitResponse = function hitResponse(a, b) {
+AABBSolver.prototype.hitResponse = function(a, b) {
   if (a.shape.type === BOX && b.shape.type === BOX ||
     a.shape.type === BOX && b.shape.type === CIRC ||
     a.shape.type === CIRC && b.shape.type === BOX) {
@@ -683,7 +683,7 @@ Object.defineProperty(Body.prototype, 'height', {
  * @memberof Body#
  * @method beforeCollide
  */
-Body.prototype.beforeCollide = function beforeCollide() {};
+Body.prototype.beforeCollide = function() {};
 
 /**
  * This is called, when body collides with another body.
@@ -692,7 +692,7 @@ Body.prototype.beforeCollide = function beforeCollide() {};
  * @param {Body} body body that it collided with.
  * @return {boolean} Return true to apply hit response.
  */
-Body.prototype.collide = function collide() {
+Body.prototype.collide = function() {
   return true;
 };
 
@@ -702,7 +702,7 @@ Body.prototype.collide = function collide() {
  * @method afterCollide
  * @param {Body} bodyB body that it collided with.
  */
-Body.prototype.afterCollide = function afterCollide() {};
+Body.prototype.afterCollide = function() {};
 
 /**
  * Set new collision group for body.
@@ -710,7 +710,7 @@ Body.prototype.afterCollide = function afterCollide() {};
  * @method setCollisionGroup
  * @param {number} group
  */
-Body.prototype.setCollisionGroup = function setCollisionGroup(group) {
+Body.prototype.setCollisionGroup = function(group) {
   if (this.world && typeof this.collisionGroup === 'number') this.world.removeBodyCollision(this);
   this.collisionGroup = group;
   if (this.world) this.world.addBodyCollision(this);
@@ -722,7 +722,7 @@ Body.prototype.setCollisionGroup = function setCollisionGroup(group) {
  * @method setCollideAgainst
  * @param {array} groups
  */
-Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
+Body.prototype.setCollideAgainst = function(groups) {
   // TODO: warning when groups are not array
   if (config.broadPhase === 'SpatialHash') {
     this.collideAgainst = 0;
@@ -741,7 +741,7 @@ Body.prototype.setCollideAgainst = function setCollideAgainst(groups) {
  * @method addTo
  * @param {World} world
  */
-Body.prototype.addTo = function addTo(world) {
+Body.prototype.addTo = function(world) {
   if (this.world) return;
   world.addBody(this);
 
@@ -758,7 +758,7 @@ Body.prototype.addTo = function addTo(world) {
  * @memberof Body#
  * @method remove
  */
-Body.prototype.remove = function remove() {
+Body.prototype.remove = function() {
   if (this.world) this.world.removeBody(this);
 };
 
@@ -767,7 +767,7 @@ Body.prototype.remove = function remove() {
  * @memberof Body#
  * @method removeCollision
  */
-Body.prototype.removeCollision = function removeCollision() {
+Body.prototype.removeCollision = function() {
   if (this.world) this.world.removeBodyCollision(this);
 };
 
@@ -776,7 +776,7 @@ Body.prototype.removeCollision = function removeCollision() {
  * @method update
  * @protected
  */
-Body.prototype.update = function update(delta) {
+Body.prototype.update = function(delta) {
   // Static and removed bodies won't get updated
   if (!this.world || this.isStatic) return;
 
@@ -860,7 +860,7 @@ function Polygon(points) {
  *   in clockwise order
  * @return {Polygon} This for chaining
  */
-Polygon.prototype.setPoints = function setPoints(points) {
+Polygon.prototype.setPoints = function(points) {
   // Only re-allocate if this is a new polygon or the number of points has changed.
   var lengthChanged = !this.points || this.points.length !== points.length;
   if (lengthChanged) {
@@ -883,7 +883,7 @@ Polygon.prototype.setPoints = function setPoints(points) {
  * @param {Vector} offset The new offset vector
  * @return {Polygon} This for chaining
  */
-Polygon.prototype.setOffset = function setOffset(offset) {
+Polygon.prototype.setOffset = function(offset) {
   this.offset = offset;
   this._recalc();
   return this;
@@ -894,7 +894,7 @@ Polygon.prototype.setOffset = function setOffset(offset) {
  * @param {number} rotation The rotation to rotate (in radians)
  * @return {Polygon} This for chaining
  */
-Polygon.prototype.rotate = function rotate(rotation) {
+Polygon.prototype.rotate = function(rotation) {
   var points = this.points;
   for (var i = 0, len = points.length; i < len; i++) {
     points[i].rotate(rotation);
@@ -913,7 +913,7 @@ Polygon.prototype.rotate = function rotate(rotation) {
  * @param {number} y The vertical amount to translate
  * @return {Polygon} This for chaining
  */
-Polygon.prototype.translate = function translate(x, y) {
+Polygon.prototype.translate = function(x, y) {
   var points = this.points;
   for (var i = 0, len = points.length; i < len; i++) {
     points[i].x += x;
@@ -928,7 +928,7 @@ Polygon.prototype.translate = function translate(x, y) {
  * @memberof Polygon#
  * @return {Polygon} This for chaining
  */
-Polygon.prototype._recalc = function _recalc() {
+Polygon.prototype._recalc = function() {
   // Calculated points - this is what is used for underlying collisions and takes into account
   // the rotation/offset set on the polygon.
   var calcPoints = this.calcPoints;
@@ -1033,7 +1033,7 @@ function Box(width, height) {
  * @memberof Box#
  * @return {Polygon}
  */
-Box.prototype.toPolygon = function toPolygon() {
+Box.prototype.toPolygon = function() {
   var halfWidth = this.width * 0.5;
   var halfHeight = this.height * 0.5;
   return new Polygon([
@@ -1149,7 +1149,7 @@ function Response () {
  * @memberof Response#
  * @return {Response} This for chaining
  */
-Response.prototype.clear = function clear() {
+Response.prototype.clear = function() {
   this.aInB = true;
   this.bInA = true;
   this.overlap = Number.MAX_VALUE;
@@ -1179,7 +1179,7 @@ function SATSolver() {}
  * @param {Body} b
  * @return {Boolean} return true, if bodies hit.
  */
-SATSolver.prototype.hitTest = function hitTest(a, b, response) {
+SATSolver.prototype.hitTest = function(a, b, response) {
   // Polygon vs polygon
   if (a.shape.points && b.shape.points) {
     return testPolygonPolygon(a, b, response);
@@ -1207,7 +1207,7 @@ SATSolver.prototype.hitTest = function hitTest(a, b, response) {
  * @param  {boolean} BvsA
  * @param  {Response} response
  */
-SATSolver.prototype.hitResponse = function hitResponse(a, b, AvsB, BvsA, response) {
+SATSolver.prototype.hitResponse = function(a, b, AvsB, BvsA, response) {
   // Make sure a and b are not reversed
   var uniqueA = (a === response.a ? a : b),
     uniqueB = (b === response.b ? b : a);
@@ -1671,16 +1671,16 @@ var UNIT_SQUARE = new Body({
 });
 
 Scene.registerSystem('Physics', {
-  init: function init(scene) {
+  init: function(scene) {
     scene.world = new World();
   },
-  preUpdate: function preUpdate(scene, _, delta) {
+  preUpdate: function(scene, _, delta) {
     scene.world.preUpdate(delta);
   },
-  update: function update(scene, _, delta) {
+  update: function(scene, _, delta) {
     scene.world.update(delta);
   },
-  postUpdate: function postUpdate(scene) {
+  postUpdate: function(scene) {
     scene.world.collisionChecks = 0;
   },
 });

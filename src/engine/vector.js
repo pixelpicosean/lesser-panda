@@ -39,7 +39,7 @@ function Vector(x, y) {
  * @param {number} [y=0]  Position of the point on the y axis
  * @return {Vector}       Vector itself for chaining.
  */
-Vector.prototype.set = function set(x, y) {
+Vector.prototype.set = function(x, y) {
   this.x = x || 0;
   this.y = y || ((y !== 0) ? this.x : 0);
   return this;
@@ -51,7 +51,7 @@ Vector.prototype.set = function set(x, y) {
  * @memberof Vector#
  * @return {Vector} The cloned vector.
  */
-Vector.prototype.clone = function clone() {
+Vector.prototype.clone = function() {
   return Vector.create(this.x, this.y);
 };
 
@@ -62,7 +62,7 @@ Vector.prototype.clone = function clone() {
  * @param {Vector} v Vector to copy from.
  * @return {Vector}  Self for chaining.
  */
-Vector.prototype.copy = function copy(v) {
+Vector.prototype.copy = function(v) {
   this.x = v.x;
   this.y = v.y;
   return this;
@@ -76,7 +76,7 @@ Vector.prototype.copy = function copy(v) {
  * @param {number} [y]      Number to add to `y`.
  * @return {Vector}         Self for chaining.
  */
-Vector.prototype.add = function add(x, y) {
+Vector.prototype.add = function(x, y) {
   this.x += x instanceof Vector ? x.x : x;
   this.y += x instanceof Vector ? x.y : (y || ((y !== 0) ? x : 0));
   return this;
@@ -90,7 +90,7 @@ Vector.prototype.add = function add(x, y) {
  * @param {number} [y]       Number to subtract from `y`.
  * @return {Vector}          Self for chaining.
  */
-Vector.prototype.subtract = function subtract(x, y) {
+Vector.prototype.subtract = function(x, y) {
   this.x -= x instanceof Vector ? x.x : x;
   this.y -= x instanceof Vector ? x.y : (y || ((y !== 0) ? x : 0));
   return this;
@@ -104,7 +104,7 @@ Vector.prototype.subtract = function subtract(x, y) {
  * @param {number} [y]       Number to multiply to `y`.
  * @return {Vector}          Self for chaining.
  */
-Vector.prototype.multiply = function multiply(x, y) {
+Vector.prototype.multiply = function(x, y) {
   this.x *= x instanceof Vector ? x.x : x;
   this.y *= x instanceof Vector ? x.y : (y || ((y !== 0) ? x : 0));
   return this;
@@ -118,7 +118,7 @@ Vector.prototype.multiply = function multiply(x, y) {
  * @param {number} [y]       Number to divide by.
  * @return {Vector}          Self for chaining.
  */
-Vector.prototype.divide = function divide(x, y) {
+Vector.prototype.divide = function(x, y) {
   this.x /= x instanceof Vector ? x.x : x;
   this.y /= x instanceof Vector ? x.y : (y || ((y !== 0) ? x : 0));
   return this;
@@ -131,7 +131,7 @@ Vector.prototype.divide = function divide(x, y) {
  * @param {Vector} vector Target vector to calculate distance from.
  * @return {number} Distance.
  */
-Vector.prototype.distance = function distance(vector) {
+Vector.prototype.distance = function(vector) {
   var x = vector.x - this.x;
   var y = vector.y - this.y;
   return Math.sqrt(x * x + y * y);
@@ -144,7 +144,7 @@ Vector.prototype.distance = function distance(vector) {
  * @param {Vector} vector Target vector to calculate distance from.
  * @return {number} Squared distance value.
  */
-Vector.prototype.squaredDistance = function squaredDistance(vector) {
+Vector.prototype.squaredDistance = function(vector) {
   var x = vector.x - this.x;
   var y = vector.y - this.y;
   return x * x + y * y;
@@ -156,7 +156,7 @@ Vector.prototype.squaredDistance = function squaredDistance(vector) {
  * @memberof Vector#
  * @return {number} Length of this vector.
  */
-Vector.prototype.length = function length() {
+Vector.prototype.length = function() {
   return Math.sqrt(this.squaredLength());
 };
 
@@ -166,7 +166,7 @@ Vector.prototype.length = function length() {
  * @memberof Vector#
  * @return {number} Squared length of this vector.
  */
-Vector.prototype.squaredLength = function squaredLength() {
+Vector.prototype.squaredLength = function() {
   return this.x * this.x + this.y * this.y;
 };
 
@@ -177,7 +177,7 @@ Vector.prototype.squaredLength = function squaredLength() {
  * @param {Vector} [vector] Vector to dot with.
  * @return {number} Result of dot operation.
  */
-Vector.prototype.dot = function dot(vector) {
+Vector.prototype.dot = function(vector) {
   if (vector instanceof Vector) return this.x * vector.x + this.y * vector.y;
   else return this.x * this.x + this.y * this.y;
 };
@@ -189,7 +189,7 @@ Vector.prototype.dot = function dot(vector) {
  * @param {Vector} [vector] Vector to dot with
  * @return {number} Result of the dot operation.
  */
-Vector.prototype.dotNormalized = function dotNormalized(vector) {
+Vector.prototype.dotNormalized = function(vector) {
   var len1 = this.length();
   var x1 = this.x / len1;
   var y1 = this.y / len1;
@@ -209,7 +209,7 @@ Vector.prototype.dotNormalized = function dotNormalized(vector) {
  * @param {number} angle Angle to rotate.
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.rotate = function rotate(angle) {
+Vector.prototype.rotate = function(angle) {
   var c = Math.cos(angle);
   var s = Math.sin(angle);
   var x = this.x * c - this.y * s;
@@ -225,7 +225,7 @@ Vector.prototype.rotate = function rotate(angle) {
  * @memberof Vector#
  * @return {Vector} Self for chaining
  */
-Vector.prototype.normalize = function normalize() {
+Vector.prototype.normalize = function() {
   var len = this.length();
   this.x /= len || 1;
   this.y /= len || 1;
@@ -239,7 +239,7 @@ Vector.prototype.normalize = function normalize() {
  * @param {Vector} vector Clamp this vector to a limitation(vector)
  * @return {Vector}       Self for chaining.
  */
-Vector.prototype.limit = function limit(vector) {
+Vector.prototype.limit = function(vector) {
   this.x = utils.clamp(this.x, -vector.x, vector.x);
   this.y = utils.clamp(this.y, -vector.y, vector.y);
   return this;
@@ -252,7 +252,7 @@ Vector.prototype.limit = function limit(vector) {
  * @param {Vector} [vector] Target vector to calculate with, angle of self is returned when it is not provided.
  * @return {number} Angle between self and target.
  */
-Vector.prototype.angle = function angle(vector) {
+Vector.prototype.angle = function(vector) {
   if (vector) {
     return Math.atan2(vector.y - this.y, vector.x - this.x);
   } else {
@@ -267,7 +267,7 @@ Vector.prototype.angle = function angle(vector) {
  * @param {Vector} vector
  * @return {number} Angle.
  */
-Vector.prototype.angleFromOrigin = function angleFromOrigin(vector) {
+Vector.prototype.angleFromOrigin = function(vector) {
   return Math.atan2(vector.y, vector.x) - Math.atan2(this.y, this.x);
 };
 
@@ -277,7 +277,7 @@ Vector.prototype.angleFromOrigin = function angleFromOrigin(vector) {
  * @memberof Vector#
  * @return {Vector} Self for chaining
  */
-Vector.prototype.round = function round() {
+Vector.prototype.round = function() {
   this.x = Math.round(this.x);
   this.y = Math.round(this.y);
   return this;
@@ -290,7 +290,7 @@ Vector.prototype.round = function round() {
  * @param  {Vector} vector Vector to compare to.
  * @return {boolean}  Whether the two vectors are equal
  */
-Vector.prototype.equals = function equals(vector) {
+Vector.prototype.equals = function(vector) {
   return (vector.x === this.x) && (vector.y === this.y);
 };
 
@@ -301,7 +301,7 @@ Vector.prototype.equals = function equals(vector) {
  * @memberof Vector#
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.perp = function perp() {
+Vector.prototype.perp = function() {
   var x = this.x;
   this.x = this.y;
   this.y = -x;
@@ -314,7 +314,7 @@ Vector.prototype.perp = function perp() {
  * @memberof Vector#
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.reverse = function reverse() {
+Vector.prototype.reverse = function() {
   this.x = -this.x;
   this.y = -this.y;
   return this;
@@ -327,7 +327,7 @@ Vector.prototype.reverse = function reverse() {
  * @param {Vector} other The vector to project onto
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.project = function project(other) {
+Vector.prototype.project = function(other) {
   var amt = this.dot(other) / other.squaredLength();
   this.x = amt * other.x;
   this.y = amt * other.y;
@@ -342,7 +342,7 @@ Vector.prototype.project = function project(other) {
  * @param {Vector} other The unit vector to project onto
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.projectN = function projectN(other) {
+Vector.prototype.projectN = function(other) {
   var amt = this.dot(other);
   this.x = amt * other.x;
   this.y = amt * other.y;
@@ -356,7 +356,7 @@ Vector.prototype.projectN = function projectN(other) {
  * @param {Vector} axis The vector representing the axis
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.reflect = function reflect(axis) {
+Vector.prototype.reflect = function(axis) {
   var x = this.x;
   var y = this.y;
   this.project(axis).multiply(2);
@@ -373,7 +373,7 @@ Vector.prototype.reflect = function reflect(axis) {
  * @param {Vector} axis The unit vector representing the axis
  * @return {Vector} Self for chaining.
  */
-Vector.prototype.reflectN = function reflectN(axis) {
+Vector.prototype.reflectN = function(axis) {
   var x = this.x;
   var y = this.y;
   this.projectN(axis).multiply(2);
@@ -389,7 +389,7 @@ Vector.prototype.reflectN = function reflectN(axis) {
  * @param {Vector} vector
  * @return {number} Result (1 = CW, -1 = CCW)
  */
-Vector.prototype.sign = function sign(vector) {
+Vector.prototype.sign = function(vector) {
   return (this.y * vector.x > this.x * vector.y) ? -1 : 1;
 };
 
@@ -400,7 +400,7 @@ Vector.prototype.sign = function sign(vector) {
  * @param  {number} [y] Position of the point on the y axis
  * @return {Vector}     Vector instance
  */
-Vector.create = function create(x, y) {
+Vector.create = function(x, y) {
   var v = pool.pop();
   if (!v) {
     v = new Vector(x, y);
@@ -416,7 +416,7 @@ Vector.create = function create(x, y) {
  * @see Vector.create
  * @param  {Vector} vector Vector instance to be recycled.
  */
-Vector.recycle = function recycle(vector) {
+Vector.recycle = function(vector) {
   pool.push(vector);
 };
 

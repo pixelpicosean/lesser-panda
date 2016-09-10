@@ -51,7 +51,7 @@ EventEmitter.prototype._events = undefined;
  * @param {boolean} exists We only need to know if there are listeners.
  * @returns {array|boolean}
  */
-EventEmitter.prototype.listeners = function listeners(event, exists) {
+EventEmitter.prototype.listeners = function(event, exists) {
   var evt = prefix ? prefix + event : event
     , available = this._events && this._events[evt];
 
@@ -74,7 +74,7 @@ EventEmitter.prototype.listeners = function listeners(event, exists) {
  * @param {string} event The name of the event.
  * @returns {boolean} Indication if we've emitted an event.
  */
-EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
+EventEmitter.prototype.emit = function(event, a1, a2, a3, a4, a5) {
   var evt = prefix ? prefix + event : event;
 
   if (!this._events || !this._events[evt]) return false;
@@ -134,7 +134,7 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
  * @param {functon} fn Callback function.
  * @param {Mixed} context The context of the function.
  */
-EventEmitter.prototype.on = function on(event, fn, context) {
+EventEmitter.prototype.on = function(event, fn, context) {
   var listener = new EE(fn, context || this)
     , evt = prefix ? prefix + event : event;
 
@@ -159,7 +159,7 @@ EventEmitter.prototype.on = function on(event, fn, context) {
  * @param {function} fn Callback function.
  * @param {Mixed} context The context of the function.
  */
-EventEmitter.prototype.once = function once(event, fn, context) {
+EventEmitter.prototype.once = function(event, fn, context) {
   var listener = new EE(fn, context || this, true)
     , evt = prefix ? prefix + event : event;
 
@@ -185,7 +185,7 @@ EventEmitter.prototype.once = function once(event, fn, context) {
  * @param {Mixed} context Only remove listeners matching this context.
  * @param {boolean} once Only remove once listeners.
  */
-EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+EventEmitter.prototype.removeListener = function(event, fn, context, once) {
   var evt = prefix ? prefix + event : event;
 
   if (!this._events || !this._events[evt]) return this;
@@ -234,7 +234,7 @@ EventEmitter.prototype.removeListener = function removeListener(event, fn, conte
  * @method removeAllListeners
  * @param {string} event The event want to remove all listeners for.
  */
-EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
+EventEmitter.prototype.removeAllListeners = function(event) {
   if (!this._events) return this;
 
   if (event) delete this._events[prefix ? prefix + event : event];

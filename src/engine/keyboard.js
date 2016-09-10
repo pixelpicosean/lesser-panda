@@ -33,7 +33,7 @@ Keyboard.prototype.constructor = Keyboard;
  * @param {string} key
  * @return {boolean}
  */
-Keyboard.prototype.down = function down(key) {
+Keyboard.prototype.down = function(key) {
   return !!this._keysDown[key];
 },
 
@@ -43,7 +43,7 @@ Keyboard.prototype.down = function down(key) {
  * @param {KeyboardEvent} event
  * @private
  */
-Keyboard.prototype._keydown = function _keydown(event) {
+Keyboard.prototype._keydown = function(event) {
   if (!Keyboard.keys[event.keyCode]) {
     // Unknown key
     Keyboard.keys[event.keyCode] = event.keyCode;
@@ -61,7 +61,7 @@ Keyboard.prototype._keydown = function _keydown(event) {
  * @param {KeyboardEvent} event
  * @private
  */
-Keyboard.prototype._keyup = function _keyup(event) {
+Keyboard.prototype._keyup = function(event) {
   this._keysDown[Keyboard.keys[event.keyCode]] = false;
   this.emit('keyup', Keyboard.keys[event.keyCode]);
 };
@@ -71,7 +71,7 @@ Keyboard.prototype._keyup = function _keyup(event) {
  * @memberof Keyboard#
  * @private
  */
-Keyboard.prototype._resetKeys = function _resetKeys() {
+Keyboard.prototype._resetKeys = function() {
   for (var key in this._keysDown) {
     this._keysDown[key] = false;
   }

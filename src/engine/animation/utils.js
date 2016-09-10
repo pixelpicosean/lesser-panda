@@ -12,7 +12,7 @@
  * @param  {string} fullPath Full path of the target property
  * @return {array}           [target, key] or undefined if no property matches
  */
-module.exports.getTargetAndKey = function getTargetAndKey(context, fullPath) {
+module.exports.getTargetAndKey = function(context, fullPath) {
   var path = fullPath.split('.');
   // Path is just the property key
   if (path.length === 1) {

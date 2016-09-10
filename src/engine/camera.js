@@ -154,7 +154,7 @@ function Camera() {
  * @param {Scene}           scene
  * @param {PIXI.Container}  container
  */
-Camera.prototype.addTo = function addTo(scene, container) {
+Camera.prototype.addTo = function(scene, container) {
   this.scene = scene;
   this.container = container;
 
@@ -175,7 +175,7 @@ Camera.prototype.addTo = function addTo(scene, container) {
  * @param {DisplayObject} target  The object to follow
  * @param {Boolean}            lerp    Whether lerp to target instead of reseting camera position
  */
-Camera.prototype.setTarget = function setTarget(target, lerp) {
+Camera.prototype.setTarget = function(target, lerp) {
   this.target = target;
 
   if (!this.target) return;
@@ -194,7 +194,7 @@ Camera.prototype.setTarget = function setTarget(target, lerp) {
  * @memberof Camera#
  * @method setPosition
  */
-Camera.prototype.setPosition = function setPosition(x, y) {
+Camera.prototype.setPosition = function(x, y) {
   this._setPosition(x, y);
 
   if (this.target) {
@@ -203,7 +203,7 @@ Camera.prototype.setPosition = function setPosition(x, y) {
   }
 };
 
-Camera.prototype._setPosition = function _setPosition(x, y) {
+Camera.prototype._setPosition = function(x, y) {
   this.position.set(x, y);
 
   // Make sure position constrains are correct
@@ -251,7 +251,7 @@ Camera.prototype._setPosition = function _setPosition(x, y) {
  * @param {Number} count How many times will the camera shake
  * @param {Boolean} forward ONLY shake forward or not
  */
-Camera.prototype.shake = function shake(force, duration, count, forward) {
+Camera.prototype.shake = function(force, duration, count, forward) {
   if (Number.isFinite(force)) {
     this._shakeForce = this._shakeForce.set(force, force);
   } else {
@@ -266,7 +266,7 @@ Camera.prototype.shake = function shake(force, duration, count, forward) {
 };
 
 /** @private */
-Camera.prototype._startShake = function _startShake() {
+Camera.prototype._startShake = function() {
   this.isShaking = true;
   if (this._shakeCount > 0) {
     if (this._shakeForward) {
@@ -293,7 +293,7 @@ Camera.prototype._startShake = function _startShake() {
  * @method moveSensor
  * @private
  */
-Camera.prototype.moveSensor = function moveSensor() {
+Camera.prototype.moveSensor = function() {
   var targetBounds = this.target.getLocalBounds();
 
   // Resize sensor to fit the target
@@ -333,7 +333,7 @@ Camera.prototype.moveSensor = function moveSensor() {
  * @method moveCamera
  * @private
  */
-Camera.prototype.moveCamera = function moveCamera(dt) {
+Camera.prototype.moveCamera = function(dt) {
   if (!this.target) return;
 
   this.speed.x = utils.clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
@@ -363,7 +363,7 @@ Camera.prototype.moveCamera = function moveCamera(dt) {
  * @memberof Camera#
  * @method remove
  */
-Camera.prototype.remove = function remove() {
+Camera.prototype.remove = function() {
   scene.off('update', this.update, this);
   this.container = null;
 };
@@ -374,7 +374,7 @@ Camera.prototype.remove = function remove() {
  * @method update
  * @protected
  */
-Camera.prototype.update = function update(_, delta) {
+Camera.prototype.update = function(_, delta) {
   this.delta = delta;
 
   if (this.target) {

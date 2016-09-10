@@ -140,7 +140,7 @@ Tween.prototype.init = function(context) {
  * @param  {String|Function} easing         Easing function
  * @param  {String|Function} interpolation  Interpolation function
  */
-Tween.prototype.to = function to(properties, duration, easing, interpolation) {
+Tween.prototype.to = function(properties, duration, easing, interpolation) {
   var easingFn = easing || Easing.Linear.None;
   var interpolationFn = interpolation || Interpolation.Linear;
 
@@ -175,7 +175,7 @@ Tween.prototype.to = function to(properties, duration, easing, interpolation) {
  * @memberof Tween#
  * @param  {number} times How many times to repeat
  */
-Tween.prototype.repeat = function repeat(times) {
+Tween.prototype.repeat = function(times) {
   this.actions.push([ACTION_TYPES.REPEAT, times]);
   return this;
 };
@@ -186,7 +186,7 @@ Tween.prototype.repeat = function repeat(times) {
  * @method wait
  * @param  {number} time Time to wait in ms
  */
-Tween.prototype.wait = function wait(time) {
+Tween.prototype.wait = function(time) {
   this.actions.push([ACTION_TYPES.WAIT, time]);
   return this;
 };
@@ -196,7 +196,7 @@ Tween.prototype.wait = function wait(time) {
  * @memberof Tween#
  * @method stop
  */
-Tween.prototype.stop = function stop() {
+Tween.prototype.stop = function() {
   this.removed = true;
   this.removeAllListeners();
   return this;
@@ -207,7 +207,7 @@ Tween.prototype.stop = function stop() {
  * @memberof Tween#
  * @method pause
  */
-Tween.prototype.pause = function pause() {
+Tween.prototype.pause = function() {
   this.paused = true;
   return this;
 };
@@ -217,12 +217,12 @@ Tween.prototype.pause = function pause() {
  * @memberof Tween#
  * @method resume
  */
-Tween.prototype.resume = function resume() {
+Tween.prototype.resume = function() {
   this.paused = false;
   return this;
 };
 
-Tween.prototype._next = function _next() {
+Tween.prototype._next = function() {
   this.delta = 0;
 
   this.index++;
@@ -316,7 +316,7 @@ Tween.prototype._next = function _next() {
   }
 };
 
-Tween.prototype._step = function _step(delta) {
+Tween.prototype._step = function(delta) {
   if (this.removed || this.paused) return;
 
   this.delta += delta;
@@ -335,7 +335,7 @@ Tween.prototype._step = function _step(delta) {
   }
 };
 
-Tween.prototype._doAnimate = function _doAnimate() {
+Tween.prototype._doAnimate = function() {
   this.progress = Math.min(1, this.delta / this.duration);
   var mod = this.easing(this.progress);
 
@@ -363,13 +363,13 @@ Tween.prototype._doAnimate = function _doAnimate() {
   }
 };
 
-Tween.prototype._doWait = function _doWait() {
+Tween.prototype._doWait = function() {
   if (this.delta >= this.duration) {
     this._next();
   }
 };
 
-Tween.prototype.recycle = function recycle() {
+Tween.prototype.recycle = function() {
   pool.push(this);
 };
 
@@ -384,7 +384,7 @@ for (var i = 0; i < 20; i++) {
  * @param  {object} context
  * @return {module:engine/animation/tween~Tween}
  */
-Tween.create = function create(context) {
+Tween.create = function(context) {
   var t = pool.pop();
   if (!t) {
     t = new Tween(context);
@@ -405,7 +405,7 @@ Object.assign(Scene.prototype, {
    * @param {string}     tag     Tag of this tween (default is '0')
    * @return {module:engine/animation/tween~Tween}
    */
-  tween: function tween(context, tag) {
+  tween: function(context, tag) {
     var t = tag || '0';
 
     if (!this.animationSystem.anims[t]) {

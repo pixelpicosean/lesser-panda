@@ -77,7 +77,7 @@ function progress(res, err) {
  *
  * @param  {object} loader
  */
-loader.registerLoader = function registerLoader(loader) {
+loader.registerLoader = function(loader) {
   loaders.push(loader);
 };
 
@@ -85,7 +85,7 @@ loader.registerLoader = function registerLoader(loader) {
  * Start the loading process
  * @private
  */
-loader.start = function start() {
+loader.start = function() {
   started = true;
 
   if (assetsQueue.length === 0) {
@@ -133,7 +133,7 @@ loader.start = function start() {
  * @param {string} [key]      Key to assign to the asset(it will be the same as `url` if not provided)
  * @param {string} [settings] Extra settings to pass to `resource-loader` instance.
  */
-loader.addAsset = function addAsset(url, key, settings) {
+loader.addAsset = function(url, key, settings) {
   var realURL = loader.baseURL + '/' + url;
   var resInfo = Object.assign({
     url: realURL,
@@ -157,7 +157,7 @@ loader.addAsset = function addAsset(url, key, settings) {
  * Add a new `resource-loader` middleware for loading process.
  * @param {function} fn   Middleware creator
  */
-loader.addMiddleware = function addMiddleware(fn) {
+loader.addMiddleware = function(fn) {
   middlewares.push(fn);
 };
 
@@ -166,7 +166,7 @@ loader.addMiddleware = function addMiddleware(fn) {
  * @param  {array<string>|string} key Key is the either an array like [atlas_key, sprite_key] for sprites in an atlas or a simple string refer to a independent texture.
  * @return {PIXI.Texture}
  */
-loader.getTexture = function getTexture(key) {
+loader.getTexture = function(key) {
   if (Array.isArray(key)) {
     return loader.resources[key[0]].textures[key[1]];
   }

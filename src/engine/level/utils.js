@@ -13,7 +13,7 @@
  * @param  {number} h         How many elements in a column.
  * @return {array}
  */
-module.exports.lift = function lift(arr, w, h) {
+module.exports.lift = function(arr, w, h) {
   var r, q, row, res = new Array(h);
   for (r = 0; r < h; r++) {
     row = new Array(w);
@@ -25,7 +25,7 @@ module.exports.lift = function lift(arr, w, h) {
   return res;
 };
 
-module.exports.isClockwise = function isClockwise(vertices) {
+module.exports.isClockwise = function(vertices) {
   var area = 0, i, v1, v2;
   for (i = 0; i < vertices.length; i++) {
     v1 = vertices[i];

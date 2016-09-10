@@ -13,7 +13,7 @@
 
 // Date.now
 if (!(Date.now && Date.prototype.getTime)) {
-    Date.now = function now() {
+    Date.now = function() {
         return new Date().getTime();
     };
 }

@@ -122,7 +122,7 @@ Object.assign(core, {
    * @param {string}    name  Name of this scene.
    * @param {function}  ctor  Constructor of the scene.
    */
-  addScene: function addScene(name, ctor) {
+  addScene: function(name, ctor) {
     if (core.scenes[name]) {
       console.log('Scene [' + name + '] is already defined!');
       return;
@@ -137,7 +137,7 @@ Object.assign(core, {
    * @param {string} name Name of the target scene.
    * @param {boolean} newInstance Whether create new instance for this scene.
    */
-  setScene: function setScene(name, newInstance) {
+  setScene: function(name, newInstance) {
     var pair = core.scenes[name];
 
     if (!pair) {
@@ -169,7 +169,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @param  {string} sceneName Name of the start scene
    */
-  startWithScene: function startWithScene(sceneName) {
+  startWithScene: function(sceneName) {
     core.setScene(sceneName);
 
     window.addEventListener('load', boot, false);
@@ -179,7 +179,7 @@ Object.assign(core, {
    * Start with `Loading` scene.
    * @memberof module:engine/core
    */
-  start: function start() {
+  start: function() {
     core.startWithScene('Loading');
   },
 
@@ -198,7 +198,7 @@ Object.assign(core, {
    *                         the same reason when resume from this
    *                         pause.
    */
-  pause: function pause(reasonP) {
+  pause: function(reasonP) {
     var i,
       reason = reasonP || 'untitled',
       alreadyPaused = false;
@@ -224,7 +224,7 @@ Object.assign(core, {
    * @param {string} reasonP Resume from pause tagged with this reason
    * @param {boolean} force Whether force to resume
    */
-  resume: function resume(reasonP, force) {
+  resume: function(reasonP, force) {
     var i, reason = reasonP || 'untitled';
 
     if (force) {

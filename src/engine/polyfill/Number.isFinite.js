@@ -8,7 +8,7 @@
  * Spec: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite
  */
 if (typeof(Number.isFinite) !== 'function') {
-  Number.isFinite = function isFinite(value) {
+  Number.isFinite = function(value) {
     // 1. If Type(number) is not Number, return false.
     if (typeof(value) !== 'number') {
       return false;

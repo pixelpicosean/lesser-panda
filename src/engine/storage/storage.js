@@ -31,7 +31,7 @@ function Storage(config) {
  * @param {string} key
  * @param {*} value
  */
-Storage.prototype.set = function set(key, value) {
+Storage.prototype.set = function(key, value) {
   if (!this.supported) return false;
   localStorage.setItem(this.id + '.' + key, this._encode(value));
 };
@@ -44,7 +44,7 @@ Storage.prototype.set = function set(key, value) {
  * @param {*} [defaultValue]
  * @return {*} value
  */
-Storage.prototype.get = function get(key, defaultValue) {
+Storage.prototype.get = function(key, defaultValue) {
   var raw = localStorage.getItem(this.id + '.' + key);
   if (raw === null) return defaultValue;
   try {
@@ -62,7 +62,7 @@ Storage.prototype.get = function get(key, defaultValue) {
  * @param {string} key
  * @return {boolean}
  */
-Storage.prototype.has = function has(key) {
+Storage.prototype.has = function(key) {
   return localStorage.getItem(this.id + '.' + key) !== null;
 };
 
@@ -72,7 +72,7 @@ Storage.prototype.has = function has(key) {
  * @method remove
  * @param {string} key
  */
-Storage.prototype.remove = function remove(key) {
+Storage.prototype.remove = function(key) {
   localStorage.removeItem(this.id + '.' + key);
 };
 
@@ -81,7 +81,7 @@ Storage.prototype.remove = function remove(key) {
  * @memberof Storage#
  * @method reset
  */
-Storage.prototype.reset = function reset() {
+Storage.prototype.reset = function() {
   for (var i = localStorage.length - 1; i >= 0; i--) {
     var key = localStorage.key(i);
     if (key.indexOf(this.id + '.') !== -1) localStorage.removeItem(key);
@@ -93,7 +93,7 @@ Storage.prototype.reset = function reset() {
  * @method _encode
  * @private
  */
-Storage.prototype._encode = function _encode(val) {
+Storage.prototype._encode = function(val) {
   return JSON.stringify(val);
 };
 
@@ -102,7 +102,7 @@ Storage.prototype._encode = function _encode(val) {
  * @method _decode
  * @private
  */
-Storage.prototype._decode = function _decode(str) {
+Storage.prototype._decode = function(str) {
   return JSON.parse(str);
 };
 
@@ -111,7 +111,7 @@ Storage.prototype._decode = function _decode(str) {
  * @method _isSupported
  * @private
  */
-Storage.prototype._isSupported = function _isSupported() {
+Storage.prototype._isSupported = function() {
   if (typeof localStorage !== 'object') return false;
   try {
     localStorage.setItem('localStorage', 1);

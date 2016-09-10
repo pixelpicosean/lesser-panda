@@ -29,7 +29,7 @@ var Renderer = {
    * @param  {number} height   Height of the game view
    * @param  {object} settings Renderer config from `game/config`.
    */
-  init: function init(width, height, settings) {
+  init: function(width, height, settings) {
     console.log('[Warning]: No working renderer!');
   },
   /**
@@ -38,7 +38,7 @@ var Renderer = {
    * @param  {number} w New width
    * @param  {number} h New height
    */
-  resize: function resize(w, h) {
+  resize: function(w, h) {
     console.log('[Warning]: Renderer can not be resized!');
   },
   /**
@@ -46,7 +46,7 @@ var Renderer = {
    * @abstract
    * @param  {Scene} scene Scene to render.
    */
-  render: function render(scene) {
+  render: function(scene) {
     console.log('[Warning]: Renderer does not render!');
   },
   /**
@@ -56,7 +56,7 @@ var Renderer = {
    * @param  {string} name      Name of this layer
    * @param  {string} [parent]  Key of parent layer, default is `stage`.
    */
-  createLayer: function createLayer(scene, name, parent) {
+  createLayer: function(scene, name, parent) {
     console.log('[Warning]: Renderer cannot create layer!');
   },
 };

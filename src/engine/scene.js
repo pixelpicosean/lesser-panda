@@ -49,7 +49,7 @@ Scene.prototype.constructor = Scene;
  * Called before activating this scene.
  * @protected
  */
-Scene.prototype._awake = function _awake() {
+Scene.prototype._awake = function() {
   var i, sys;
 
   for (i in this.updateOrder) {
@@ -65,7 +65,7 @@ Scene.prototype._awake = function _awake() {
  * Called each single frame once or more.
  * @protected
  */
-Scene.prototype._update = function _update(deltaMS, deltaSec) {
+Scene.prototype._update = function(deltaMS, deltaSec) {
   var i, sys;
 
   // Pre-update
@@ -100,7 +100,7 @@ Scene.prototype._update = function _update(deltaMS, deltaSec) {
  * Called before deactivating this scene.
  * @protected
  */
-Scene.prototype._freeze = function _freeze() {
+Scene.prototype._freeze = function() {
   this.emit('freeze');
   this.freeze();
 
@@ -116,51 +116,51 @@ Scene.prototype._freeze = function _freeze() {
  * @method awake
  * @memberof Scene#
  */
-Scene.prototype.awake = function awake() {};
+Scene.prototype.awake = function() {};
 /**
  * PreUpdate is called at the beginning of each frame
  * @method preUpdate
  * @memberof Scene#
  */
-Scene.prototype.preUpdate = function preUpdate() {};
+Scene.prototype.preUpdate = function() {};
 /**
  * Update is called each frame, right after `preUpdate`.
  * @method update
  * @memberof Scene#
  */
-Scene.prototype.update = function update() {};
+Scene.prototype.update = function() {};
 /**
  * PostUpdate is called at the end of each frame, right after `update`.
  * @method postUpdate
  * @memberof Scene#
  */
-Scene.prototype.postUpdate = function postUpdate() {};
+Scene.prototype.postUpdate = function() {};
 /**
  * Freeze is called when this scene is deactivated(switched to another one)
  * @method freeze
  * @memberof Scene#
  */
-Scene.prototype.freeze = function freeze() {};
+Scene.prototype.freeze = function() {};
 
 /**
  * System pause callback.
  * @method pause
  * @memberof Scene#
  */
-Scene.prototype.pause = function pause() {};
+Scene.prototype.pause = function() {};
 /**
  * System resume callback.
  * @method resume
  * @memberof Scene#
  */
-Scene.prototype.resume = function resume() {};
+Scene.prototype.resume = function() {};
 
 /**
  * Create a new layer
  * @param {string} name      Name of this layer
  * @param {string} [parent]  Key of parent layer, default is `stage`.
  */
-Scene.prototype.createLayer = function createLayer(name, parent) {
+Scene.prototype.createLayer = function(name, parent) {
   renderer.createLayer(this, name, parent);
   return this;
 };
@@ -190,7 +190,7 @@ Object.assign(Scene, {
    * @param  {string} name
    * @param  {object} system
    */
-  registerSystem: function registerSystem(name, system) {
+  registerSystem: function(name, system) {
     if (Scene.systems[name]) console.log('Warning: override [' + name + '] system!');
 
     Scene.systems[name] = system;

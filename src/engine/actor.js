@@ -204,7 +204,7 @@ Object.defineProperty(Actor.prototype, 'rotation', {
  * @method ready
  * @memberof Actor#
  */
-Actor.prototype.ready = function ready() {};
+Actor.prototype.ready = function() {};
 
 /**
  * Update method to be called each frame
@@ -213,14 +213,14 @@ Actor.prototype.ready = function ready() {};
  * @memberof Actor#
  * @protected
  */
-Actor.prototype.update = function update(dtMS, dtSec) {};
+Actor.prototype.update = function(dtMS, dtSec) {};
 
 /**
  * Remove from current scene and layer container
  * @method remove
  * @memberof Actor#
  */
-Actor.prototype.remove = function remove() {
+Actor.prototype.remove = function() {
   if (this.sprite) {
     this.sprite.remove();
   }
@@ -243,7 +243,7 @@ Actor.prototype.remove = function remove() {
  * @param {object} [settings] Sprite settings.
  * @return {Actor}            Self for chaining.
  */
-Actor.prototype.initEmpty = function initEmpty(settings) {
+Actor.prototype.initEmpty = function(settings) {
   this.addEmpty(settings, null, 'sprite', false);
   this.sprite.position = this.position;
 
@@ -263,7 +263,7 @@ Actor.prototype.initEmpty = function initEmpty(settings) {
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.Container}
  */
-Actor.prototype.addEmpty = function addEmpty(settings, parentNode, key, returnInst) {
+Actor.prototype.addEmpty = function(settings, parentNode, key, returnInst) {
   // Create instance
   var inst = new PIXI.Container();
 
@@ -295,7 +295,7 @@ Actor.prototype.addEmpty = function addEmpty(settings, parentNode, key, returnIn
  * @param   {PIXI.Texture|array|string} settings.texture
  * @return  {Actor}                                       Self for chaining.
  */
-Actor.prototype.initSprite = function initSprite(settings) {
+Actor.prototype.initSprite = function(settings) {
   this.addSprite(settings, null, 'sprite');
   this.sprite.position = this.position;
 
@@ -316,7 +316,7 @@ Actor.prototype.initSprite = function initSprite(settings) {
  * @param {boolean} [returnInst]  Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.Sprite}
  */
-Actor.prototype.addSprite = function addSprite(settings, parentNode, key, returnInst) {
+Actor.prototype.addSprite = function(settings, parentNode, key, returnInst) {
   var tex = textureFrom(settings.texture);
 
   // Create instance
@@ -353,7 +353,7 @@ Actor.prototype.addSprite = function addSprite(settings, parentNode, key, return
  * @return {Actor}              Self for chaining
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initGraphics = function initGraphics(settings, parentNode, key) {
+Actor.prototype.initGraphics = function(settings, parentNode, key) {
   this.addGraphics(settings, null, 'sprite');
   this.sprite.position = this.position;
 
@@ -378,7 +378,7 @@ Actor.prototype.initGraphics = function initGraphics(settings, parentNode, key) 
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.Graphics}
  */
-Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key, returnInst) {
+Actor.prototype.addGraphics = function(settings, parentNode, key, returnInst) {
   // Create instance
   var settings_ = settings || {};
 
@@ -431,7 +431,7 @@ Actor.prototype.addGraphics = function addGraphics(settings, parentNode, key, re
  * @param settings.anims {array<{ name, frames, settings }>}
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initAnimatedSprite = function initAnimatedSprite(settings) {
+Actor.prototype.initAnimatedSprite = function(settings) {
   this.addAnimatedSprite(settings, null, 'sprite');
   this.sprite.position = this.position;
 
@@ -451,7 +451,7 @@ Actor.prototype.initAnimatedSprite = function initAnimatedSprite(settings) {
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.extra.AnimatedSprite}
  */
-Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentNode, key, returnInst) {
+Actor.prototype.addAnimatedSprite = function(settings, parentNode, key, returnInst) {
   // Create instance
   var settings_ = settings || {};
 
@@ -492,7 +492,7 @@ Actor.prototype.addAnimatedSprite = function addAnimatedSprite(settings, parentN
  * @param  {object} settings
  * @return {Actor}        self for chaining
  */
-Actor.prototype.initTilingSprite = function initTilingSprite(settings) {
+Actor.prototype.initTilingSprite = function(settings) {
   this.addTilingSprite(settings, null, 'sprite');
   this.sprite.position = this.position;
 
@@ -515,7 +515,7 @@ Actor.prototype.initTilingSprite = function initTilingSprite(settings) {
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.extras.TilingSprite}
  */
-Actor.prototype.addTilingSprite = function addTilingSprite(settings, parentNode, key, returnInst) {
+Actor.prototype.addTilingSprite = function(settings, parentNode, key, returnInst) {
   var texture = textureFrom(settings.texture);
   var width = Number.isFinite(settings.width) ? settings.width : texture.width;
   var height = Number.isFinite(settings.height) ? settings.height : texture.height;
@@ -551,7 +551,7 @@ Actor.prototype.addTilingSprite = function addTilingSprite(settings, parentNode,
  * @param  {object} settings  Text settings.
  * @return {Actor}            Self for chaining.
  */
-Actor.prototype.initText = function initText(settings) {
+Actor.prototype.initText = function(settings) {
   this.addText(settings, null, 'sprite');
   this.sprite.position = this.position;
 
@@ -573,7 +573,7 @@ Actor.prototype.initText = function initText(settings) {
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.Text}
  */
-Actor.prototype.addText = function addText(settings, parentNode, key, returnInst) {
+Actor.prototype.addText = function(settings, parentNode, key, returnInst) {
   // Create instance
   var inst = new PIXI.Text(settings.text, settings, settings.resolution || 1);
 
@@ -604,7 +604,7 @@ Actor.prototype.addText = function addText(settings, parentNode, key, returnInst
  * @param  {object} settings  BitmapText settings.
  * @return {Actor}            Self for chaining.
  */
-Actor.prototype.initBitmapText = function initBitmapText(settings) {
+Actor.prototype.initBitmapText = function(settings) {
   this.addBitmapText(settings, null, 'sprite');
   this.sprite.position = this.position;
 
@@ -625,7 +625,7 @@ Actor.prototype.initBitmapText = function initBitmapText(settings) {
  * @param {boolean} [returnInst]                Whether return the newly created instance instead of Actor?
  * @return {Actor|PIXI.extras.BitmapText}
  */
-Actor.prototype.addBitmapText = function addBitmapText(settings, parentNode, key, returnInst) {
+Actor.prototype.addBitmapText = function(settings, parentNode, key, returnInst) {
   // Create instance
   var inst = new PIXI.extras.BitmapText(settings.text, settings);
 
@@ -690,7 +690,7 @@ Actor.prototype.addBitmapText = function addBitmapText(settings, parentNode, key
  * @param  {object} data
  * @return {Actor} Self for chaining.
  */
-Actor.prototype.initFromData = function initFromData(data) {
+Actor.prototype.initFromData = function(data) {
   var i, sprData = data.sprite, bodyData = data.body;
 
   // Sprite
@@ -714,7 +714,7 @@ Actor.prototype.initFromData = function initFromData(data) {
   return this;
 };
 
-Actor.prototype._addChildFromData = function _addChildFromData(data, parent) {
+Actor.prototype._addChildFromData = function(data, parent) {
   var inst = this['add' + data.type](data, parent, data.key, true);
 
   if (Array.isArray(data.children)) {
@@ -736,7 +736,7 @@ Actor.prototype._addChildFromData = function _addChildFromData(data, parent) {
  * @param  [settings.points] {array<engine/vector>} vertices for 'Polygon' shapes
  * @return {Actor}  self for chaining
  */
-Actor.prototype.initBody = function initBody(settings_) {
+Actor.prototype.initBody = function(settings_) {
   var settings = settings_ || {};
 
   // Create shape
@@ -807,7 +807,7 @@ Actor.prototype.initBody = function initBody(settings_) {
  *                                            to give it a key explicitly, or the last one will be overrided.
  * @return {Actor} Self for chaining
  */
-Actor.prototype.behave = function behave(behv, settings, key) {
+Actor.prototype.behave = function(behv, settings, key) {
   var behavior = behv;
   if (typeof(behv) === 'string') {
     behavior = Behavior.behaviors[behv];
@@ -844,7 +844,7 @@ Actor.prototype.behave = function behave(behv, settings, key) {
  * @param  {number} dtMS  Delta time in milli-seconds
  * @param  {number} dtSec Delta time in seconds
  */
-Actor.prototype.updateBehaviors = function updateBehaviors(dtMS, dtSec) {
+Actor.prototype.updateBehaviors = function(dtMS, dtSec) {
   var i, behv;
   for (i = 0; i < this.behaviorList.length; i++) {
     behv = this.behaviorList[i];
@@ -934,7 +934,7 @@ Object.assign(Scene.prototype, {
    * @param  {string} [settings.tag]  Tag of this actor
    * @return {Actor}            Actor instance
    */
-  spawnActor: function spawnActor(actor_, x, y, layerName, settings) {
+  spawnActor: function(actor_, x, y, layerName, settings) {
     var settings_ = settings || {};
 
     // Create instance
@@ -974,7 +974,7 @@ Object.assign(Scene.prototype, {
    * @param {string} name   Name of this actor
    * @param {string} tag    Tag of this actor, default is '0'
    */
-  addActor: function addActor(actor, layer, name, tag) {
+  addActor: function(actor, layer, name, tag) {
     actor.scene = this;
 
     // Add sprite to a layer if required
@@ -1027,7 +1027,7 @@ Object.assign(Scene.prototype, {
    * @memberOf Scene#
    * @param {Actor} actor
    */
-  removeActor: function removeActor(actor) {
+  removeActor: function(actor) {
     // Will remove in next frame
     if (actor) actor.removed = true;
 
@@ -1050,7 +1050,7 @@ Object.assign(Scene.prototype, {
    * @param  {string} name  Name of the actor.
    * @return {Actor}        Actor with the name or undefined if not found.
    */
-  getActorByName: function getActorByName(name) {
+  getActorByName: function(name) {
     return this.actorSystem.namedActors[name];
   },
 
@@ -1060,7 +1060,7 @@ Object.assign(Scene.prototype, {
    * @memberof Scene#
    * @param  {string} tag
    */
-  pauseActorsTagged: function pauseActorsTagged(tag) {
+  pauseActorsTagged: function(tag) {
     if (this.actorSystem.actors[tag]) {
       utils.removeItems(this.actorSystem.activeTags, this.actorSystem.activeTags.indexOf(tag), 1);
       this.actorSystem.deactiveTags.push(tag);
@@ -1075,7 +1075,7 @@ Object.assign(Scene.prototype, {
    * @memberof Scene#
    * @param  {string} tag
    */
-  resumeActorsTagged: function resumeActorsTagged(tag) {
+  resumeActorsTagged: function(tag) {
     if (this.actorSystem.actors[tag]) {
       utils.removeItems(this.actorSystem.deactiveTags, this.actorSystem.deactiveTags.indexOf(tag), 1);
       this.actorSystem.activeTags.push(tag);
@@ -1086,7 +1086,7 @@ Object.assign(Scene.prototype, {
 });
 
 Scene.registerSystem('Actor', {
-  init: function init(scene) {
+  init: function(scene) {
     /**
      * Actor system runtime data storage
      */
@@ -1099,7 +1099,7 @@ Scene.registerSystem('Actor', {
       namedActors: {},
     };
   },
-  update: function update(scene, deltaMS, deltaSec) {
+  update: function(scene, deltaMS, deltaSec) {
     var i, key, actors, actor;
     for (key in scene.actorSystem.actors) {
       if (scene.actorSystem.activeTags.indexOf(key) < 0) continue;
@@ -1124,7 +1124,7 @@ Scene.registerSystem('Actor', {
       }
     }
   },
-  freeze: function freeze(scene) {
+  freeze: function(scene) {
     // Cleanup
     var i, key, actors, actor;
     for (key in scene.actorSystem.actors) {

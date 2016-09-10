@@ -28,7 +28,7 @@ Object.assign(Scene.prototype, {
    * @param  {string} tag
    * @return {Scene}      Self for chaining.
    */
-  pauseAnimationsTagged: function pauseAnimationsTagged(tag) {
+  pauseAnimationsTagged: function(tag) {
     if (this.animationSystem.anims[tag]) {
       utils.removeItems(this.animationSystem.activeTags, this.animationSystem.activeTags.indexOf(tag), 1);
       this.animationSystem.deactiveTags.push(tag);
@@ -44,7 +44,7 @@ Object.assign(Scene.prototype, {
    * @param  {string} tag
    * @return {Scene}      Self for chaining.
    */
-  resumeAnimationsTagged: function resumeAnimationsTagged(tag) {
+  resumeAnimationsTagged: function(tag) {
     if (this.animationSystem.anims[tag]) {
       utils.removeItems(this.animationSystem.deactiveTags, this.animationSystem.deactiveTags.indexOf(tag), 1);
       this.animationSystem.activeTags.push(tag);
@@ -55,7 +55,7 @@ Object.assign(Scene.prototype, {
 });
 
 Scene.registerSystem('Animation', {
-  init: function init(scene) {
+  init: function(scene) {
     /**
      * Map of animation lists.
      * @property {Object} anims
@@ -68,7 +68,7 @@ Scene.registerSystem('Animation', {
       },
     };
   },
-  preUpdate: function preUpdate(scene) {
+  preUpdate: function(scene) {
     var i, key, anims, t;
     for (key in scene.animationSystem.anims) {
       if (scene.animationSystem.activeTags.indexOf(key) < 0) continue;
@@ -83,7 +83,7 @@ Scene.registerSystem('Animation', {
       }
     }
   },
-  update: function update(scene, delta) {
+  update: function(scene, delta) {
     var i, key, anims, t;
     for (key in scene.animationSystem.anims) {
       if (scene.animationSystem.activeTags.indexOf(key) < 0) continue;

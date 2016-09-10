@@ -11,7 +11,7 @@ var pRatio = 1.0, cRatio = 1.0;
  * @param  {Vector} contentSize
  * @return {object} { left , top , scale }
  */
-module.exports.outerBoxResize = function innerBoxResize(containerSize, contentSize) {
+module.exports.outerBoxResize = function(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 
@@ -34,7 +34,7 @@ module.exports.outerBoxResize = function innerBoxResize(containerSize, contentSi
  * @param  {Vector} contentSize
  * @return {object} { left , top , scale }
  */
-module.exports.innerBoxResize = function outerBoxResize(containerSize, contentSize) {
+module.exports.innerBoxResize = function(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 

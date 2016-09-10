@@ -66,7 +66,7 @@ function Analytics(settings) {
  * @param {string} [label]
  * @param {string} [value]
  */
-Analytics.prototype.send = function send(category, action, label, value) {
+Analytics.prototype.send = function(category, action, label, value) {
   if (!navigator.onLine) return;
 
   if (device.cocoonJS) {
