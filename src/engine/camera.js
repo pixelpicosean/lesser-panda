@@ -239,6 +239,11 @@ Camera.prototype._setPosition = function(x, y) {
     this.container.position.set(engine.width, engine.height)
       .multiply(this.anchor);
     this.container.pivot.copy(this.position);
+
+    if (this.rounding) {
+      this.container.position.round();
+      this.container.pivot.round();
+    }
   }
 };
 
