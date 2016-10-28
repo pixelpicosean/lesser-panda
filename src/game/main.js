@@ -1,32 +1,44 @@
 import core from 'engine/core';
-import Scene from 'engine/scene';
-import PIXI from 'engine/pixi';
-import loader from 'engine/loader';
+import Game from 'engine/game';
 
-import 'game/loading';
-
-loader.addAsset('KenPixel.fnt');
-
-PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
-
-class Main extends Scene {
+class MyGame extends Game {
   constructor() {
     super();
 
-    this
-      .createLayer('worldLayer')
-        .createLayer('actLayer', 'worldLayer')
-        .createLayer('fxLayer', 'worldLayer')
-      .createLayer('uiLayer');
+    this.desiredFPS = 10;
 
-    const text = new PIXI.extras.BitmapText('It Works!', {
-      font: '16px KenPixel',
-    }).addTo(this.uiLayer);
-    text.position
-      .set(core.width * 0.5, core.height * 0.5)
-      .subtract(text.width * 0.5, text.height * 0.5);
+    console.log('constructor');
   }
-};
-core.addScene('Main', Main);
+  awake() {
+    super.awake();
 
-core.start();
+    console.log('awake');
+  }
+  update() {
+    super.update();
+
+    // console.log('update');
+  }
+  fixedUpdate() {
+    super.fixedUpdate();
+
+    // console.log('fixedUpdate');
+  }
+  freeze() {
+    super.freeze();
+
+    console.log('freeze');
+  }
+
+  resize() {
+    console.log('resize');
+  }
+  pause() {
+    console.log('pause');
+  }
+  resume() {
+    console.log('resume');
+  }
+}
+
+core.main(null, MyGame);

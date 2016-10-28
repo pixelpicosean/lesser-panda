@@ -3,7 +3,6 @@
 require('engine/polyfill');
 
 var EventEmitter = require('engine/eventemitter3');
-var Renderer = require('engine/renderer');
 var Timer = require('engine/timer');
 var Vector = require('engine/vector');
 var resize = require('engine/resize');
@@ -15,6 +14,7 @@ var config = require('game/config').default;
  * @private
  */
 var core = new EventEmitter();
+var nextGameIdx = 1;
 
 // Public properties and methods
 Object.assign(core, {
@@ -23,7 +23,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v0.4.2',
+  version: 'v1.0.0-dev',
 
   /**
    * Main Canvas element.
@@ -60,19 +60,19 @@ Object.assign(core, {
   resizeFunc: null,
 
   /**
-   * Map of registered scenes.
+   * Map of registered games.
    * @memberof module:engine/core
    * @type {object}
    */
-  scenes: {},
+  games: {},
   /**
-   * Current activated scene.
+   * Current activated game.
    * Note: this may be undefined during switching.
    * Will be deprecated in future versions.
    * @memberof module:engine/core
-   * @type {Scene}
+   * @type {Game}
    */
-  scene: null,
+  game: null,
 
   /**
    * Map that contains pause state of all kinds of reasons.
@@ -111,76 +111,39 @@ Object.assign(core, {
   rotatePromptVisible: false,
 
   /**
-   * Register a new scene class.
+   * Switch to a game.
    * @memberof module:engine/core
-   *
-   * @example
-   * import core from 'engine/core';
-   * class MyScene extends Scene {}
-   * core.addScene('MyScene', MyScene);
-   *
-   * @param {string}    name  Name of this scene.
-   * @param {function}  ctor  Constructor of the scene.
+   * @param {Game} gameCtor       Game class to be set
+   * @param {boolean} newInstance Whether create new instance for this game.
    */
-  addScene: function(name, ctor) {
-    if (core.scenes[name]) {
-      console.log('Scene [' + name + '] is already defined!');
-      return;
+  setGame: function(gameCtor, newInstance) {
+    if (!gameCtor.id) {
+      gameCtor.id = nextGameIdx++;
     }
 
-    var pair = { ctor: ctor, inst: null };
-    core.scenes[name] = pair;
-  },
-  /**
-   * Switch to a scene.
-   * @memberof module:engine/core
-   * @param {string} name Name of the target scene.
-   * @param {boolean} newInstance Whether create new instance for this scene.
-   */
-  setScene: function(name, newInstance) {
-    var pair = core.scenes[name];
+    var pair = core.games[gameCtor.id];
 
     if (!pair) {
-      console.log('Scene [' + name + '] is not defined!');
-      return;
+      pair = { ctor: gameCtor, inst: null };
     }
 
     if (!!newInstance) {
       pair.inst = null;
     }
 
-    nextScene = pair;
+    nextGame = pair;
   },
   /**
-   * Entrance of the game, set the first scene to boot with.
-   * Note: it's recommend to set the first scene to `Loading` or
-   * your customized loading scene, otherwise the assets won't get load.
-   *
-   * Simply use `core.start` instead if you don't want to start
-   * from a custom loading scene.
-   *
-   * @example
-   * // In the `game/main` module
-   * import core from 'engine/core';
-   * core.startWithScene('MyCustomLoading');
-   * // or simply use the default loading scene
-   * core.start();
-   *
+   * Main entry.
    * @memberof module:engine/core
-   * @param  {string} sceneName Name of the start scene
+   * @param {Game} gameCtor   First game class
+   * @param {Game} loaderCtor Asset loader class
    */
-  startWithScene: function(sceneName) {
-    core.setScene(sceneName);
+  main: function(gameCtor, loaderCtor) {
+    core.setGame(loaderCtor, true);
 
     window.addEventListener('load', boot, false);
     document.addEventListener('DOMContentLoaded', boot, false);
-  },
-  /**
-   * Start with `Loading` scene.
-   * @memberof module:engine/core
-   */
-  start: function() {
-    core.startWithScene('Loading');
   },
 
   /**
@@ -325,7 +288,7 @@ else {
 }
 
 // - Private properties and methods
-var nextScene = null;
+var nextGame = null;
 var loopId = 0;
 var resizeFunc = _letterBoxResize;
 function startLoop() {
@@ -336,7 +299,32 @@ function loop(timestamp) {
 
   // Do not update anything when paused
   if (!core.paused) {
-    tickAndRender(core.scene, timestamp);
+    // Switch to new game
+    if (nextGame) {
+      var pair = nextGame;
+      nextGame = null;
+
+      // Freeze current game before switching
+      if (core.game) {
+        core.off('resize', core.game.resize, core.game);
+        core.game.freeze();
+      }
+      core.game = null;
+
+      // Create instance of game if not exist
+      if (!pair.inst) pair.inst = new pair.ctor();
+
+      // Awake the game
+      core.game = pair.inst;
+      core.on('resize', core.game.resize, core.game);
+      core.game.awake();
+
+      // Resize container of the game
+      resizeFunc();
+    }
+
+    // Update current game
+    if (core.game) core.game.run(timestamp);
   }
 }
 function endLoop() {
@@ -362,9 +350,9 @@ function boot() {
   core.view.addEventListener('touchstart', focus);
 
   // Config and create renderer
-  Renderer.resolution = rendererConfig.resolution = core.resolution;
+  // Renderer.resolution = rendererConfig.resolution = core.resolution;
+  // Renderer.init(core.width, core.height, rendererConfig);
 
-  Renderer.init(core.width, core.height, rendererConfig);
   startLoop();
 
   // Pick a resize function
@@ -565,117 +553,6 @@ function resizeRotatePrompt() {
   core.rotatePromptImg.style.width = h + 'px';
 }
 
-// Update (fixed update implementation from Phaser by @photonstorm)
-var spiraling = 0;
-var last = -1;
-var realDelta = 0;
-var deltaTime = 0;
-var desiredFPS = 30;
-var currentUpdateID = 0;
-var lastCount = 0;
-var step = 0;
-var slowStep = 0;
-var count = 0;
-/**
- * Update and render a scene
- * @private
- * @param  {Scene} scene      Scene to be updated
- * @param  {Number} timestamp Current time stamp
- */
-function tickAndRender(scene, timestamp) {
-  if (last > 0) {
-    realDelta = timestamp - last;
-  }
-  last = timestamp;
-
-  // If the logic time is spiraling upwards, skip a frame entirely
-  if (spiraling > 1) {
-    // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
-    deltaTime = 0;
-    spiraling = 0;
-
-    renderScene(scene);
-  }
-  else {
-    desiredFPS = scene ? scene.desiredFPS : 30;
-
-    // Step size
-    step = 1000.0 / desiredFPS;
-    slowStep = step * core.speed;
-
-    // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
-    deltaTime += Math.max(Math.min(step * 3, realDelta), 0);
-
-    // Call the game update logic multiple times if necessary to "catch up" with dropped frames
-    // unless forceSingleUpdate is true
-    count = 0;
-
-    while (deltaTime >= step) {
-      deltaTime -= step;
-      currentUpdateID = count;
-
-      // Fixed update with the timestep
-      core.delta = step;
-      Timer.update(slowStep);
-      updateScene(scene);
-
-      count += 1;
-    }
-
-    // Detect spiraling (if the catch-up loop isn't fast enough, the number of iterations will increase constantly)
-    if (count > lastCount) {
-      spiraling += 1;
-    }
-    else if (count < lastCount) {
-      // Looks like it caught up successfully, reset the spiral alert counter
-      spiraling = 0;
-    }
-
-    lastCount = count;
-
-    renderScene(scene);
-  }
-}
-function updateScene(scene) {
-  // Switch to new scene
-  if (nextScene) {
-    var pair = nextScene;
-    nextScene = null;
-
-    // Freeze current scene before switching
-    core.scene && core.scene._freeze();
-    core.scene = null;
-
-    // Create instance of scene if not exist
-    if (!pair.inst) {
-      pair.inst = new pair.ctor();
-    }
-
-    // Awake the scene
-    core.scene = pair.inst;
-    core.scene._awake();
-
-    // Resize container of the scene
-    resizeFunc();
-  }
-
-  // Update current scene
-  if (scene) {
-    scene._update(slowStep, slowStep * 0.001);
-  }
-}
-var skipFrameCounter = 0;
-function renderScene(scene) {
-  skipFrameCounter -= 1;
-  if (skipFrameCounter < 0) {
-    skipFrameCounter = (config.skipFrame || 0);
-
-    if (scene) {
-      Renderer.render(scene);
-    }
-  }
-}
-
 // Resize functions
 var windowSize = { x: 1, y: 1 };
 var scaledWidth, scaledHeight;
@@ -689,7 +566,7 @@ function _letterBoxResize(first) {
   result = resize.outerBoxResize(windowSize, core.viewSize);
 
   // Resize the renderer once
-  if (first) Renderer.resize(core.viewSize.x, core.viewSize.y);
+  // if (first) Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   scaledWidth = Math.floor(core.viewSize.x * result.scale);
   scaledHeight = Math.floor(core.viewSize.y * result.scale);
@@ -719,7 +596,7 @@ function _cropResize() {
   core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
+  // Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
@@ -736,11 +613,11 @@ function _scaleInnerResize() {
   core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
+  // Renderer.resize(core.viewSize.x, core.viewSize.y);
 
-  // Resize container of current scene
-  if (core.scene) {
-    container = core.scene.stage;
+  // Resize container of current game
+  if (core.game) {
+    container = core.game.stage;
     result = resize.innerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
@@ -761,11 +638,11 @@ function _scaleOuterResize() {
   core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
 
   // Resize the renderer
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
+  // Renderer.resize(core.viewSize.x, core.viewSize.y);
 
-  // Resize container of current scene
-  if (core.scene) {
-    container = core.scene.stage;
+  // Resize container of current game
+  if (core.game) {
+    container = core.game.stage;
     result = resize.outerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
