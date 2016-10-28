@@ -6,22 +6,6 @@ export default {
   height: 200,
 
   /**
-   * Logic update FPS
-   * @type {Number}
-   * @default 30
-   */
-  desiredFPS: 60,
-  /**
-   * How many RAFs to skip before each rendering?
-   *
-   * Note: This setting does not affect update frequency!
-   *
-   * @type {Number}
-   * @default 0
-   */
-  skipFrame: 0,
-
-  /**
    * How does the game resize?
    * available values:
    *  + letter-box    Scale with CSS and align to the center
@@ -32,10 +16,9 @@ export default {
   resizeMode: 'letter-box',
 
   /**
-   * Whether pause the game (timer and scene)
-   * when page is hidden
+   * Whether pause the game when page loses focus.
    */
-  pauseOnHide: false,
+  pauseOnHide: true,
 
   /**
    * Whether show a image or text to tell players to rotate device
@@ -75,34 +58,4 @@ export default {
   storage: {
     id: 'lpanda',
   },
-
-  physics: {
-    /**
-     * Collision solver, available settings:
-     * - AABB: Fast but only Box(not rotated) and Circle shapes are supported
-     * - SAT:  Powerful SAT based, have convex Polygon and rotation support
-     * @default AABB
-     */
-    solver: 'AABB',
-    /**
-     * Broad phase algorithm to use for collision detection
-     * - Simple: Check collision between every possible pairs, for small amount of bodies
-     * - SpatialHash: Advanced solution that performs best if the objects are sparsely distributed
-     * @default SpatialHash
-     */
-    broadPhase: 'SpatialHash',
-    /**
-     * This only works while using "SpatialHash" broad phase.
-     * Feel free to tweak this number for best performance.
-     * @type {Number}
-     * @default 5
-     */
-    spatialFactor: 8,
-  },
-
-  /**
-   * First scene to launch after loading.
-   * You can change this behavior from `game/loading.js`
-   */
-  firstScene: 'Main',
 };
