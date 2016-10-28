@@ -1,6 +1,6 @@
 'use strict';
 
-var utils = require('engine/utils');
+var mathutils = require('engine/utils/math');
 
 /**
  * Vector instance pool
@@ -240,8 +240,8 @@ Vector.prototype.normalize = function() {
  * @return {Vector}       Self for chaining.
  */
 Vector.prototype.limit = function(vector) {
-  this.x = utils.clamp(this.x, -vector.x, vector.x);
-  this.y = utils.clamp(this.y, -vector.y, vector.y);
+  this.x = mathutils.clamp(this.x, -vector.x, vector.x);
+  this.y = mathutils.clamp(this.y, -vector.y, vector.y);
   return this;
 };
 
