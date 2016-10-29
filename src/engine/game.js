@@ -20,10 +20,17 @@ function Game() {
   this.desiredFPS = 60;
 
   /**
-   * List of added systems
-   * @property {Array} systems
+   * Map of added systems
+   * @property {Object} systems
    */
-  this.systems = [];
+  this.systems = {};
+
+  /**
+   * List of system updating order.
+   * Note: `systemOrder` should only be modified after systems added!
+   * @property {Array<String>} systemOrder
+   */
+  this.systemOrder = [];
 
   /**
    * Caches update informations
@@ -110,9 +117,9 @@ Game.prototype.run = function(timestamp) {
  */
 Game.prototype.awake = function() {
   var i, sys;
-  for (i = 0; i < this.systems.length; i++) {
-    sys = this.systems[i];
-    sys.awake && sys.awake();
+  for (i = 0; i < this.systemOrder.length; i++) {
+    sys = this.systemOrder[i];
+    this.systems[sys] && this.systems[sys].awake();
   }
 
   this.emit('awake');
@@ -125,9 +132,9 @@ Game.prototype.awake = function() {
  */
 Game.prototype.update = function(delta, deltaSec) {
   var i, sys;
-  for (i = 0; i < this.systems.length; i++) {
-    sys = this.systems[i];
-    sys && sys.update && sys.update(delta, deltaSec);
+  for (i = 0; i < this.systemOrder.length; i++) {
+    sys = this.systemOrder[i];
+    this.systems[sys] && this.systems[sys].update(delta, deltaSec);
   }
 
   this.emit('update', delta, deltaSec);
@@ -140,9 +147,9 @@ Game.prototype.update = function(delta, deltaSec) {
  */
 Game.prototype.fixedUpdate = function(delta, deltaSec) {
   var i, sys;
-  for (i = 0; i < this.systems.length; i++) {
-    sys = this.systems[i];
-    sys && sys.fixedUpdate && sys.fixedUpdate(delta, deltaSec);
+  for (i = 0; i < this.systemOrder.length; i++) {
+    sys = this.systemOrder[i];
+    this.systems[sys] && this.systems[sys].fixedUpdate(delta, deltaSec);
   }
 
   this.emit('fixedUpdate', delta, deltaSec);
@@ -155,12 +162,30 @@ Game.prototype.fixedUpdate = function(delta, deltaSec) {
  */
 Game.prototype.freeze = function() {
   var i, sys;
-  for (i = 0; i < this.systems.length; i++) {
-    sys = this.systems[i];
-    sys && sys.freeze && sys.freeze();
+  for (i = 0; i < this.systemOrder.length; i++) {
+    sys = this.systemOrder[i];
+    this.systems[sys] && this.systems[sys].freeze();
   }
 
   this.emit('freeze');
+};
+
+Game.prototype.addSystem = function(sys) {
+  if (sys.name.length === 0) {
+    console.log('System name "' + sys.name + '" is invalid!');
+    return this;
+  }
+
+  if (this.systemOrder.indexOf(sys.name) >= 0) {
+    console.log('System "' + sys.name + '" already added!');
+    return this;
+  }
+
+  this.systems[sys.name] = sys;
+  this.systemOrder.push(sys.name);
+  this[sys.name] = sys;
+
+  return this;
 };
 
 /**

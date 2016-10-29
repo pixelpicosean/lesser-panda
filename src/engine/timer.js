@@ -1,7 +1,5 @@
-'use strict';
-
-var Scene = require('engine/scene');
-var utils = require('engine/utils');
+var System = require('engine/system');
+var arrayutils = require('engine/utils/array');
 
 /**
  * Timer constructor should not be used directly, use the static methods instead:
@@ -175,189 +173,167 @@ function recycleTimer(timer) {
   pool.push(timer);
 }
 
-// Timer static properties and functions
-Object.assign(Timer, {
-  /**
-   * Delta since last frame (ms).
-   * @memberof Timer
-   * @type {number}
-   */
-  delta: 0,
-  /**
-   * A cumulative number represents how long has passed since the
-   * game is launched (in milliseconds).
-   * @memberof Timer
-   * @type {number}
-   */
-  now: 0,
-  /**
-   * Map of timers
-   * @memberof Timer
-   * @type {object}
-   */
-  timers: {
+/**
+ * Timer system.
+ */
+function SystemTimer() {
+  this.name = 'sTimer';
+
+  this.delta = 0;
+  this.now = 0;
+  this.timers = {
     '0': [],
-  },
-  activeTags: ['0'],
-  deactiveTags: [],
-  /**
-   * Update timer system.
-   * @memberof Timer
-   * @method update
-   * @protected
-   */
-  update: function(delta) {
-    this.delta = delta;
+  };
+  this.activeTags = ['0'];
+  this.deactiveTags = [];
+}
+SystemTimer.prototype = Object.create(System.prototype);
+SystemTimer.prototype.constructor = SystemTimer;
 
-    this.now += delta;
+SystemTimer.prototype.update = function(delta) {
+  this.delta = delta;
 
-    var i, key, timers;
-    for (key in this.timers) {
-      if (this.activeTags.indexOf(key) < 0) continue;
+  this.now += delta;
 
-      timers = this.timers[key];
-      for (i = 0; i < timers.length; i++) {
-        if (!timers[i].removed) {
-          timers[i].update(delta);
-        }
-        if (timers[i].removed) {
-          recycleTimer(timers[i]);
-          utils.removeItems(timers, i--, 1);
-        }
+  var i, key, timers;
+  for (key in this.timers) {
+    if (this.activeTags.indexOf(key) < 0) continue;
+
+    timers = this.timers[key];
+    for (i = 0; i < timers.length; i++) {
+      if (!timers[i].removed) {
+        timers[i].update(delta);
+      }
+      if (timers[i].removed) {
+        recycleTimer(timers[i]);
+        arrayutils.removeItems(timers, i--, 1);
       }
     }
-  },
-
-  /**
-   * Create an one-shoot timer.
-   * @memberof Timer
-   * @method later
-   * @param {number}    wait      Time in milliseconds
-   * @param {function}  callback  Callback function to run, when timer ends
-   * @param {object}    context   Context of the callback to be invoked
-   * @param {string}    tag       Tag of this timer, default is '0'
-   * @return {Timer}
-   */
-  later: function(wait, callback, context, tag) {
-    var t = tag || '0';
-    var timer = createTimer(wait);
-
-    timer.repeat = false;
-    timer.callback = callback;
-    timer.callbackCtx = context;
-
-    if (!this.timers[t]) {
-      // Create a new timer list
-      this.timers[t] = [];
-
-      // Active new tag by default
-      this.activeTags.push(t);
-    }
-
-    if (this.timers[t].indexOf(timer) < 0) {
-      this.timers[t].push(timer);
-    }
-
-    return timer;
-  },
-  /**
-   * Create an one-shoot timer while the time is in seconds instead.
-   * @memberof Timer
-   * @method laterSec
-   * @see Timer.later
-   */
-  laterSec: function(wait, callback, context, tag) {
-    this.later(Math.floor(wait * 1000), callback, context, tag);
-  },
-
-  /**
-   * Create a repeat timer.
-   * @memberof Timer
-   * @method interval
-   * @param {number}    interval  Time in milliseconds
-   * @param {function}  callback  Callback function to run, when timer ends
-   * @param {object}    context   Context of the callback to be invoked
-   * @param {string}    tag       Tag of this timer, default is '0'
-   * @return {Timer}
-   */
-  interval: function(interval, callback, context, tag) {
-    var t = tag || '0';
-    var timer = createTimer(interval);
-
-    timer.repeat = true;
-    timer.callback = callback;
-    timer.callbackCtx = context;
-
-    if (!this.timers[t]) {
-      // Create a new timer list
-      this.timers[t] = [];
-
-      // Active new tag by default
-      this.activeTags.push(t);
-    }
-
-    if (this.timers[t].indexOf(timer) < 0) {
-      this.timers[t].push(timer);
-    }
-
-    return timer;
-  },
-  /**
-   * Create a repeat timer while the time is in seconds instead.
-   * @memberof Timer
-   * @method intervalSec
-   * @see Timer.interval
-   */
-  intervalSec: function(interval, callback, context, tag) {
-    this.later(Math.floor(interval * 1000), callback, context, tag);
-  },
-
-  /**
-   * Remove a timer.
-   * @memberof Timer
-   * @method remove
-   * @param {Timer} timer
-   */
-  remove: function(timer) {
-    if (timer) timer.removed = true;
-  },
-
-  /**
-   * Pause timers with a specific tag.
-   * @memberof Timer
-   * @method pauseTimersTagged
-   * @param  {string} tag
-   */
-  pauseTimersTagged: function(tag) {
-    if (this.timers[tag]) {
-      utils.removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
-      this.deactiveTags.push(tag);
-    }
-
-    return this;
-  },
-
-  /**
-   * Resume timers with a specific tag.
-   * @memberof Timer
-   * @method resumeTimersTagged
-   * @param  {string} tag
-   */
-  resumeTimersTagged: function(tag) {
-    if (this.timers[tag]) {
-      utils.removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);
-      this.activeTags.push(tag);
-    }
-
-    return this;
-  },
-});
+  }
+};
 
 /**
- * @exports engine/timer
- * @see Timer
- *
- * @requires engine/scene
- * @requires engine/utils
+ * Create an one-shoot timer.
+ * @memberof Timer
+ * @method later
+ * @param {number}    wait      Time in milliseconds
+ * @param {function}  callback  Callback function to run, when timer ends
+ * @param {object}    context   Context of the callback to be invoked
+ * @param {string}    tag       Tag of this timer, default is '0'
+ * @return {Timer}
  */
-module.exports = Timer;
+SystemTimer.prototype.later = function(wait, callback, context, tag) {
+  var t = tag || '0';
+  var timer = createTimer(wait);
+
+  timer.repeat = false;
+  timer.callback = callback;
+  timer.callbackCtx = context;
+
+  if (!this.timers[t]) {
+    // Create a new timer list
+    this.timers[t] = [];
+
+    // Active new tag by default
+    this.activeTags.push(t);
+  }
+
+  if (this.timers[t].indexOf(timer) < 0) {
+    this.timers[t].push(timer);
+  }
+
+  return timer;
+};
+/**
+ * Create an one-shoot timer while the time is in seconds instead.
+ * @memberof Timer
+ * @method laterSec
+ * @see Timer.later
+ */
+SystemTimer.prototype.laterSec = function(wait, callback, context, tag) {
+  this.later(Math.floor(wait * 1000), callback, context, tag);
+};
+
+/**
+ * Create a repeat timer.
+ * @memberof Timer
+ * @method interval
+ * @param {number}    interval  Time in milliseconds
+ * @param {function}  callback  Callback function to run, when timer ends
+ * @param {object}    context   Context of the callback to be invoked
+ * @param {string}    tag       Tag of this timer, default is '0'
+ * @return {Timer}
+ */
+SystemTimer.prototype.interval = function(interval, callback, context, tag) {
+  var t = tag || '0';
+  var timer = createTimer(interval);
+
+  timer.repeat = true;
+  timer.callback = callback;
+  timer.callbackCtx = context;
+
+  if (!this.timers[t]) {
+    // Create a new timer list
+    this.timers[t] = [];
+
+    // Active new tag by default
+    this.activeTags.push(t);
+  }
+
+  if (this.timers[t].indexOf(timer) < 0) {
+    this.timers[t].push(timer);
+  }
+
+  return timer;
+};
+/**
+ * Create a repeat timer while the time is in seconds instead.
+ * @memberof Timer
+ * @method intervalSec
+ * @see Timer.interval
+ */
+SystemTimer.prototype.intervalSec = function(interval, callback, context, tag) {
+  this.later(Math.floor(interval * 1000), callback, context, tag);
+};
+
+/**
+ * Remove a timer.
+ * @memberof Timer
+ * @method remove
+ * @param {Timer} timer
+ */
+SystemTimer.prototype.remove = function(timer) {
+  if (timer) timer.removed = true;
+};
+
+/**
+ * Pause timers with a specific tag.
+ * @memberof Timer
+ * @method pauseTimersTagged
+ * @param  {string} tag
+ */
+SystemTimer.prototype.pauseTimersTagged = function(tag) {
+  if (this.timers[tag]) {
+    arrayutils.removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
+    this.deactiveTags.push(tag);
+  }
+
+  return this;
+};
+
+/**
+ * Resume timers with a specific tag.
+ * @memberof Timer
+ * @method resumeTimersTagged
+ * @param  {string} tag
+ */
+SystemTimer.prototype.resumeTimersTagged = function(tag) {
+  if (this.timers[tag]) {
+    arrayutils.removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);
+    this.activeTags.push(tag);
+  }
+
+  return this;
+};
+
+module.exports = SystemTimer;
