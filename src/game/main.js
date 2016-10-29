@@ -2,6 +2,12 @@ import core from 'engine/core';
 import Game from 'engine/game';
 
 import SystemTimer from 'engine/timer';
+import Loader from 'engine/resource-loader';
+
+import { persistent, session } from 'engine/storage';
+
+persistent.addInt('score', 0);
+session.addString('name', 'Sean');
 
 class MyGame extends Game {
   constructor() {
@@ -18,6 +24,7 @@ class MyGame extends Game {
 
     console.log('awake');
 
+    // Test timers
     this.sTimer.later(1000, () => {
       console.log('pause timers');
 
@@ -32,6 +39,11 @@ class MyGame extends Game {
     this.sTimer.later(2000, () => {
       console.log('hello from timer');
     }, null, 'aa');
+
+    // Test storage
+    persistent.load();
+    console.log(`session test: ${session.get('name')}`);
+    console.log(`persistent test: ${persistent.get('score')}`);
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
