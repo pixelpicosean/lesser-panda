@@ -1,11 +1,15 @@
 import core from 'engine/core';
 import Game from 'engine/game';
 
+import SystemTimer from 'engine/timer';
+
 class MyGame extends Game {
   constructor() {
     super();
 
     this.desiredFPS = 10;
+
+    this.addSystem(new SystemTimer());
 
     console.log('constructor');
   }
@@ -13,14 +17,29 @@ class MyGame extends Game {
     super.awake();
 
     console.log('awake');
+
+    this.sTimer.later(1000, () => {
+      console.log('pause timers');
+
+      this.sTimer.pauseTimersTagged('aa');
+    });
+    this.sTimer.later(2000, () => {
+      console.log('resume timers');
+
+      this.sTimer.resumeTimersTagged('aa');
+    });
+
+    this.sTimer.later(2000, () => {
+      console.log('hello from timer');
+    }, null, 'aa');
   }
-  update() {
-    super.update();
+  update(dt, dtSec) {
+    super.update(dt, dtSec);
 
     // console.log('update');
   }
-  fixedUpdate() {
-    super.fixedUpdate();
+  fixedUpdate(dt, dtSec) {
+    super.fixedUpdate(dt, dtSec);
 
     // console.log('fixedUpdate');
   }
