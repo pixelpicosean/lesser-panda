@@ -7,6 +7,7 @@ export default {
 
   canvas: 'game',
 
+  baseUrl: 'media',
   /**
    * How does the game resize?
    * available values:
