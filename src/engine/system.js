@@ -1,13 +1,13 @@
-function System() {
-  this.name = '';
+export default class System {
+  constructor() {
+    this.name = '';
+  }
+
+  awake() {}
+  update() {}
+  fixedUpdate() {}
+  freeze() {}
+
+  onEntitySpawn() {}
+  onEntityRemove() {}
 }
-
-System.prototype.awake = function() {};
-System.prototype.update = function() {};
-System.prototype.fixedUpdate = function() {};
-System.prototype.freeze = function() {};
-
-System.prototype.onEntitySpawn = function() {};
-System.prototype.onEntityRemove = function() {};
-
-module.exports = System;
