@@ -2,12 +2,23 @@ import core from 'engine/core';
 import Game from 'engine/game';
 
 import SystemTimer from 'engine/timer';
-import Loader from 'engine/resource-loader';
 
 import { persistent, session } from 'engine/storage';
 
+import loader from 'engine/loader';
+import { sounds } from 'engine/audio';
+
 persistent.addInt('score', 0);
 session.addString('name', 'Sean');
+
+loader
+  .add('font', 'KenPixel.fnt')
+  .add('font-sheet', 'KenPixel.png')
+  .add('bgm', 'bgm.mp3|webm')
+  .add('bgm2', 'bgm.mp3')
+  .load((loader, res) => {
+    console.log('== loading completed! ==');
+  });
 
 class MyGame extends Game {
   constructor() {
@@ -44,6 +55,9 @@ class MyGame extends Game {
     persistent.load();
     console.log(`session test: ${session.get('name')}`);
     console.log(`persistent test: ${persistent.get('score')}`);
+
+    // Audio
+    sounds['bgm'].play();
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
