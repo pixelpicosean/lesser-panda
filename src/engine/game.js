@@ -1,5 +1,5 @@
-var core = require('engine/core');
-var EventEmitter = require('engine/eventemitter3');
+import core from 'engine/core';
+import EventEmitter from 'engine/event-emitter';
 
 /**
  * Game is the main hub for a game. A game made with LesserPanda

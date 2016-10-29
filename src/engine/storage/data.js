@@ -1,4 +1,4 @@
-import Eventemitter from 'engine/eventemitter3';
+import EventEmitter from 'engine/event-emitter';
 
 /**
  * Data storage base class. Provides data define, set and get support.
@@ -7,7 +7,7 @@ import Eventemitter from 'engine/eventemitter3';
  * @constructor
  * @extends {EventEmitter}
  */
-class Data extends Eventemitter {
+class Data extends EventEmitter {
   constructor() {
     super();
 
