@@ -218,7 +218,7 @@ class SystemTimer extends System {
    * @param {string}    tag       Tag of this timer, default is '0'
    * @return {Timer}
    */
-  later(wait, callback, context, tag) {
+  later(wait, callback, context, tag = '0') {
     let timer = createTimer(wait);
 
     timer.repeat = false;
@@ -245,7 +245,7 @@ class SystemTimer extends System {
    * @method laterSec
    * @see Timer.later
    */
-  laterSec(wait, callback, context, tag) {
+  laterSec(wait, callback, context, tag = '0') {
     this.later(Math.floor(wait * 1000), callback, context, tag);
   }
 
@@ -286,7 +286,7 @@ class SystemTimer extends System {
    * @method intervalSec
    * @see Timer.interval
    */
-  intervalSec(interval, callback, context, tag) {
+  intervalSec(interval, callback, context, tag = '0') {
     this.later(Math.floor(interval * 1000), callback, context, tag);
   }
 
