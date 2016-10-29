@@ -302,6 +302,8 @@ function loop(timestamp) {
 
       // Freeze current game before switching
       if (core.game) {
+        core.off('pause', core.game.pause, core.game);
+        core.off('resume', core.game.resume, core.game);
         core.off('resize', core.game.resize, core.game);
         core.game.freeze();
       }
@@ -312,6 +314,8 @@ function loop(timestamp) {
 
       // Awake the game
       core.game = pair.inst;
+      core.on('pause', core.game.pause, core.game);
+      core.on('resume', core.game.resume, core.game);
       core.on('resize', core.game.resize, core.game);
       core.game.awake();
 

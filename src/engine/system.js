@@ -10,4 +10,7 @@ export default class System {
 
   onEntitySpawn() {}
   onEntityRemove() {}
+
+  onPause() {}
+  onResume() {}
 }

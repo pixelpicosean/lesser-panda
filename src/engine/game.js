@@ -191,13 +191,29 @@ class Game extends EventEmitter {
    * @method pause
    * @memberof Game#
    */
-  pause() {};
+  pause() {
+    let i, sys;
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].onPause();
+    }
+
+    this.emit('pause');
+  };
   /**
    * System resume callback.
    * @method resume
    * @memberof Game#
    */
-  resume() {};
+  resume() {
+    let i, sys;
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].onResume();
+    }
+
+    this.emit('resume');
+  };
 
   /**
    * Resize callback.
