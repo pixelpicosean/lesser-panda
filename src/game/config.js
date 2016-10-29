@@ -8,6 +8,11 @@ export default {
   canvas: 'game',
 
   baseUrl: 'media',
+
+  audio: {
+    use: ['webm', 'mp3'],
+  },
+
   /**
    * How does the game resize?
    * available values:
