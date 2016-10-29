@@ -1,16 +1,64 @@
+import core from 'engine/core';
 import loader, { Resource } from 'engine/loader';
-import { Howl } from 'engine/audio/howler.core';
+import { Howl, Howler } from 'engine/audio/howler.core';
+import EventEmitter from 'engine/event-emitter';
 import config from 'game/config';
 
-const AudioUse = (config.audio && Array.isArray(config.audio.use)) ? config.audio.use : ['webm', 'mp3'];
-
 /**
- * Map of loaded audio files
+ * Map of loaded audio files.
  * @type {Object<String, Howl>}
  */
-export const sounds = {};
+const sounds = {};
+
+/**
+ * Audio manager.
+ */
+const audio = Object.assign(new EventEmitter(), {
+  /**
+   * Map of loaded audio files.
+   * @memberof module:engine/audio
+   * @type {Object<String, Howl>}
+   */
+  sounds: sounds,
+  /**
+   * Whether audio is muted.
+   * @memberof module:engine/audio
+   * @type {boolean}
+   */
+  muted: false,
+  /**
+   * Mute.
+   * @memberof module:engine/audio
+   */
+  mute: function() { Howler.mute(true); audio.muted = true; audio.emit('mute', true); },
+  /**
+   * Unmute.
+   * @memberof module:engine/audio
+   */
+  unmute: function() { Howler.mute(false); audio.muted = false; audio.emit('mute', false); },
+
+  /**
+   * Get/set global audio volume.
+   * @memberof module:engine/audio
+   */
+  volume: function(v) { Howler.volume(v) },
+});
+
+let mutedBeforePause = false;
+core.on('pause', function() {
+  if (audio.muted) {
+    mutedBeforePause = true;
+  }
+  audio.mute();
+});
+core.on('resume', function() {
+  if (!mutedBeforePause) {
+    audio.unmute();
+  }
+});
 
 // Utils
+const AudioUse = (config.audio && Array.isArray(config.audio.use)) ? config.audio.use : ['webm', 'mp3'];
 function getFileExt(path) {
   return (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
 }
@@ -93,3 +141,37 @@ loader.pre((res, next) => {
 
   next();
 });
+
+/**
+ * Audio module is a simple wrapper of Howler.js.
+ * For more details, see the [Howler.js official site](http://goldfirestudios.com/blog/104/howler.js-Modern-Web-Audio-Javascript-Library).
+ *
+ * @example <caption>Load audio files</caption>
+ * import loader from 'engine/loader';
+ *
+ * // Add audio file with extensions, and give it an `id` for later use.
+ * loader.add('bgm', 'bgm.ogg');
+ * // You can
+ * loader.add('bgm2', 'bgm2.webm|mp3');
+ *
+ * // Note that ONLY files with extensions in `config.audio.use` will be
+ * // properly loaded.
+ *
+ * @example <caption>Play loaded sound file</caption>
+ * import audio from 'engine/audio';
+ *
+ * // Sound objects are just `Howl` instances
+ * audio.sounds['bgm'].loop(true).play();
+ *
+ * @emits mute
+ * @emits unmute
+ *
+ * @exports engine/audio
+ *
+ * @requires engine/event-emitter
+ * @requires engine/core
+ * @requires engine/loader
+ * @requires engine/audio/howler.core
+ */
+export { Howl, Howler, sounds };
+export default audio;
