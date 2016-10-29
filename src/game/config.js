@@ -5,6 +5,8 @@ export default {
   width: 320,
   height: 200,
 
+  canvas: 'game',
+
   /**
    * How does the game resize?
    * available values:

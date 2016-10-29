@@ -1,20 +1,18 @@
-'use strict';
+import 'engine/polyfill';
 
-require('engine/polyfill');
-
-var EventEmitter = require('engine/eventemitter3');
-var Timer = require('engine/timer');
-var Vector = require('engine/vector');
-var resize = require('engine/resize');
-var device = require('engine/device');
-var config = require('game/config').default;
+import EventEmitter from 'engine/eventemitter3';
+import Timer from 'engine/timer';
+import Vector from 'engine/vector';
+import resize from 'engine/resize';
+import device from 'engine/device';
+import config from 'game/config';
 
 /**
  * @type {EventEmitter}
  * @private
  */
-var core = new EventEmitter();
-var nextGameIdx = 1;
+const core = new EventEmitter();
+let nextGameIdx = 1;
 
 // Public properties and methods
 Object.assign(core, {
@@ -116,12 +114,12 @@ Object.assign(core, {
    * @param {Game} gameCtor       Game class to be set
    * @param {boolean} newInstance Whether create new instance for this game.
    */
-  setGame: function(gameCtor, newInstance) {
+  setGame: function(gameCtor, newInstance = false) {
     if (!gameCtor.id) {
       gameCtor.id = nextGameIdx++;
     }
 
-    var pair = core.games[gameCtor.id];
+    let pair = core.games[gameCtor.id];
 
     if (!pair) {
       pair = { ctor: gameCtor, inst: null };
@@ -161,10 +159,8 @@ Object.assign(core, {
    *                         the same reason when resume from this
    *                         pause.
    */
-  pause: function(reasonP) {
-    var i,
-      reason = reasonP || 'untitled',
-      alreadyPaused = false;
+  pause: function(reason = 'untitled') {
+    let i, alreadyPaused = false;
 
     for (i in core.pauses) {
       if (!core.pauses.hasOwnProperty(i)) continue;
@@ -187,8 +183,8 @@ Object.assign(core, {
    * @param {string} reasonP Resume from pause tagged with this reason
    * @param {boolean} force Whether force to resume
    */
-  resume: function(reasonP, force) {
-    var i, reason = reasonP || 'untitled';
+  resume: function(reason = 'untitled', force = false) {
+    let i;
 
     if (force) {
       // Resume everything
@@ -288,9 +284,9 @@ else {
 }
 
 // - Private properties and methods
-var nextGame = null;
-var loopId = 0;
-var resizeFunc = _letterBoxResize;
+let nextGame = null;
+let loopId = 0;
+let resizeFunc = _letterBoxResize;
 function startLoop() {
   loopId = requestAnimationFrame(loop);
 }
@@ -301,7 +297,7 @@ function loop(timestamp) {
   if (!core.paused) {
     // Switch to new game
     if (nextGame) {
-      var pair = nextGame;
+      let pair = nextGame;
       nextGame = null;
 
       // Freeze current game before switching
@@ -337,11 +333,7 @@ function boot() {
   // Disable scroll
   _noPageScroll();
 
-  var rendererConfig = Object.assign({
-    canvasId: 'game',
-  }, config.renderer);
-
-  core.view = document.getElementById(rendererConfig.canvasId);
+  core.view = document.getElementById(config.canvas || 'game');
   core.containerView = document.getElementById('container');
 
   // Keep focus when mouse/touch event occurs on the canvas
@@ -382,21 +374,21 @@ function boot() {
   resizeFunc(true);
 
   // Setup visibility change API
-  var visibleResume = function() {
+  const visibleResume = function() {
     if (config.pauseOnHide) core.resume('visibility');
   };
-  var visiblePause = function() {
+  const visiblePause = function() {
     if (config.pauseOnHide) core.pause('visibility');
   };
 
   // Main visibility API function
-  var vis = (function() {
-    var stateKey, eventKey;
-    var keys = {
-      hidden: "visibilitychange",
-      mozHidden: "mozvisibilitychange",
-      webkitHidden: "webkitvisibilitychange",
-      msHidden: "msvisibilitychange"
+  const vis = (function() {
+    let stateKey, eventKey;
+    const keys = {
+      hidden: 'visibilitychange',
+      mozHidden: 'mozvisibilitychange',
+      webkitHidden: 'webkitvisibilitychange',
+      msHidden: 'msvisibilitychange'
     };
     for (stateKey in keys) {
       if (stateKey in document) {
@@ -430,7 +422,7 @@ function boot() {
     window.addEventListener('blur', visiblePause, false);
   }
   else {
-    window.attachEvent("focus", function() {
+    window.attachEvent('focus', function() {
       setTimeout(visibleResume, 300);
     });
     window.attachEvent('blur', visiblePause);
@@ -438,7 +430,7 @@ function boot() {
 
   // Create rotate prompt if required
   if (device.mobile && config.showRotatePrompt) {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = config.rotatePromptImg ? '' : config.rotatePromptMsg;
     div.style.position = 'absolute';
     div.style.height = '12px';
@@ -454,7 +446,7 @@ function boot() {
     document.body.appendChild(div);
 
     if (config.rotatePromptImg) {
-      var img = new Image();
+      const img = new Image();
       img.onload = function() {
         div.image = img;
         div.appendChild(img);
@@ -466,7 +458,7 @@ function boot() {
     }
 
     // Check orientation and display the rotate prompt if required
-    var isLandscape = (core.width / core.height >= 1);
+    const isLandscape = (core.width / core.height >= 1);
     core.on('resize', function() {
       if (window.innerWidth < window.innerHeight && isLandscape) {
         core.rotatePromptVisible = true;
@@ -511,17 +503,17 @@ function chooseProperResolution(res) {
     return 1;
   }
   // Numerical value
-  else if (typeof(res) === 'number') {
+  else if (Number.isFinite(res)) {
     return res;
   }
   // Calculate based on window size and device pixel ratio
   else {
     res.values.sort(function(a, b) { return a - b });
-    var gameRatio = core.width / core.height;
-    var windowRatio = window.innerWidth / window.innerHeight;
-    var scale = res.retina ? window.devicePixelRatio : 1;
-    var result = res.values[0];
-    for (var i = 0; i < res.values.length; i++) {
+    const gameRatio = core.width / core.height;
+    const windowRatio = window.innerWidth / window.innerHeight;
+    const scale = res.retina ? window.devicePixelRatio : 1;
+    let result = res.values[0];
+    for (let i = 0; i < res.values.length; i++) {
       result = res.values[i];
 
       if ((gameRatio >= windowRatio && window.innerWidth * scale <= core.width * result) ||
@@ -534,13 +526,13 @@ function chooseProperResolution(res) {
   }
 }
 function resizeRotatePrompt() {
-  core.rotatePromptElm.style.width = window.innerWidth + 'px';
-  core.rotatePromptElm.style.height = window.innerHeight + 'px';
+  core.rotatePromptElm.style.width = `${window.innerWidth}px`;
+  core.rotatePromptElm.style.height = `${window.innerHeight}px`;
   _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
 
-  var imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
-  var windowRatio = window.innerWidth / window.innerHeight;
-  var w, h;
+  const imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
+  const windowRatio = window.innerWidth / window.innerHeight;
+  let w, h;
   if (imgRatio < windowRatio) {
     w = Math.floor(window.innerHeight * 0.8);
     h = Math.floor(w / imgRatio);
@@ -549,14 +541,14 @@ function resizeRotatePrompt() {
     h = Math.floor(window.innerWidth * 0.8);
     w = Math.floor(h * imgRatio);
   }
-  core.rotatePromptImg.style.height = w + 'px';
-  core.rotatePromptImg.style.width = h + 'px';
+  core.rotatePromptImg.style.height = `${w}px`;
+  core.rotatePromptImg.style.width = `${h}px`;
 }
 
 // Resize functions
-var windowSize = { x: 1, y: 1 };
-var scaledWidth, scaledHeight;
-var result, container;
+let windowSize = { x: 1, y: 1 };
+let scaledWidth, scaledHeight;
+let result, container;
 function _letterBoxResize(first) {
   // Update sizes
   windowSize.x = window.innerWidth;
@@ -572,14 +564,14 @@ function _letterBoxResize(first) {
   scaledHeight = Math.floor(core.viewSize.y * result.scale);
 
   // Resize the view
-  core.view.style.width = scaledWidth + 'px';
-  core.view.style.height = scaledHeight + 'px';
+  core.view.style.width = `${scaledWidth}px`;
+  core.view.style.height = `${scaledHeight}px`;
 
   // Resize the container
-  core.containerView.style.width = scaledWidth + 'px';
-  core.containerView.style.height = scaledHeight + 'px';
-  core.containerView.style.marginTop = Math.floor(result.top) + 'px';
-  core.containerView.style.marginLeft = Math.floor(result.left) + 'px';
+  core.containerView.style.width = `${scaledWidth}px`;
+  core.containerView.style.height = `${scaledHeight}px`;
+  core.containerView.style.marginTop = `${Math.floor(result.top)}px`;
+  core.containerView.style.marginLeft = `${Math.floor(result.left)}px`;
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
@@ -592,8 +584,8 @@ function _letterBoxResize(first) {
 function _cropResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
-  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
-  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
+  core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
+  core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
   // Resize the renderer
   // Renderer.resize(core.viewSize.x, core.viewSize.y);
@@ -609,8 +601,8 @@ function _cropResize() {
 function _scaleInnerResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
-  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
-  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
+  core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
+  core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
   // Resize the renderer
   // Renderer.resize(core.viewSize.x, core.viewSize.y);
@@ -634,8 +626,8 @@ function _scaleInnerResize() {
 function _scaleOuterResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
-  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
-  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
+  core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
+  core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
   // Resize the renderer
   // Renderer.resize(core.viewSize.x, core.viewSize.y);
@@ -659,8 +651,8 @@ function _scaleOuterResize() {
 
 // CSS helpers
 function _alignToWindowCenter(el, w, h) {
-  el.style.marginLeft = Math.floor((window.innerWidth - w) / 2) + 'px';
-  el.style.marginTop = Math.floor((window.innerHeight - h) / 2) + 'px';
+  el.style.marginLeft = `${Math.floor((window.innerWidth - w) / 2)}px`;
+  el.style.marginTop = `${Math.floor((window.innerHeight - h) / 2)}px`;
 }
 function _noPageScroll() {
   document.ontouchmove = function(event) {
@@ -680,4 +672,4 @@ function _noPageScroll() {
  * @requires module:engine/resize
  * @requires module:engine/device
  */
-module.exports = core;
+export default core;
