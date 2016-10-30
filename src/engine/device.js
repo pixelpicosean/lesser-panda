@@ -1,13 +1,10 @@
-'use strict';
-
 function fetchDeviceInfo() {
-  var device = {};
-
-  var ua = navigator.userAgent;
+  const device = {};
+  let ua = navigator.userAgent;
 
   // Facebook mobile app's integrated browser adds a bunch of strings that
   // match everything. Strip it out if it exists.
-  var tmp = ua.split('[FBAN');
+  let tmp = ua.split('[FBAN');
   if (typeof tmp[1] !== 'undefined') {
     ua = tmp[0];
     /**
@@ -360,4 +357,4 @@ function fetchDeviceInfo() {
 /**
  * @exports engine/device
  */
-module.exports = fetchDeviceInfo();
+export default fetchDeviceInfo();
