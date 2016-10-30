@@ -1,9 +1,7 @@
-'use strict';
-
 /**
  * @module engine/resize
  */
-var pRatio = 1.0, cRatio = 1.0;
+let pRatio = 1.0, cRatio = 1.0;
 
 /**
  * Calculate how to scale a content to fill its container in `outer-box` mode.
@@ -11,11 +9,11 @@ var pRatio = 1.0, cRatio = 1.0;
  * @param  {Vector} contentSize
  * @return {object} { left , top , scale }
  */
-module.exports.outerBoxResize = function(containerSize, contentSize) {
+export function outerBoxResize(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 
-  var result = { left: 0, top: 0, scale: 1, };
+  let result = { left: 0, top: 0, scale: 1, };
   if (pRatio > cRatio) {
     result.scale = containerSize.y / contentSize.y;
     result.left = (containerSize.x - contentSize.x * result.scale) * 0.5;
@@ -34,11 +32,11 @@ module.exports.outerBoxResize = function(containerSize, contentSize) {
  * @param  {Vector} contentSize
  * @return {object} { left , top , scale }
  */
-module.exports.innerBoxResize = function(containerSize, contentSize) {
+export function innerBoxResize(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 
-  var result = { left: 0, top: 0, scale: 1, };
+  let result = { left: 0, top: 0, scale: 1, };
   if (pRatio < cRatio) {
     result.scale = containerSize.y / contentSize.y;
     result.left = (containerSize.x - contentSize.x * result.scale) * 0.5;

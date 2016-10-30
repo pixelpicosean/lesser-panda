@@ -3,7 +3,7 @@ import 'engine/polyfill';
 import EventEmitter from 'engine/event-emitter';
 import Timer from 'engine/timer';
 import Vector from 'engine/vector';
-import resize from 'engine/resize';
+import * as resize from 'engine/resize';
 import device from 'engine/device';
 import config from 'game/config';
 
