@@ -83,11 +83,18 @@ class SystemGfx extends System {
     this.renderer = sharedRenderer;
 
     /**
-     * Root drawing element
+     * Root drawing element.
      * @memberof SystemGfx#
      * @type {Container}
      */
     this.root = container();
+
+    /**
+     * Map of layer containers.
+     * @memberof SystemGfx#
+     * @type {Object}
+     */
+    this.layers = {};
   }
 
   set backgroundColor(c) {
@@ -104,8 +111,35 @@ class SystemGfx extends System {
   fixedUpdate() {}
   freeze() {}
 
-  onEntitySpawn() {}
-  onEntityRemove() {}
+  createLayer(name, parent) {
+    if (this.layers[name]) {
+      console.log(`Layer "${name}" already exist!`);
+      return this;
+    }
+
+    let c;
+    if (!parent) {
+      c = this.root;
+    }
+    else if (this.layers.hasOwnProperty(parent)) {
+      c = this.layers[parent];
+    }
+    else {
+      console.log(`Parent layer "${parent}" does not exist!`);
+      return this;
+    }
+
+    this.layers[name] = container().addTo(c);
+
+    return this;
+  }
+
+  onEntitySpawn(ent) {
+    if (ent.gfx) {
+      let layer = ent.layer
+    }
+  }
+  onEntityRemove(ent) {}
 
   onPause() {}
   onResume() {}
