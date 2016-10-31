@@ -74,12 +74,19 @@ class MyGame extends Game {
     // Keyboard
     keyboard.on('keydown', (k) => console.log(`Pressed "${k}"`));
 
-    // Pixi
+    // Gfx
+    this.sysGfx
+      .createLayer('background')
+      .createLayer('entities')
+        .createLayer('deco', 'entities')
+        .createLayer('actor', 'entities')
+        .createLayer('fx', 'entities')
+      .createLayer('ui');
+
     this.sysGfx.backgroundColor = 0xcccccc;
     let spr = sprite({
       texture: 'font-sheet',
-    }).addTo(this.sysGfx.root);
-    console.log(spr);
+    }).addTo(this.sysGfx.layers['ui']);
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
