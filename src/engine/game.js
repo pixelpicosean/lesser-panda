@@ -181,7 +181,7 @@ class Game extends EventEmitter {
 
     this.systems[sys.name] = sys;
     this.systemOrder.push(sys.name);
-    this[sys.name] = sys;
+    this[`sys${sys.name}`] = sys;
     sys.game = this;
 
     return this;

@@ -175,7 +175,7 @@ class SystemTimer extends System {
   constructor() {
     super();
 
-    this.name = 'sTimer';
+    this.name = 'Timer';
 
     this.delta = 0;
     this.now = 0;

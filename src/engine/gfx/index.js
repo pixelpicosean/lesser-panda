@@ -10,30 +10,6 @@
 // core.filters        = require('./filters');
 // core.mesh           = require('./mesh');
 
-// Register PIXI as the renderer of choice
-// var Renderer = require('engine/renderer');
-// var config = require('game/config').default;
-
-// Renderer.init = function(width, height, settings) {
-//   settings.view = document.getElementById(settings.canvasId);
-
-//   if (settings.webGL) {
-//     this.instance = core.autoDetectRenderer(width, height, settings);
-//   }
-//   else {
-//     this.instance = new core.CanvasRenderer(width, height, settings);
-//   }
-// };
-// Renderer.resize = function(w, h) {
-//   this.instance.resize(w, h);
-// };
-// Renderer.render = function(scene) {
-//   this.instance.render(scene.stage);
-// };
-// Renderer.createLayer = function(scene, name, parent) {
-//   var parentKey = parent || 'stage';
-//   scene[name] = new core.Container().addTo(scene[parentKey]);
-// };
 
 // Inject as sub-system of scene
 // var Scene = require('engine/scene');
@@ -60,15 +36,6 @@
 //   },
 // });
 
-// Object.defineProperty(Scene.prototype, 'backgroundColor', {
-//   get: function() {
-//     return this._backgroundColor;
-//   },
-//   set: function(color) {
-//     Renderer.instance.backgroundColor = this._backgroundColor = color;
-//   },
-// });
-
 
 const core = require('engine/core');
 const System = require('engine/system');
@@ -89,7 +56,7 @@ class SystemGfx extends System {
      * @memberof SystemGfx#
      * @type {String}
      */
-    this.name = 'sGfx';
+    this.name = 'Gfx';
 
     if (!sharedRenderer) {
       let options = {

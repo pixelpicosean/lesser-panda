@@ -45,18 +45,18 @@ class MyGame extends Game {
     console.log(`awake from a "${device.mobile ? 'mobile' : 'desktop'}" device`);
 
     // Test timers
-    this.sTimer.later(1000, () => {
+    this.sysTimer.later(1000, () => {
       console.log('pause timers');
 
-      this.sTimer.pauseTimersTagged('aa');
+      this.sysTimer.pauseTimersTagged('aa');
     });
-    this.sTimer.later(2000, () => {
+    this.sysTimer.later(2000, () => {
       console.log('resume timers');
 
-      this.sTimer.resumeTimersTagged('aa');
+      this.sysTimer.resumeTimersTagged('aa');
     });
 
-    this.sTimer.later(2000, () => {
+    this.sysTimer.later(2000, () => {
       console.log('hello from timer');
     }, null, 'aa');
 
@@ -75,10 +75,10 @@ class MyGame extends Game {
     keyboard.on('keydown', (k) => console.log(`Pressed "${k}"`));
 
     // Pixi
-    this.sGfx.backgroundColor = 0xcccccc;
+    this.sysGfx.backgroundColor = 0xcccccc;
     let spr = sprite({
       texture: 'font-sheet',
-    }).addTo(this.sGfx.root);
+    }).addTo(this.sysGfx.root);
     console.log(spr);
   }
   update(dt, dtSec) {
