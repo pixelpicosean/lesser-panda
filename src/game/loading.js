@@ -51,6 +51,8 @@ class Loading extends Game {
     loader.onComplete.once(function() {
       h.detach();
       core.setGame(gameClass, true);
+
+      core.emit('ready');
     });
 
     loader.load();
