@@ -4,8 +4,6 @@ var textureFromData = require('./utils').textureFromData;
 module.exports = function(data) {
   var tex = textureFromData(data.texture);
   var inst = new Sprite(tex);
-  console.log(data.texture)
-  console.log(tex)
 
   var k, func;
   for (k in data) {
