@@ -1,9 +1,11 @@
-import Loader from './Loader';
-import Resource from './Resource';
-import * as async from './async';
-import * as b64 from './b64';
-import config from 'game/config';
+const Loader = require('./Loader');
+const Resource = require('./Resource');
+const async = require('./async');
+const b64 = require('./b64');
+const config = require('game/config');
 
-export { Loader, Resource, async, b64 as base64 };
-
-export default new Loader(config.baseUrl || 'media');
+module.exports = new Loader(config.baseUrl || 'media');
+module.exports.Loader = Loader;
+module.exports.Resource = Resource;
+module.exports.async = async;
+module.exports.base64 = b64;

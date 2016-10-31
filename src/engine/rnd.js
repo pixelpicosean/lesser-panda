@@ -275,5 +275,5 @@ class RandomDataGenerator {
  *
  * @exports engine/rnd
  */
-export { RandomDataGenerator };
-export default new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
+module.exports = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
+module.exports.RandomDataGenerator = RandomDataGenerator;

@@ -1,5 +1,5 @@
-import Data from './data';
-import storage from './storage';
+const Data = require('./data');
+const storage = require('./storage');
 
 /**
  * Persistent data storage, save/load data from `localStorage`.
@@ -59,4 +59,4 @@ class PersistentData extends Data {
  * @requires module:engine/storage/storage
  * @requires module:engine/storage/data
  */
-export default PersistentData;
+module.exports = PersistentData;

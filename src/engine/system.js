@@ -1,4 +1,4 @@
-export default class System {
+class System {
   constructor() {
     this.name = '';
   }
@@ -14,3 +14,5 @@ export default class System {
   onPause() {}
   onResume() {}
 }
+
+module.exports = System;

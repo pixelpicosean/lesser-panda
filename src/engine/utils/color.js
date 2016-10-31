@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Color utility functions.
  *
@@ -43,5 +41,5 @@ module.exports.hex2string = function(hex) {
  * @return {number} The color number
  */
 module.exports.rgb2hex = function(rgb) {
-  return ((rgb[0]*255 << 16) + (rgb[1]*255 << 8) + rgb[2]*255);
+  return ((rgb[0] * 255 << 16) + (rgb[1] * 255 << 8) + rgb[2] * 255);
 };

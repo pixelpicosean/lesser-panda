@@ -1,4 +1,4 @@
-import EventEmitter from 'engine/event-emitter';
+const EventEmitter = require('engine/event-emitter');
 
 /**
  * @class Keyboard
@@ -190,5 +190,5 @@ Object.assign(Keyboard, {
  *   console.log(`key "${key}" is pressed`);
  * });
  */
-export { Keyboard };
-export default new Keyboard();
+module.exports = new Keyboard();
+module.exports.Keyboard = Keyboard;

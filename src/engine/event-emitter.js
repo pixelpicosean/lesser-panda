@@ -251,4 +251,4 @@ EventEmitter.prototype.addListener = EventEmitter.prototype.on;
  * @exports engine/eventemitter3
  * @see EventEmitter
  */
-export default EventEmitter;
+module.exports = EventEmitter;

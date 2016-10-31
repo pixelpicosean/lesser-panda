@@ -1,11 +1,11 @@
-import 'engine/polyfill';
+require('engine/polyfill');
 
-import EventEmitter from 'engine/event-emitter';
-import Timer from 'engine/timer';
-import Vector from 'engine/vector';
-import * as resize from 'engine/resize';
-import device from 'engine/device';
-import config from 'game/config';
+const EventEmitter = require('engine/event-emitter');
+const Timer = require('engine/timer');
+const Vector = require('engine/vector');
+const resize = require('engine/resize');
+const device = require('engine/device');
+const config = require('game/config');
 
 /**
  * @type {EventEmitter}
@@ -36,6 +36,13 @@ Object.assign(core, {
    * @type {HTMLCanvasElement}
    */
   containerView: null,
+
+  /**
+   * Canvas resolution properly choosed based on configs.
+   * @memberof module:engine/core
+   * @type {Number}
+   */
+  resolution: 1,
 
   /**
    * Size of game content.
@@ -345,10 +352,7 @@ function boot() {
   core.view.addEventListener('mousedown', focus);
   core.view.addEventListener('touchstart', focus);
 
-  // Config and create renderer
-  // Renderer.resolution = rendererConfig.resolution = core.resolution;
-  // Renderer.init(core.width, core.height, rendererConfig);
-
+  // Start game loop
   startLoop();
 
   // Pick a resize function
@@ -676,4 +680,4 @@ function _noPageScroll() {
  * @requires module:engine/resize
  * @requires module:engine/device
  */
-export default core;
+module.exports = core;

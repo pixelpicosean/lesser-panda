@@ -1,5 +1,5 @@
-import System from 'engine/system';
-import { removeItems } from 'engine/utils/array';
+const System = require('engine/system');
+const { removeItems } = require('engine/utils/array');
 
 /**
  * @class Timer
@@ -331,4 +331,4 @@ class SystemTimer extends System {
   }
 }
 
-export default SystemTimer;
+module.exports = SystemTimer;

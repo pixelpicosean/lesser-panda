@@ -1,7 +1,7 @@
-import Signal from 'engine/mini-signals';
-import parseUri from './parse-uri';
-import * as async from './async';
-import Resource from './Resource';
+const Signal = require('engine/mini-signals');
+const parseUri = require('./parse-uri');
+const async = require('./async');
+const Resource = require('./Resource');
 
 // some constants
 const MAX_PROGRESS = 100;
@@ -12,7 +12,7 @@ const rgxExtractUrlHash = /(#[\w\-]+)?$/;
  *
  * @class
  */
-export default class Loader {
+class Loader {
     /**
      * @param {string} [baseUrl=''] - The base url for all resources loaded by this loader.
      * @param {number} [concurrency=10] - The number of resources to load concurrently.
@@ -553,3 +553,5 @@ export default class Loader {
         );
     }
 }
+
+module.exports = Loader;

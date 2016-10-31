@@ -1,5 +1,5 @@
-import core from 'engine/core';
-import EventEmitter from 'engine/event-emitter';
+const core = require('engine/core');
+const EventEmitter = require('engine/event-emitter');
 
 /**
  * Game is the main hub for a game. A game made with LesserPanda
@@ -250,4 +250,4 @@ class Game extends EventEmitter {
  * @requires engine/core
  * @requires engine/utils
  */
-export default Game;
+module.exports = Game;

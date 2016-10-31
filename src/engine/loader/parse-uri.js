@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = function parseURI (str, opts) {
+module.exports = function(str, opts) {
   opts = opts || {}
 
   var o = {

@@ -1,15 +1,76 @@
-export default {
+module.exports = {
   /**
    * Logic size of the game
    */
-  width: 320,
-  height: 200,
+  width: 400,
+  height: 400,
 
+  gfx: {
+    /**
+     * Using WebGL when available or not?
+     * @type {Boolean}
+     */
+    webgl: true,
+    /**
+     * The resolution of the renderer, used for hi-resolution
+     * textures and better text rendering.
+     *
+     * You only need higher resolutions while using hi-res
+     * textures(i.e. image@2x.png), or better Text renderering.
+     * Higher resolution means larger Canvas, which may cause
+     * performance issues, especially on mobile devices.
+     *
+     * The value can be numbers, which will be directly used
+     *   by the renderer
+     * Or an object with some fields:
+     *   - retina {Boolean} Whether take retina into account
+     *   - values {Array}   Available resolutions
+     * @type {Number|Object}
+     */
+    resolution: {
+      retina: true,
+      values: [1, 2],
+    },
+    /**
+     * If the render view is transparent.
+     * @type {Boolean}
+     */
+    transparent: false,
+    /**
+     * Sets antialias (only applicable in chrome at the moment).
+     * @type {Boolean}
+     */
+    antialias: false,
+    /**
+     * Enables drawing buffer preservation, enable this if you
+     * need to call toDataUrl on the webgl context.
+     * @type {Boolean}
+     */
+    preserveDrawingBuffer: false,
+  },
+
+  /**
+   * Default canvas view ID.
+   * @type {String}
+   */
   canvas: 'game',
 
+  /**
+   * Base URL of assets.
+   * @type {String}
+   */
   baseUrl: 'media',
 
+  /**
+   * Audio specific settings.
+   * @type {Object}
+   */
   audio: {
+    /**
+     * Supported audio file format.
+     * Only files with these extensions will be load.
+     * @type {Array}
+     */
     use: ['webm', 'mp3'],
   },
 
@@ -38,30 +99,6 @@ export default {
   rotatePromptFontColor: 'white',
   rotatePromptImg: 'media/rotate.png',
   rotatePromptMsg: 'Please Rotate Your Device!',
-
-  renderer: {
-    webGL: true,
-    /**
-     * The resolution of the renderer, used for hi-resolution
-     * textures and better text rendering.
-     *
-     * You only need higher resolutions while using hi-res
-     * textures(i.e. image@2x.png), or better Text renderering.
-     * Higher resolution means larger Canvas, which may cause
-     * performance issues, especially on mobile devices.
-     *
-     * The value can be numbers, which will be directly used
-     *   by the renderer
-     * Or an object with some fields:
-     *   - retina {Boolean} Whether take retina into account
-     *   - values {Array}   Available resolutions
-     * @type {Number|Object}
-     */
-    resolution: {
-      retina: true,
-      values: [1],
-    },
-  },
 
   storage: {
     id: 'lpanda',

@@ -1,4 +1,4 @@
-export class MiniSignalBinding {
+class MiniSignalBinding {
 
   /**
   * MiniSignalBinding constructor.
@@ -41,7 +41,7 @@ function _addMiniSignalBinding (self, node) {
   return node;
 }
 
-export class MiniSignal {
+class MiniSignal {
 
   /**
   * MiniSignal constructor.
@@ -194,4 +194,6 @@ export class MiniSignal {
   }
 }
 
-export default MiniSignal;
+module.exports = MiniSignal;
+module.exports.MiniSignalBinding = MiniSignalBinding;
+module.exports.MiniSignal = MiniSignal;

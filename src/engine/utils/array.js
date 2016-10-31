@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Array utility functions.
  *
@@ -14,14 +12,14 @@
  * @param {number} removeCount How many items to remove
  */
 module.exports.removeItems = function(arr, startIdx, removeCount) {
-  var length = arr.length;
+  let i, len, length = arr.length;
 
   if (startIdx >= length || removeCount === 0) {
     return;
   }
 
   removeCount = (startIdx+removeCount > length ? length-startIdx : removeCount);
-  for (var i = startIdx, len = length-removeCount; i < len; ++i) {
+  for (i = startIdx, len = length-removeCount; i < len; ++i) {
     arr[i] = arr[i + removeCount];
   }
 

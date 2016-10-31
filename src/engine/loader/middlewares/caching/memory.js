@@ -1,7 +1,7 @@
 // a simple in-memory cache for resources
 const cache = {};
 
-export function memoryMiddlewareFactory() {
+module.exports.memoryMiddlewareFactory = function() {
     return function memoryMiddleware(resource, next) {
         // if cached, then set data and complete the resource
         if (cache[resource.url]) {
@@ -15,4 +15,4 @@ export function memoryMiddlewareFactory() {
 
         next();
     };
-}
+};

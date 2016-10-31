@@ -1,25 +1,23 @@
-import core from 'engine/core';
-import loader, { Resource } from 'engine/loader';
-import { Howl, Howler } from 'engine/audio/howler.core';
-import EventEmitter from 'engine/event-emitter';
-import config from 'game/config';
-
-/**
- * Map of loaded audio files.
- * @type {Object<String, Howl>}
- */
-const sounds = {};
+const core = require('engine/core');
+const loader = require('engine/loader');
+const { Resource } = loader;
+const { Howl, Howler } = require('engine/audio/howler.core');
+const EventEmitter = require('engine/event-emitter');
+const config = require('game/config');
 
 /**
  * Audio manager.
  */
 const audio = Object.assign(new EventEmitter(), {
+  Howl: Howl,
+  Howler: Howler,
+
   /**
    * Map of loaded audio files.
    * @memberof module:engine/audio
    * @type {Object<String, Howl>}
    */
-  sounds: sounds,
+  sounds: {},
   /**
    * Whether audio is muted.
    * @memberof module:engine/audio
@@ -90,7 +88,7 @@ function load(cb) {
   this.data.on('load', this._boundComplete, false);
 
   // Save to sound hash
-  sounds[this.name] = this.data;
+  audio.sounds[this.name] = this.data;
 }
 function complete() {
   if (this.data) {
@@ -173,5 +171,4 @@ loader.pre((res, next) => {
  * @requires engine/loader
  * @requires engine/audio/howler.core
  */
-export { Howl, Howler, sounds };
-export default audio;
+module.exports = audio;

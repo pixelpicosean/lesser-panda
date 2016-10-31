@@ -1,4 +1,4 @@
-import EventEmitter from 'engine/event-emitter';
+const EventEmitter = require('engine/event-emitter');
 
 /**
  * Data storage base class. Provides data define, set and get support.
@@ -259,4 +259,4 @@ class Data extends EventEmitter {
  *
  * @requires module:engine/eventemitter3
  */
-export default Data;
+module.exports = Data;

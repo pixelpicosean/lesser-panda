@@ -1,10 +1,10 @@
-import Resource from '../../Resource';
-import b64 from '../../b64';
+const Resource = require('../../Resource');
+const b64 = require('../../b64');
 
 const Url = window.URL || window.webkitURL;
 
 // a middleware for transforming XHR loaded Blobs into more useful objects
-export function blobMiddlewareFactory() {
+module.exports.blobMiddlewareFactory = function() {
     return function blobMiddleware(resource, next) {
         if (!resource.data) {
             next();
@@ -62,4 +62,4 @@ export function blobMiddlewareFactory() {
 
         next();
     };
-}
+;}

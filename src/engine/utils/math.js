@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Math utility functions and constant variables.
  *
