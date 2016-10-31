@@ -1,18 +1,25 @@
-import core from 'engine/core';
-import Game from 'engine/game';
+const core = require('engine/core');
+const Game = require('engine/game');
 
-import SystemTimer from 'engine/timer';
+const SystemTimer = require('engine/timer');
 
-import { persistent, session } from 'engine/storage';
+const { persistent, session } = require('engine/storage');
 
-import loader from 'engine/loader';
-import { sounds } from 'engine/audio';
+const loader = require('engine/loader');
+const { sounds } = require('engine/audio');
+const analytics = require('engine/analytics');
+const device = require('engine/device');
+const rnd = require('engine/rnd');
+const keyboard = require('engine/keyboard');
+const SystemGfx = require('engine/gfx');
+const sprite = require('engine/gfx/sprite');
+const Loading = require('game/loading');
 
 persistent.addInt('score', 0);
 session.addString('name', 'Sean');
 
 loader
-  .add('font', 'KenPixel.fnt')
+  .add('KenPixel.fnt')
   .add('font-sheet', 'KenPixel.png')
   .add('bgm', 'bgm.mp3|webm')
   .add('bgm2', 'bgm.mp3')
@@ -26,14 +33,16 @@ class MyGame extends Game {
 
     this.desiredFPS = 10;
 
-    this.addSystem(new SystemTimer());
+    this
+      .addSystem(new SystemTimer())
+      .addSystem(new SystemGfx());
 
     console.log('constructor');
   }
   awake() {
     super.awake();
 
-    console.log('awake');
+    console.log(`awake from a "${device.mobile ? 'mobile' : 'desktop'}" device`);
 
     // Test timers
     this.sTimer.later(1000, () => {
@@ -57,7 +66,20 @@ class MyGame extends Game {
     console.log(`persistent test: ${persistent.get('score')}`);
 
     // Audio
-    sounds['bgm'].play();
+    // sounds['bgm'].play();
+
+    // Rnd
+    console.log(`random integer: ` + rnd.between(0, 1000000));
+
+    // Keyboard
+    keyboard.on('keydown', (k) => console.log(`Pressed "${k}"`));
+
+    // Pixi
+    this.sGfx.backgroundColor = 0xcccccc;
+    let spr = sprite({
+      texture: 'font-sheet',
+    }).addTo(this.sGfx.root);
+    console.log(spr);
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
@@ -86,4 +108,4 @@ class MyGame extends Game {
   }
 }
 
-core.main(null, MyGame);
+core.main(MyGame, Loading);
