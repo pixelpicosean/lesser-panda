@@ -121,7 +121,7 @@ Object.assign(core, {
    * @param {Game} gameCtor       Game class to be set
    * @param {boolean} newInstance Whether create new instance for this game.
    */
-  setGame: function(gameCtor, newInstance = false) {
+  setGame: function(gameCtor, newInstance = false, param = {}) {
     if (!gameCtor.id) {
       gameCtor.id = nextGameIdx++;
     }
@@ -129,8 +129,9 @@ Object.assign(core, {
     let pair = core.games[gameCtor.id];
 
     if (!pair) {
-      pair = { ctor: gameCtor, inst: null };
+      pair = { ctor: gameCtor, inst: null, param: param };
     }
+    pair.param = param;
 
     if (!!newInstance) {
       pair.inst = null;
@@ -145,7 +146,7 @@ Object.assign(core, {
    * @param {Game} loaderCtor Asset loader class
    */
   main: function(gameCtor, loaderCtor) {
-    core.setGame(loaderCtor, true);
+    core.setGame(loaderCtor, true, { gameClass: gameCtor });
 
     window.addEventListener('load', boot, false);
     document.addEventListener('DOMContentLoaded', boot, false);
@@ -283,11 +284,8 @@ Object.defineProperty(core, 'paused', {
 });
 
 // Fetch device info and setup
-if (config.renderer && config.renderer.resolution) {
-  core.resolution = chooseProperResolution(config.renderer.resolution);
-}
-else {
-  core.resolution = 1;
+if (config.gfx && config.gfx.resolution) {
+  core.resolution = chooseProperResolution(config.gfx.resolution);
 }
 
 // - Private properties and methods
@@ -324,7 +322,7 @@ function loop(timestamp) {
       core.on('pause', core.game.pause, core.game);
       core.on('resume', core.game.resume, core.game);
       core.on('resize', core.game.resize, core.game);
-      core.game.awake();
+      core.game.awake(pair.param);
 
       // Resize container of the game
       resizeFunc();
