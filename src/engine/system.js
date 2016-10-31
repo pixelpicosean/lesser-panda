@@ -1,6 +1,7 @@
 class System {
   constructor() {
     this.name = '';
+    this.game = null;
   }
 
   awake() {}
