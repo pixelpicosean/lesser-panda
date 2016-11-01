@@ -45,6 +45,8 @@ class EntityCircle extends Entity {
   constructor(x, y, settings) {
     super(x, y, settings);
 
+    this.canEverTick = true;
+
     this.name = 'c0';
     this.tag = 'primitive';
 
@@ -54,6 +56,18 @@ class EntityCircle extends Entity {
       color: 0xff0000,
       radius: 20,
     });
+
+    this.count = 0;
+  }
+  update(_, dt) {
+    this.position.x += dt * 120;
+    if (this.position.x > core.width) {
+      this.position.x -= core.width;
+
+      if (this.count++ > 2) {
+        this.remove();
+      }
+    }
   }
 }
 
@@ -123,6 +137,8 @@ class MyGame extends Game {
     // Entity
     let ent = this.spawnEntity(EntityCircle, core.width / 2, core.height / 2);
     console.log((ent.gfx.parent === this.sysGfx.layers['actor']) ? '"ent" added to right layer' : '"ent" added to wrong layer!');
+    console.log((ent === this.getEntityByName('c0')) ? '"ent" can be found by name' : '"ent" cannot be found by name!');
+    console.log((ent === this.getEntitiesByTag('primitive')[0]) ? '"ent" can be found by tag' : '"ent" cannot be found by tag!');
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
