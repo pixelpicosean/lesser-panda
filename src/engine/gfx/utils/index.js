@@ -1,4 +1,4 @@
-var core = require('../core');
+var Texture = require('../core/textures/Texture');
 var loader = require('engine/loader');
 var Resource = loader.Resource;
 
@@ -21,7 +21,7 @@ module.exports.textureFromData = function(data) {
   if (!data) {
     return undefined;
   }
-  else if (data instanceof core.Texture) {
+  else if (data instanceof Texture) {
     return data;
   }
   else {

@@ -1,5 +1,6 @@
 var Graphics = require('./core/graphics/Graphics');
 var Vector = require('engine/vector');
+require('./core/graphics/webgl/GraphicsRenderer');
 
 var DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),

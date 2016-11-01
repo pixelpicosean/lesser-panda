@@ -15,7 +15,7 @@ const core = require('engine/core');
 const System = require('engine/system');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
-const utils = require('./core/utils');
+const { isWebGLSupported } = require('./core/utils');
 const container = require('./container');
 const config = require('game/config');
 
@@ -41,7 +41,7 @@ class SystemGfx extends System {
         resolution: core.resolution,
       };
 
-      if (config.gfx.webgl && utils.isWebGLSupported()) {
+      if (config.gfx.webgl && isWebGLSupported()) {
         sharedRenderer = new WebGLRenderer(config.width || 320, config.height || 200, options);
       }
       else {

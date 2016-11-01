@@ -1,5 +1,6 @@
 var Sprite = require('./core/sprites/Sprite');
 var textureFromData = require('./utils').textureFromData;
+require('./core/sprites/webgl/SpriteRenderer');
 
 module.exports = function(data) {
   var tex = textureFromData(data.texture);

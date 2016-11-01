@@ -1,10 +1,12 @@
-var Resource = require('engine/loader').Resource;
-var dirname = require('./dirname');
-var core = require('../core');
-var async = require('engine/loader').async;
-var Loader = require('engine/loader').Loader;
+const Resource = require('engine/loader').Resource;
+const dirname = require('./dirname');
+const Texture = require('../core/textures/Texture');
+const utils = require('../core/utils');
+const math = require('../core/math')
+const async = require('engine/loader').async;
+const Loader = require('engine/loader').Loader;
 
-var BATCH_SIZE = 1000;
+const BATCH_SIZE = 1000;
 
 /**
  * Get texture by key, works for both image and atlas.
@@ -47,7 +49,7 @@ module.exports = function ()
 
             var frames = resource.data.frames;
             var frameKeys = Object.keys(frames);
-            var resolution = core.utils.getResolutionOfUrl(resource.url);
+            var resolution = utils.getResolutionOfUrl(resource.url);
             var batchIndex = 0;
 
             function processFrames(initialFrameIndex, maxFrames)
@@ -66,17 +68,17 @@ module.exports = function ()
 
                         if (frame.rotated)
                         {
-                            size = new core.Rectangle(rect.x, rect.y, rect.h, rect.w);
+                            size = new math.Rectangle(rect.x, rect.y, rect.h, rect.w);
                         }
                         else
                         {
-                            size = new core.Rectangle(rect.x, rect.y, rect.w, rect.h);
+                            size = new math.Rectangle(rect.x, rect.y, rect.w, rect.h);
                         }
 
                         //  Check to see if the sprite is trimmed
                         if (frame.trimmed)
                         {
-                            trim = new core.Rectangle(
+                            trim = new math.Rectangle(
                                 frame.spriteSourceSize.x / resolution,
                                 frame.spriteSourceSize.y / resolution,
                                 frame.sourceSize.w / resolution,
@@ -97,10 +99,10 @@ module.exports = function ()
                         size.width /= resolution;
                         size.height /= resolution;
 
-                        resource.textures[frameKeys[frameIndex]] = new core.Texture(res.texture.baseTexture, size, size.clone(), trim, frame.rotated);
+                        resource.textures[frameKeys[frameIndex]] = new Texture(res.texture.baseTexture, size, size.clone(), trim, frame.rotated);
 
                         // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
-                        core.utils.TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
+                        utils.TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
                     }
                     frameIndex++;
                 }
