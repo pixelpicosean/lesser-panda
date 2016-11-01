@@ -24,6 +24,8 @@ const Entity = require('engine/entity');
 
 const Loading = require('game/loading');
 
+const SystemAnime = require('engine/anime');
+
 
 // Storage
 persistent.addInt('score', 0);
@@ -64,7 +66,7 @@ class EntityCircle extends Entity {
     if (this.position.x > core.width) {
       this.position.x -= core.width;
 
-      if (this.count++ > 2) {
+      if (this.count++ > 3) {
         this.remove();
       }
     }
@@ -81,7 +83,14 @@ class MyGame extends Game {
 
     this
       .addSystem(new SystemTimer())
+      .addSystem(new SystemAnime())
       .addSystem(new SystemGfx());
+
+    this.systemOrder = [
+      'Timer',
+      'Anime',
+      'Gfx',
+    ];
 
     console.log('constructor');
   }
@@ -139,6 +148,16 @@ class MyGame extends Game {
     console.log((ent.gfx.parent === this.sysGfx.layers['actor']) ? '"ent" added to right layer' : '"ent" added to wrong layer!');
     console.log((ent === this.getEntityByName('c0')) ? '"ent" can be found by name' : '"ent" cannot be found by name!');
     console.log((ent === this.getEntitiesByTag('primitive')[0]) ? '"ent" can be found by tag' : '"ent" cannot be found by tag!');
+
+    // Anime
+    this.sysAnime.tween(ent.position)
+      .to({ y: 100 }, 1000, 'Quadratic.InOut')
+      .to({ y: core.height - 100 }, 1000, 'Quadratic.InOut')
+      .to({ y: core.height / 2 }, 1000, 'Quadratic.InOut')
+      .repeat(2)
+      .once('finish', () => {
+        console.log('animation finished');
+      });
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
