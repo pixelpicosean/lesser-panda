@@ -145,6 +145,8 @@ class SystemGfx extends System {
       else if (this.layers.hasOwnProperty(name)) {
         this.layers[name].addChild(ent.gfx);
       }
+      // Override gfx's position with the entity's
+      ent.gfx.position = ent.position;
     }
   }
   onEntityRemove(ent) {
