@@ -17,12 +17,13 @@ const rnd = require('engine/rnd');
 const keyboard = require('engine/keyboard');
 
 const SystemGfx = require('engine/gfx');
-const sprite = require('engine/gfx/sprite');
-const graphics = require('engine/gfx/graphics');
+const Sprite = require('engine/gfx/sprite');
+const Graphics = require('engine/gfx/graphics');
+const Text = require('engine/gfx/text');
 
 const Entity = require('engine/entity');
 
-const Loading = require('game/loading');
+const Loading = require('game/Loading');
 
 const SystemAnime = require('engine/anime');
 
@@ -53,11 +54,18 @@ class EntityCircle extends Entity {
     this.tag = 'primitive';
 
     this.layerName = 'actor';
-    this.gfx = graphics({
+    this.gfx = Graphics({
       shape: 'Circle',
-      color: 0xff0000,
+      color: 0xffffff,
       radius: 20,
+      tint: 0xff0000,
     });
+    Text({
+      text: 'Hello',
+      font: '12px Verdana',
+      fill: '#fff',
+      anchor: { x: 0.5, y: 0.5 },
+    }).addTo(this.gfx);
 
     this.count = 0;
   }
@@ -139,7 +147,7 @@ class MyGame extends Game {
       .createLayer('ui');
 
     this.sysGfx.backgroundColor = 0xcccccc;
-    let spr = sprite({
+    let spr = Sprite({
       texture: 'font-sheet',
     }).addTo(this.sysGfx.layers['ui']);
 

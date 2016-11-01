@@ -7,7 +7,7 @@ var utils = {
   _uid: 0,
   _saidHello: false,
 
-  EventEmitter: require('engine/event-emitter'),
+  EventEmitter: require('engine/EventEmitter'),
   pluginTarget: require('./pluginTarget'),
   async: require('engine/loader').async,
 

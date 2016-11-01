@@ -1,4 +1,4 @@
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 
 /**
  * @class Keyboard

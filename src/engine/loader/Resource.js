@@ -1,5 +1,5 @@
 const parseUri = require('./parse-uri');
-const Signal = require('engine/mini-signals');
+const Signal = require('engine/MiniSignals');
 
 // tests is CORS is supported in XHR, if not we need to use XDR
 const useXdr = !!(window.XDomainRequest && !('withCredentials' in (new XMLHttpRequest())));

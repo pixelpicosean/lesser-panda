@@ -1,7 +1,7 @@
 const BaseTexture = require('./BaseTexture');
 const VideoBaseTexture = require('./VideoBaseTexture');
 const TextureUvs = require('./TextureUvs');
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 const math = require('../math');
 const utils = require('../utils');
 

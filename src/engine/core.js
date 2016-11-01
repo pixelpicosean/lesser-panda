@@ -1,6 +1,6 @@
 require('engine/polyfill');
 
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 const Timer = require('engine/timer');
 const Vector = require('engine/vector');
 const resize = require('engine/resize');

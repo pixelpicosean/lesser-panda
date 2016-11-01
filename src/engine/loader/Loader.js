@@ -1,4 +1,4 @@
-const Signal = require('engine/mini-signals');
+const Signal = require('engine/MiniSignals');
 const parseUri = require('./parse-uri');
 const async = require('./async');
 const Resource = require('./Resource');

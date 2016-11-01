@@ -1,6 +1,6 @@
 const math = require('../math');
 const RenderTexture = require('../textures/RenderTexture');
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 const CONST = require('../const');
 
 const _tempMatrix = new math.Matrix();

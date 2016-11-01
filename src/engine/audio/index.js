@@ -2,7 +2,7 @@ const core = require('engine/core');
 const loader = require('engine/loader');
 const { Resource } = loader;
 const { Howl, Howler } = require('engine/audio/howler.core');
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 const config = require('game/config');
 
 /**
@@ -166,7 +166,7 @@ loader.pre((res, next) => {
  *
  * @exports engine/audio
  *
- * @requires engine/event-emitter
+ * @requires engine/EventEmitter
  * @requires engine/core
  * @requires engine/loader
  * @requires engine/audio/howler.core

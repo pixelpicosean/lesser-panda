@@ -1,5 +1,5 @@
 const core = require('engine/core');
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 const { removeItems } = require('engine/utils/array');
 
 /**

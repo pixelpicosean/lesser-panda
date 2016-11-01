@@ -1,4 +1,4 @@
-const Data = require('./data');
+const Data = require('./Data');
 const storage = require('./storage');
 
 /**

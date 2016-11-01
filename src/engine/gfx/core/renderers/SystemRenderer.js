@@ -1,7 +1,7 @@
 var utils = require('../utils'),
     math = require('../math'),
     CONST = require('../const'),
-    EventEmitter = require('engine/event-emitter');
+    EventEmitter = require('engine/EventEmitter');
 
 /**
  * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.

@@ -1,4 +1,4 @@
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 
 const { getTargetAndKey } = require('./utils');
 const { Easing, Interpolation } = require('./easing');
@@ -390,7 +390,7 @@ Tween.create = function(context) {
  *
  * @exports engine/anime/tween
  *
- * @requires engine/event-emitter
+ * @requires engine/EventEmitter
  * @requires engine/anime/utils
  * @requires engine/anime/easing
  */

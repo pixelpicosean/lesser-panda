@@ -1,4 +1,4 @@
-const EventEmitter = require('engine/event-emitter');
+const EventEmitter = require('engine/EventEmitter');
 
 /**
  * Data storage base class. Provides data define, set and get support.

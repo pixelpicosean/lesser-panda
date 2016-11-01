@@ -1,7 +1,7 @@
 const storage = require('./storage');
 
-const Data = require('./data');
-const PersistentData = require('./persistent-data');
+const Data = require('./Data');
+const PersistentData = require('./PersistentData');
 
 /**
  * Data class.
