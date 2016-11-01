@@ -1,9 +1,9 @@
-var BaseTexture = require('./BaseTexture'),
-  VideoBaseTexture = require('./VideoBaseTexture'),
-  TextureUvs = require('./TextureUvs'),
-  EventEmitter = require('engine/event-emitter'),
-  math = require('../math'),
-  utils = require('../utils');
+const BaseTexture = require('./BaseTexture');
+const VideoBaseTexture = require('./VideoBaseTexture');
+const TextureUvs = require('./TextureUvs');
+const EventEmitter = require('engine/event-emitter');
+const math = require('../math');
+const utils = require('../utils');
 
 /**
  * A texture stores the information that represents an image or part of an image. It cannot be added
@@ -148,6 +148,104 @@ class Texture extends EventEmitter {
      * @protected
      */
   }
+
+  /**
+   * Updates this texture on the gpu.
+   *
+   */
+  update ()
+  {
+      this.baseTexture.update();
+  }
+
+  /**
+   * Called when the base texture is loaded
+   *
+   * @private
+   */
+  onBaseTextureLoaded (baseTexture)
+  {
+      // TODO this code looks confusing.. boo to abusing getters and setterss!
+      if (this.noFrame)
+      {
+          this.frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+      }
+      else
+      {
+          this.frame = this._frame;
+      }
+
+      this.emit('update', this);
+  }
+
+  /**
+   * Called when the base texture is updated
+   *
+   * @private
+   */
+  onBaseTextureUpdated (baseTexture)
+  {
+      this._frame.width = baseTexture.width;
+      this._frame.height = baseTexture.height;
+
+      this.emit('update', this);
+  }
+
+  /**
+   * Destroys this texture
+   *
+   * @param [destroyBase=false] {boolean} Whether to destroy the base texture as well
+   */
+  destroy (destroyBase)
+  {
+      if (this.baseTexture)
+      {
+          if (destroyBase)
+          {
+              this.baseTexture.destroy();
+          }
+
+          this.baseTexture.off('update', this.onBaseTextureUpdated, this);
+          this.baseTexture.off('loaded', this.onBaseTextureLoaded, this);
+
+          this.baseTexture = null;
+      }
+
+      this._frame = null;
+      this._uvs = null;
+      this.trim = null;
+      this.crop = null;
+
+      this.valid = false;
+
+      this.off('dispose', this.dispose, this);
+      this.off('update', this.update, this);
+  }
+
+  /**
+   * Creates a new texture object that acts the same as this one.
+   *
+   * @return {PIXI.Texture}
+   */
+  clone ()
+  {
+      return new Texture(this.baseTexture, this.frame, this.crop, this.trim, this.rotate);
+  }
+
+  /**
+   * Updates the internal WebGL UV cache.
+   *
+   * @private
+   */
+  _updateUvs ()
+  {
+      if (!this._uvs)
+      {
+          this._uvs = new TextureUvs();
+      }
+
+      this._uvs.set(this.crop, this.baseTexture, this.rotate);
+  }
 }
 
 Object.defineProperties(Texture.prototype, {
@@ -221,104 +319,6 @@ Object.defineProperties(Texture.prototype, {
         }
     }
 });
-
-/**
- * Updates this texture on the gpu.
- *
- */
-Texture.prototype.update = function ()
-{
-    this.baseTexture.update();
-};
-
-/**
- * Called when the base texture is loaded
- *
- * @private
- */
-Texture.prototype.onBaseTextureLoaded = function (baseTexture)
-{
-    // TODO this code looks confusing.. boo to abusing getters and setterss!
-    if (this.noFrame)
-    {
-        this.frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
-    }
-    else
-    {
-        this.frame = this._frame;
-    }
-
-    this.emit('update', this);
-};
-
-/**
- * Called when the base texture is updated
- *
- * @private
- */
-Texture.prototype.onBaseTextureUpdated = function (baseTexture)
-{
-    this._frame.width = baseTexture.width;
-    this._frame.height = baseTexture.height;
-
-    this.emit('update', this);
-};
-
-/**
- * Destroys this texture
- *
- * @param [destroyBase=false] {boolean} Whether to destroy the base texture as well
- */
-Texture.prototype.destroy = function (destroyBase)
-{
-    if (this.baseTexture)
-    {
-        if (destroyBase)
-        {
-            this.baseTexture.destroy();
-        }
-
-        this.baseTexture.off('update', this.onBaseTextureUpdated, this);
-        this.baseTexture.off('loaded', this.onBaseTextureLoaded, this);
-
-        this.baseTexture = null;
-    }
-
-    this._frame = null;
-    this._uvs = null;
-    this.trim = null;
-    this.crop = null;
-
-    this.valid = false;
-
-    this.off('dispose', this.dispose, this);
-    this.off('update', this.update, this);
-};
-
-/**
- * Creates a new texture object that acts the same as this one.
- *
- * @return {PIXI.Texture}
- */
-Texture.prototype.clone = function ()
-{
-    return new Texture(this.baseTexture, this.frame, this.crop, this.trim, this.rotate);
-};
-
-/**
- * Updates the internal WebGL UV cache.
- *
- * @private
- */
-Texture.prototype._updateUvs = function ()
-{
-    if (!this._uvs)
-    {
-        this._uvs = new TextureUvs();
-    }
-
-    this._uvs.set(this.crop, this.baseTexture, this.rotate);
-};
 
 /**
  * Helper function that creates a Texture object from the given image url.

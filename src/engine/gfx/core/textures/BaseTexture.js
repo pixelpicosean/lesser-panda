@@ -1,6 +1,6 @@
-var utils = require('../utils'),
-    CONST = require('../const'),
-    EventEmitter = require('engine/event-emitter');
+const utils = require('../utils');
+const CONST = require('../const');
+const EventEmitter = require('engine/event-emitter');
 
 /**
  * A texture stores the information that represents an image. All textures have a base texture.

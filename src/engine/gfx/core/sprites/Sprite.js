@@ -1,12 +1,12 @@
-var math = require('../math'),
-    Texture = require('../textures/Texture'),
-    Container = require('../display/Container'),
-    CanvasTinter = require('../renderers/canvas/utils/CanvasTinter'),
-    utils = require('../utils'),
-    CONST = require('../const'),
-    tempPoint = new math.Point(),
-    GroupD8 = math.GroupD8,
-    canvasRenderWorldTransform = new math.Matrix();
+const math = require('../math');
+const Texture = require('../textures/Texture');
+const Container = require('../display/Container');
+const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
+const utils = require('../utils');
+const CONST = require('../const');
+const tempPoint = new math.Point();
+const GroupD8 = math.GroupD8;
+const canvasRenderWorldTransform = new math.Matrix();
 
 /**
  * The Sprite object is the base for all textured objects that are rendered to the screen

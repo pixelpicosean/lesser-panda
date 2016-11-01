@@ -1,5 +1,5 @@
-var BaseTexture = require('./BaseTexture'),
-    utils = require('../utils');
+const BaseTexture = require('./BaseTexture');
+const utils = require('../utils');
 
 /**
  * A texture of a [playing] Video.
@@ -29,8 +29,8 @@ var BaseTexture = require('./BaseTexture'),
  * @param source {HTMLVideoElement}
  * @param [scaleMode] {number} See {@link PIXI.SCALE_MODES} for possible values
  */
-function VideoBaseTexture(source, scaleMode)
-{
+class VideoBaseTexture extends BaseTexture {
+  constructor(source, scaleMode) {
     if (!source)
     {
         throw new Error('No video source element specified.');
@@ -44,7 +44,7 @@ function VideoBaseTexture(source, scaleMode)
         source.complete = true;
     }
 
-    BaseTexture.call(this, source, scaleMode);
+    super(source, scaleMode);
 
     /**
      * Should the base texture automatically update itself, set to true by default
@@ -68,92 +68,89 @@ function VideoBaseTexture(source, scaleMode)
     }
 
     this.__loaded = false;
+  }
+
+  /**
+   * The internal update loop of the video base texture, only runs when autoUpdate is set to true
+   *
+   * @private
+   */
+  _onUpdate ()
+  {
+      if (this.autoUpdate)
+      {
+          window.requestAnimationFrame(this._onUpdate);
+          this.update();
+      }
+  }
+
+  /**
+   * Runs the update loop when the video is ready to play
+   *
+   * @private
+   */
+  _onPlayStart ()
+  {
+      if (!this.autoUpdate)
+      {
+          window.requestAnimationFrame(this._onUpdate);
+          this.autoUpdate = true;
+      }
+  }
+
+  /**
+   * Fired when a pause event is triggered, stops the update loop
+   *
+   * @private
+   */
+  _onPlayStop ()
+  {
+      this.autoUpdate = false;
+  }
+
+  /**
+   * Fired when the video is loaded and ready to play
+   *
+   * @private
+   */
+  _onCanPlay ()
+  {
+      this.hasLoaded = true;
+
+      if (this.source)
+      {
+          this.source.removeEventListener('canplay', this._onCanPlay);
+          this.source.removeEventListener('canplaythrough', this._onCanPlay);
+
+          this.width = this.source.videoWidth;
+          this.height = this.source.videoHeight;
+
+          this.source.play();
+
+          // prevent multiple loaded dispatches..
+          if (!this.__loaded)
+          {
+              this.__loaded = true;
+              this.emit('loaded', this);
+          }
+      }
+  }
+
+  /**
+   * Destroys this texture
+   *
+   */
+  destroy ()
+  {
+      if (this.source && this.source._pixiId)
+      {
+          delete utils.BaseTextureCache[ this.source._pixiId ];
+          delete this.source._pixiId;
+      }
+
+      BaseTexture.prototype.destroy.call(this);
+  }
 }
-
-VideoBaseTexture.prototype = Object.create(BaseTexture.prototype);
-VideoBaseTexture.prototype.constructor = VideoBaseTexture;
-module.exports = VideoBaseTexture;
-
-/**
- * The internal update loop of the video base texture, only runs when autoUpdate is set to true
- *
- * @private
- */
-VideoBaseTexture.prototype._onUpdate = function ()
-{
-    if (this.autoUpdate)
-    {
-        window.requestAnimationFrame(this._onUpdate);
-        this.update();
-    }
-};
-
-/**
- * Runs the update loop when the video is ready to play
- *
- * @private
- */
-VideoBaseTexture.prototype._onPlayStart = function ()
-{
-    if (!this.autoUpdate)
-    {
-        window.requestAnimationFrame(this._onUpdate);
-        this.autoUpdate = true;
-    }
-};
-
-/**
- * Fired when a pause event is triggered, stops the update loop
- *
- * @private
- */
-VideoBaseTexture.prototype._onPlayStop = function ()
-{
-    this.autoUpdate = false;
-};
-
-/**
- * Fired when the video is loaded and ready to play
- *
- * @private
- */
-VideoBaseTexture.prototype._onCanPlay = function ()
-{
-    this.hasLoaded = true;
-
-    if (this.source)
-    {
-        this.source.removeEventListener('canplay', this._onCanPlay);
-        this.source.removeEventListener('canplaythrough', this._onCanPlay);
-
-        this.width = this.source.videoWidth;
-        this.height = this.source.videoHeight;
-
-        this.source.play();
-
-        // prevent multiple loaded dispatches..
-        if (!this.__loaded)
-        {
-            this.__loaded = true;
-            this.emit('loaded', this);
-        }
-    }
-};
-
-/**
- * Destroys this texture
- *
- */
-VideoBaseTexture.prototype.destroy = function ()
-{
-    if (this.source && this.source._pixiId)
-    {
-        delete utils.BaseTextureCache[ this.source._pixiId ];
-        delete this.source._pixiId;
-    }
-
-    BaseTexture.prototype.destroy.call(this);
-};
 
 /**
  * Mimic Pixi BaseTexture.from.... method.
@@ -233,3 +230,5 @@ function createSource(path, type)
 
     return source;
 }
+
+module.exports = VideoBaseTexture;
