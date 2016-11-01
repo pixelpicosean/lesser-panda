@@ -11,32 +11,6 @@
 // core.mesh           = require('./mesh');
 
 
-// Inject as sub-system of scene
-// var Scene = require('engine/scene');
-
-// Scene.registerSystem('Renderer', {
-//   init: function init(scene) {
-//     scene.stage = new core.Container();
-//     scene.displayObjects = [];
-
-//     activeScene = scene;
-//   },
-//   awake: function awake(scene) {
-//     if (typeof scene._backgroundColor === 'undefined') {
-//       scene._backgroundColor = 0x220033;
-//     }
-//     Renderer.instance.backgroundColor = scene._backgroundColor;
-
-//     activeScene = scene;
-//   },
-//   update: function update(scene, _, dt) {
-//     for (var i = 0; i < scene.displayObjects.length; i++) {
-//       scene.displayObjects[i].update(dt);
-//     }
-//   },
-// });
-
-
 const core = require('engine/core');
 const System = require('engine/system');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
@@ -95,16 +69,25 @@ class SystemGfx extends System {
      * @type {Object}
      */
     this.layers = {};
+
+    /**
+     * Background color cache
+     * @type {Number|String}
+     * @private
+     */
+    this._backgroundColor = 0x000000;
   }
 
   set backgroundColor(c) {
-    this.renderer.backgroundColor = c;
+    this.renderer.backgroundColor = this._backgroundColor = c;
   }
   get backgroundColor() {
-    return this.renderer.backgroundColor;
+    return this._backgroundColor;
   }
 
-  awake() {}
+  awake() {
+    this.renderer.backgroundColor = this._backgroundColor;
+  }
   update() {
     this.renderer.render(this.root);
   }
