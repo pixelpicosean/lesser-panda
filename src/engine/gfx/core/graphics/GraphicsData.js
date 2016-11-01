@@ -11,8 +11,8 @@
  * @param fill      {boolean} whether or not the shape is filled with a colour
  * @param shape     {Circle|Rectangle|Ellipse|Line|Polygon} The shape object to draw.
  */
-function GraphicsData(lineWidth, lineColor, lineAlpha, fillColor, fillAlpha, fill, shape)
-{
+class GraphicsData {
+  constructor(lineWidth, lineColor, lineAlpha, fillColor, fillAlpha, fill, shape) {
     /*
      * @member {number} the width of the line to draw
      */
@@ -60,32 +60,32 @@ function GraphicsData(lineWidth, lineColor, lineAlpha, fillColor, fillAlpha, fil
      * @member {number} The type of the shape, see the Const.Shapes file for all the existing types,
      */
     this.type = shape.type;
+  }
+
+  /**
+   * Creates a new GraphicsData object with the same values as this one.
+   *
+   * @return {PIXI.GraphicsData}
+   */
+  clone()
+  {
+      return new GraphicsData(
+          this.lineWidth,
+          this.lineColor,
+          this.lineAlpha,
+          this.fillColor,
+          this.fillAlpha,
+          this.fill,
+          this.shape
+      );
+  }
+
+  /**
+   * Destroys the Graphics data.
+   */
+  destroy() {
+      this.shape = null;
+  }
 }
 
-GraphicsData.prototype.constructor = GraphicsData;
 module.exports = GraphicsData;
-
-/**
- * Creates a new GraphicsData object with the same values as this one.
- *
- * @return {PIXI.GraphicsData}
- */
-GraphicsData.prototype.clone = function ()
-{
-    return new GraphicsData(
-        this.lineWidth,
-        this.lineColor,
-        this.lineAlpha,
-        this.fillColor,
-        this.fillAlpha,
-        this.fill,
-        this.shape
-    );
-};
-
-/**
- * Destroys the Graphics data.
- */
-GraphicsData.prototype.destroy = function () {
-    this.shape = null;
-};
