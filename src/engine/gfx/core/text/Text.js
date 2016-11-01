@@ -94,132 +94,132 @@ class Text extends Sprite {
    *
    * @private
    */
-  updateText ()
+  updateText()
   {
-      var style = this._style;
-      this.context.font = style.font;
+    var style = this._style;
+    this.context.font = style.font;
 
       // word wrap
       // preserve original text
-      var outputText = style.wordWrap ? this.wordWrap(this._text) : this._text;
+    var outputText = style.wordWrap ? this.wordWrap(this._text) : this._text;
 
       // split text into lines
-      var lines = outputText.split(/(?:\r\n|\r|\n)/);
+    var lines = outputText.split(/(?:\r\n|\r|\n)/);
 
       // calculate text width
-      var lineWidths = new Array(lines.length);
-      var maxLineWidth = 0;
-      var fontProperties = this.determineFontProperties(style.font);
-      for (var i = 0; i < lines.length; i++)
+    var lineWidths = new Array(lines.length);
+    var maxLineWidth = 0;
+    var fontProperties = this.determineFontProperties(style.font);
+    for (var i = 0; i < lines.length; i++)
       {
-          var lineWidth = this.context.measureText(lines[i]).width + ((lines[i].length - 1) * style.letterSpacing);
-          lineWidths[i] = lineWidth;
-          maxLineWidth = Math.max(maxLineWidth, lineWidth);
-      }
+      var lineWidth = this.context.measureText(lines[i]).width + ((lines[i].length - 1) * style.letterSpacing);
+      lineWidths[i] = lineWidth;
+      maxLineWidth = Math.max(maxLineWidth, lineWidth);
+    }
 
-      var width = maxLineWidth + style.strokeThickness;
-      if (style.dropShadow)
+    var width = maxLineWidth + style.strokeThickness;
+    if (style.dropShadow)
       {
-          width += style.dropShadowDistance;
-      }
+      width += style.dropShadowDistance;
+    }
 
-      this.canvas.width = Math.ceil( ( width + this.context.lineWidth ) * this.resolution );
+    this.canvas.width = Math.ceil( ( width + this.context.lineWidth ) * this.resolution );
 
       // calculate text height
-      var lineHeight = this.style.lineHeight || fontProperties.fontSize + style.strokeThickness;
+    var lineHeight = this.style.lineHeight || fontProperties.fontSize + style.strokeThickness;
 
-      var height = lineHeight * lines.length;
-      if (style.dropShadow)
+    var height = lineHeight * lines.length;
+    if (style.dropShadow)
       {
-          height += style.dropShadowDistance;
-      }
+      height += style.dropShadowDistance;
+    }
 
-      this.canvas.height = Math.ceil( ( height + this._style.padding * 2 ) * this.resolution );
+    this.canvas.height = Math.ceil( ( height + this._style.padding * 2 ) * this.resolution );
 
-      this.context.scale( this.resolution, this.resolution);
+    this.context.scale( this.resolution, this.resolution);
 
-      if (navigator.isCocoonJS)
+    if (navigator.isCocoonJS)
       {
-          this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      }
+    }
 
       //this.context.fillStyle="#FF0000";
       //this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      this.context.font = style.font;
-      this.context.strokeStyle = style.stroke;
-      this.context.lineWidth = style.strokeThickness;
-      this.context.textBaseline = style.textBaseline;
-      this.context.lineJoin = style.lineJoin;
-      this.context.miterLimit = style.miterLimit;
+    this.context.font = style.font;
+    this.context.strokeStyle = style.stroke;
+    this.context.lineWidth = style.strokeThickness;
+    this.context.textBaseline = style.textBaseline;
+    this.context.lineJoin = style.lineJoin;
+    this.context.miterLimit = style.miterLimit;
 
-      var linePositionX;
-      var linePositionY;
+    var linePositionX;
+    var linePositionY;
 
-      if (style.dropShadow)
+    if (style.dropShadow)
       {
-          if (style.dropShadowBlur > 0) {
-              this.context.shadowColor = style.dropShadowColor;
-              this.context.shadowBlur = style.dropShadowBlur;
-          } else {
-              this.context.fillStyle = style.dropShadowColor;
-          }
-
-          var xShadowOffset = Math.cos(style.dropShadowAngle) * style.dropShadowDistance;
-          var yShadowOffset = Math.sin(style.dropShadowAngle) * style.dropShadowDistance;
-
-          for (i = 0; i < lines.length; i++)
-          {
-              linePositionX = style.strokeThickness / 2;
-              linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
-
-              if (style.align === 'right')
-              {
-                  linePositionX += maxLineWidth - lineWidths[i];
-              }
-              else if (style.align === 'center')
-              {
-                  linePositionX += (maxLineWidth - lineWidths[i]) / 2;
-              }
-
-              if (style.fill)
-              {
-                  this.drawLetterSpacing(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + style.padding);
-              }
-          }
+      if (style.dropShadowBlur > 0) {
+        this.context.shadowColor = style.dropShadowColor;
+        this.context.shadowBlur = style.dropShadowBlur;
+      } else {
+        this.context.fillStyle = style.dropShadowColor;
       }
+
+      var xShadowOffset = Math.cos(style.dropShadowAngle) * style.dropShadowDistance;
+      var yShadowOffset = Math.sin(style.dropShadowAngle) * style.dropShadowDistance;
+
+      for (i = 0; i < lines.length; i++)
+          {
+        linePositionX = style.strokeThickness / 2;
+        linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
+
+        if (style.align === 'right')
+              {
+          linePositionX += maxLineWidth - lineWidths[i];
+        }
+        else if (style.align === 'center')
+              {
+          linePositionX += (maxLineWidth - lineWidths[i]) / 2;
+        }
+
+        if (style.fill)
+              {
+          this.drawLetterSpacing(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + style.padding);
+        }
+      }
+    }
 
       //set canvas text styles
-      this.context.fillStyle = style.fill;
+    this.context.fillStyle = style.fill;
 
       //draw lines line by line
-      for (i = 0; i < lines.length; i++)
+    for (i = 0; i < lines.length; i++)
       {
-          linePositionX = style.strokeThickness / 2;
-          linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
+      linePositionX = style.strokeThickness / 2;
+      linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
 
-          if (style.align === 'right')
+      if (style.align === 'right')
           {
-              linePositionX += maxLineWidth - lineWidths[i];
-          }
-          else if (style.align === 'center')
+        linePositionX += maxLineWidth - lineWidths[i];
+      }
+      else if (style.align === 'center')
           {
-              linePositionX += (maxLineWidth - lineWidths[i]) / 2;
-          }
-
-          if (style.stroke && style.strokeThickness)
-          {
-              this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding, true);
-          }
-
-          if (style.fill)
-          {
-              this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding);
-          }
+        linePositionX += (maxLineWidth - lineWidths[i]) / 2;
       }
 
-      this.updateTexture();
+      if (style.stroke && style.strokeThickness)
+          {
+        this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding, true);
+      }
+
+      if (style.fill)
+          {
+        this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding);
+      }
+    }
+
+    this.updateTexture();
   }
 
   /**
@@ -229,42 +229,42 @@ class Text extends Sprite {
    */
   drawLetterSpacing(text, x, y, isStroke)
   {
-      var style = this._style;
+    var style = this._style;
 
       // letterSpacing of 0 means normal
-      var letterSpacing = style.letterSpacing;
+    var letterSpacing = style.letterSpacing;
 
-      if (letterSpacing === 0)
+    if (letterSpacing === 0)
       {
-          if (isStroke)
+      if (isStroke)
           {
-              this.context.strokeText(text, x, y);
-          }
-          else
-          {
-              this.context.fillText(text, x, y);
-          }
-          return;
+        this.context.strokeText(text, x, y);
       }
+      else
+          {
+        this.context.fillText(text, x, y);
+      }
+      return;
+    }
 
-      var characters = String.prototype.split.call(text, ''),
-          index = 0,
-          current,
-          currentPosition = x;
+    var characters = String.prototype.split.call(text, ''),
+      index = 0,
+      current,
+      currentPosition = x;
 
-      while (index < text.length)
+    while (index < text.length)
       {
-          current = characters[index++];
-          if (isStroke)
+      current = characters[index++];
+      if (isStroke)
           {
-              this.context.strokeText(current, currentPosition, y);
-          }
-          else
-          {
-              this.context.fillText(current, currentPosition, y);
-          }
-          currentPosition += this.context.measureText(current).width + letterSpacing;
+        this.context.strokeText(current, currentPosition, y);
       }
+      else
+          {
+        this.context.fillText(current, currentPosition, y);
+      }
+      currentPosition += this.context.measureText(current).width + letterSpacing;
+    }
   }
 
   /**
@@ -272,31 +272,31 @@ class Text extends Sprite {
    *
    * @private
    */
-  updateTexture ()
+  updateTexture()
   {
-      var texture = this._texture;
-      var style = this._style;
+    var texture = this._texture;
+    var style = this._style;
 
-      texture.baseTexture.hasLoaded = true;
-      texture.baseTexture.resolution = this.resolution;
+    texture.baseTexture.hasLoaded = true;
+    texture.baseTexture.resolution = this.resolution;
 
-      texture.baseTexture.width = this.canvas.width / this.resolution;
-      texture.baseTexture.height = this.canvas.height / this.resolution;
-      texture.crop.width = texture._frame.width = this.canvas.width / this.resolution;
-      texture.crop.height = texture._frame.height = this.canvas.height / this.resolution;
+    texture.baseTexture.width = this.canvas.width / this.resolution;
+    texture.baseTexture.height = this.canvas.height / this.resolution;
+    texture.crop.width = texture._frame.width = this.canvas.width / this.resolution;
+    texture.crop.height = texture._frame.height = this.canvas.height / this.resolution;
 
-      texture.trim.x = 0;
-      texture.trim.y = -style.padding;
+    texture.trim.x = 0;
+    texture.trim.y = -style.padding;
 
-      texture.trim.width = texture._frame.width;
-      texture.trim.height = texture._frame.height - style.padding*2;
+    texture.trim.width = texture._frame.width;
+    texture.trim.height = texture._frame.height - style.padding*2;
 
-      this._width = this.canvas.width / this.resolution;
-      this._height = this.canvas.height / this.resolution;
+    this._width = this.canvas.width / this.resolution;
+    this._height = this.canvas.height / this.resolution;
 
-      texture.baseTexture.emit('update',  texture.baseTexture);
+    texture.baseTexture.emit('update',  texture.baseTexture);
 
-      this.dirty = false;
+    this.dirty = false;
   }
 
   /**
@@ -304,16 +304,16 @@ class Text extends Sprite {
    *
    * @param renderer {PIXI.WebGLRenderer}
    */
-  renderWebGL (renderer)
+  renderWebGL(renderer)
   {
-      if (this.dirty)
+    if (this.dirty)
       {
           //this.resolution = 1//renderer.resolution;
 
-          this.updateText();
-      }
+      this.updateText();
+    }
 
-      Sprite.prototype.renderWebGL.call(this, renderer);
+    Sprite.prototype.renderWebGL.call(this, renderer);
   }
 
   /**
@@ -322,16 +322,16 @@ class Text extends Sprite {
    * @param renderer {PIXI.CanvasRenderer}
    * @private
    */
-  _renderCanvas (renderer)
+  _renderCanvas(renderer)
   {
-      if (this.dirty)
+    if (this.dirty)
       {
        //   this.resolution = 1//renderer.resolution;
 
-          this.updateText();
-      }
+      this.updateText();
+    }
 
-      Sprite.prototype._renderCanvas.call(this, renderer);
+    Sprite.prototype._renderCanvas.call(this, renderer);
   }
 
   /**
@@ -340,100 +340,100 @@ class Text extends Sprite {
    * @param fontStyle {object}
    * @private
    */
-  determineFontProperties (fontStyle)
+  determineFontProperties(fontStyle)
   {
-      var properties = Text.fontPropertiesCache[fontStyle];
+    var properties = Text.fontPropertiesCache[fontStyle];
 
-      if (!properties)
+    if (!properties)
       {
-          properties = {};
+      properties = {};
 
-          var canvas = Text.fontPropertiesCanvas;
-          var context = Text.fontPropertiesContext;
+      var canvas = Text.fontPropertiesCanvas;
+      var context = Text.fontPropertiesContext;
 
-          context.font = fontStyle;
+      context.font = fontStyle;
 
-          var width = Math.ceil(context.measureText('|MÉq').width);
-          var baseline = Math.ceil(context.measureText('M').width);
-          var height = 2 * baseline;
+      var width = Math.ceil(context.measureText('|MÉq').width);
+      var baseline = Math.ceil(context.measureText('M').width);
+      var height = 2 * baseline;
 
-          baseline = baseline * 1.4 | 0;
+      baseline = baseline * 1.4 | 0;
 
-          canvas.width = width;
-          canvas.height = height;
+      canvas.width = width;
+      canvas.height = height;
 
-          context.fillStyle = '#f00';
-          context.fillRect(0, 0, width, height);
+      context.fillStyle = '#f00';
+      context.fillRect(0, 0, width, height);
 
-          context.font = fontStyle;
+      context.font = fontStyle;
 
-          context.textBaseline = 'alphabetic';
-          context.fillStyle = '#000';
-          context.fillText('|MÉq', 0, baseline);
+      context.textBaseline = 'alphabetic';
+      context.fillStyle = '#000';
+      context.fillText('|MÉq', 0, baseline);
 
-          var imagedata = context.getImageData(0, 0, width, height).data;
-          var pixels = imagedata.length;
-          var line = width * 4;
+      var imagedata = context.getImageData(0, 0, width, height).data;
+      var pixels = imagedata.length;
+      var line = width * 4;
 
-          var i, j;
+      var i, j;
 
-          var idx = 0;
-          var stop = false;
+      var idx = 0;
+      var stop = false;
 
           // ascent. scan from top to bottom until we find a non red pixel
-          for (i = 0; i < baseline; i++)
+      for (i = 0; i < baseline; i++)
           {
-              for (j = 0; j < line; j += 4)
+        for (j = 0; j < line; j += 4)
               {
-                  if (imagedata[idx + j] !== 255)
+          if (imagedata[idx + j] !== 255)
                   {
-                      stop = true;
-                      break;
-                  }
-              }
-              if (!stop)
-              {
-                  idx += line;
-              }
-              else
-              {
-                  break;
-              }
+            stop = true;
+            break;
           }
-
-          properties.ascent = baseline - i;
-
-          idx = pixels - line;
-          stop = false;
-
-          // descent. scan from bottom to top until we find a non red pixel
-          for (i = height; i > baseline; i--)
-          {
-              for (j = 0; j < line; j += 4)
+        }
+        if (!stop)
               {
-                  if (imagedata[idx + j] !== 255)
-                  {
-                      stop = true;
-                      break;
-                  }
-              }
-              if (!stop)
+          idx += line;
+        }
+        else
               {
-                  idx -= line;
-              }
-              else
-              {
-                  break;
-              }
-          }
-
-          properties.descent = i - baseline;
-          properties.fontSize = properties.ascent + properties.descent;
-
-          Text.fontPropertiesCache[fontStyle] = properties;
+          break;
+        }
       }
 
-      return properties;
+      properties.ascent = baseline - i;
+
+      idx = pixels - line;
+      stop = false;
+
+          // descent. scan from bottom to top until we find a non red pixel
+      for (i = height; i > baseline; i--)
+          {
+        for (j = 0; j < line; j += 4)
+              {
+          if (imagedata[idx + j] !== 255)
+                  {
+            stop = true;
+            break;
+          }
+        }
+        if (!stop)
+              {
+          idx -= line;
+        }
+        else
+              {
+          break;
+        }
+      }
+
+      properties.descent = i - baseline;
+      properties.fontSize = properties.ascent + properties.descent;
+
+      Text.fontPropertiesCache[fontStyle] = properties;
+    }
+
+    return properties;
   }
 
   /**
@@ -443,71 +443,71 @@ class Text extends Sprite {
    * @param text {string}
    * @private
    */
-  wordWrap (text)
+  wordWrap(text)
   {
       // Greedy wrapping algorithm that will wrap words as the line grows longer
       // than its horizontal bounds.
-      var result = '';
-      var lines = text.split('\n');
-      var wordWrapWidth = this._style.wordWrapWidth;
-      for (var i = 0; i < lines.length; i++)
+    var result = '';
+    var lines = text.split('\n');
+    var wordWrapWidth = this._style.wordWrapWidth;
+    for (var i = 0; i < lines.length; i++)
       {
-          var spaceLeft = wordWrapWidth;
-          var words = lines[i].split(' ');
-          for (var j = 0; j < words.length; j++)
+      var spaceLeft = wordWrapWidth;
+      var words = lines[i].split(' ');
+      for (var j = 0; j < words.length; j++)
           {
-              var wordWidth = this.context.measureText(words[j]).width;
-              if (this._style.breakWords && wordWidth > wordWrapWidth)
+        var wordWidth = this.context.measureText(words[j]).width;
+        if (this._style.breakWords && wordWidth > wordWrapWidth)
               {
                   // Word should be split in the middle
-                  var characters = words[j].split('');
-                  for (var c = 0; c < characters.length; c++)
+          var characters = words[j].split('');
+          for (var c = 0; c < characters.length; c++)
                   {
-                    var characterWidth = this.context.measureText(characters[c]).width;
-                    if (characterWidth > spaceLeft)
+            var characterWidth = this.context.measureText(characters[c]).width;
+            if (characterWidth > spaceLeft)
                     {
-                      result += '\n' + characters[c];
-                      spaceLeft = wordWrapWidth - characterWidth;
-                    }
-                    else
+              result += '\n' + characters[c];
+              spaceLeft = wordWrapWidth - characterWidth;
+            }
+            else
                     {
-                      if (c === 0)
+              if (c === 0)
                       {
-                        result += ' ';
-                      }
-                      result += characters[c];
-                      spaceLeft -= characterWidth;
-                    }
-                  }
+                result += ' ';
               }
-              else
+              result += characters[c];
+              spaceLeft -= characterWidth;
+            }
+          }
+        }
+        else
               {
-                  var wordWidthWithSpace = wordWidth + this.context.measureText(' ').width;
-                  if (j === 0 || wordWidthWithSpace > spaceLeft)
+          var wordWidthWithSpace = wordWidth + this.context.measureText(' ').width;
+          if (j === 0 || wordWidthWithSpace > spaceLeft)
                   {
                       // Skip printing the newline if it's the first word of the line that is
                       // greater than the word wrap width.
-                      if (j > 0)
+            if (j > 0)
                       {
-                          result += '\n';
-                      }
-                      result += words[j];
-                      spaceLeft = wordWrapWidth - wordWidth;
-                  }
-                  else
-                  {
-                      spaceLeft -= wordWidthWithSpace;
-                      result += ' ' + words[j];
-                  }
-              }
-          }
-
-          if (i < lines.length-1)
-          {
               result += '\n';
+            }
+            result += words[j];
+            spaceLeft = wordWrapWidth - wordWidth;
           }
+          else
+                  {
+            spaceLeft -= wordWidthWithSpace;
+            result += ' ' + words[j];
+          }
+        }
       }
-      return result;
+
+      if (i < lines.length-1)
+          {
+        result += '\n';
+      }
+    }
+    return result;
   }
 
   /**
@@ -516,14 +516,14 @@ class Text extends Sprite {
    * @param matrix {PIXI.Matrix} the transformation matrix of the Text
    * @return {PIXI.Rectangle} the framing rectangle
    */
-  getBounds (matrix)
+  getBounds(matrix)
   {
-      if (this.dirty)
+    if (this.dirty)
       {
-          this.updateText();
-      }
+      this.updateText();
+    }
 
-      return Sprite.prototype.getBounds.call(this, matrix);
+    return Sprite.prototype.getBounds.call(this, matrix);
   }
 
   /**
@@ -531,15 +531,15 @@ class Text extends Sprite {
    *
    * @param [destroyBaseTexture=true] {boolean} whether to destroy the base texture as well
    */
-  destroy (destroyBaseTexture)
+  destroy(destroyBaseTexture)
   {
       // make sure to reset the the context and canvas.. dont want this hanging around in memory!
-      this.context = null;
-      this.canvas = null;
+    this.context = null;
+    this.canvas = null;
 
-      this._style = null;
+    this._style = null;
 
-      this._texture.destroy(destroyBaseTexture === undefined ? true : destroyBaseTexture);
+    this._texture.destroy(destroyBaseTexture === undefined ? true : destroyBaseTexture);
   }
 }
 
@@ -554,22 +554,22 @@ Object.defineProperties(Text.prototype, {
      * @member {number}
      * @memberof PIXI.Text#
      */
-    width: {
-        get: function ()
+  width: {
+    get: function()
         {
-            if (this.dirty)
+      if (this.dirty)
             {
-                this.updateText();
-            }
+        this.updateText();
+      }
 
-            return this.scale.x * this._texture._frame.width;
-        },
-        set: function (value)
-        {
-            this.scale.x = value / this._texture._frame.width;
-            this._width = value;
-        }
+      return this.scale.x * this._texture._frame.width;
     },
+    set: function(value)
+        {
+      this.scale.x = value / this._texture._frame.width;
+      this._width = value;
+    },
+  },
 
     /**
      * The height of the Text, setting this will actually modify the scale to achieve the value set
@@ -577,22 +577,22 @@ Object.defineProperties(Text.prototype, {
      * @member {number}
      * @memberof PIXI.Text#
      */
-    height: {
-        get: function ()
+  height: {
+    get: function()
         {
-            if (this.dirty)
+      if (this.dirty)
             {
-                this.updateText();
-            }
+        this.updateText();
+      }
 
-            return  this.scale.y * this._texture._frame.height;
-        },
-        set: function (value)
-        {
-            this.scale.y = value / this._texture._frame.height;
-            this._height = value;
-        }
+      return  this.scale.y * this._texture._frame.height;
     },
+    set: function(value)
+        {
+      this.scale.y = value / this._texture._frame.height;
+      this._height = value;
+    },
+  },
 
     /**
      * Set the style of the text
@@ -620,54 +620,54 @@ Object.defineProperties(Text.prototype, {
      *      or increase the spikiness of rendered text.
      * @memberof PIXI.Text#
      */
-    style: {
-        get: function ()
+  style: {
+    get: function()
         {
-            return this._style;
-        },
-        set: function (style)
-        {
-            style = style || {};
-
-            if (typeof style.fill === 'number') {
-                style.fill = utils.hex2string(style.fill);
-            }
-
-            if (typeof style.stroke === 'number') {
-                style.stroke = utils.hex2string(style.stroke);
-            }
-
-            if (typeof style.dropShadowColor === 'number') {
-                style.dropShadowColor = utils.hex2string(style.dropShadowColor);
-            }
-
-            style.font = style.font || 'bold 20pt Arial';
-            style.fill = style.fill || 'black';
-            style.align = style.align || 'left';
-            style.stroke = style.stroke || 'black'; //provide a default, see: https://github.com/pixijs/pixi.js/issues/136
-            style.strokeThickness = style.strokeThickness || 0;
-            style.wordWrap = style.wordWrap || false;
-            style.wordWrapWidth = style.wordWrapWidth || 100;
-            style.breakWords = style.breakWords || false;
-            style.letterSpacing = style.letterSpacing || 0;
-
-            style.dropShadow = style.dropShadow || false;
-            style.dropShadowColor = style.dropShadowColor || '#000000';
-            style.dropShadowAngle = style.dropShadowAngle !== undefined ? style.dropShadowAngle : Math.PI / 6;
-            style.dropShadowDistance = style.dropShadowDistance !== undefined ? style.dropShadowDistance : 5;
-            style.dropShadowBlur = style.dropShadowBlur !== undefined ? style.dropShadowBlur : 0; //shadowBlur is '0' by default according to HTML
-
-            style.padding = style.padding || 0;
-
-            style.textBaseline = style.textBaseline || 'alphabetic';
-
-            style.lineJoin = style.lineJoin || 'miter';
-            style.miterLimit = style.miterLimit || 10;
-
-            this._style = style;
-            this.dirty = true;
-        }
+      return this._style;
     },
+    set: function(style)
+        {
+      style = style || {};
+
+      if (typeof style.fill === 'number') {
+        style.fill = utils.hex2string(style.fill);
+      }
+
+      if (typeof style.stroke === 'number') {
+        style.stroke = utils.hex2string(style.stroke);
+      }
+
+      if (typeof style.dropShadowColor === 'number') {
+        style.dropShadowColor = utils.hex2string(style.dropShadowColor);
+      }
+
+      style.font = style.font || 'bold 20pt Arial';
+      style.fill = style.fill || 'black';
+      style.align = style.align || 'left';
+      style.stroke = style.stroke || 'black'; //provide a default, see: https://github.com/pixijs/pixi.js/issues/136
+      style.strokeThickness = style.strokeThickness || 0;
+      style.wordWrap = style.wordWrap || false;
+      style.wordWrapWidth = style.wordWrapWidth || 100;
+      style.breakWords = style.breakWords || false;
+      style.letterSpacing = style.letterSpacing || 0;
+
+      style.dropShadow = style.dropShadow || false;
+      style.dropShadowColor = style.dropShadowColor || '#000000';
+      style.dropShadowAngle = style.dropShadowAngle !== undefined ? style.dropShadowAngle : Math.PI / 6;
+      style.dropShadowDistance = style.dropShadowDistance !== undefined ? style.dropShadowDistance : 5;
+      style.dropShadowBlur = style.dropShadowBlur !== undefined ? style.dropShadowBlur : 0; //shadowBlur is '0' by default according to HTML
+
+      style.padding = style.padding || 0;
+
+      style.textBaseline = style.textBaseline || 'alphabetic';
+
+      style.lineJoin = style.lineJoin || 'miter';
+      style.miterLimit = style.miterLimit || 10;
+
+      this._style = style;
+      this.dirty = true;
+    },
+  },
 
     /**
      * Set the copy for the text object. To split a line you can use '\n'.
@@ -675,21 +675,21 @@ Object.defineProperties(Text.prototype, {
      * @param text {string} The copy that you would like the text to display
      * @memberof PIXI.Text#
      */
-    text: {
-        get: function()
+  text: {
+    get: function()
         {
-            return this._text;
-        },
-        set: function (text){
-            text = text.toString() || ' ';
-            if (this._text === text)
+      return this._text;
+    },
+    set: function(text){
+      text = text.toString() || ' ';
+      if (this._text === text)
             {
-                return;
-            }
-            this._text = text;
-            this.dirty = true;
-        }
-    }
+        return;
+      }
+      this._text = text;
+      this.dirty = true;
+    },
+  },
 });
 
 module.exports = Text;

@@ -10,17 +10,17 @@ var core = require('../../core');
  */
 function TwistFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./twist.frag'),
         // custom uniforms
-        {
-            radius:     { type: '1f', value: 0.5 },
-            angle:      { type: '1f', value: 5 },
-            offset:     { type: 'v2', value: { x: 0.5, y: 0.5 } }
-        }
+    {
+      radius:     { type: '1f', value: 0.5 },
+      angle:      { type: '1f', value: 5 },
+      offset:     { type: 'v2', value: { x: 0.5, y: 0.5 } },
+    }
     );
 }
 
@@ -35,16 +35,16 @@ Object.defineProperties(TwistFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.TwistFilter#
      */
-    offset: {
-        get: function ()
+  offset: {
+    get: function()
         {
-            return this.uniforms.offset.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.offset.value = value;
-        }
+      return this.uniforms.offset.value;
     },
+    set: function(value)
+        {
+      this.uniforms.offset.value = value;
+    },
+  },
 
     /**
      * This radius of the twist.
@@ -52,16 +52,16 @@ Object.defineProperties(TwistFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.TwistFilter#
      */
-    radius: {
-        get: function ()
+  radius: {
+    get: function()
         {
-            return this.uniforms.radius.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.radius.value = value;
-        }
+      return this.uniforms.radius.value;
     },
+    set: function(value)
+        {
+      this.uniforms.radius.value = value;
+    },
+  },
 
     /**
      * This angle of the twist.
@@ -69,14 +69,14 @@ Object.defineProperties(TwistFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.TwistFilter#
      */
-    angle: {
-        get: function ()
+  angle: {
+    get: function()
         {
-            return this.uniforms.angle.value;
-        },
-        set: function (value)
+      return this.uniforms.angle.value;
+    },
+    set: function(value)
         {
-            this.uniforms.angle.value = value;
-        }
-    }
+      this.uniforms.angle.value = value;
+    },
+  },
 });

@@ -18,15 +18,15 @@ var AbstractFilter = require('./AbstractFilter');
  */
 function FXAAFilter()
 {
-    AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         require('./FXAA.vert'),
         // fragme.t shader
         require('./FXAA.frag'),
         // uniforms
-        {
-            resolution: { type: 'v2', value: { x: 1, y: 1 } }
-        }
+    {
+      resolution: { type: 'v2', value: { x: 1, y: 1 } },
+    }
     );
 
 }
@@ -42,11 +42,11 @@ module.exports = FXAAFilter;
  * @param input {PIXI.RenderTarget}
  * @param output {PIXI.RenderTarget}
  */
-FXAAFilter.prototype.applyFilter = function (renderer, input, output)
+FXAAFilter.prototype.applyFilter = function(renderer, input, output)
 {
-    var filterManager = renderer.filterManager;
+  var filterManager = renderer.filterManager;
 
-    var shader = this.getShader( renderer );
+  var shader = this.getShader( renderer );
      // draw the filter...
-    filterManager.applyFilter(shader, input, output);
+  filterManager.applyFilter(shader, input, output);
 };

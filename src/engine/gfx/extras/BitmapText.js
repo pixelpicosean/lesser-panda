@@ -30,9 +30,9 @@ var core = require('../core');
  */
 function BitmapText(text, style)
 {
-    core.Container.call(this);
+  core.Container.call(this);
 
-    style = style || {};
+  style = style || {};
 
     /**
      * The width of the overall text, different from fontSize,
@@ -41,7 +41,7 @@ function BitmapText(text, style)
      * @member {number}
      * @readOnly
      */
-    this.textWidth = 0;
+  this.textWidth = 0;
 
     /**
      * The height of the overall text, different from fontSize,
@@ -50,7 +50,7 @@ function BitmapText(text, style)
      * @member {number}
      * @readOnly
      */
-    this.textHeight = 0;
+  this.textHeight = 0;
 
     /**
      * Private tracker for the letter sprite pool.
@@ -58,7 +58,7 @@ function BitmapText(text, style)
      * @member {PIXI.Sprite[]}
      * @private
      */
-    this._glyphs = [];
+  this._glyphs = [];
 
     /**
      * Private tracker for the current style.
@@ -66,12 +66,12 @@ function BitmapText(text, style)
      * @member {object}
      * @private
      */
-    this._font = {
-        tint: style.tint !== undefined ? style.tint : 0xFFFFFF,
-        align: style.align || 'left',
-        name: null,
-        size: 0
-    };
+  this._font = {
+    tint: style.tint !== undefined ? style.tint : 0xFFFFFF,
+    align: style.align || 'left',
+    name: null,
+    size: 0,
+  };
 
     /**
      * Private tracker for the current font.
@@ -79,7 +79,7 @@ function BitmapText(text, style)
      * @member {object}
      * @private
      */
-    this.font = style.font; // run font setter
+  this.font = style.font; // run font setter
 
     /**
      * Private tracker for the current text.
@@ -87,7 +87,7 @@ function BitmapText(text, style)
      * @member {string}
      * @private
      */
-    this._text = text;
+  this._text = text;
 
     /**
      * The max width of this bitmap text in pixels. If the text provided is longer than the value provided, line breaks will be automatically inserted in the last whitespace.
@@ -95,23 +95,23 @@ function BitmapText(text, style)
      *
      * @member {number}
      */
-    this.maxWidth = 0;
+  this.maxWidth = 0;
 
     /**
      * The max line height. This is useful when trying to use the total height of the Text, ie: when trying to vertically align.
      *
      * @member {number}
      */
-    this.maxLineHeight = 0;
+  this.maxLineHeight = 0;
 
     /**
      * The dirty state of this object.
      *
      * @member {boolean}
      */
-    this.dirty = false;
+  this.dirty = false;
 
-    this.updateText();
+  this.updateText();
 }
 
 // constructor
@@ -126,18 +126,18 @@ Object.defineProperties(BitmapText.prototype, {
      * @member {number}
      * @memberof PIXI.extras.BitmapText#
      */
-    tint: {
-        get: function ()
+  tint: {
+    get: function()
         {
-            return this._font.tint;
-        },
-        set: function (value)
-        {
-            this._font.tint = (typeof value === 'number' && value >= 0) ? value : 0xFFFFFF;
-
-            this.dirty = true;
-        }
+      return this._font.tint;
     },
+    set: function(value)
+        {
+      this._font.tint = (typeof value === 'number' && value >= 0) ? value : 0xFFFFFF;
+
+      this.dirty = true;
+    },
+  },
 
     /**
      * The alignment of the BitmapText object
@@ -146,18 +146,18 @@ Object.defineProperties(BitmapText.prototype, {
      * @default 'left'
      * @memberof PIXI.extras.BitmapText#
      */
-    align: {
-        get: function ()
+  align: {
+    get: function()
         {
-            return this._font.align;
-        },
-        set: function (value)
-        {
-            this._font.align = value || 'left';
-
-            this.dirty = true;
-        }
+      return this._font.align;
     },
+    set: function(value)
+        {
+      this._font.align = value || 'left';
+
+      this.dirty = true;
+    },
+  },
 
     /**
      * The font descriptor of the BitmapText object
@@ -165,31 +165,31 @@ Object.defineProperties(BitmapText.prototype, {
      * @member {Font}
      * @memberof PIXI.extras.BitmapText#
      */
-    font: {
-        get: function ()
+  font: {
+    get: function()
         {
-            return this._font;
-        },
-        set: function (value)
-        {
-            if (!value) {
-                return;
-            }
-
-            if (typeof value === 'string') {
-                value = value.split(' ');
-
-                this._font.name = value.length === 1 ? value[0] : value.slice(1).join(' ');
-                this._font.size = value.length >= 2 ? parseInt(value[0], 10) : BitmapText.fonts[this._font.name].size;
-            }
-            else {
-                this._font.name = value.name;
-                this._font.size = typeof value.size === 'number' ? value.size : parseInt(value.size, 10);
-            }
-
-            this.dirty = true;
-        }
+      return this._font;
     },
+    set: function(value)
+        {
+      if (!value) {
+        return;
+      }
+
+      if (typeof value === 'string') {
+        value = value.split(' ');
+
+        this._font.name = value.length === 1 ? value[0] : value.slice(1).join(' ');
+        this._font.size = value.length >= 2 ? parseInt(value[0], 10) : BitmapText.fonts[this._font.name].size;
+      }
+      else {
+        this._font.name = value.name;
+        this._font.size = typeof value.size === 'number' ? value.size : parseInt(value.size, 10);
+      }
+
+      this.dirty = true;
+    },
+  },
 
     /**
      * The text of the BitmapText object
@@ -197,22 +197,22 @@ Object.defineProperties(BitmapText.prototype, {
      * @member {string}
      * @memberof PIXI.extras.BitmapText#
      */
-    text: {
-        get: function ()
+  text: {
+    get: function()
         {
-            return this._text;
-        },
-        set: function (value)
+      return this._text;
+    },
+    set: function(value)
         {
-            value = value.toString() || ' ';
-            if (this._text === value)
+      value = value.toString() || ' ';
+      if (this._text === value)
             {
-                return;
-            }
-            this._text = value;
-            this.dirty = true;
-        }
-    }
+        return;
+      }
+      this._text = value;
+      this.dirty = true;
+    },
+  },
 });
 
 /**
@@ -220,130 +220,130 @@ Object.defineProperties(BitmapText.prototype, {
  *
  * @private
  */
-BitmapText.prototype.updateText = function ()
+BitmapText.prototype.updateText = function()
 {
-    var data = BitmapText.fonts[this._font.name];
-    var pos = new core.Point();
-    var prevCharCode = null;
-    var chars = [];
-    var lastLineWidth = 0;
-    var maxLineWidth = 0;
-    var lineWidths = [];
-    var line = 0;
-    var scale = this._font.size / data.size;
-    var lastSpace = -1;
-    var maxLineHeight = 0;
+  var data = BitmapText.fonts[this._font.name];
+  var pos = new core.Point();
+  var prevCharCode = null;
+  var chars = [];
+  var lastLineWidth = 0;
+  var maxLineWidth = 0;
+  var lineWidths = [];
+  var line = 0;
+  var scale = this._font.size / data.size;
+  var lastSpace = -1;
+  var maxLineHeight = 0;
 
-    for (var i = 0; i < this.text.length; i++)
+  for (var i = 0; i < this.text.length; i++)
     {
-        var charCode = this.text.charCodeAt(i);
-        lastSpace = /(\s)/.test(this.text.charAt(i)) ? i : lastSpace;
+    var charCode = this.text.charCodeAt(i);
+    lastSpace = /(\s)/.test(this.text.charAt(i)) ? i : lastSpace;
 
-        if (/(?:\r\n|\r|\n)/.test(this.text.charAt(i)))
+    if (/(?:\r\n|\r|\n)/.test(this.text.charAt(i)))
         {
-            lineWidths.push(lastLineWidth);
-            maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
-            line++;
+      lineWidths.push(lastLineWidth);
+      maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
+      line++;
 
-            pos.x = 0;
-            pos.y += data.lineHeight;
-            prevCharCode = null;
-            continue;
-        }
-
-        if (lastSpace !== -1 && this.maxWidth > 0 && pos.x * scale > this.maxWidth)
-        {
-            core.utils.removeItems(chars, lastSpace, i - lastSpace);
-            i = lastSpace;
-            lastSpace = -1;
-
-            lineWidths.push(lastLineWidth);
-            maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
-            line++;
-
-            pos.x = 0;
-            pos.y += data.lineHeight;
-            prevCharCode = null;
-            continue;
-        }
-
-        var charData = data.chars[charCode];
-
-        if (!charData)
-        {
-            continue;
-        }
-
-        if (prevCharCode && charData.kerning[prevCharCode])
-        {
-            pos.x += charData.kerning[prevCharCode];
-        }
-
-        chars.push({texture:charData.texture, line: line, charCode: charCode, position: new core.Point(pos.x + charData.xOffset, pos.y + charData.yOffset)});
-        lastLineWidth = pos.x + (charData.texture.width + charData.xOffset);
-        pos.x += charData.xAdvance;
-        maxLineHeight = Math.max(maxLineHeight, (charData.yOffset + charData.texture.height));
-        prevCharCode = charCode;
+      pos.x = 0;
+      pos.y += data.lineHeight;
+      prevCharCode = null;
+      continue;
     }
 
-    lineWidths.push(lastLineWidth);
-    maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
-
-    var lineAlignOffsets = [];
-
-    for (i = 0; i <= line; i++)
-    {
-        var alignOffset = 0;
-
-        if (this._font.align === 'right')
+    if (lastSpace !== -1 && this.maxWidth > 0 && pos.x * scale > this.maxWidth)
         {
-            alignOffset = maxLineWidth - lineWidths[i];
-        }
-        else if (this._font.align === 'center')
-        {
-            alignOffset = (maxLineWidth - lineWidths[i]) / 2;
-        }
+      core.utils.removeItems(chars, lastSpace, i - lastSpace);
+      i = lastSpace;
+      lastSpace = -1;
 
-        lineAlignOffsets.push(alignOffset);
+      lineWidths.push(lastLineWidth);
+      maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
+      line++;
+
+      pos.x = 0;
+      pos.y += data.lineHeight;
+      prevCharCode = null;
+      continue;
     }
 
-    var lenChars = chars.length;
-    var tint = this.tint;
+    var charData = data.chars[charCode];
 
-    for (i = 0; i < lenChars; i++)
-    {
-        var c = this._glyphs[i]; // get the next glyph sprite
-
-        if (c)
+    if (!charData)
         {
-            c.texture = chars[i].texture;
-        }
-        else
-        {
-            c = new core.Sprite(chars[i].texture);
-            this._glyphs.push(c);
-        }
-
-        c.position.x = (chars[i].position.x + lineAlignOffsets[chars[i].line]) * scale;
-        c.position.y = chars[i].position.y * scale;
-        c.scale.x = c.scale.y = scale;
-        c.tint = tint;
-
-        if (!c.parent)
-        {
-            this.addChild(c);
-        }
+      continue;
     }
+
+    if (prevCharCode && charData.kerning[prevCharCode])
+        {
+      pos.x += charData.kerning[prevCharCode];
+    }
+
+    chars.push({texture:charData.texture, line: line, charCode: charCode, position: new core.Point(pos.x + charData.xOffset, pos.y + charData.yOffset)});
+    lastLineWidth = pos.x + (charData.texture.width + charData.xOffset);
+    pos.x += charData.xAdvance;
+    maxLineHeight = Math.max(maxLineHeight, (charData.yOffset + charData.texture.height));
+    prevCharCode = charCode;
+  }
+
+  lineWidths.push(lastLineWidth);
+  maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
+
+  var lineAlignOffsets = [];
+
+  for (i = 0; i <= line; i++)
+    {
+    var alignOffset = 0;
+
+    if (this._font.align === 'right')
+        {
+      alignOffset = maxLineWidth - lineWidths[i];
+    }
+    else if (this._font.align === 'center')
+        {
+      alignOffset = (maxLineWidth - lineWidths[i]) / 2;
+    }
+
+    lineAlignOffsets.push(alignOffset);
+  }
+
+  var lenChars = chars.length;
+  var tint = this.tint;
+
+  for (i = 0; i < lenChars; i++)
+    {
+    var c = this._glyphs[i]; // get the next glyph sprite
+
+    if (c)
+        {
+      c.texture = chars[i].texture;
+    }
+    else
+        {
+      c = new core.Sprite(chars[i].texture);
+      this._glyphs.push(c);
+    }
+
+    c.position.x = (chars[i].position.x + lineAlignOffsets[chars[i].line]) * scale;
+    c.position.y = chars[i].position.y * scale;
+    c.scale.x = c.scale.y = scale;
+    c.tint = tint;
+
+    if (!c.parent)
+        {
+      this.addChild(c);
+    }
+  }
 
     // remove unnecessary children.
-    for (i = lenChars; i < this._glyphs.length; ++i)
+  for (i = lenChars; i < this._glyphs.length; ++i)
     {
-        this.removeChild(this._glyphs[i]);
-    }
+    this.removeChild(this._glyphs[i]);
+  }
 
-    this.textWidth = maxLineWidth * scale;
-    this.textHeight = (pos.y + data.lineHeight) * scale;
-    this.maxLineHeight = maxLineHeight * scale;
+  this.textWidth = maxLineWidth * scale;
+  this.textHeight = (pos.y + data.lineHeight) * scale;
+  this.maxLineHeight = maxLineHeight * scale;
 };
 
 /**
@@ -351,10 +351,10 @@ BitmapText.prototype.updateText = function ()
  *
  * @private
  */
-BitmapText.prototype.updateTransform = function ()
+BitmapText.prototype.updateTransform = function()
 {
-    this.validate();
-    this.containerUpdateTransform();
+  this.validate();
+  this.containerUpdateTransform();
 };
 
 /**
@@ -365,8 +365,8 @@ BitmapText.prototype.updateTransform = function ()
 
 BitmapText.prototype.getLocalBounds = function()
 {
-    this.validate();
-    return core.Container.prototype.getLocalBounds.call(this);
+  this.validate();
+  return core.Container.prototype.getLocalBounds.call(this);
 };
 
 /**
@@ -376,11 +376,11 @@ BitmapText.prototype.getLocalBounds = function()
  */
 BitmapText.prototype.validate = function()
 {
-    if (this.dirty)
+  if (this.dirty)
     {
-        this.updateText();
-        this.dirty = false;
-    }
+    this.updateText();
+    this.dirty = false;
+  }
 };
 
 BitmapText.fonts = {};

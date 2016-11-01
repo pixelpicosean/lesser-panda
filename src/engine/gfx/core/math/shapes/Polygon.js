@@ -21,23 +21,23 @@ class Polygon {
     {
         // prevents an argument leak deopt
         // see section 3.2: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
-        points = new Array(arguments.length);
+      points = new Array(arguments.length);
 
-        for (var a = 0; a < points.length; ++a) {
-            points[a] = arguments[a];
-        }
+      for (var a = 0; a < points.length; ++a) {
+        points[a] = arguments[a];
+      }
     }
 
     // if this is an array of points, convert it to a flat array of numbers
     if (points[0] instanceof Vector)
     {
-        var p = [];
-        for (var i = 0, il = points.length; i < il; i++)
+      var p = [];
+      for (var i = 0, il = points.length; i < il; i++)
         {
-            p.push(points[i].x, points[i].y);
-        }
+        p.push(points[i].x, points[i].y);
+      }
 
-        points = p;
+      points = p;
     }
 
     this.closed = true;
@@ -64,7 +64,7 @@ class Polygon {
    */
   clone()
   {
-      return new Polygon(this.points.slice());
+    return new Polygon(this.points.slice());
   }
 
   /**
@@ -76,25 +76,25 @@ class Polygon {
    */
   contains(x, y)
   {
-      var inside = false;
+    var inside = false;
 
       // use some raycasting to test hits
       // https://github.com/substack/point-in-polygon/blob/master/index.js
-      var length = this.points.length / 2;
+    var length = this.points.length / 2;
 
-      for (var i = 0, j = length - 1; i < length; j = i++)
+    for (var i = 0, j = length - 1; i < length; j = i++)
       {
-          var xi = this.points[i * 2], yi = this.points[i * 2 + 1],
-              xj = this.points[j * 2], yj = this.points[j * 2 + 1],
-              intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      var xi = this.points[i * 2], yi = this.points[i * 2 + 1],
+        xj = this.points[j * 2], yj = this.points[j * 2 + 1],
+        intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
 
-          if (intersect)
+      if (intersect)
           {
-              inside = !inside;
-          }
+        inside = !inside;
       }
+    }
 
-      return inside;
+    return inside;
   }
 }
 

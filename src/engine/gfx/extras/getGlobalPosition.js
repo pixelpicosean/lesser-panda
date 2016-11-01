@@ -7,22 +7,22 @@ var core = require('../core');
 * @param point {Point} the point to write the global value to. If null a new point will be returned
 * @return {Point}
 */
-core.DisplayObject.prototype.getGlobalPosition = function (point)
+core.DisplayObject.prototype.getGlobalPosition = function(point)
 {
-    point = point || new core.Point();
+  point = point || new core.Point();
 
-    if(this.parent)
+  if(this.parent)
     {
-        this.displayObjectUpdateTransform();
+    this.displayObjectUpdateTransform();
 
-        point.x = this.worldTransform.tx;
-        point.y = this.worldTransform.ty;
-    }
-    else
+    point.x = this.worldTransform.tx;
+    point.y = this.worldTransform.ty;
+  }
+  else
     {
-        point.x = this.position.x;
-        point.y = this.position.y;
-    }
+    point.x = this.position.x;
+    point.y = this.position.y;
+  }
 
-    return point;
+  return point;
 };

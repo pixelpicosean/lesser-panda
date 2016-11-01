@@ -101,7 +101,7 @@ class Entity {
    * Tag for filtering by systems.
    * @type {string}
    */
-  get tag() { return this._tag }
+  get tag() { return this._tag; }
   set tag(t) {
     if (this.game) {
       this.game.changeEntityTag(this, t);
@@ -133,14 +133,14 @@ class Entity {
    * @method update
    * @memberof Entity#
    */
-  update(dt, dtSec) {}
+  update(/*dt, dtSec*/) {}
   /**
    * Update method to be called each fixed step. Set `canFixedTick = true` to activate.
    * Doing nothing by default.
    * @method fixedUpdate
    * @memberof Entity#
    */
-  fixedUpdate(dt, dtSec) {}
+  fixedUpdate(/*dt, dtSec*/) {}
 }
 Entity.nextId = 0;
 

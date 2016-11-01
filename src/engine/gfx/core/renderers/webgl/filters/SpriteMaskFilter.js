@@ -1,5 +1,5 @@
 var AbstractFilter = require('./AbstractFilter'),
-    math =  require('../../../math');
+  math =  require('../../../math');
 
 
 
@@ -13,20 +13,20 @@ var AbstractFilter = require('./AbstractFilter'),
  */
 function SpriteMaskFilter(sprite)
 {
-    var maskMatrix = new math.Matrix();
+  var maskMatrix = new math.Matrix();
 
-    AbstractFilter.call(this,
+  AbstractFilter.call(this,
         require('./spriteMaskFilter.vert'),
         require('./spriteMaskFilter.frag'),
-        {
-            mask:           { type: 'sampler2D', value: sprite._texture },
-            alpha:          { type: 'f', value: 1},
-            otherMatrix:    { type: 'mat3', value: maskMatrix.toArray(true) }
-        }
+    {
+      mask:           { type: 'sampler2D', value: sprite._texture },
+      alpha:          { type: 'f', value: 1},
+      otherMatrix:    { type: 'mat3', value: maskMatrix.toArray(true) },
+    }
     );
 
-    this.maskSprite = sprite;
-    this.maskMatrix = maskMatrix;
+  this.maskSprite = sprite;
+  this.maskMatrix = maskMatrix;
 }
 
 SpriteMaskFilter.prototype = Object.create(AbstractFilter.prototype);
@@ -40,20 +40,20 @@ module.exports = SpriteMaskFilter;
  * @param input {PIXI.RenderTarget}
  * @param output {PIXI.RenderTarget}
  */
-SpriteMaskFilter.prototype.applyFilter = function (renderer, input, output)
+SpriteMaskFilter.prototype.applyFilter = function(renderer, input, output)
 {
-    var filterManager = renderer.filterManager;
+  var filterManager = renderer.filterManager;
 
-    this.uniforms.mask.value = this.maskSprite._texture;
+  this.uniforms.mask.value = this.maskSprite._texture;
 
-    filterManager.calculateMappedMatrix(input.frame, this.maskSprite, this.maskMatrix);
+  filterManager.calculateMappedMatrix(input.frame, this.maskSprite, this.maskMatrix);
 
-    this.uniforms.otherMatrix.value = this.maskMatrix.toArray(true);
-    this.uniforms.alpha.value = this.maskSprite.worldAlpha;
+  this.uniforms.otherMatrix.value = this.maskMatrix.toArray(true);
+  this.uniforms.alpha.value = this.maskSprite.worldAlpha;
 
-    var shader = this.getShader(renderer);
+  var shader = this.getShader(renderer);
      // draw the filter...
-    filterManager.applyFilter(shader, input, output);
+  filterManager.applyFilter(shader, input, output);
 };
 
 
@@ -64,16 +64,16 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
      * @member {PIXI.Texture}
      * @memberof PIXI.SpriteMaskFilter#
      */
-    map: {
-        get: function ()
+  map: {
+    get: function()
         {
-            return this.uniforms.mask.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.mask.value = value;
-        }
+      return this.uniforms.mask.value;
     },
+    set: function(value)
+        {
+      this.uniforms.mask.value = value;
+    },
+  },
 
     /**
      * The offset used to move the displacement map.
@@ -81,14 +81,14 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.SpriteMaskFilter#
      */
-    offset: {
-        get: function()
+  offset: {
+    get: function()
         {
-            return this.uniforms.offset.value;
-        },
-        set: function(value)
+      return this.uniforms.offset.value;
+    },
+    set: function(value)
         {
-            this.uniforms.offset.value = value;
-        }
-    }
+      this.uniforms.offset.value = value;
+    },
+  },
 });

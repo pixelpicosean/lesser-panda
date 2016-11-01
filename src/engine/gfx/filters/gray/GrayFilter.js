@@ -10,15 +10,15 @@ var core = require('../../core');
  */
 function GrayFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./gray.frag'),
         // set the uniforms
-        {
-            gray: { type: '1f', value: 1 }
-        }
+    {
+      gray: { type: '1f', value: 1 },
+    }
     );
 }
 
@@ -33,14 +33,14 @@ Object.defineProperties(GrayFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.GrayFilter#
      */
-    gray: {
-        get: function ()
+  gray: {
+    get: function()
         {
-            return this.uniforms.gray.value;
-        },
-        set: function (value)
+      return this.uniforms.gray.value;
+    },
+    set: function(value)
         {
-            this.uniforms.gray.value = value;
-        }
-    }
+      this.uniforms.gray.value = value;
+    },
+  },
 });

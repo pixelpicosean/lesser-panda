@@ -12,17 +12,17 @@ var core = require('../../core');
  */
 function ShockwaveFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./shockwave.frag'),
         // custom uniforms
-        {
-            center: { type: 'v2', value: { x: 0.5, y: 0.5 } },
-            params: { type: 'v3', value: { x: 10, y: 0.8, z: 0.1 } },
-            time: { type: '1f', value: 0 }
-        }
+    {
+      center: { type: 'v2', value: { x: 0.5, y: 0.5 } },
+      params: { type: 'v3', value: { x: 10, y: 0.8, z: 0.1 } },
+      time: { type: '1f', value: 0 },
+    }
     );
 }
 
@@ -38,16 +38,16 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * @member {object<string, number>}
      * @memberof PIXI.filters.ShockwaveFilter#
      */
-    center: {
-        get: function ()
+  center: {
+    get: function()
         {
-            return this.uniforms.center.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.center.value = value;
-        }
+      return this.uniforms.center.value;
     },
+    set: function(value)
+        {
+      this.uniforms.center.value = value;
+    },
+  },
     /**
      * Sets the params of the shockwave. These modify the look and behavior of
      * the shockwave as it ripples out.
@@ -55,16 +55,16 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * @member {object<string, number>}
      * @memberof PIXI.filters.ShockwaveFilter#
      */
-    params: {
-        get: function ()
+  params: {
+    get: function()
         {
-            return this.uniforms.params.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.params.value = value;
-        }
+      return this.uniforms.params.value;
     },
+    set: function(value)
+        {
+      this.uniforms.params.value = value;
+    },
+  },
     /**
      * Sets the elapsed time of the shockwave. This controls the speed at which
      * the shockwave ripples out.
@@ -72,14 +72,14 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.ShockwaveFilter#
      */
-    time: {
-        get: function ()
+  time: {
+    get: function()
         {
-            return this.uniforms.time.value;
-        },
-        set: function (value)
+      return this.uniforms.time.value;
+    },
+    set: function(value)
         {
-            this.uniforms.time.value = value;
-        }
-    }
+      this.uniforms.time.value = value;
+    },
+  },
 });

@@ -72,45 +72,45 @@ class WebGLGraphicsData {
    * Resets the vertices and the indices
    */
   reset() {
-      this.points.length = 0;
-      this.indices.length = 0;
+    this.points.length = 0;
+    this.indices.length = 0;
   }
 
   /**
    * Binds the buffers and uploads the data
    */
   upload() {
-      const gl = this.gl;
+    const gl = this.gl;
 
   //    this.lastIndex = graphics.graphicsData.length;
-      this.glPoints = new Float32Array(this.points);
+    this.glPoints = new Float32Array(this.points);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, this.glPoints, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.glPoints, gl.STATIC_DRAW);
 
-      this.glIndices = new Uint16Array(this.indices);
+    this.glIndices = new Uint16Array(this.indices);
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.glIndices, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.glIndices, gl.STATIC_DRAW);
 
-      this.dirty = false;
+    this.dirty = false;
   }
 
   destroy() {
-      this.color = null;
-      this.points = null;
-      this.indices = null;
+    this.color = null;
+    this.points = null;
+    this.indices = null;
 
-      this.gl.deleteBuffer(this.buffer);
-      this.gl.deleteBuffer(this.indexBuffer);
+    this.gl.deleteBuffer(this.buffer);
+    this.gl.deleteBuffer(this.indexBuffer);
 
-      this.gl = null;
+    this.gl = null;
 
-      this.buffer = null;
-      this.indexBuffer = null;
+    this.buffer = null;
+    this.indexBuffer = null;
 
-      this.glPoints = null;
-      this.glIndices = null;
+    this.glPoints = null;
+    this.glIndices = null;
   }
 }
 

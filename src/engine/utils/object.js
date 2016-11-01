@@ -18,7 +18,7 @@
  * // return { a: { var_1: 2 } }
  */
 module.exports.mergeMultiple = function mergeMultiple(a) {
-  var a = 0, b, key, value;
+  var i = 0, b, key, value;
   for (i = 1; i < arguments.length; i++) {
     b = arguments[i];
 

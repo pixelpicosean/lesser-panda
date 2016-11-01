@@ -10,7 +10,7 @@ var core = require('../../core');
  */
 function CrossHatchFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader

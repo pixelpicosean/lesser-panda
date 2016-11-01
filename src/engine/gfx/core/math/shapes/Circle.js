@@ -45,7 +45,7 @@ class Circle {
    */
   clone()
   {
-      return new Circle(this.x, this.y, this.radius);
+    return new Circle(this.x, this.y, this.radius);
   }
 
   /**
@@ -57,19 +57,19 @@ class Circle {
    */
   contains(x, y)
   {
-      if (this.radius <= 0)
+    if (this.radius <= 0)
       {
-          return false;
-      }
+      return false;
+    }
 
-      var dx = (this.x - x),
-          dy = (this.y - y),
-          r2 = this.radius * this.radius;
+    var dx = (this.x - x),
+      dy = (this.y - y),
+      r2 = this.radius * this.radius;
 
-      dx *= dx;
-      dy *= dy;
+    dx *= dx;
+    dy *= dy;
 
-      return (dx + dy <= r2);
+    return (dx + dy <= r2);
   }
 
   /**
@@ -79,7 +79,7 @@ class Circle {
   */
   getBounds()
   {
-      return new Rectangle(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+    return new Rectangle(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
   }
 }
 

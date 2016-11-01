@@ -39,7 +39,7 @@ const audio = Object.assign(new EventEmitter(), {
    * Get/set global audio volume.
    * @memberof module:engine/audio
    */
-  volume: function(v) { Howler.volume(v) },
+  volume: function(v) { Howler.volume(v); },
 });
 
 let mutedBeforePause = false;

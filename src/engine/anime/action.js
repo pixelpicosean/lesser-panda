@@ -12,7 +12,7 @@
 const EventEmitter = require('engine/EventEmitter');
 
 const { getTargetAndKey } = require('./utils');
-const { Easing, Interpolation } = require('./easing');
+const { Easing } = require('./easing');
 
 /**
  * Type of channels
@@ -308,7 +308,7 @@ class ActionPlayer extends EventEmitter {
      */
     this.looped = true;
 
-    let channel, props = [], channels = this.action.channels;
+    let channel, channels = this.action.channels;
     for (let i = 0; i < channels.length; i++) {
       // Channel: [propContext, propKey]
       channel = getTargetAndKey(this.context, channels[i].path);
@@ -438,7 +438,7 @@ class ActionPlayer extends EventEmitter {
    * @method goto
    * @param  {number} time
    */
-  goto(time) {}
+  goto(/*time*/) {}
 }
 
 /**

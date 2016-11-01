@@ -63,16 +63,16 @@ class ParticleBuffer {
 
     for (var i = 0; i < properties.length; i++)
     {
-        var property = properties[i];
+      var property = properties[i];
 
-        if(dynamicPropertyFlags[i])
+      if(dynamicPropertyFlags[i])
         {
-            this.dynamicProperties.push(property);
-        }
-        else
+        this.dynamicProperties.push(property);
+      }
+      else
         {
-            this.staticProperties.push(property);
-        }
+        this.staticProperties.push(property);
+      }
     }
 
     this.staticStride = 0;
@@ -92,49 +92,49 @@ class ParticleBuffer {
    *
    * @private
    */
-  initBuffers ()
+  initBuffers()
   {
-      var gl = this.gl;
-      var i;
-      var property;
+    var gl = this.gl;
+    var i;
+    var property;
 
-      var dynamicOffset = 0;
-      this.dynamicStride = 0;
+    var dynamicOffset = 0;
+    this.dynamicStride = 0;
 
-      for (i = 0; i < this.dynamicProperties.length; i++)
+    for (i = 0; i < this.dynamicProperties.length; i++)
       {
-          property = this.dynamicProperties[i];
+      property = this.dynamicProperties[i];
 
-          property.offset = dynamicOffset;
-          dynamicOffset += property.size;
-          this.dynamicStride += property.size;
-      }
+      property.offset = dynamicOffset;
+      dynamicOffset += property.size;
+      this.dynamicStride += property.size;
+    }
 
-      this.dynamicData = new Float32Array( this.size * this.dynamicStride * 4);
-      this.dynamicBuffer = gl.createBuffer();
+    this.dynamicData = new Float32Array( this.size * this.dynamicStride * 4);
+    this.dynamicBuffer = gl.createBuffer();
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.dynamicBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, this.dynamicData, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.dynamicBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.dynamicData, gl.DYNAMIC_DRAW);
 
 
       // static //
-      var staticOffset = 0;
-      this.staticStride = 0;
+    var staticOffset = 0;
+    this.staticStride = 0;
 
-      for (i = 0; i < this.staticProperties.length; i++)
+    for (i = 0; i < this.staticProperties.length; i++)
       {
-          property = this.staticProperties[i];
+      property = this.staticProperties[i];
 
-          property.offset = staticOffset;
-          staticOffset += property.size;
-          this.staticStride += property.size;
-      }
+      property.offset = staticOffset;
+      staticOffset += property.size;
+      this.staticStride += property.size;
+    }
 
-      this.staticData = new Float32Array( this.size * this.staticStride * 4);
-      this.staticBuffer = gl.createBuffer();
+    this.staticData = new Float32Array( this.size * this.staticStride * 4);
+    this.staticBuffer = gl.createBuffer();
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.staticBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, this.staticData, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.staticBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.staticData, gl.DYNAMIC_DRAW);
   }
 
   /**
@@ -143,16 +143,16 @@ class ParticleBuffer {
    */
   uploadDynamic(children, startIndex, amount)
   {
-      var gl = this.gl;
+    var gl = this.gl;
 
-      for (var i = 0; i < this.dynamicProperties.length; i++)
+    for (var i = 0; i < this.dynamicProperties.length; i++)
       {
-          var property = this.dynamicProperties[i];
-          property.uploadFunction(children, startIndex, amount, this.dynamicData, this.dynamicStride, property.offset);
-      }
+      var property = this.dynamicProperties[i];
+      property.uploadFunction(children, startIndex, amount, this.dynamicData, this.dynamicStride, property.offset);
+    }
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.dynamicBuffer);
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.dynamicData);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.dynamicBuffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.dynamicData);
   }
 
   /**
@@ -161,57 +161,57 @@ class ParticleBuffer {
    */
   uploadStatic(children, startIndex, amount)
   {
-      var gl = this.gl;
+    var gl = this.gl;
 
-      for (var i = 0; i < this.staticProperties.length; i++)
+    for (var i = 0; i < this.staticProperties.length; i++)
       {
-          var property = this.staticProperties[i];
-          property.uploadFunction(children, startIndex, amount, this.staticData, this.staticStride, property.offset);
-      }
+      var property = this.staticProperties[i];
+      property.uploadFunction(children, startIndex, amount, this.staticData, this.staticStride, property.offset);
+    }
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.staticBuffer);
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.staticData);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.staticBuffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.staticData);
   }
 
   /**
    * Binds the buffers to the GPU
    *
    */
-  bind ()
+  bind()
   {
-      var gl = this.gl;
-      var i, property;
+    var gl = this.gl;
+    var i, property;
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.dynamicBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.dynamicBuffer);
 
-      for (i = 0; i < this.dynamicProperties.length; i++)
+    for (i = 0; i < this.dynamicProperties.length; i++)
       {
-          property = this.dynamicProperties[i];
-          gl.vertexAttribPointer(property.attribute, property.size, gl.FLOAT, false, this.dynamicStride * 4, property.offset * 4);
-      }
+      property = this.dynamicProperties[i];
+      gl.vertexAttribPointer(property.attribute, property.size, gl.FLOAT, false, this.dynamicStride * 4, property.offset * 4);
+    }
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.staticBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.staticBuffer);
 
-      for (i = 0; i < this.staticProperties.length; i++)
+    for (i = 0; i < this.staticProperties.length; i++)
       {
-          property = this.staticProperties[i];
-          gl.vertexAttribPointer(property.attribute, property.size, gl.FLOAT, false, this.staticStride * 4, property.offset * 4);
-      }
+      property = this.staticProperties[i];
+      gl.vertexAttribPointer(property.attribute, property.size, gl.FLOAT, false, this.staticStride * 4, property.offset * 4);
+    }
   }
 
   /**
    * Destroys the ParticleBuffer.
    *
    */
-  destroy ()
+  destroy()
   {
-      this.dynamicProperties = null;
-      this.dynamicData = null;
-      this.gl.deleteBuffer(this.dynamicBuffer);
+    this.dynamicProperties = null;
+    this.dynamicData = null;
+    this.gl.deleteBuffer(this.dynamicBuffer);
 
-      this.staticProperties = null;
-      this.staticData = null;
-      this.gl.deleteBuffer(this.staticBuffer);
+    this.staticProperties = null;
+    this.staticData = null;
+    this.gl.deleteBuffer(this.staticBuffer);
   }
 }
 

@@ -17,16 +17,16 @@ var core = require('../../core');
  */
 function AsciiFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./ascii.frag'),
         // custom uniforms
-        {
-            dimensions: { type: '4fv', value: new Float32Array([0, 0, 0, 0]) },
-            pixelSize:  { type: '1f', value: 8 }
-        }
+    {
+      dimensions: { type: '4fv', value: new Float32Array([0, 0, 0, 0]) },
+      pixelSize:  { type: '1f', value: 8 },
+    }
     );
 }
 
@@ -41,14 +41,14 @@ Object.defineProperties(AsciiFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.AsciiFilter#
      */
-    size: {
-        get: function ()
+  size: {
+    get: function()
         {
-            return this.uniforms.pixelSize.value;
-        },
-        set: function (value)
+      return this.uniforms.pixelSize.value;
+    },
+    set: function(value)
         {
-            this.uniforms.pixelSize.value = value;
-        }
-    }
+      this.uniforms.pixelSize.value = value;
+    },
+  },
 });

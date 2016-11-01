@@ -10,15 +10,15 @@ var core = require('../../core');
  */
 function InvertFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./invert.frag'),
         // custom uniforms
-        {
-            invert: { type: '1f', value: 1 }
-        }
+    {
+      invert: { type: '1f', value: 1 },
+    }
     );
 }
 
@@ -34,14 +34,14 @@ Object.defineProperties(InvertFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.InvertFilter#
      */
-    invert: {
-        get: function ()
+  invert: {
+    get: function()
         {
-            return this.uniforms.invert.value;
-        },
-        set: function (value)
+      return this.uniforms.invert.value;
+    },
+    set: function(value)
         {
-            this.uniforms.invert.value = value;
-        }
-    }
+      this.uniforms.invert.value = value;
+    },
+  },
 });

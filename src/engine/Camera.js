@@ -85,10 +85,10 @@ class Camera {
      */
     this.rotation = 0;
     /**
-     * Reference of the scene added to.
-     * @type {Scene}
+     * Reference of the game added to.
+     * @type {Game}
      */
-    this.scene = null;
+    this.game = null;
     /**
      * Current speed of camera.
      * @type {Vector}
@@ -150,14 +150,14 @@ class Camera {
    * Add camera to container.
    * @memberof Camera#
    * @method addTo
-   * @param {Scene}           scene
+   * @param {Scene}           game
    * @param {PIXI.Container}  container
    */
-  addTo(scene, container) {
-    this.scene = scene;
+  addTo(game, container) {
+    this.game = game;
     this.container = container;
 
-    scene.on('update', this.update, this);
+    game.on('update', this.update, this);
 
     this.position.set(engine.width, engine.height)
       .multiply(this.anchor);
@@ -368,7 +368,7 @@ class Camera {
    * @method remove
    */
   remove() {
-    scene.off('update', this.update, this);
+    this.game.off('update', this.update, this);
     this.container = null;
   }
 

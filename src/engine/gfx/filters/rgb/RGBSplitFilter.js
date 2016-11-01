@@ -10,18 +10,18 @@ var core = require('../../core');
  */
 function RGBSplitFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./rgbSplit.frag'),
         // custom uniforms
-        {
-            red:        { type: 'v2', value: { x: 20, y: 20 } },
-            green:      { type: 'v2', value: { x: -20, y: 20 } },
-            blue:       { type: 'v2', value: { x: 20, y: -20 } },
-            dimensions: { type: '4fv', value: [0, 0, 0, 0] }
-        }
+    {
+      red:        { type: 'v2', value: { x: 20, y: 20 } },
+      green:      { type: 'v2', value: { x: -20, y: 20 } },
+      blue:       { type: 'v2', value: { x: 20, y: -20 } },
+      dimensions: { type: '4fv', value: [0, 0, 0, 0] },
+    }
     );
 }
 
@@ -36,16 +36,16 @@ Object.defineProperties(RGBSplitFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.RGBSplitFilter#
      */
-    red: {
-        get: function ()
+  red: {
+    get: function()
         {
-            return this.uniforms.red.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.red.value = value;
-        }
+      return this.uniforms.red.value;
     },
+    set: function(value)
+        {
+      this.uniforms.red.value = value;
+    },
+  },
 
     /**
      * Green channel offset.
@@ -53,16 +53,16 @@ Object.defineProperties(RGBSplitFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.RGBSplitFilter#
      */
-    green: {
-        get: function ()
+  green: {
+    get: function()
         {
-            return this.uniforms.green.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.green.value = value;
-        }
+      return this.uniforms.green.value;
     },
+    set: function(value)
+        {
+      this.uniforms.green.value = value;
+    },
+  },
 
     /**
      * Blue offset.
@@ -70,14 +70,14 @@ Object.defineProperties(RGBSplitFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.RGBSplitFilter#
      */
-    blue: {
-        get: function ()
+  blue: {
+    get: function()
         {
-            return this.uniforms.blue.value;
-        },
-        set: function (value)
+      return this.uniforms.blue.value;
+    },
+    set: function(value)
         {
-            this.uniforms.blue.value = value;
-        }
-    }
+      this.uniforms.blue.value = value;
+    },
+  },
 });

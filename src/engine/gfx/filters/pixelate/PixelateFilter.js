@@ -10,16 +10,16 @@ var core = require('../../core');
  */
 function PixelateFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./pixelate.frag'),
         // custom uniforms
-        {
-            dimensions: { type: '4fv',  value: new Float32Array([0, 0, 0, 0]) },
-            pixelSize:  { type: 'v2',   value: { x: 10, y: 10 } }
-        }
+    {
+      dimensions: { type: '4fv',  value: new Float32Array([0, 0, 0, 0]) },
+      pixelSize:  { type: 'v2',   value: { x: 10, y: 10 } },
+    }
     );
 }
 
@@ -35,14 +35,14 @@ Object.defineProperties(PixelateFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.PixelateFilter#
      */
-    size: {
-        get: function ()
+  size: {
+    get: function()
         {
-            return this.uniforms.pixelSize.value;
-        },
-        set: function (value)
+      return this.uniforms.pixelSize.value;
+    },
+    set: function(value)
         {
-            this.uniforms.pixelSize.value = value;
-        }
-    }
+      this.uniforms.pixelSize.value = value;
+    },
+  },
 });

@@ -69,7 +69,7 @@ class GraphicsData {
    */
   clone()
   {
-      return new GraphicsData(
+    return new GraphicsData(
           this.lineWidth,
           this.lineColor,
           this.lineAlpha,
@@ -84,7 +84,7 @@ class GraphicsData {
    * Destroys the Graphics data.
    */
   destroy() {
-      this.shape = null;
+    this.shape = null;
   }
 }
 

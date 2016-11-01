@@ -10,15 +10,15 @@ var core = require('../../core');
  */
 function BlurXFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         require('./blurX.vert'),
         // fragment shader
         require('./blur.frag'),
         // set the uniforms
-        {
-            strength: { type: '1f', value: 1 }
-        }
+    {
+      strength: { type: '1f', value: 1 },
+    }
     );
 
     /**
@@ -27,44 +27,44 @@ function BlurXFilter()
      * @member {number}
      * @default 1
      */
-    this.passes = 1;
+  this.passes = 1;
 
-    this.strength = 4;
+  this.strength = 4;
 }
 
 BlurXFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BlurXFilter.prototype.constructor = BlurXFilter;
 module.exports = BlurXFilter;
 
-BlurXFilter.prototype.applyFilter = function (renderer, input, output, clear)
+BlurXFilter.prototype.applyFilter = function(renderer, input, output, clear)
 {
-    var shader = this.getShader(renderer);
+  var shader = this.getShader(renderer);
 
-    this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
+  this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
 
-    if(this.passes === 1)
+  if(this.passes === 1)
     {
-        renderer.filterManager.applyFilter(shader, input, output, clear);
-    }
-    else
+    renderer.filterManager.applyFilter(shader, input, output, clear);
+  }
+  else
     {
-        var renderTarget = renderer.filterManager.getRenderTarget(true);
-        var flip = input;
-        var flop = renderTarget;
+    var renderTarget = renderer.filterManager.getRenderTarget(true);
+    var flip = input;
+    var flop = renderTarget;
 
-        for(var i = 0; i < this.passes-1; i++)
+    for(var i = 0; i < this.passes-1; i++)
         {
-            renderer.filterManager.applyFilter(shader, flip, flop, true);
+      renderer.filterManager.applyFilter(shader, flip, flop, true);
 
-           var temp = flop;
-           flop = flip;
-           flip = temp;
-        }
-
-        renderer.filterManager.applyFilter(shader, flip, output, clear);
-
-        renderer.filterManager.returnRenderTarget(renderTarget);
+      var temp = flop;
+      flop = flip;
+      flip = temp;
     }
+
+    renderer.filterManager.applyFilter(shader, flip, output, clear);
+
+    renderer.filterManager.returnRenderTarget(renderTarget);
+  }
 };
 
 
@@ -76,15 +76,15 @@ Object.defineProperties(BlurXFilter.prototype, {
      * @memberof PIXI.filters.BlurXFilter#
      * @default 2
      */
-    blur: {
-        get: function ()
+  blur: {
+    get: function()
         {
-            return  this.strength;
-        },
-        set: function (value)
+      return  this.strength;
+    },
+    set: function(value)
         {
-            this.padding =  Math.abs(value) * 0.5;
-            this.strength = value;
-        }
-    }
+      this.padding =  Math.abs(value) * 0.5;
+      this.strength = value;
+    },
+  },
 });

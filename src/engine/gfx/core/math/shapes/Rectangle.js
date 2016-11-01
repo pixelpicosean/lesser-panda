@@ -51,7 +51,7 @@ class Rectangle {
    */
   clone()
   {
-      return new Rectangle(this.x, this.y, this.width, this.height);
+    return new Rectangle(this.x, this.y, this.width, this.height);
   }
 
   /**
@@ -63,20 +63,20 @@ class Rectangle {
    */
   contains(x, y)
   {
-      if (this.width <= 0 || this.height <= 0)
+    if (this.width <= 0 || this.height <= 0)
       {
-          return false;
-      }
-
-      if (x >= this.x && x < this.x + this.width)
-      {
-          if (y >= this.y && y < this.y + this.height)
-          {
-              return true;
-          }
-      }
-
       return false;
+    }
+
+    if (x >= this.x && x < this.x + this.width)
+      {
+      if (y >= this.y && y < this.y + this.height)
+          {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 

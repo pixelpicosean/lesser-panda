@@ -57,6 +57,6 @@ class Loading extends Game {
 
     loader.load();
   }
-};
+}
 
 module.exports = Loading;

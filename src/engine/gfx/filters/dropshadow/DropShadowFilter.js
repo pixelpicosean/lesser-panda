@@ -1,6 +1,6 @@
 var core = require('../../core'),
-    BlurXFilter = require('../blur/BlurXFilter'),
-    BlurYTintFilter = require('./BlurYTintFilter');
+  BlurXFilter = require('../blur/BlurXFilter'),
+  BlurYTintFilter = require('./BlurYTintFilter');
 
 /**
  * The DropShadowFilter applies a Gaussian blur to an object.
@@ -12,56 +12,56 @@ var core = require('../../core'),
  */
 function DropShadowFilter()
 {
-    core.AbstractFilter.call(this);
+  core.AbstractFilter.call(this);
 
-    this.blurXFilter = new BlurXFilter();
-    this.blurYTintFilter = new BlurYTintFilter();
+  this.blurXFilter = new BlurXFilter();
+  this.blurYTintFilter = new BlurYTintFilter();
 
-    this.defaultFilter = new core.AbstractFilter();
+  this.defaultFilter = new core.AbstractFilter();
 
-    this.padding = 30;
+  this.padding = 30;
 
-    this._dirtyPosition = true;
-    this._angle = 45 * Math.PI / 180;
-    this._distance = 10;
-    this.alpha = 0.75;
-    this.hideObject = false;
-    this.blendMode = core.BLEND_MODES.MULTIPLY;
+  this._dirtyPosition = true;
+  this._angle = 45 * Math.PI / 180;
+  this._distance = 10;
+  this.alpha = 0.75;
+  this.hideObject = false;
+  this.blendMode = core.BLEND_MODES.MULTIPLY;
 }
 
 DropShadowFilter.prototype = Object.create(core.AbstractFilter.prototype);
 DropShadowFilter.prototype.constructor = DropShadowFilter;
 module.exports = DropShadowFilter;
 
-DropShadowFilter.prototype.applyFilter = function (renderer, input, output)
+DropShadowFilter.prototype.applyFilter = function(renderer, input, output)
 {
-    var renderTarget = renderer.filterManager.getRenderTarget(true);
+  var renderTarget = renderer.filterManager.getRenderTarget(true);
 
     //TODO - copyTexSubImage2D could be used here?
-    if(this._dirtyPosition)
+  if(this._dirtyPosition)
     {
-        this._dirtyPosition = false;
+    this._dirtyPosition = false;
 
-        this.blurYTintFilter.uniforms.offset.value[0] = Math.sin(this._angle) * this._distance;
-        this.blurYTintFilter.uniforms.offset.value[1] = Math.cos(this._angle) * this._distance;
-    }
+    this.blurYTintFilter.uniforms.offset.value[0] = Math.sin(this._angle) * this._distance;
+    this.blurYTintFilter.uniforms.offset.value[1] = Math.cos(this._angle) * this._distance;
+  }
 
-    this.blurXFilter.applyFilter(renderer, input, renderTarget);
+  this.blurXFilter.applyFilter(renderer, input, renderTarget);
 
-    renderer.blendModeManager.setBlendMode(this.blendMode);
+  renderer.blendModeManager.setBlendMode(this.blendMode);
 
-    this.blurYTintFilter.applyFilter(renderer, renderTarget, output);
+  this.blurYTintFilter.applyFilter(renderer, renderTarget, output);
 
-    renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
+  renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
 
-    if(!this.hideObject)
+  if(!this.hideObject)
     {
 
-        this.defaultFilter.applyFilter(renderer, input, output);
-    }
+    this.defaultFilter.applyFilter(renderer, input, output);
+  }
 
 
-    renderer.filterManager.returnRenderTarget(renderTarget);
+  renderer.filterManager.returnRenderTarget(renderTarget);
 };
 
 Object.defineProperties(DropShadowFilter.prototype, {
@@ -72,16 +72,16 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      * @default 2
      */
-    blur: {
-        get: function ()
+  blur: {
+    get: function()
         {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = this.blurYTintFilter.blur = value;
-        }
+      return this.blurXFilter.blur;
     },
+    set: function(value)
+        {
+      this.blurXFilter.blur = this.blurYTintFilter.blur = value;
+    },
+  },
 
     /**
      * Sets the strength of the blurX property
@@ -90,16 +90,16 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      * @default 2
      */
-    blurX: {
-        get: function ()
+  blurX: {
+    get: function()
         {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = value;
-        }
+      return this.blurXFilter.blur;
     },
+    set: function(value)
+        {
+      this.blurXFilter.blur = value;
+    },
+  },
 
     /**
      * Sets the strength of the blurY property
@@ -108,16 +108,16 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      * @default 2
      */
-    blurY: {
-        get: function ()
+  blurY: {
+    get: function()
         {
-            return this.blurYTintFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurYTintFilter.blur = value;
-        }
+      return this.blurYTintFilter.blur;
     },
+    set: function(value)
+        {
+      this.blurYTintFilter.blur = value;
+    },
+  },
 
     /**
      * Sets the color of the shadow
@@ -125,16 +125,16 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @member {number}
      * @memberOf PIXI.filters.DropShadowFilter#
      */
-    color: {
-        get: function ()
+  color: {
+    get: function()
         {
-            return  core.utils.rgb2hex( this.blurYTintFilter.uniforms.color.value );
-        },
-        set: function (value)
-        {
-            this.blurYTintFilter.uniforms.color.value = core.utils.hex2rgb(value);
-        }
+      return  core.utils.rgb2hex( this.blurYTintFilter.uniforms.color.value );
     },
+    set: function(value)
+        {
+      this.blurYTintFilter.uniforms.color.value = core.utils.hex2rgb(value);
+    },
+  },
 
     /**
      * Sets the alpha of the shadow
@@ -142,16 +142,16 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @member {number}
      * @memberOf PIXI.filters.DropShadowFilter#
      */
-    alpha: {
-        get: function ()
+  alpha: {
+    get: function()
         {
-            return  this.blurYTintFilter.uniforms.alpha.value;
-        },
-        set: function (value)
-        {
-            this.blurYTintFilter.uniforms.alpha.value = value;
-        }
+      return  this.blurYTintFilter.uniforms.alpha.value;
     },
+    set: function(value)
+        {
+      this.blurYTintFilter.uniforms.alpha.value = value;
+    },
+  },
 
     /**
      * Sets the distance of the shadow
@@ -159,17 +159,17 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @member {number}
      * @memberOf PIXI.filters.DropShadowFilter#
      */
-    distance: {
-        get: function ()
+  distance: {
+    get: function()
         {
-            return  this._distance;
-        },
-        set: function (value)
-        {
-            this._dirtyPosition = true;
-            this._distance = value;
-        }
+      return  this._distance;
     },
+    set: function(value)
+        {
+      this._dirtyPosition = true;
+      this._distance = value;
+    },
+  },
 
     /**
      * Sets the angle of the shadow
@@ -177,15 +177,15 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @member {number}
      * @memberOf PIXI.filters.DropShadowFilter#
      */
-    angle: {
-        get: function ()
+  angle: {
+    get: function()
         {
-            return  this._angle;
-        },
-        set: function (value)
+      return  this._angle;
+    },
+    set: function(value)
         {
-            this._dirtyPosition = true;
-            this._angle = value;
-        }
-    }
+      this._dirtyPosition = true;
+      this._angle = value;
+    },
+  },
 });

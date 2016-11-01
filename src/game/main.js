@@ -132,7 +132,7 @@ class MyGame extends Game {
     // sounds['bgm'].play();
 
     // Rnd
-    console.log(`random integer: ` + rnd.between(0, 1000000));
+    console.log(`random integer: ${rnd.between(0, 1000000)}`);
 
     // Keyboard
     keyboard.on('keydown', (k) => console.log(`Pressed "${k}"`));

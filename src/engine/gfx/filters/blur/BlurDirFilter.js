@@ -11,20 +11,20 @@ var core = require('../../core');
  */
 function BlurDirFilter(dirX, dirY)
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         require('./blurDir.vert'),
         // fragment shader
         require('./blurDir.frag'),
         // set the uniforms
-        {
-            strength: { type: '1f', value: 1 },
-            dirX: { type: '1f', value: dirX || 0 },
-            dirY: { type: '1f', value: dirY || 0 }
-        }
+    {
+      strength: { type: '1f', value: 1 },
+      dirX: { type: '1f', value: dirX || 0 },
+      dirY: { type: '1f', value: dirY || 0 },
+    }
     );
 
-    this.defaultFilter = new core.AbstractFilter();
+  this.defaultFilter = new core.AbstractFilter();
 
     /**
      * Sets the number of passes for blur. More passes means higher quaility bluring.
@@ -32,7 +32,7 @@ function BlurDirFilter(dirX, dirY)
      * @member {number}
      * @default 1
      */
-    this.passes = 1;
+  this.passes = 1;
 
     /**
      * Sets the X direction of the blur
@@ -40,7 +40,7 @@ function BlurDirFilter(dirX, dirY)
      * @member {number}
      * @default 0
      */
-    this.dirX = dirX || 0;
+  this.dirX = dirX || 0;
 
     /**
      * Sets the Y direction of the blur
@@ -48,38 +48,38 @@ function BlurDirFilter(dirX, dirY)
      * @member {number}
      * @default 0
      */
-    this.dirY = dirY || 0;
+  this.dirY = dirY || 0;
 
-    this.strength = 4;
+  this.strength = 4;
 }
 
 BlurDirFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BlurDirFilter.prototype.constructor = BlurDirFilter;
 module.exports = BlurDirFilter;
 
-BlurDirFilter.prototype.applyFilter = function (renderer, input, output, clear) {
+BlurDirFilter.prototype.applyFilter = function(renderer, input, output, clear) {
 
-    var shader = this.getShader(renderer);
+  var shader = this.getShader(renderer);
 
-    this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
+  this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
 
-    if (this.passes === 1) {
-        renderer.filterManager.applyFilter(shader, input, output, clear);
-    } else {
-        var renderTarget = renderer.filterManager.getRenderTarget(true);
+  if (this.passes === 1) {
+    renderer.filterManager.applyFilter(shader, input, output, clear);
+  } else {
+    var renderTarget = renderer.filterManager.getRenderTarget(true);
 
-        renderer.filterManager.applyFilter(shader, input, renderTarget, clear);
+    renderer.filterManager.applyFilter(shader, input, renderTarget, clear);
 
-        for(var i = 0; i < this.passes-2; i++)
+    for(var i = 0; i < this.passes-2; i++)
         {
             //this.uniforms.strength.value = this.strength / 4 / (this.passes+(i*2)) * (input.frame.width / input.size.width);
-            renderer.filterManager.applyFilter(shader, renderTarget, renderTarget, clear);
-        }
-
-        renderer.filterManager.applyFilter(shader, renderTarget, output, clear);
-
-        renderer.filterManager.returnRenderTarget(renderTarget);
+      renderer.filterManager.applyFilter(shader, renderTarget, renderTarget, clear);
     }
+
+    renderer.filterManager.applyFilter(shader, renderTarget, output, clear);
+
+    renderer.filterManager.returnRenderTarget(renderTarget);
+  }
 };
 
 
@@ -91,17 +91,17 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * @memberof PIXI.filters.BlurDirFilter#
      * @default 2
      */
-    blur: {
-        get: function ()
+  blur: {
+    get: function()
         {
-            return this.strength;
-        },
-        set: function (value)
-        {
-            this.padding = value * 0.5;
-            this.strength = value;
-        }
+      return this.strength;
     },
+    set: function(value)
+        {
+      this.padding = value * 0.5;
+      this.strength = value;
+    },
+  },
     /**
      * Sets the X direction of the blur.
      *
@@ -109,16 +109,16 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * @memberof PIXI.filters.BlurYFilter#
      * @default 0
      */
-    dirX: {
-        get: function ()
+  dirX: {
+    get: function()
         {
-            return this.dirX;
-        },
-        set: function (value)
-        {
-            this.uniforms.dirX.value = value;
-        }
+      return this.dirX;
     },
+    set: function(value)
+        {
+      this.uniforms.dirX.value = value;
+    },
+  },
     /**
      * Sets the Y direction of the blur.
      *
@@ -126,14 +126,14 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * @memberof PIXI.filters.BlurDirFilter#
      * @default 0
      */
-    dirY: {
-        get: function ()
+  dirY: {
+    get: function()
         {
-            return this.dirY;
-        },
-        set: function (value)
+      return this.dirY;
+    },
+    set: function(value)
         {
-            this.uniforms.dirY.value = value;
-        }
-    }
+      this.uniforms.dirY.value = value;
+    },
+  },
 });

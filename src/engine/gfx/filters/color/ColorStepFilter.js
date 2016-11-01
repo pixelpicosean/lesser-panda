@@ -10,15 +10,15 @@ var core = require('../../core');
  */
 function ColorStepFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./colorStep.frag'),
         // custom uniforms
-        {
-            step: { type: '1f', value: 5 }
-        }
+    {
+      step: { type: '1f', value: 5 },
+    }
     );
 }
 
@@ -33,14 +33,14 @@ Object.defineProperties(ColorStepFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.ColorStepFilter#
      */
-    step: {
-        get: function ()
+  step: {
+    get: function()
         {
-            return this.uniforms.step.value;
-        },
-        set: function (value)
+      return this.uniforms.step.value;
+    },
+    set: function(value)
         {
-            this.uniforms.step.value = value;
-        }
-    }
+      this.uniforms.step.value = value;
+    },
+  },
 });

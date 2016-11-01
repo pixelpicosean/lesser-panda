@@ -7,7 +7,7 @@
 /**
  * Easing functions.
  */
-module.exports.Easing = {
+const Easing = {
   Linear: {
     None: function(k) {
       return k;
@@ -179,7 +179,7 @@ module.exports.Easing = {
 
   Bounce: {
     In: function(k) {
-      return 1 - Tween.Easing.Bounce.Out(1 - k);
+      return 1 - Easing.Bounce.Out(1 - k);
     },
 
     Out: function(k) {
@@ -195,8 +195,8 @@ module.exports.Easing = {
     },
 
     InOut: function(k) {
-      if (k < 0.5) return Tween.Easing.Bounce.In(k * 2) * 0.5;
-      return Tween.Easing.Bounce.Out(k * 2 - 1) * 0.5 + 0.5;
+      if (k < 0.5) return Easing.Bounce.In(k * 2) * 0.5;
+      return Easing.Bounce.Out(k * 2 - 1) * 0.5 + 0.5;
     },
   },
 };
@@ -204,12 +204,12 @@ module.exports.Easing = {
 /**
  * Interpolation functions.
  */
-module.exports.Interpolation = {
+const Interpolation = {
   Linear: function(v, k) {
     var m = v.length - 1,
       f = m * k,
       i = Math.floor(f),
-      fn = Tween.Interpolation.Utils.Linear;
+      fn = Interpolation.Utils.Linear;
     if (k < 0) return fn(v[0], v[1], f);
     if (k > 1) return fn(v[m], v[m - 1], m - f);
     return fn(v[i], v[i + 1 > m ? m : i + 1], f - i);
@@ -219,7 +219,7 @@ module.exports.Interpolation = {
     var b = 0,
       n = v.length - 1,
       pw = Math.pow,
-      bn = Tween.Interpolation.Utils.Bernstein,
+      bn = Interpolation.Utils.Bernstein,
       i;
     for (i = 0; i <= n; i++) {
       b += pw(1 - k, n - i) * pw(k, i) * v[i] * bn(n, i);
@@ -232,7 +232,7 @@ module.exports.Interpolation = {
     var m = v.length - 1,
       f = m * k,
       i = Math.floor(f),
-      fn = Tween.Interpolation.Utils.CatmullRom;
+      fn = Interpolation.Utils.CatmullRom;
     if (v[0] === v[m]) {
       if (k < 0) i = Math.floor(f = m * (1 + k));
       return fn(v[(i - 1 + m) % m], v[i], v[(i + 1) % m], v[(i + 2) % m], f - i);
@@ -249,7 +249,7 @@ module.exports.Interpolation = {
     },
 
     Bernstein: function(n, i) {
-      var fc = Tween.Interpolation.Utils.Factorial;
+      var fc = Interpolation.Utils.Factorial;
       return fc(n) / fc(i) / fc(n - i);
     },
 
@@ -272,3 +272,6 @@ module.exports.Interpolation = {
     },
   },
 };
+
+module.exports.Easing = Easing;
+module.exports.Interpolation = Interpolation;

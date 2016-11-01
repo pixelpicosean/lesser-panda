@@ -16,17 +16,17 @@ var core = require('../../core');
  */
 function DotScreenFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./dotScreen.frag'),
         // custom uniforms
-        {
-            scale:      { type: '1f', value: 1 },
-            angle:      { type: '1f', value: 5 },
-            dimensions: { type: '4fv', value: [0, 0, 0, 0] }
-        }
+    {
+      scale:      { type: '1f', value: 1 },
+      angle:      { type: '1f', value: 5 },
+      dimensions: { type: '4fv', value: [0, 0, 0, 0] },
+    }
     );
 }
 
@@ -40,30 +40,30 @@ Object.defineProperties(DotScreenFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.DotScreenFilter#
      */
-    scale: {
-        get: function ()
+  scale: {
+    get: function()
         {
-            return this.uniforms.scale.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.scale.value = value;
-        }
+      return this.uniforms.scale.value;
     },
+    set: function(value)
+        {
+      this.uniforms.scale.value = value;
+    },
+  },
 
     /**
      * The radius of the effect.
      * @member {number}
      * @memberof PIXI.filters.DotScreenFilter#
      */
-    angle: {
-        get: function ()
+  angle: {
+    get: function()
         {
-            return this.uniforms.angle.value;
-        },
-        set: function (value)
+      return this.uniforms.angle.value;
+    },
+    set: function(value)
         {
-            this.uniforms.angle.value = value;
-        }
-    }
+      this.uniforms.angle.value = value;
+    },
+  },
 });

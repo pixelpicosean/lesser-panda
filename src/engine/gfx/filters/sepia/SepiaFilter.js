@@ -10,15 +10,15 @@ var core = require('../../core');
  */
 function SepiaFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./sepia.frag'),
         // custom uniforms
-        {
-            sepia: { type: '1f', value: 1 }
-        }
+    {
+      sepia: { type: '1f', value: 1 },
+    }
     );
 }
 
@@ -34,14 +34,14 @@ Object.defineProperties(SepiaFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.SepiaFilter#
      */
-    sepia: {
-        get: function ()
+  sepia: {
+    get: function()
         {
-            return this.uniforms.sepia.value;
-        },
-        set: function (value)
+      return this.uniforms.sepia.value;
+    },
+    set: function(value)
         {
-            this.uniforms.sepia.value = value;
-        }
-    }
+      this.uniforms.sepia.value = value;
+    },
+  },
 });

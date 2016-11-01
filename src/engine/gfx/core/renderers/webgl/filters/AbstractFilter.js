@@ -18,19 +18,19 @@ function AbstractFilter(vertexSrc, fragmentSrc, uniforms)
      * @member {PIXI.Shader[]}
      * @private
      */
-    this.shaders = [];
+  this.shaders = [];
 
     /**
      * The extra padding that the filter might need
      * @member {number}
      */
-    this.padding = 0;
+  this.padding = 0;
 
     /**
      * The uniforms as an object
      * @member {object}
      */
-    this.uniforms = uniforms || {};
+  this.uniforms = uniforms || {};
 
 
     /**
@@ -38,14 +38,14 @@ function AbstractFilter(vertexSrc, fragmentSrc, uniforms)
      * @member {string[]}
      * @private
      */
-    this.vertexSrc = vertexSrc || DefaultShader.defaultVertexSrc;
+  this.vertexSrc = vertexSrc || DefaultShader.defaultVertexSrc;
 
     /**
      * The code of the frament shader
      * @member {string[]}
      * @private
      */
-    this.fragmentSrc = fragmentSrc || DefaultShader.defaultFragmentSrc;
+  this.fragmentSrc = fragmentSrc || DefaultShader.defaultFragmentSrc;
 
     //TODO a reminder - would be cool to have lower res filters as this would give better performance.
 
@@ -61,25 +61,25 @@ module.exports = AbstractFilter;
  *
  * @param renderer {PIXI.WebGLRenderer} The renderer to retrieve the shader from
  */
-AbstractFilter.prototype.getShader = function (renderer)
+AbstractFilter.prototype.getShader = function(renderer)
 {
-    var gl = renderer.gl;
+  var gl = renderer.gl;
 
-    var shader = this.shaders[gl.id];
+  var shader = this.shaders[gl.id];
 
-    if (!shader)
+  if (!shader)
     {
-        shader = new DefaultShader(renderer.shaderManager,
+    shader = new DefaultShader(renderer.shaderManager,
             this.vertexSrc,
             this.fragmentSrc,
             this.uniforms,
             this.attributes
         );
 
-        this.shaders[gl.id] = shader;
-    }
+    this.shaders[gl.id] = shader;
+  }
 
-    return shader;
+  return shader;
 };
 
 /**
@@ -90,21 +90,21 @@ AbstractFilter.prototype.getShader = function (renderer)
  * @param output {PIXI.RenderTarget}
  * @param clear {boolean} Whether or not we want to clear the outputTarget
  */
-AbstractFilter.prototype.applyFilter = function (renderer, input, output, clear)
+AbstractFilter.prototype.applyFilter = function(renderer, input, output, clear)
 {
-    var shader = this.getShader(renderer);
+  var shader = this.getShader(renderer);
 
-    renderer.filterManager.applyFilter(shader, input, output, clear);
+  renderer.filterManager.applyFilter(shader, input, output, clear);
 };
 
 /**
  * Syncs a uniform between the class object and the shaders.
  *
  */
-AbstractFilter.prototype.syncUniform = function (uniform)
+AbstractFilter.prototype.syncUniform = function(uniform)
 {
-    for (var i = 0, j = this.shaders.length; i < j; ++i)
+  for (var i = 0, j = this.shaders.length; i < j; ++i)
     {
-        this.shaders[i].syncUniform(uniform);
-    }
+    this.shaders[i].syncUniform(uniform);
+  }
 };

@@ -1,6 +1,7 @@
 const core = require('engine/core');
 const EventEmitter = require('engine/EventEmitter');
 const { removeItems } = require('engine/utils/array');
+const Entity = require('engine/Entity');
 
 /**
  * Game is the main hub for a game. A game made with LesserPanda
@@ -248,7 +249,7 @@ class Game extends EventEmitter {
     }
 
     this.emit('pause');
-  };
+  }
   /**
    * System resume callback.
    * @method resume
@@ -262,7 +263,7 @@ class Game extends EventEmitter {
     }
 
     this.emit('resume');
-  };
+  }
 
   /**
    * Spawn an `Entity` into game world.
@@ -401,7 +402,7 @@ class Game extends EventEmitter {
    * @method resize
    * @memberof Game#
    */
-  resize(/*w, h*/) {};
+  resize(/*w, h*/) {}
 }
 
 /**

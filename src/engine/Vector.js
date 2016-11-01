@@ -29,7 +29,7 @@ function Vector(x, y) {
    * @type {number}
    */
   this.y = y || ((y !== 0) ? this.x : 0);
-};
+}
 
 /**
  * Set vector values.

@@ -10,15 +10,15 @@ var core = require('../../core');
  */
 function SmartBlurFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./smartBlur.frag'),
         // uniforms
-        {
-          delta: { type: 'v2', value: { x: 0.1, y: 0.0 } }
-        }
+    {
+      delta: { type: 'v2', value: { x: 0.1, y: 0.0 } },
+    }
     );
 }
 

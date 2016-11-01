@@ -1,6 +1,6 @@
 var core = require('../../core'),
-    BlurXFilter = require('../blur/BlurXFilter'),
-    BlurYFilter = require('../blur/BlurYFilter');
+  BlurXFilter = require('../blur/BlurXFilter'),
+  BlurYFilter = require('../blur/BlurYFilter');
 
 /**
  * The BloomFilter applies a Gaussian blur to an object.
@@ -12,34 +12,34 @@ var core = require('../../core'),
  */
 function BloomFilter()
 {
-    core.AbstractFilter.call(this);
+  core.AbstractFilter.call(this);
 
-    this.blurXFilter = new BlurXFilter();
-    this.blurYFilter = new BlurYFilter();
+  this.blurXFilter = new BlurXFilter();
+  this.blurYFilter = new BlurYFilter();
 
-    this.defaultFilter = new core.AbstractFilter();
+  this.defaultFilter = new core.AbstractFilter();
 }
 
 BloomFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BloomFilter.prototype.constructor = BloomFilter;
 module.exports = BloomFilter;
 
-BloomFilter.prototype.applyFilter = function (renderer, input, output)
+BloomFilter.prototype.applyFilter = function(renderer, input, output)
 {
-    var renderTarget = renderer.filterManager.getRenderTarget(true);
+  var renderTarget = renderer.filterManager.getRenderTarget(true);
 
     //TODO - copyTexSubImage2D could be used here?
-    this.defaultFilter.applyFilter(renderer, input, output);
+  this.defaultFilter.applyFilter(renderer, input, output);
 
-    this.blurXFilter.applyFilter(renderer, input, renderTarget);
+  this.blurXFilter.applyFilter(renderer, input, renderTarget);
 
-    renderer.blendModeManager.setBlendMode(core.BLEND_MODES.SCREEN);
+  renderer.blendModeManager.setBlendMode(core.BLEND_MODES.SCREEN);
 
-    this.blurYFilter.applyFilter(renderer, renderTarget, output);
+  this.blurYFilter.applyFilter(renderer, renderTarget, output);
 
-    renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
+  renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
 
-    renderer.filterManager.returnRenderTarget(renderTarget);
+  renderer.filterManager.returnRenderTarget(renderTarget);
 };
 
 Object.defineProperties(BloomFilter.prototype, {
@@ -50,16 +50,16 @@ Object.defineProperties(BloomFilter.prototype, {
      * @memberOf PIXI.filters.BloomFilter#
      * @default 2
      */
-    blur: {
-        get: function ()
+  blur: {
+    get: function()
         {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = this.blurYFilter.blur = value;
-        }
+      return this.blurXFilter.blur;
     },
+    set: function(value)
+        {
+      this.blurXFilter.blur = this.blurYFilter.blur = value;
+    },
+  },
 
     /**
      * Sets the strength of the blurX property
@@ -68,16 +68,16 @@ Object.defineProperties(BloomFilter.prototype, {
      * @memberOf PIXI.filters.BloomFilter#
      * @default 2
      */
-    blurX: {
-        get: function ()
+  blurX: {
+    get: function()
         {
-            return this.blurXFilter.blur;
-        },
-        set: function (value)
-        {
-            this.blurXFilter.blur = value;
-        }
+      return this.blurXFilter.blur;
     },
+    set: function(value)
+        {
+      this.blurXFilter.blur = value;
+    },
+  },
 
     /**
      * Sets the strength of the blurY property
@@ -86,14 +86,14 @@ Object.defineProperties(BloomFilter.prototype, {
      * @memberOf PIXI.filters.BloomFilter#
      * @default 2
      */
-    blurY: {
-        get: function ()
+  blurY: {
+    get: function()
         {
-            return this.blurYFilter.blur;
-        },
-        set: function (value)
+      return this.blurYFilter.blur;
+    },
+    set: function(value)
         {
-            this.blurYFilter.blur = value;
-        }
-    }
+      this.blurYFilter.blur = value;
+    },
+  },
 });

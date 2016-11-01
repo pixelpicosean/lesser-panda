@@ -15,23 +15,23 @@ var core = require('../../core');
  */
 function TiltShiftAxisFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./tiltShift.frag'),
         // custom uniforms
-        {
-            blur:           { type: '1f', value: 100 },
-            gradientBlur:   { type: '1f', value: 600 },
-            start:          { type: 'v2', value: { x: 0,    y: window.innerHeight / 2 } },
-            end:            { type: 'v2', value: { x: 600,  y: window.innerHeight / 2 } },
-            delta:          { type: 'v2', value: { x: 30,   y: 30 } },
-            texSize:        { type: 'v2', value: { x: window.innerWidth, y: window.innerHeight } }
-        }
+    {
+      blur:           { type: '1f', value: 100 },
+      gradientBlur:   { type: '1f', value: 600 },
+      start:          { type: 'v2', value: { x: 0,    y: window.innerHeight / 2 } },
+      end:            { type: 'v2', value: { x: 600,  y: window.innerHeight / 2 } },
+      delta:          { type: 'v2', value: { x: 30,   y: 30 } },
+      texSize:        { type: 'v2', value: { x: window.innerWidth, y: window.innerHeight } },
+    }
     );
 
-    this.updateDelta();
+  this.updateDelta();
 }
 
 TiltShiftAxisFilter.prototype = Object.create(core.AbstractFilter.prototype);
@@ -43,10 +43,10 @@ module.exports = TiltShiftAxisFilter;
  * This is overridden in the X and Y filters, does nothing for this class.
  *
  */
-TiltShiftAxisFilter.prototype.updateDelta = function ()
+TiltShiftAxisFilter.prototype.updateDelta = function()
 {
-    this.uniforms.delta.value.x = 0;
-    this.uniforms.delta.value.y = 0;
+  this.uniforms.delta.value.x = 0;
+  this.uniforms.delta.value.y = 0;
 };
 
 Object.defineProperties(TiltShiftAxisFilter.prototype, {
@@ -56,16 +56,16 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
-    blur: {
-        get: function ()
+  blur: {
+    get: function()
         {
-            return this.uniforms.blur.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.blur.value = value;
-        }
+      return this.uniforms.blur.value;
     },
+    set: function(value)
+        {
+      this.uniforms.blur.value = value;
+    },
+  },
 
     /**
      * The strength of the gradient blur.
@@ -73,16 +73,16 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
-    gradientBlur: {
-        get: function ()
+  gradientBlur: {
+    get: function()
         {
-            return this.uniforms.gradientBlur.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.gradientBlur.value = value;
-        }
+      return this.uniforms.gradientBlur.value;
     },
+    set: function(value)
+        {
+      this.uniforms.gradientBlur.value = value;
+    },
+  },
 
     /**
      * The X value to start the effect at.
@@ -90,17 +90,17 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
-    start: {
-        get: function ()
+  start: {
+    get: function()
         {
-            return this.uniforms.start.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.start.value = value;
-            this.updateDelta();
-        }
+      return this.uniforms.start.value;
     },
+    set: function(value)
+        {
+      this.uniforms.start.value = value;
+      this.updateDelta();
+    },
+  },
 
     /**
      * The X value to end the effect at.
@@ -108,15 +108,15 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @member {PIXI.Point}
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
-    end: {
-        get: function ()
+  end: {
+    get: function()
         {
-            return this.uniforms.end.value;
-        },
-        set: function (value)
+      return this.uniforms.end.value;
+    },
+    set: function(value)
         {
-            this.uniforms.end.value = value;
-            this.updateDelta();
-        }
-    }
+      this.uniforms.end.value = value;
+      this.updateDelta();
+    },
+  },
 });

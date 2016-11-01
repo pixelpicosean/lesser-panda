@@ -10,21 +10,21 @@ function StencilMaskStack()
      *
      * @member {any[]}
      */
-    this.stencilStack = [];
+  this.stencilStack = [];
 
     /**
      * TODO @alvin
      *
      * @member {boolean}
      */
-    this.reverse = true;
+  this.reverse = true;
 
     /**
      * Internal count
      *
      * @member {number}
      */
-    this.count = 0;
+  this.count = 0;
 }
 
 StencilMaskStack.prototype.constructor = StencilMaskStack;

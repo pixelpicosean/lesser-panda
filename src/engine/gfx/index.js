@@ -22,7 +22,7 @@ const config = require('game/config');
 let sharedRenderer = null;
 
 class SystemGfx extends System {
-  constructor(settings) {
+  constructor() {
     super();
 
     /**

@@ -8,14 +8,14 @@ class MiniSignalBinding {
   * @param {Mixed} [thisArg] The context of the callback function.
   * @api private
   */
-  constructor (fn, once = false, thisArg) {
+  constructor(fn, once = false, thisArg) {
     this._fn = fn;
     this._once = once;
     this._thisArg = thisArg;
     this._next = this._prev = this._owner = null;
   }
 
-  detach () {
+  detach() {
     if (this._owner === null) return false;
     this._owner.detach(this);
     return true;
@@ -26,7 +26,7 @@ class MiniSignalBinding {
 /**
 * @private
 */
-function _addMiniSignalBinding (self, node) {
+function _addMiniSignalBinding(self, node) {
   if (!self._head) {
     self._head = node;
     self._tail = node;
@@ -54,7 +54,7 @@ class MiniSignal {
   * mySignal.dispatch('foo', 'bar');
   * mySignal.detach(binding);
   */
-  constructor () {
+  constructor() {
     this._head = this._tail = undefined;
   }
 
@@ -65,7 +65,7 @@ class MiniSignal {
   * @returns {MiniSignalBinding[]|Boolean} Array of attached MiniSignalBinding or Boolean if called with exists = true
   * @api public
   */
-  handlers (exists = false) {
+  handlers(exists = false) {
     let node = this._head;
 
     if (exists) return !!node;
@@ -87,7 +87,7 @@ class MiniSignal {
   * @returns {Boolean} True if node is attache to mini-signal
   * @api public
   */
-  has (node) {
+  has(node) {
     if (!(node instanceof MiniSignalBinding)) {
       throw new Error('MiniSignal#has(): First arg must be a MiniSignalBinding object.');
     }
@@ -101,7 +101,7 @@ class MiniSignal {
   * @returns {Boolean} Indication if we've emitted an event.
   * @api public
   */
-  dispatch () {
+  dispatch() {
     let node = this._head;
 
     if (!node) return false;
@@ -123,7 +123,7 @@ class MiniSignal {
   * @returns {MiniSignalBinding} The MiniSignalBinding node that was added.
   * @api public
   */
-  add (fn, thisArg = null) {
+  add(fn, thisArg = null) {
     if (typeof fn !== 'function') {
       throw new Error('MiniSignal#add(): First arg must be a Function.');
     }
@@ -138,7 +138,7 @@ class MiniSignal {
   * @returns {MiniSignalBinding} The MiniSignalBinding node that was added.
   * @api public
   */
-  once (fn, thisArg = null) {
+  once(fn, thisArg = null) {
     if (typeof fn !== 'function') {
       throw new Error('MiniSignal#once(): First arg must be a Function.');
     }
@@ -151,7 +151,7 @@ class MiniSignal {
   * @param {MiniSignalBinding} node The binding node that will be removed.
   * @returns {MiniSignal} The instance on which this method was called.
   * @api public */
-  detach (node) {
+  detach(node) {
     if (!(node instanceof MiniSignalBinding)) {
       throw new Error('MiniSignal#detach(): First arg must be a MiniSignalBinding object.');
     }
@@ -180,7 +180,7 @@ class MiniSignal {
   * @returns {MiniSignal} The instance on which this method was called.
   * @api public
   */
-  detachAll () {
+  detachAll() {
     let node = this._head;
     if (!node) return this;
 

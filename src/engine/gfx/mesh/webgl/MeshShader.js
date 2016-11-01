@@ -8,47 +8,47 @@ var core = require('../../core');
  */
 function MeshShader(shaderManager)
 {
-    core.Shader.call(this,
+  core.Shader.call(this,
         shaderManager,
         // vertex shader
-        [
-            'precision lowp float;',
-            'attribute vec2 aVertexPosition;',
-            'attribute vec2 aTextureCoord;',
+    [
+      'precision lowp float;',
+      'attribute vec2 aVertexPosition;',
+      'attribute vec2 aTextureCoord;',
 
-            'uniform mat3 translationMatrix;',
-            'uniform mat3 projectionMatrix;',
+      'uniform mat3 translationMatrix;',
+      'uniform mat3 projectionMatrix;',
 
-            'varying vec2 vTextureCoord;',
+      'varying vec2 vTextureCoord;',
 
-            'void main(void){',
-            '   gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
-            '   vTextureCoord = aTextureCoord;',
-            '}'
-        ].join('\n'),
-        [
-            'precision lowp float;',
+      'void main(void){',
+      '   gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
+      '   vTextureCoord = aTextureCoord;',
+      '}',
+    ].join('\n'),
+    [
+      'precision lowp float;',
 
-            'varying vec2 vTextureCoord;',
-            'uniform float alpha;',
+      'varying vec2 vTextureCoord;',
+      'uniform float alpha;',
 
-            'uniform sampler2D uSampler;',
+      'uniform sampler2D uSampler;',
 
-            'void main(void){',
-            '   gl_FragColor = texture2D(uSampler, vTextureCoord) * alpha ;',
-            '}'
-        ].join('\n'),
+      'void main(void){',
+      '   gl_FragColor = texture2D(uSampler, vTextureCoord) * alpha ;',
+      '}',
+    ].join('\n'),
         // custom uniforms
-        {
-            alpha:  { type: '1f', value: 0 },
-            translationMatrix: { type: 'mat3', value: new Float32Array(9) },
-            projectionMatrix: { type: 'mat3', value: new Float32Array(9) }
-        },
+    {
+      alpha:  { type: '1f', value: 0 },
+      translationMatrix: { type: 'mat3', value: new Float32Array(9) },
+      projectionMatrix: { type: 'mat3', value: new Float32Array(9) },
+    },
         // custom attributes
-        {
-            aVertexPosition:0,
-            aTextureCoord:0
-        }
+    {
+      aVertexPosition:0,
+      aTextureCoord:0,
+    }
     );
 }
 

@@ -1,5 +1,5 @@
 var WebGLManager = require('./WebGLManager'),
-    AlphaMaskFilter = require('../filters/SpriteMaskFilter');
+  AlphaMaskFilter = require('../filters/SpriteMaskFilter');
 
 /**
  * @class
@@ -8,13 +8,13 @@ var WebGLManager = require('./WebGLManager'),
  */
 function MaskManager(renderer)
 {
-    WebGLManager.call(this, renderer);
+  WebGLManager.call(this, renderer);
 
-    this.stencilStack = [];
-    this.reverse = true;
-    this.count = 0;
+  this.stencilStack = [];
+  this.reverse = true;
+  this.count = 0;
 
-    this.alphaMaskPool = [];
+  this.alphaMaskPool = [];
 }
 
 MaskManager.prototype = Object.create(WebGLManager.prototype);
@@ -27,16 +27,16 @@ module.exports = MaskManager;
  * @param graphics {PIXI.Graphics}
  * @param webGLData {any[]}
  */
-MaskManager.prototype.pushMask = function (target, maskData)
+MaskManager.prototype.pushMask = function(target, maskData)
 {
-    if (maskData.texture)
+  if (maskData.texture)
     {
-        this.pushSpriteMask(target, maskData);
-    }
-    else
+    this.pushSpriteMask(target, maskData);
+  }
+  else
     {
-        this.pushStencilMask(target, maskData);
-    }
+    this.pushStencilMask(target, maskData);
+  }
 
 };
 
@@ -46,16 +46,16 @@ MaskManager.prototype.pushMask = function (target, maskData)
  * @param target {PIXI.RenderTarget}
  * @param maskData {any[]}
  */
-MaskManager.prototype.popMask = function (target, maskData)
+MaskManager.prototype.popMask = function(target, maskData)
 {
-    if (maskData.texture)
+  if (maskData.texture)
     {
-        this.popSpriteMask(target, maskData);
-    }
-    else
+    this.popSpriteMask(target, maskData);
+  }
+  else
     {
-        this.popStencilMask(target, maskData);
-    }
+    this.popStencilMask(target, maskData);
+  }
 };
 
 /**
@@ -64,28 +64,28 @@ MaskManager.prototype.popMask = function (target, maskData)
  * @param target {PIXI.RenderTarget}
  * @param maskData {any[]}
  */
-MaskManager.prototype.pushSpriteMask = function (target, maskData)
+MaskManager.prototype.pushSpriteMask = function(target, maskData)
 {
-    var alphaMaskFilter = this.alphaMaskPool.pop();
+  var alphaMaskFilter = this.alphaMaskPool.pop();
 
-    if (!alphaMaskFilter)
+  if (!alphaMaskFilter)
     {
-        alphaMaskFilter = [new AlphaMaskFilter(maskData)];
-    }
+    alphaMaskFilter = [new AlphaMaskFilter(maskData)];
+  }
 
-    alphaMaskFilter[0].maskSprite = maskData;
-    this.renderer.filterManager.pushFilter(target, alphaMaskFilter);
+  alphaMaskFilter[0].maskSprite = maskData;
+  this.renderer.filterManager.pushFilter(target, alphaMaskFilter);
 };
 
 /**
  * Removes the last filter from the filter stack and doesn't return it.
  *
  */
-MaskManager.prototype.popSpriteMask = function ()
+MaskManager.prototype.popSpriteMask = function()
 {
-    var filters = this.renderer.filterManager.popFilter();
+  var filters = this.renderer.filterManager.popFilter();
 
-    this.alphaMaskPool.push(filters);
+  this.alphaMaskPool.push(filters);
 };
 
 
@@ -95,9 +95,9 @@ MaskManager.prototype.popSpriteMask = function ()
  * @param target {PIXI.RenderTarget}
  * @param maskData {any[]}
  */
-MaskManager.prototype.pushStencilMask = function (target, maskData)
+MaskManager.prototype.pushStencilMask = function(target, maskData)
 {
-    this.renderer.stencilManager.pushMask(maskData);
+  this.renderer.stencilManager.pushMask(maskData);
 };
 
 /**
@@ -106,8 +106,8 @@ MaskManager.prototype.pushStencilMask = function (target, maskData)
  * @param target {PIXI.RenderTarget}
  * @param maskData {any[]}
  */
-MaskManager.prototype.popStencilMask = function (target, maskData)
+MaskManager.prototype.popStencilMask = function(target, maskData)
 {
-    this.renderer.stencilManager.popMask(maskData);
+  this.renderer.stencilManager.popMask(maskData);
 };
 

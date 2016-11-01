@@ -17,16 +17,16 @@ var core = require('../../core');
  */
 function ConvolutionFilter(matrix, width, height)
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./convolution.frag'),
         // custom uniforms
-        {
-            matrix:     { type: '1fv', value: new Float32Array(matrix) },
-            texelSize:  { type: 'v2', value: { x: 1 / width, y: 1 / height } }
-        }
+    {
+      matrix:     { type: '1fv', value: new Float32Array(matrix) },
+      texelSize:  { type: 'v2', value: { x: 1 / width, y: 1 / height } },
+    }
     );
 }
 
@@ -41,16 +41,16 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * @member {number[]}
      * @memberof PIXI.filters.ConvolutionFilter#
      */
-    matrix: {
-        get: function ()
+  matrix: {
+    get: function()
         {
-            return this.uniforms.matrix.value;
-        },
-        set: function (value)
-        {
-            this.uniforms.matrix.value = new Float32Array(value);
-        }
+      return this.uniforms.matrix.value;
     },
+    set: function(value)
+        {
+      this.uniforms.matrix.value = new Float32Array(value);
+    },
+  },
 
     /**
      * Width of the object you are transforming
@@ -58,16 +58,16 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.ConvolutionFilter#
      */
-    width: {
-        get: function ()
+  width: {
+    get: function()
         {
-            return 1/this.uniforms.texelSize.value.x;
-        },
-        set: function (value)
-        {
-            this.uniforms.texelSize.value.x = 1/value;
-        }
+      return 1/this.uniforms.texelSize.value.x;
     },
+    set: function(value)
+        {
+      this.uniforms.texelSize.value.x = 1/value;
+    },
+  },
 
     /**
      * Height of the object you are transforming
@@ -75,14 +75,14 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * @member {number}
      * @memberof PIXI.filters.ConvolutionFilter#
      */
-    height: {
-        get: function ()
+  height: {
+    get: function()
         {
-            return 1/this.uniforms.texelSize.value.y;
-        },
-        set: function (value)
+      return 1/this.uniforms.texelSize.value.y;
+    },
+    set: function(value)
         {
-            this.uniforms.texelSize.value.y = 1/value;
-        }
-    }
+      this.uniforms.texelSize.value.y = 1/value;
+    },
+  },
 });

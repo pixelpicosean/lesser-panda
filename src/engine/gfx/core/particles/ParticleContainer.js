@@ -45,11 +45,11 @@ class ParticleContainer extends Container {
     // so max number of particles is 65536 / 4 = 16384
     var maxBatchSize = 16384;
     if (batchSize > maxBatchSize) {
-        batchSize = maxBatchSize;
+      batchSize = maxBatchSize;
     }
 
     if (batchSize > maxSize) {
-        batchSize = maxSize;
+      batchSize = maxSize;
     }
 
     /**
@@ -118,13 +118,13 @@ class ParticleContainer extends Container {
  */
 ParticleContainer.prototype.setProperties = function(properties)
 {
-    if ( properties ) {
-        this._properties[0] = 'scale' in properties ? !!properties.scale : this._properties[0];
-        this._properties[1] = 'position' in properties ? !!properties.position : this._properties[1];
-        this._properties[2] = 'rotation' in properties ? !!properties.rotation : this._properties[2];
-        this._properties[3] = 'uvs' in properties ? !!properties.uvs : this._properties[3];
-        this._properties[4] = 'alpha' in properties ? !!properties.alpha : this._properties[4];
-    }
+  if ( properties ) {
+    this._properties[0] = 'scale' in properties ? !!properties.scale : this._properties[0];
+    this._properties[1] = 'position' in properties ? !!properties.position : this._properties[1];
+    this._properties[2] = 'rotation' in properties ? !!properties.rotation : this._properties[2];
+    this._properties[3] = 'uvs' in properties ? !!properties.uvs : this._properties[3];
+    this._properties[4] = 'alpha' in properties ? !!properties.alpha : this._properties[4];
+  }
 };
 
 /**
@@ -132,11 +132,11 @@ ParticleContainer.prototype.setProperties = function(properties)
  *
  * @private
  */
-ParticleContainer.prototype.updateTransform = function ()
+ParticleContainer.prototype.updateTransform = function()
 {
 
     // TODO don't need to!
-    this.displayObjectUpdateTransform();
+  this.displayObjectUpdateTransform();
     //  PIXI.Container.prototype.updateTransform.call( this );
 };
 
@@ -146,15 +146,15 @@ ParticleContainer.prototype.updateTransform = function ()
  * @param renderer {PIXI.WebGLRenderer} The webgl renderer
  * @private
  */
-ParticleContainer.prototype.renderWebGL = function (renderer)
+ParticleContainer.prototype.renderWebGL = function(renderer)
 {
-    if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable)
+  if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable)
     {
-        return;
-    }
+    return;
+  }
 
-    renderer.setObjectRenderer( renderer.plugins.particle );
-    renderer.plugins.particle.render( this );
+  renderer.setObjectRenderer( renderer.plugins.particle );
+  renderer.plugins.particle.render( this );
 };
 
 /**
@@ -162,12 +162,12 @@ ParticleContainer.prototype.renderWebGL = function (renderer)
  *
  * @private
  */
-ParticleContainer.prototype.onChildrenChange = function (smallestChildIndex)
+ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex)
 {
-    var bufferIndex = Math.floor(smallestChildIndex / this._batchSize);
-    if (bufferIndex < this._bufferToUpdate) {
-        this._bufferToUpdate = bufferIndex;
-    }
+  var bufferIndex = Math.floor(smallestChildIndex / this._batchSize);
+  if (bufferIndex < this._bufferToUpdate) {
+    this._bufferToUpdate = bufferIndex;
+  }
 };
 
 /**
@@ -176,52 +176,52 @@ ParticleContainer.prototype.onChildrenChange = function (smallestChildIndex)
  * @param renderer {PIXI.CanvasRenderer} The canvas renderer
  * @private
  */
-ParticleContainer.prototype.renderCanvas = function (renderer)
+ParticleContainer.prototype.renderCanvas = function(renderer)
 {
-    if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable)
+  if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable)
     {
-        return;
-    }
+    return;
+  }
 
-    var context = renderer.context;
-    var transform = this.worldTransform;
-    var isRotated = true;
+  var context = renderer.context;
+  var transform = this.worldTransform;
+  var isRotated = true;
 
-    var positionX = 0;
-    var positionY = 0;
+  var positionX = 0;
+  var positionY = 0;
 
-    var finalWidth = 0;
-    var finalHeight = 0;
+  var finalWidth = 0;
+  var finalHeight = 0;
 
-    var compositeOperation = renderer.blendModes[this.blendMode];
-    if (compositeOperation !== context.globalCompositeOperation)
+  var compositeOperation = renderer.blendModes[this.blendMode];
+  if (compositeOperation !== context.globalCompositeOperation)
     {
-        context.globalCompositeOperation = compositeOperation;
-    }
+    context.globalCompositeOperation = compositeOperation;
+  }
 
-    context.globalAlpha = this.worldAlpha;
+  context.globalAlpha = this.worldAlpha;
 
-    this.displayObjectUpdateTransform();
+  this.displayObjectUpdateTransform();
 
-    for (var i = 0; i < this.children.length; ++i)
+  for (var i = 0; i < this.children.length; ++i)
     {
-        var child = this.children[i];
+    var child = this.children[i];
 
-        if (!child.visible)
+    if (!child.visible)
         {
-            continue;
-        }
+      continue;
+    }
 
-        var frame = child.texture.frame;
+    var frame = child.texture.frame;
 
-        context.globalAlpha = this.worldAlpha * child.alpha;
+    context.globalAlpha = this.worldAlpha * child.alpha;
 
-        if (child.rotation % (Math.PI * 2) === 0)
+    if (child.rotation % (Math.PI * 2) === 0)
         {
             // this is the fastest  way to optimise! - if rotation is 0 then we can avoid any kind of setTransform call
-            if (isRotated)
+      if (isRotated)
             {
-                context.setTransform(
+        context.setTransform(
                     transform.a,
                     transform.b,
                     transform.c,
@@ -230,30 +230,30 @@ ParticleContainer.prototype.renderCanvas = function (renderer)
                     transform.ty
                 );
 
-                isRotated = false;
-            }
+        isRotated = false;
+      }
 
-            positionX = ((child.anchor.x) * (-frame.width * child.scale.x) + child.position.x  + 0.5);
-            positionY = ((child.anchor.y) * (-frame.height * child.scale.y) + child.position.y  + 0.5);
+      positionX = ((child.anchor.x) * (-frame.width * child.scale.x) + child.position.x  + 0.5);
+      positionY = ((child.anchor.y) * (-frame.height * child.scale.y) + child.position.y  + 0.5);
 
-            finalWidth = frame.width * child.scale.x;
-            finalHeight = frame.height * child.scale.y;
+      finalWidth = frame.width * child.scale.x;
+      finalHeight = frame.height * child.scale.y;
 
-        }
-        else
+    }
+    else
         {
-            if (!isRotated)
+      if (!isRotated)
             {
-                isRotated = true;
-            }
+        isRotated = true;
+      }
 
-            child.displayObjectUpdateTransform();
+      child.displayObjectUpdateTransform();
 
-            var childTransform = child.worldTransform;
+      var childTransform = child.worldTransform;
 
-            if (renderer.roundPixels)
+      if (renderer.roundPixels)
             {
-                context.setTransform(
+        context.setTransform(
                     childTransform.a,
                     childTransform.b,
                     childTransform.c,
@@ -261,10 +261,10 @@ ParticleContainer.prototype.renderCanvas = function (renderer)
                     childTransform.tx | 0,
                     childTransform.ty | 0
                 );
-            }
-            else
+      }
+      else
             {
-                context.setTransform(
+        context.setTransform(
                     childTransform.a,
                     childTransform.b,
                     childTransform.c,
@@ -272,16 +272,16 @@ ParticleContainer.prototype.renderCanvas = function (renderer)
                     childTransform.tx,
                     childTransform.ty
                 );
-            }
+      }
 
-            positionX = ((child.anchor.x) * (-frame.width) + 0.5);
-            positionY = ((child.anchor.y) * (-frame.height) + 0.5);
+      positionX = ((child.anchor.x) * (-frame.width) + 0.5);
+      positionY = ((child.anchor.y) * (-frame.height) + 0.5);
 
-            finalWidth = frame.width;
-            finalHeight = frame.height;
-        }
+      finalWidth = frame.width;
+      finalHeight = frame.height;
+    }
 
-        context.drawImage(
+    context.drawImage(
             child.texture.baseTexture.source,
             frame.x,
             frame.y,
@@ -292,7 +292,7 @@ ParticleContainer.prototype.renderCanvas = function (renderer)
             finalWidth,
             finalHeight
         );
-    }
+  }
 };
 
 /**
@@ -300,17 +300,17 @@ ParticleContainer.prototype.renderCanvas = function (renderer)
  *
  * @param [destroyChildren=false] {boolean} if set to true, all the children will have their destroy method called as well
  */
-ParticleContainer.prototype.destroy = function () {
-    Container.prototype.destroy.apply(this, arguments);
+ParticleContainer.prototype.destroy = function() {
+  Container.prototype.destroy.apply(this, arguments);
 
-    if (this._buffers) {
-        for (var i = 0; i < this._buffers.length; ++i) {
-            this._buffers[i].destroy();
-        }
+  if (this._buffers) {
+    for (var i = 0; i < this._buffers.length; ++i) {
+      this._buffers[i].destroy();
     }
+  }
 
-    this._properties = null;
-    this._buffers = null;
+  this._properties = null;
+  this._buffers = null;
 };
 
 module.exports = ParticleContainer;

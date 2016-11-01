@@ -10,9 +10,9 @@ function WebGLManager(renderer)
      *
      * @member {PIXI.WebGLRenderer}
      */
-    this.renderer = renderer;
+  this.renderer = renderer;
 
-    this.renderer.on('context', this.onContextChange, this);
+  this.renderer.on('context', this.onContextChange, this);
 }
 
 WebGLManager.prototype.constructor = WebGLManager;
@@ -22,7 +22,7 @@ module.exports = WebGLManager;
  * Generic method called when there is a WebGL context change.
  *
  */
-WebGLManager.prototype.onContextChange = function ()
+WebGLManager.prototype.onContextChange = function()
 {
 	// do some codes init!
 };
@@ -31,9 +31,9 @@ WebGLManager.prototype.onContextChange = function ()
  * Generic destroy methods to be overridden by the subclass
  *
  */
-WebGLManager.prototype.destroy = function ()
+WebGLManager.prototype.destroy = function()
 {
-    this.renderer.off('context', this.onContextChange, this);
+  this.renderer.off('context', this.onContextChange, this);
 
-    this.renderer = null;
+  this.renderer = null;
 };

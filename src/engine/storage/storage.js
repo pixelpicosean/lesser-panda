@@ -33,7 +33,7 @@ class Storage {
   set(key, value) {
     if (!this.supported) return false;
     localStorage.setItem(this.id + '.' + key, this._encode(value));
-  };
+  }
 
   /**
    * Get key from local storage.
@@ -52,7 +52,7 @@ class Storage {
     catch (e) {
       return raw;
     }
-  };
+  }
 
   /**
    * Check if a key is in local storage.
@@ -63,7 +63,7 @@ class Storage {
    */
   has(key) {
     return localStorage.getItem(this.id + '.' + key) !== null;
-  };
+  }
 
   /**
    * Remove key from local storage.
@@ -73,7 +73,7 @@ class Storage {
    */
   remove(key) {
     localStorage.removeItem(this.id + '.' + key);
-  };
+  }
 
   /**
    * Reset local storage. This removes ALL keys.
@@ -86,7 +86,7 @@ class Storage {
       key = localStorage.key(i);
       if (key.indexOf(this.id + '.') !== -1) localStorage.removeItem(key);
     }
-  };
+  }
 
   /**
    * @memberof Storage#
@@ -95,7 +95,7 @@ class Storage {
    */
   _encode(val) {
     return JSON.stringify(val);
-  };
+  }
 
   /**
    * @memberof Storage#
@@ -104,7 +104,7 @@ class Storage {
    */
   _decode(str) {
     return JSON.parse(str);
-  };
+  }
 
   /**
    * @memberof Storage#

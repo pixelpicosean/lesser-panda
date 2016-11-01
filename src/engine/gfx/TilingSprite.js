@@ -1,54 +1,55 @@
 var TilingSprite = require('./extras/TilingSprite');
 var textureFromData = require('./utils').textureFromData;
+var CONST = require('./core/const');
 
 module.exports = function(data) {
   var tex = textureFromData(data.texture);
   var inst = new TilingSprite(tex, data.width || tex.width, data.height || tex.height);
 
-  var k, func;
+  var k;
   for (k in data) {
     switch (k) {
       // Directly set
       // - Container
-      case 'alpha':
-      case 'width':
-      case 'height':
-      case 'rotation':
-      case 'visible':
-      case 'x':
-      case 'y':
-      case 'interactive':
+    case 'alpha':
+    case 'width':
+    case 'height':
+    case 'rotation':
+    case 'visible':
+    case 'x':
+    case 'y':
+    case 'interactive':
       // - Sprite
-      case 'tint':
-        inst[k] = data[k];
-        break;
+    case 'tint':
+      inst[k] = data[k];
+      break;
 
       // Set vector
       // - Container
-      case 'pivot':
-      case 'position':
-      case 'skew':
+    case 'pivot':
+    case 'position':
+    case 'skew':
 
       // - Sprite
-      case 'anchor':
+    case 'anchor':
 
       // - TilingSprite
-      case 'tilePosition':
-      case 'tileScale':
-        inst[k].x = data[k].x || 0;
-        inst[k].y = data[k].y || 0;
-        break;
+    case 'tilePosition':
+    case 'tileScale':
+      inst[k].x = data[k].x || 0;
+      inst[k].y = data[k].y || 0;
+      break;
 
       // - Container
-      case 'scale':
-        inst[k].x = data[k].x || 1;
-        inst[k].y = data[k].y || 1;
-        break;
+    case 'scale':
+      inst[k].x = data[k].x || 1;
+      inst[k].y = data[k].y || 1;
+      break;
 
       // Set blend mode
-      case 'blendMode':
-        inst.blendMode = core.BLEND_MODES[data[k]];
-        break;
+    case 'blendMode':
+      inst.blendMode = CONST.BLEND_MODES[data[k]];
+      break;
     }
   }
 

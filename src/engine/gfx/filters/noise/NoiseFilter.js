@@ -15,15 +15,15 @@ var core = require('../../core');
  */
 function NoiseFilter()
 {
-    core.AbstractFilter.call(this,
+  core.AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
         require('./noise.frag'),
         // custom uniforms
-        {
-            noise: { type: '1f', value: 0.5 }
-        }
+    {
+      noise: { type: '1f', value: 0.5 },
+    }
     );
 }
 
@@ -39,14 +39,14 @@ Object.defineProperties(NoiseFilter.prototype, {
      * @memberof PIXI.filters.NoiseFilter#
      * @default 0.5
      */
-    noise: {
-        get: function ()
+  noise: {
+    get: function()
         {
-            return this.uniforms.noise.value;
-        },
-        set: function (value)
+      return this.uniforms.noise.value;
+    },
+    set: function(value)
         {
-            this.uniforms.noise.value = value;
-        }
-    }
+      this.uniforms.noise.value = value;
+    },
+  },
 });

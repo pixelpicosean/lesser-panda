@@ -18,13 +18,13 @@ class CanvasMaskManager {
   pushMask(maskData, renderer)
   {
 
-      renderer.context.save();
+    renderer.context.save();
 
-      let cacheAlpha = maskData.alpha;
-      let transform = maskData.worldTransform;
-      let resolution = renderer.resolution;
+    let cacheAlpha = maskData.alpha;
+    let transform = maskData.worldTransform;
+    let resolution = renderer.resolution;
 
-      renderer.context.setTransform(
+    renderer.context.setTransform(
           transform.a * resolution,
           transform.b * resolution,
           transform.c * resolution,
@@ -35,13 +35,13 @@ class CanvasMaskManager {
 
       //TODO suport sprite alpha masks??
       //lots of effort required. If demand is great enough..
-      if(!maskData.texture)
+    if(!maskData.texture)
       {
-          CanvasGraphics.renderGraphicsMask(maskData, renderer.context);
-          renderer.context.clip();
-      }
+      CanvasGraphics.renderGraphicsMask(maskData, renderer.context);
+      renderer.context.clip();
+    }
 
-      maskData.worldAlpha = cacheAlpha;
+    maskData.worldAlpha = cacheAlpha;
   }
 
   /**
@@ -51,7 +51,7 @@ class CanvasMaskManager {
    */
   popMask(renderer)
   {
-      renderer.context.restore();
+    renderer.context.restore();
   }
 
   destroy() {}

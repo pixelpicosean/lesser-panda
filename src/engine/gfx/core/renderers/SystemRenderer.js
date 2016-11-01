@@ -1,7 +1,7 @@
 var utils = require('../utils'),
-    math = require('../math'),
-    CONST = require('../const'),
-    EventEmitter = require('engine/EventEmitter');
+  math = require('../math'),
+  CONST = require('../const'),
+  EventEmitter = require('engine/EventEmitter');
 
 /**
  * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.
@@ -32,17 +32,17 @@ class SystemRenderer extends EventEmitter {
     // prepare options
     if (options)
     {
-        for (var i in CONST.DEFAULT_RENDER_OPTIONS)
+      for (var i in CONST.DEFAULT_RENDER_OPTIONS)
         {
-            if (typeof options[i] === 'undefined')
+        if (typeof options[i] === 'undefined')
             {
-                options[i] = CONST.DEFAULT_RENDER_OPTIONS[i];
-            }
+          options[i] = CONST.DEFAULT_RENDER_OPTIONS[i];
         }
+      }
     }
     else
     {
-        options = CONST.DEFAULT_RENDER_OPTIONS;
+      options = CONST.DEFAULT_RENDER_OPTIONS;
     }
 
     /**
@@ -183,19 +183,19 @@ Object.defineProperties(SystemRenderer.prototype, {
      * @member {number}
      * @memberof PIXI.SystemRenderer#
      */
-    backgroundColor:
-    {
-        get: function ()
+  backgroundColor:
+  {
+    get: function()
         {
-            return this._backgroundColor;
-        },
-        set: function (val)
+      return this._backgroundColor;
+    },
+    set: function(val)
         {
-            this._backgroundColor = val;
-            this._backgroundColorString = utils.hex2string(val);
-            utils.hex2rgb(val, this._backgroundColorRgb);
-        }
-    }
+      this._backgroundColor = val;
+      this._backgroundColorString = utils.hex2string(val);
+      utils.hex2rgb(val, this._backgroundColorRgb);
+    },
+  },
 });
 
 /**
@@ -204,18 +204,18 @@ Object.defineProperties(SystemRenderer.prototype, {
  * @param width {number} the new width of the canvas view
  * @param height {number} the new height of the canvas view
  */
-SystemRenderer.prototype.resize = function (width, height) {
-    this.width = width * this.resolution;
-    this.height = height * this.resolution;
+SystemRenderer.prototype.resize = function(width, height) {
+  this.width = width * this.resolution;
+  this.height = height * this.resolution;
 
-    this.view.width = this.width;
-    this.view.height = this.height;
+  this.view.width = this.width;
+  this.view.height = this.height;
 
-    if (this.autoResize)
+  if (this.autoResize)
     {
-        this.view.style.width = this.width / this.resolution + 'px';
-        this.view.style.height = this.height / this.resolution + 'px';
-    }
+    this.view.style.width = this.width / this.resolution + 'px';
+    this.view.style.height = this.height / this.resolution + 'px';
+  }
 };
 
 /**
@@ -223,35 +223,35 @@ SystemRenderer.prototype.resize = function (width, height) {
  *
  * @param [removeView=false] {boolean} Removes the Canvas element from the DOM.
  */
-SystemRenderer.prototype.destroy = function (removeView) {
-    if (removeView && this.view.parentNode)
+SystemRenderer.prototype.destroy = function(removeView) {
+  if (removeView && this.view.parentNode)
     {
-        this.view.parentNode.removeChild(this.view);
-    }
+    this.view.parentNode.removeChild(this.view);
+  }
 
-    this.type = CONST.RENDERER_TYPE.UNKNOWN;
+  this.type = CONST.RENDERER_TYPE.UNKNOWN;
 
-    this.width = 0;
-    this.height = 0;
+  this.width = 0;
+  this.height = 0;
 
-    this.view = null;
+  this.view = null;
 
-    this.resolution = 0;
+  this.resolution = 0;
 
-    this.transparent = false;
+  this.transparent = false;
 
-    this.autoResize = false;
+  this.autoResize = false;
 
-    this.blendModes = null;
+  this.blendModes = null;
 
-    this.preserveDrawingBuffer = false;
-    this.clearBeforeRender = false;
+  this.preserveDrawingBuffer = false;
+  this.clearBeforeRender = false;
 
-    this.roundPixels = false;
+  this.roundPixels = false;
 
-    this._backgroundColor = 0;
-    this._backgroundColorRgb = null;
-    this._backgroundColorString = null;
+  this._backgroundColor = 0;
+  this._backgroundColorRgb = null;
+  this._backgroundColorString = null;
 };
 
 module.exports = SystemRenderer;

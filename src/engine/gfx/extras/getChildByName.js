@@ -15,14 +15,14 @@ core.DisplayObject.prototype.name = null;
 * @param name {string} instance name
 * @return {PIXI.DisplayObject}
 */
-core.Container.prototype.getChildByName = function (name)
+core.Container.prototype.getChildByName = function(name)
 {
-    for (var i = 0; i < this.children.length; i++)
+  for (var i = 0; i < this.children.length; i++)
     {
-        if (this.children[i].name === name)
+    if (this.children[i].name === name)
         {
-            return this.children[i];
-        }
+      return this.children[i];
     }
-    return null;
+  }
+  return null;
 };

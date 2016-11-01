@@ -1,6 +1,5 @@
 var Texture = require('../core/textures/Texture');
 var loader = require('engine/loader');
-var Resource = loader.Resource;
 
 // General asset middlewares (including texture support)
 var blobMiddlewareFactory = require('engine/loader/middlewares/parsing/blob').blobMiddlewareFactory;

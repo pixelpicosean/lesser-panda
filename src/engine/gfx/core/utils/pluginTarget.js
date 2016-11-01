@@ -11,7 +11,7 @@
  */
 function pluginTarget(obj)
 {
-    obj.__plugins = {};
+  obj.__plugins = {};
 
     /**
      * Adds a plugin to an object
@@ -19,39 +19,39 @@ function pluginTarget(obj)
      * @param pluginName {string} The events that should be listed.
      * @param ctor {Function} The constructor function for the plugin.
      */
-    obj.registerPlugin = function (pluginName, ctor)
+  obj.registerPlugin = function(pluginName, ctor)
     {
-        obj.__plugins[pluginName] = ctor;
-    };
+    obj.__plugins[pluginName] = ctor;
+  };
 
     /**
      * Instantiates all the plugins of this object
      *
      */
-    obj.prototype.initPlugins = function ()
+  obj.prototype.initPlugins = function()
     {
-        this.plugins = this.plugins || {};
+    this.plugins = this.plugins || {};
 
-        for (var o in obj.__plugins)
+    for (var o in obj.__plugins)
         {
-            this.plugins[o] = new (obj.__plugins[o])(this);
-        }
-    };
+      this.plugins[o] = new (obj.__plugins[o])(this);
+    }
+  };
 
     /**
      * Removes all the plugins of this object
      *
      */
-    obj.prototype.destroyPlugins = function ()
+  obj.prototype.destroyPlugins = function()
     {
-        for (var o in this.plugins)
+    for (var o in this.plugins)
         {
-            this.plugins[o].destroy();
-            this.plugins[o] = null;
-        }
+      this.plugins[o].destroy();
+      this.plugins[o] = null;
+    }
 
-        this.plugins = null;
-    };
+    this.plugins = null;
+  };
 }
 
 
@@ -61,8 +61,8 @@ module.exports = {
      *
      * @param object {object} The obj to mix into
      */
-    mixin: function mixin(obj)
+  mixin: function mixin(obj)
     {
-        pluginTarget(obj);
-    }
+    pluginTarget(obj);
+  },
 };

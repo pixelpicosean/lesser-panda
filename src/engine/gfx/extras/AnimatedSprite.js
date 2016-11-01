@@ -62,7 +62,7 @@ function AnimatedSprite(textures) {
   this.addAnim('default');
 
   core.Sprite.call(this, this.textures[0]);
-};
+}
 
 AnimatedSprite.prototype = Object.create(core.Sprite.prototype);
 AnimatedSprite.prototype.constructor = AnimatedSprite;
@@ -114,7 +114,7 @@ AnimatedSprite.prototype.play = function play(name, frame) {
     frame = anim.frames.length - 1;
   }
 
-  this.gotoFrame(frame || 0);
+  this.gotoFrame(frame || 0);
 
   // Request updates
   if (!this._willTick) {
@@ -161,6 +161,7 @@ AnimatedSprite.prototype.gotoFrame = function gotoFrame(frame) {
  * @method updateAnimation
  */
 AnimatedSprite.prototype.update = function update(delta) {
+  var nextFrame;
   var anim = this.anims[this.currentAnim];
 
   if (this.finished) {
@@ -182,9 +183,9 @@ AnimatedSprite.prototype.update = function update(delta) {
     this._frameTime -= 1;
 
     if (anim.random && anim.frames.length > 1) {
-      var nextFrame = this.currentFrame;
+      nextFrame = this.currentFrame;
       while (nextFrame === this.currentFrame) {
-        var nextFrame = Math.round(Math.random(0, anim.frames.length - 1));
+        nextFrame = Math.round(Math.random(0, anim.frames.length - 1));
       }
 
       this.currentFrame = nextFrame;
@@ -192,7 +193,7 @@ AnimatedSprite.prototype.update = function update(delta) {
       return;
     }
 
-    var nextFrame = this.currentFrame + (anim.reverse ? -1 : 1);
+    nextFrame = this.currentFrame + (anim.reverse ? -1 : 1);
 
     if (nextFrame >= anim.frames.length) {
       if (anim.loop) {

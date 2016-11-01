@@ -1,7 +1,6 @@
 require('engine/polyfill');
 
 const EventEmitter = require('engine/EventEmitter');
-const Timer = require('engine/timer');
 const Vector = require('engine/vector');
 const resize = require('engine/resize');
 const device = require('engine/device');
@@ -133,7 +132,7 @@ Object.assign(core, {
     }
     pair.param = param;
 
-    if (!!newInstance) {
+    if (newInstance) {
       pair.inst = null;
     }
 
@@ -332,9 +331,9 @@ function loop(timestamp) {
     if (core.game) core.game.run(timestamp);
   }
 }
-function endLoop() {
+core.endLoop = function endLoop() {
   cancelAnimationFrame(loopId);
-}
+};
 function boot() {
   window.removeEventListener('load', boot);
   document.removeEventListener('DOMContentLoaded', boot);
@@ -346,7 +345,7 @@ function boot() {
   core.containerView = document.getElementById('container');
 
   // Keep focus when mouse/touch event occurs on the canvas
-  function focus() { window.focus() }
+  function focus() { window.focus(); }
   core.view.addEventListener('mousedown', focus);
   core.view.addEventListener('touchstart', focus);
 
@@ -355,20 +354,20 @@ function boot() {
 
   // Pick a resize function
   switch (config.resizeMode) {
-    case 'letter-box':
-      resizeFunc = _letterBoxResize;
-      break;
-    case 'crop':
-      resizeFunc = _cropResize;
-      break;
-    case 'scale-inner':
-      resizeFunc = _scaleInnerResize;
-      break;
-    case 'scale-outer':
-      resizeFunc = _scaleOuterResize;
-      break;
-    default:
-      resizeFunc = _letterBoxResize;
+  case 'letter-box':
+    resizeFunc = _letterBoxResize;
+    break;
+  case 'crop':
+    resizeFunc = _cropResize;
+    break;
+  case 'scale-inner':
+    resizeFunc = _scaleInnerResize;
+    break;
+  case 'scale-outer':
+    resizeFunc = _scaleOuterResize;
+    break;
+  default:
+    resizeFunc = _letterBoxResize;
   }
   core.resizeFunc = resizeFunc;
 
@@ -394,7 +393,7 @@ function boot() {
       hidden: 'visibilitychange',
       mozHidden: 'mozvisibilitychange',
       webkitHidden: 'webkitvisibilitychange',
-      msHidden: 'msvisibilitychange'
+      msHidden: 'msvisibilitychange',
     };
     for (stateKey in keys) {
       if (stateKey in document) {
@@ -405,7 +404,7 @@ function boot() {
     return function(c) {
       if (c) document.addEventListener(eventKey, c, false);
       return !document[stateKey];
-    }
+    };
   })();
 
   // Check if current tab is active or not
@@ -499,10 +498,6 @@ function boot() {
   core.emit('boot');
   core.emit('booted');
 }
-function getVendorAttribute(el, attr) {
-  var uc = attr.ucfirst();
-  return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
-}
 function chooseProperResolution(res) {
   // Default value
   if (!res) {
@@ -514,7 +509,7 @@ function chooseProperResolution(res) {
   }
   // Calculate based on window size and device pixel ratio
   else {
-    res.values.sort(function(a, b) { return a - b });
+    res.values.sort(function(a, b) { return a - b; });
     const gameRatio = core.width / core.height;
     const windowRatio = window.innerWidth / window.innerHeight;
     const scale = res.retina ? window.devicePixelRatio : 1;
@@ -555,16 +550,13 @@ function resizeRotatePrompt() {
 let windowSize = { x: 1, y: 1 };
 let scaledWidth, scaledHeight;
 let result, container;
-function _letterBoxResize(first) {
+function _letterBoxResize() {
   // Update sizes
   windowSize.x = window.innerWidth;
   windowSize.y = window.innerHeight;
 
   // Use inner box scaling function to calculate correct size
   result = resize.outerBoxResize(windowSize, core.viewSize);
-
-  // Resize the renderer once
-  // if (first) Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   scaledWidth = Math.floor(core.viewSize.x * result.scale);
   scaledHeight = Math.floor(core.viewSize.y * result.scale);
@@ -593,9 +585,6 @@ function _cropResize() {
   core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
   core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
-  // Resize the renderer
-  // Renderer.resize(core.viewSize.x, core.viewSize.y);
-
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
 
@@ -609,9 +598,6 @@ function _scaleInnerResize() {
   core.viewSize.set(window.innerWidth, window.innerHeight);
   core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
   core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
-
-  // Resize the renderer
-  // Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   // Resize container of current game
   if (core.game) {
@@ -634,9 +620,6 @@ function _scaleOuterResize() {
   core.viewSize.set(window.innerWidth, window.innerHeight);
   core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
   core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
-
-  // Resize the renderer
-  // Renderer.resize(core.viewSize.x, core.viewSize.y);
 
   // Resize container of current game
   if (core.game) {
@@ -663,7 +646,7 @@ function _alignToWindowCenter(el, w, h) {
 function _noPageScroll() {
   document.ontouchmove = function(event) {
     event.preventDefault();
-  }
+  };
 }
 
 /**

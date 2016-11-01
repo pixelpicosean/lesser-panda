@@ -18,15 +18,15 @@ Object.assign(
 function AccessibilityManager(renderer)
 {
   // first we create a div that will sit over the pixi element. This is where the div overlays will go.
-    var div = document.createElement('div');
+  var div = document.createElement('div');
 
-    div.style.width = 100 + 'px';
-    div.style.height = 100 + 'px';
-    div.style.position = 'absolute';
-    div.style.top = 0;
-    div.style.left = 0;
+  div.style.width = 100 + 'px';
+  div.style.height = 100 + 'px';
+  div.style.position = 'absolute';
+  div.style.top = 0;
+  div.style.left = 0;
    //
-    div.style.zIndex = 2;
+  div.style.zIndex = 2;
 
     /**
      * This is the dom element that will sit over the pixi element. This is where the div overlays will go.
@@ -34,7 +34,7 @@ function AccessibilityManager(renderer)
      * @type {HTMLElement}
      * @private
      */
-    this.div = div;
+  this.div = div;
 
     /**
      * A simple pool for storing divs.
@@ -50,21 +50,21 @@ function AccessibilityManager(renderer)
    * @type {Number}
    * @private
    */
-    this.renderId = 0;
+  this.renderId = 0;
 
     /**
      * Setting this to true will visually show the divs
      *
      * @type {Boolean}
      */
-    this.debug = false;
+  this.debug = false;
 
     /**
      * The renderer this accessibility manager works for.
      *
      * @member {PIXI.SystemRenderer}
      */
-    this.renderer = renderer;
+  this.renderer = renderer;
 
     /**
      * The array of currently active accessible items.
@@ -72,13 +72,13 @@ function AccessibilityManager(renderer)
      * @member {Array}
      * @private
      */
-    this.children = [];
+  this.children = [];
 
     /**
      * pre bind the functions..
      */
-    this._onKeyDown = this._onKeyDown.bind(this);
-    this._onMouseMove = this._onMouseMove.bind(this);
+  this._onKeyDown = this._onKeyDown.bind(this);
+  this._onMouseMove = this._onMouseMove.bind(this);
 
     /**
      * stores the state of the manager. If there are no accessible objects or the mouse is moving the will be false.
@@ -86,11 +86,11 @@ function AccessibilityManager(renderer)
      * @member {Array}
      * @private
      */
-    this.isActive = false;
+  this.isActive = false;
 
 
     // let listen for tab.. once pressed we can fire up and show the accessibility layer
-    window.addEventListener('keydown', this._onKeyDown, false);
+  window.addEventListener('keydown', this._onKeyDown, false);
 }
 
 
@@ -159,7 +159,7 @@ AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject)
       this.addChild(displayObject);
     }
 
-      displayObject.renderId = this.renderId;
+    displayObject.renderId = this.renderId;
   }
 
 
@@ -206,7 +206,7 @@ AccessibilityManager.prototype.update = function()
     {
       child._accessibleActive = false;
 
-            core.utils.removeItems(this.children, i, 1);
+      core.utils.removeItems(this.children, i, 1);
       this.div.removeChild( child._accessibleDiv );
       this.pool.push(child._accessibleDiv);
       child._accessibleDiv = null;
@@ -253,29 +253,29 @@ AccessibilityManager.prototype.update = function()
   this.renderId++;
 };
 
-AccessibilityManager.prototype.capHitArea = function (hitArea)
+AccessibilityManager.prototype.capHitArea = function(hitArea)
 {
-    if (hitArea.x < 0)
+  if (hitArea.x < 0)
     {
-        hitArea.width += hitArea.x;
-        hitArea.x = 0;
-    }
+    hitArea.width += hitArea.x;
+    hitArea.x = 0;
+  }
 
-    if (hitArea.y < 0)
+  if (hitArea.y < 0)
     {
-        hitArea.height += hitArea.y;
-        hitArea.y = 0;
-    }
+    hitArea.height += hitArea.y;
+    hitArea.y = 0;
+  }
 
-    if ( hitArea.x + hitArea.width > this.renderer.width )
+  if ( hitArea.x + hitArea.width > this.renderer.width )
     {
-        hitArea.width = this.renderer.width - hitArea.x;
-    }
+    hitArea.width = this.renderer.width - hitArea.x;
+  }
 
-    if ( hitArea.y + hitArea.height > this.renderer.height )
+  if ( hitArea.y + hitArea.height > this.renderer.height )
     {
-        hitArea.height = this.renderer.height - hitArea.y;
-    }
+    hitArea.height = this.renderer.height - hitArea.y;
+  }
 };
 
 
@@ -293,17 +293,17 @@ AccessibilityManager.prototype.addChild = function(displayObject)
   {
     div = document.createElement('button');
 
-      div.style.width = 100 + 'px';
-      div.style.height = 100 + 'px';
-      div.style.backgroundColor = this.debug ? 'rgba(255,0,0,0.5)' : 'transparent';
-      div.style.position = 'absolute';
-      div.style.zIndex = 2;
-      div.style.borderStyle = 'none';
+    div.style.width = 100 + 'px';
+    div.style.height = 100 + 'px';
+    div.style.backgroundColor = this.debug ? 'rgba(255,0,0,0.5)' : 'transparent';
+    div.style.position = 'absolute';
+    div.style.zIndex = 2;
+    div.style.borderStyle = 'none';
 
 
-      div.addEventListener('click', this._onClick.bind(this));
-      div.addEventListener('focus', this._onFocus.bind(this));
-      div.addEventListener('focusout', this._onFocusOut.bind(this));
+    div.addEventListener('click', this._onClick.bind(this));
+    div.addEventListener('focus', this._onFocus.bind(this));
+    div.addEventListener('focusout', this._onFocusOut.bind(this));
   }
 
 
@@ -384,7 +384,7 @@ AccessibilityManager.prototype._onMouseMove = function()
  * Destroys the accessibility manager
  *
  */
-AccessibilityManager.prototype.destroy = function ()
+AccessibilityManager.prototype.destroy = function()
 {
   this.div = null;
 

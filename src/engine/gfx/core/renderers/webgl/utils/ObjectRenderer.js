@@ -10,7 +10,7 @@ var WebGLManager = require('../managers/WebGLManager');
  */
 function ObjectRenderer(renderer)
 {
-    WebGLManager.call(this, renderer);
+  WebGLManager.call(this, renderer);
 }
 
 
@@ -22,7 +22,7 @@ module.exports = ObjectRenderer;
  * Starts the renderer and sets the shader
  *
  */
-ObjectRenderer.prototype.start = function ()
+ObjectRenderer.prototype.start = function()
 {
     // set the shader..
 };
@@ -31,16 +31,16 @@ ObjectRenderer.prototype.start = function ()
  * Stops the renderer
  *
  */
-ObjectRenderer.prototype.stop = function ()
+ObjectRenderer.prototype.stop = function()
 {
-    this.flush();
+  this.flush();
 };
 
 /**
  * flushes
  *
  */
-ObjectRenderer.prototype.flush = function ()
+ObjectRenderer.prototype.flush = function()
 {
     // flush!
 };
@@ -50,7 +50,7 @@ ObjectRenderer.prototype.flush = function ()
  *
  * @param object {PIXI.DisplayObject} The object to render.
  */
-ObjectRenderer.prototype.render = function (object) // jshint unused:false
+ObjectRenderer.prototype.render = function(object) /*eslint no-unused-vars:0*/
 {
     // render the object
 };

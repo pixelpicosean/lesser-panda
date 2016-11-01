@@ -9,13 +9,13 @@ class Timer {
    * @property {number} elapsed   Time elapsed since start.
    * @readonly
    */
-  get elapsed() { return this.duration - this._count }
+  get elapsed() { return this.duration - this._count; }
 
   /**
    * @property {number} left  Time left till the end.
    * @readonly
    */
-  get left() { return this._count }
+  get left() { return this._count; }
 
   /**
    * Timer constructor should not be used directly, use the static methods instead:

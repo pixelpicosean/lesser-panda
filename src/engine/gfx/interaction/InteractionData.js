@@ -13,21 +13,21 @@ function InteractionData()
      *
      * @member {PIXI.Point}
      */
-    this.global = new core.Point();
+  this.global = new core.Point();
 
     /**
      * The target Sprite that was interacted with
      *
      * @member {PIXI.Sprite}
      */
-    this.target = null;
+  this.target = null;
 
     /**
      * When passed to an event handler, this will be the original DOM Event that was captured
      *
      * @member {Event}
      */
-    this.originalEvent = null;
+  this.originalEvent = null;
 }
 
 InteractionData.prototype.constructor = InteractionData;
@@ -41,7 +41,7 @@ module.exports = InteractionData;
  * @param [globalPos] {PIXI.Point} A Point object containing your custom global coords, optional (otherwise will use the current global coords)
  * @return {PIXI.Point} A point containing the coordinates of the InteractionData position relative to the DisplayObject
  */
-InteractionData.prototype.getLocalPosition = function (displayObject, point, globalPos)
+InteractionData.prototype.getLocalPosition = function(displayObject, point, globalPos)
 {
-    return displayObject.worldTransform.applyInverse(globalPos || this.global, point);
+  return displayObject.worldTransform.applyInverse(globalPos || this.global, point);
 };

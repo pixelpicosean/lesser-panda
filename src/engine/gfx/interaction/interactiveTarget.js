@@ -16,19 +16,19 @@ var interactiveTarget = {
     /**
      * @todo Needs docs.
      */
-    interactive: false,
+  interactive: false,
     /**
      * @todo Needs docs.
      */
-    buttonMode: false,
+  buttonMode: false,
     /**
      * @todo Needs docs.
      */
-    interactiveChildren: true,
+  interactiveChildren: true,
     /**
      * @todo Needs docs.
      */
-    defaultCursor: 'pointer',
+  defaultCursor: 'pointer',
 
     // some internal checks..
 
@@ -36,12 +36,12 @@ var interactiveTarget = {
      * @todo Needs docs.
      * @private
      */
-    _over: false,
+  _over: false,
     /**
      * @todo Needs docs.
      * @private
      */
-    _touchDown: false
+  _touchDown: false,
 };
 
 module.exports = interactiveTarget;

@@ -50,34 +50,34 @@ var utils = {
    *
    * @return {boolean} whether they are supported
    */
-  canUseNewCanvasBlendModes: function ()
+  canUseNewCanvasBlendModes: function()
   {
-      if (typeof document === 'undefined')
+    if (typeof document === 'undefined')
       {
-          return false;
-      }
+      return false;
+    }
 
-      var pngHead = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABAQMAAADD8p2OAAAAA1BMVEX/';
-      var pngEnd = 'AAAACklEQVQI12NgAAAAAgAB4iG8MwAAAABJRU5ErkJggg==';
+    var pngHead = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABAQMAAADD8p2OAAAAA1BMVEX/';
+    var pngEnd = 'AAAACklEQVQI12NgAAAAAgAB4iG8MwAAAABJRU5ErkJggg==';
 
-      var magenta = new Image();
-      magenta.src = pngHead + 'AP804Oa6' + pngEnd;
+    var magenta = new Image();
+    magenta.src = pngHead + 'AP804Oa6' + pngEnd;
 
-      var yellow = new Image();
-      yellow.src = pngHead + '/wCKxvRF' + pngEnd;
+    var yellow = new Image();
+    yellow.src = pngHead + '/wCKxvRF' + pngEnd;
 
-      var canvas = document.createElement('canvas');
-      canvas.width = 6;
-      canvas.height = 1;
+    var canvas = document.createElement('canvas');
+    canvas.width = 6;
+    canvas.height = 1;
 
-      var context = canvas.getContext('2d');
-      context.globalCompositeOperation = 'multiply';
-      context.drawImage(magenta, 0, 0);
-      context.drawImage(yellow, 2, 0);
+    var context = canvas.getContext('2d');
+    context.globalCompositeOperation = 'multiply';
+    context.drawImage(magenta, 0, 0);
+    context.drawImage(yellow, 2, 0);
 
-      var data = context.getImageData(2,0,1,1).data;
+    var data = context.getImageData(2,0,1,1).data;
 
-      return (data[0] === 255 && data[1] === 0 && data[2] === 0);
+    return (data[0] === 255 && data[1] === 0 && data[2] === 0);
   },
 
   /**
@@ -87,24 +87,24 @@ var utils = {
    * @param number {number}
    * @return {number} the closest number that is a power of two
    */
-  getNextPowerOfTwo: function (number)
+  getNextPowerOfTwo: function(number)
   {
       // see: http://en.wikipedia.org/wiki/Power_of_two#Fast_algorithm_to_check_if_a_positive_number_is_a_power_of_two
-      if (number > 0 && (number & (number - 1)) === 0)
+    if (number > 0 && (number & (number - 1)) === 0)
       {
-          return number;
-      }
-      else
+      return number;
+    }
+    else
       {
-          var result = 1;
+      var result = 1;
 
-          while (result < number)
+      while (result < number)
           {
-              result <<= 1;
-          }
-
-          return result;
+        result <<= 1;
       }
+
+      return result;
+    }
   },
 
   /**
@@ -114,9 +114,9 @@ var utils = {
    * @param height {number}
    * @return {boolean}
    */
-  isPowerOfTwo: function (width, height)
+  isPowerOfTwo: function(width, height)
   {
-      return (width > 0 && (width & (width - 1)) === 0 && height > 0 && (height & (height - 1)) === 0);
+    return (width > 0 && (width & (width - 1)) === 0 && height > 0 && (height & (height - 1)) === 0);
   },
 
   /**
@@ -126,16 +126,16 @@ var utils = {
    * @param url {string} the image path
    * @return {number}
    */
-  getResolutionOfUrl: function (url)
+  getResolutionOfUrl: function(url)
   {
-      var resolution = CONST.RETINA_PREFIX.exec(url);
+    var resolution = CONST.RETINA_PREFIX.exec(url);
 
-      if (resolution)
+    if (resolution)
       {
-         return parseFloat(resolution[1]);
-      }
+      return parseFloat(resolution[1]);
+    }
 
-      return 1;
+    return 1;
   },
 
   /**
@@ -148,36 +148,36 @@ var utils = {
    * @constant
    * @static
    */
-  sayHello: function (type)
+  sayHello: function(type)
   {
-      if (utils._saidHello)
+    if (utils._saidHello)
       {
-          return;
-      }
+      return;
+    }
 
-      if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
+    if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
       {
-          var args = [
-              '\n %c %c %c Pixi.js ' + CONST.VERSION + ' - ✰ ' + type + ' ✰  %c ' + ' %c ' + ' http://www.pixijs.com/  %c %c ♥%c♥%c♥ \n\n',
-              'background: #ff66a5; padding:5px 0;',
-              'background: #ff66a5; padding:5px 0;',
-              'color: #ff66a5; background: #030307; padding:5px 0;',
-              'background: #ff66a5; padding:5px 0;',
-              'background: #ffc3dc; padding:5px 0;',
-              'background: #ff66a5; padding:5px 0;',
-              'color: #ff2424; background: #fff; padding:5px 0;',
-              'color: #ff2424; background: #fff; padding:5px 0;',
-              'color: #ff2424; background: #fff; padding:5px 0;'
-          ];
+      var args = [
+        '\n %c %c %c Pixi.js ' + CONST.VERSION + ' - ✰ ' + type + ' ✰  %c ' + ' %c ' + ' http://www.pixijs.com/  %c %c ♥%c♥%c♥ \n\n',
+        'background: #ff66a5; padding:5px 0;',
+        'background: #ff66a5; padding:5px 0;',
+        'color: #ff66a5; background: #030307; padding:5px 0;',
+        'background: #ff66a5; padding:5px 0;',
+        'background: #ffc3dc; padding:5px 0;',
+        'background: #ff66a5; padding:5px 0;',
+        'color: #ff2424; background: #fff; padding:5px 0;',
+        'color: #ff2424; background: #fff; padding:5px 0;',
+        'color: #ff2424; background: #fff; padding:5px 0;',
+      ];
 
-          window.console.log.apply(console, args); //jshint ignore:line
-      }
-      else if (window.console)
+      window.console.log.apply(console, args); //jshint ignore:line
+    }
+    else if (window.console)
       {
-          window.console.log('Pixi.js ' + CONST.VERSION + ' - ' + type + ' - http://www.pixijs.com/'); //jshint ignore:line
-      }
+      window.console.log('Pixi.js ' + CONST.VERSION + ' - ' + type + ' - http://www.pixijs.com/'); //jshint ignore:line
+    }
 
-      utils._saidHello = true;
+    utils._saidHello = true;
   },
 
   /**
@@ -185,24 +185,24 @@ var utils = {
    *
    * @return {boolean}
    */
-  isWebGLSupported: function ()
+  isWebGLSupported: function()
   {
-      var contextOptions = { stencil: true };
-      try
+    var contextOptions = { stencil: true };
+    try
       {
-          if (!window.WebGLRenderingContext)
+        if (!window.WebGLRenderingContext)
           {
-              return false;
-          }
+          return false;
+        }
 
-          var canvas = document.createElement('canvas'),
-              gl = canvas.getContext('webgl', contextOptions) || canvas.getContext('experimental-webgl', contextOptions);
+        var canvas = document.createElement('canvas'),
+          gl = canvas.getContext('webgl', contextOptions) || canvas.getContext('experimental-webgl', contextOptions);
 
-          return !!(gl && gl.getContextAttributes().stencil);
+        return !!(gl && gl.getContextAttributes().stencil);
       }
       catch (e)
       {
-          return false;
+        return false;
       }
   },
 
@@ -212,9 +212,9 @@ var utils = {
    * @param n {number}
    * @returns {number} 0 if n is 0, -1 if n is negative, 1 if n i positive
    */
-  sign: function (n)
+  sign: function(n)
   {
-      return n ? (n < 0 ? -1 : 1) : 0;
+    return n ? (n < 0 ? -1 : 1) : 0;
   },
 
   /**
@@ -236,7 +236,7 @@ var utils = {
    * @todo Describe property usage
    * @private
    */
-  BaseTextureCache: {}
+  BaseTextureCache: {},
 };
 
 module.exports = utils;

@@ -11,28 +11,28 @@ var CONST = {
      * @constant
      * @property {string} VERSION
      */
-    VERSION: '3.0.10-dev',
+  VERSION: '3.0.10-dev',
 
     /**
      * @property {number} PI_2 - Two Pi
      * @constant
      * @static
      */
-    PI_2: Math.PI * 2,
+  PI_2: Math.PI * 2,
 
     /**
      * @property {number} RAD_TO_DEG - Constant conversion factor for converting radians to degrees
      * @constant
      * @static
      */
-    RAD_TO_DEG: 180 / Math.PI,
+  RAD_TO_DEG: 180 / Math.PI,
 
     /**
      * @property {Number} DEG_TO_RAD - Constant conversion factor for converting degrees to radians
      * @constant
      * @static
      */
-    DEG_TO_RAD: Math.PI / 180,
+  DEG_TO_RAD: Math.PI / 180,
 
     /**
      * Target frames per millisecond.
@@ -41,7 +41,7 @@ var CONST = {
      * @constant
      * @property {number} TARGET_FPMS=0.06
      */
-    TARGET_FPMS: 0.06,
+  TARGET_FPMS: 0.06,
 
     /**
      * Constant to identify the Renderer Type.
@@ -53,11 +53,11 @@ var CONST = {
      * @property {number} RENDERER_TYPE.WEBGL
      * @property {number} RENDERER_TYPE.CANVAS
      */
-    RENDERER_TYPE: {
-        UNKNOWN:    0,
-        WEBGL:      1,
-        CANVAS:     2
-    },
+  RENDERER_TYPE: {
+    UNKNOWN:    0,
+    WEBGL:      1,
+    CANVAS:     2,
+  },
 
     /**
      * Various blend modes supported by PIXI. IMPORTANT - The WebGL renderer only supports
@@ -85,25 +85,25 @@ var CONST = {
      * @property {number} BLEND_MODES.COLOR
      * @property {number} BLEND_MODES.LUMINOSITY
      */
-    BLEND_MODES: {
-        NORMAL:         0,
-        ADD:            1,
-        MULTIPLY:       2,
-        SCREEN:         3,
-        OVERLAY:        4,
-        DARKEN:         5,
-        LIGHTEN:        6,
-        COLOR_DODGE:    7,
-        COLOR_BURN:     8,
-        HARD_LIGHT:     9,
-        SOFT_LIGHT:     10,
-        DIFFERENCE:     11,
-        EXCLUSION:      12,
-        HUE:            13,
-        SATURATION:     14,
-        COLOR:          15,
-        LUMINOSITY:     16
-    },
+  BLEND_MODES: {
+    NORMAL:         0,
+    ADD:            1,
+    MULTIPLY:       2,
+    SCREEN:         3,
+    OVERLAY:        4,
+    DARKEN:         5,
+    LIGHTEN:        6,
+    COLOR_DODGE:    7,
+    COLOR_BURN:     8,
+    HARD_LIGHT:     9,
+    SOFT_LIGHT:     10,
+    DIFFERENCE:     11,
+    EXCLUSION:      12,
+    HUE:            13,
+    SATURATION:     14,
+    COLOR:          15,
+    LUMINOSITY:     16,
+  },
 
     /**
      * Various webgl draw modes. These can be used to specify which GL drawMode to use
@@ -120,15 +120,15 @@ var CONST = {
      * @property {number} DRAW_MODES.TRIANGLE_STRIP
      * @property {number} DRAW_MODES.TRIANGLE_FAN
      */
-    DRAW_MODES: {
-        POINTS:         0,
-        LINES:          1,
-        LINE_LOOP:      2,
-        LINE_STRIP:     3,
-        TRIANGLES:      4,
-        TRIANGLE_STRIP: 5,
-        TRIANGLE_FAN:   6
-    },
+  DRAW_MODES: {
+    POINTS:         0,
+    LINES:          1,
+    LINE_LOOP:      2,
+    LINE_STRIP:     3,
+    TRIANGLES:      4,
+    TRIANGLE_STRIP: 5,
+    TRIANGLE_FAN:   6,
+  },
 
     /**
      * The scale modes that are supported by pixi.
@@ -143,11 +143,11 @@ var CONST = {
      * @property {number} SCALE_MODES.LINEAR Smooth scaling
      * @property {number} SCALE_MODES.NEAREST Pixelating scaling
      */
-    SCALE_MODES: {
-        DEFAULT:    0,
-        LINEAR:     0,
-        NEAREST:    1
-    },
+  SCALE_MODES: {
+    DEFAULT:    0,
+    LINEAR:     0,
+    NEAREST:    1,
+  },
 
     /**
      * The prefix that denotes a URL is for a retina asset
@@ -157,11 +157,11 @@ var CONST = {
      * @property {string} RETINA_PREFIX
      */
     //example: '@2x',
-    RETINA_PREFIX: /@(.+)x/,
+  RETINA_PREFIX: /@(.+)x/,
 
-    RESOLUTION:1,
+  RESOLUTION:1,
 
-    FILTER_RESOLUTION:1,
+  FILTER_RESOLUTION:1,
 
     /**
      * The default render options if none are supplied to {@link PIXI.WebGLRenderer}
@@ -180,18 +180,18 @@ var CONST = {
      * @property {boolean} DEFAULT_RENDER_OPTIONS.clearBeforeRender=true
      * @property {boolean} DEFAULT_RENDER_OPTIONS.autoResize=false
      */
-    DEFAULT_RENDER_OPTIONS: {
-        view: null,
-        resolution: 1,
-        antialias: false,
-        forceFXAA: false,
-        autoResize: false,
-        transparent: false,
-        backgroundColor: 0x000000,
-        clearBeforeRender: true,
-        preserveDrawingBuffer: false,
-        roundPixels: false
-    },
+  DEFAULT_RENDER_OPTIONS: {
+    view: null,
+    resolution: 1,
+    antialias: false,
+    forceFXAA: false,
+    autoResize: false,
+    transparent: false,
+    backgroundColor: 0x000000,
+    clearBeforeRender: true,
+    preserveDrawingBuffer: false,
+    roundPixels: false,
+  },
 
     /**
      * Constants that identify shapes, mainly to prevent `instanceof` calls.
@@ -205,17 +205,17 @@ var CONST = {
      * @property {object} SHAPES.ELIP=3
      * @property {object} SHAPES.RREC=4
      */
-    SHAPES: {
-        POLY: 0,
-        RECT: 1,
-        CIRC: 2,
-        ELIP: 3,
-        RREC: 4
-    },
+  SHAPES: {
+    POLY: 0,
+    RECT: 1,
+    CIRC: 2,
+    ELIP: 3,
+    RREC: 4,
+  },
 
     // TODO: maybe change to SPRITE.BATCH_SIZE: 2000
     // TODO: maybe add PARTICLE.BATCH_SIZE: 15000
-    SPRITE_BATCH_SIZE: 2000 //nice balance between mobile and desktop machines
+  SPRITE_BATCH_SIZE: 2000, //nice balance between mobile and desktop machines
 };
 
 module.exports = CONST;

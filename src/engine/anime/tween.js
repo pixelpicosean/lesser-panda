@@ -121,7 +121,7 @@ class Tween extends EventEmitter {
     this.before.length = 0;
     this.change.length = 0;
     this.types.length = 0;
-  };
+  }
 
   /**
    * Add a new action to the tween
@@ -158,7 +158,7 @@ class Tween extends EventEmitter {
     this.actions.push([props, duration, easingFn, interpolationFn]);
 
     return this;
-  };
+  }
 
   /**
    * Repeat the tween for times
@@ -168,7 +168,7 @@ class Tween extends EventEmitter {
   repeat(times) {
     this.actions.push([ACTION_TYPES.REPEAT, times]);
     return this;
-  };
+  }
 
   /**
    * Wait a short time before next action
@@ -179,7 +179,7 @@ class Tween extends EventEmitter {
   wait(time) {
     this.actions.push([ACTION_TYPES.WAIT, time]);
     return this;
-  };
+  }
 
   /**
    * Stop this tween
@@ -190,7 +190,7 @@ class Tween extends EventEmitter {
     this.isRemoved = true;
     this.removeAllListeners();
     return this;
-  };
+  }
 
   /**
    * Pause this tween
@@ -200,7 +200,7 @@ class Tween extends EventEmitter {
   pause() {
     this.isPaused = true;
     return this;
-  };
+  }
 
   /**
    * Resume this tween from pausing
@@ -210,7 +210,7 @@ class Tween extends EventEmitter {
   resume() {
     this.isPaused = false;
     return this;
-  };
+  }
 
   _next() {
     this.delta = 0;
@@ -304,7 +304,7 @@ class Tween extends EventEmitter {
       this.easing = this.current[2];
       this.interpolation = this.current[3];
     }
-  };
+  }
 
   _step(delta) {
     if (this.isRemoved || this.isPaused) return;
@@ -316,14 +316,14 @@ class Tween extends EventEmitter {
     }
 
     switch (this.currentAction) {
-      case ACTION_TYPES.ANIMATE:
-        this._doAnimate();
-        break;
-      case ACTION_TYPES.WAIT:
-        this._doWait();
-        break;
+    case ACTION_TYPES.ANIMATE:
+      this._doAnimate();
+      break;
+    case ACTION_TYPES.WAIT:
+      this._doWait();
+      break;
     }
-  };
+  }
 
   _doAnimate() {
     this.progress = Math.min(1, this.delta / this.duration);
@@ -334,30 +334,30 @@ class Tween extends EventEmitter {
       key = this.propKey[i];
       switch (this.types[i]) {
         // Number tweening
-        case 0:
-          this.propCtx[i][key] = this.before[i] + this.change[i] * mod;
-          break;
+      case 0:
+        this.propCtx[i][key] = this.before[i] + this.change[i] * mod;
+        break;
         // Tweening text content
-        case 1:
-          this.propCtx[i][key] = this.change[i].slice(0, Math.floor(this.change[i].length * mod));
-          break;
+      case 1:
+        this.propCtx[i][key] = this.change[i].slice(0, Math.floor(this.change[i].length * mod));
+        break;
         // Instantly value changing for boolean and objects
-        case 2:
-          if (this.progress >= 1) this.propCtx[i][key] = this.change[i];
-          break;
+      case 2:
+        if (this.progress >= 1) this.propCtx[i][key] = this.change[i];
+        break;
       }
     }
 
     if (this.progress >= 1) {
       this._next();
     }
-  };
+  }
 
   _doWait() {
     if (this.delta >= this.duration) {
       this._next();
     }
-  };
+  }
 
   recycle() {
     pool.push(this);
