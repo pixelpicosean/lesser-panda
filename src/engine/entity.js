@@ -1,6 +1,19 @@
 const Vector = require('engine/vector');
 const { merge } = require('engine/utils/object');
 
+/**
+ * Base object that may contain a graphic element(as `gfx`)
+ * and a collider instance(as `coll`).
+ *
+ * The `gfx` and `coll` share the same postion.
+ *
+ * @class Entity
+ *
+ * @constructor
+ * @param {number} x          X coordinate
+ * @param {number} y          Y coordinate
+ * @param {object} settings   Setting object to be merged in
+ */
 class Entity {
   constructor(x, y, settings) {
     /**
@@ -10,7 +23,7 @@ class Entity {
     this.id = ++Entity.nextId;
 
     /**
-     * Name of this Actor, default is null.
+     * Name of this Entity, default is null.
      * @type {string}
      */
     this.name = null;
@@ -65,7 +78,7 @@ class Entity {
      * Position of this entity.
      * @memberof Entity#
      */
-    this.position = new Vector();
+    this.position = new Vector(x, y);
 
     /**
      * Reference to the game this actor is added to.
@@ -147,3 +160,5 @@ Entity.register = function(type, ctor) {
  * @private
  */
 Entity.canBePooled = false;
+
+module.exports = Entity;

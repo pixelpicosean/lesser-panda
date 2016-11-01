@@ -306,6 +306,8 @@ class Game extends EventEmitter {
 
     // Entity is ready to rock :D
     ent.ready();
+
+    return ent;
   }
   removeEntity(ent) {
     // Mark as removed
