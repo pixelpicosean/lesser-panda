@@ -14,10 +14,10 @@
  * @return {object} first argument
  *
  * @example
- * merge({ a: { var_1: 1 } }, { a: { var_1: 2 } });
+ * mergeMultiple({ a: { var_1: 1 } }, { a: { var_1: 2 } });
  * // return { a: { var_1: 2 } }
  */
-module.exports.merge = function(a) {
+module.exports.mergeMultiple = function mergeMultiple(a) {
   var a = 0, b, key, value;
   for (i = 1; i < arguments.length; i++) {
     b = arguments[i];
@@ -27,7 +27,7 @@ module.exports.merge = function(a) {
 
       if (typeof a[key] !== 'undefined') {
         if (typeof a[key] === 'object')
-          this.merge(a[key], value);
+          mergeMultiple(a[key], value);
         else
           a[key] = value;
       }
@@ -37,4 +37,43 @@ module.exports.merge = function(a) {
     }
   }
   return a;
+};
+
+/**
+ * Deeply merge an object into the another.
+ *
+ * @return {object}
+ *
+ * @example
+ * merge({ a: { var_1: 1 } }, { a: { var_1: 2 } });
+ * // return { a: { var_1: 2 } }
+ */
+module.exports.merge = function merge(original, extended) {
+  for (var key in extended) {
+    var ext = extended[key];
+    var extType = typeof ext;
+    if (extType !== 'undefined') {
+      if (extType !== 'object') {
+        // ugly, perhaps there is a better way?
+        if (extType === 'string') {
+          if (ext === 'true') {
+            ext = true;
+          }
+          else if (ext === 'false') {
+            ext = false;
+          }
+        }
+
+        original[key] = ext;
+      }
+      else {
+        if (!original[key] || typeof(original[key]) !== 'object') {
+          original[key] = Array.isArray(ext) ? [] : {};
+        }
+        merge(original[key], ext);
+      }
+    }
+  }
+
+  return original;
 };
