@@ -21,7 +21,7 @@ const Sprite = require('engine/gfx/sprite');
 const Graphics = require('engine/gfx/graphics');
 const Text = require('engine/gfx/text');
 
-const Entity = require('engine/entity');
+const Entity = require('engine/Entity');
 
 const Loading = require('game/Loading');
 
