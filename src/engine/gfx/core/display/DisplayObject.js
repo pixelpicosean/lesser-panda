@@ -1,13 +1,13 @@
-var math = require('../math');
-var RenderTexture = require('../textures/RenderTexture');
-var EventEmitter = require('engine/event-emitter');
-var CONST = require('../const');
+const math = require('../math');
+const RenderTexture = require('../textures/RenderTexture');
+const EventEmitter = require('engine/event-emitter');
+const CONST = require('../const');
 
-var _tempMatrix = new math.Matrix();
-var _tempDisplayObjectParent = {
+const _tempMatrix = new math.Matrix();
+const _tempDisplayObjectParent = {
   worldTransform: new math.Matrix(),
   worldAlpha: 1,
-  children: []
+  children: [],
 };
 
 
