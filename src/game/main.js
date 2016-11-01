@@ -1,32 +1,64 @@
+// Modules
 const core = require('engine/core');
+const loader = require('engine/loader');
+const device = require('engine/device');
 const Game = require('engine/game');
 
 const SystemTimer = require('engine/timer');
 
 const { persistent, session } = require('engine/storage');
 
-const loader = require('engine/loader');
 const { sounds } = require('engine/audio');
+
 const analytics = require('engine/analytics');
-const device = require('engine/device');
+
 const rnd = require('engine/rnd');
+
 const keyboard = require('engine/keyboard');
+
 const SystemGfx = require('engine/gfx');
 const sprite = require('engine/gfx/sprite');
+const graphics = require('engine/gfx/graphics');
+
+const Entity = require('engine/entity');
+
 const Loading = require('game/loading');
 
+
+// Storage
 persistent.addInt('score', 0);
 session.addString('name', 'Sean');
 
+
+// Resource loading
 loader
   .add('KenPixel.fnt')
   .add('font-sheet', 'KenPixel.png')
   .add('bgm', 'bgm.mp3|webm')
-  .add('bgm2', 'bgm.mp3')
   .load((loader, res) => {
     console.log('== loading completed! ==');
   });
 
+
+// Custom entity class
+class EntityCircle extends Entity {
+  constructor(x, y, settings) {
+    super(x, y, settings);
+
+    this.name = 'c0';
+    this.tag = 'primitive';
+
+    this.layerName = 'actor';
+    this.gfx = graphics({
+      shape: 'Circle',
+      color: 0xff0000,
+      radius: 20,
+    });
+  }
+}
+
+
+// Custom game class
 class MyGame extends Game {
   constructor() {
     super();
@@ -87,6 +119,10 @@ class MyGame extends Game {
     let spr = sprite({
       texture: 'font-sheet',
     }).addTo(this.sysGfx.layers['ui']);
+
+    // Entity
+    let ent = this.spawnEntity(EntityCircle, core.width / 2, core.height / 2);
+    console.log((ent.gfx.parent === this.sysGfx.layers['actor']) ? '"ent" added to right layer' : '"ent" added to wrong layer!');
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
