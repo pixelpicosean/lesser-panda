@@ -1,5 +1,6 @@
 const core = require('engine/core');
 const EventEmitter = require('engine/event-emitter');
+const { removeItems } = require('engine/utils/array');
 
 /**
  * Game is the main hub for a game. A game made with LesserPanda
@@ -156,7 +157,12 @@ class Game extends EventEmitter {
     // Update entities
     for (i = 0; i < this.entities.length; i++) {
       ent = this.entities[i];
-      if (ent.canEverTick) ent.update(delta, deltaSec);
+      if (!ent.isRemoved && ent.canEverTick) ent.update(delta, deltaSec);
+
+      if (ent.isRemoved) {
+        if (ent.CTOR.canBePooled) ent.CTOR.recycle(ent);
+        removeItems(this.entities, i--, 1);
+      }
     }
 
     this.emit('update', delta, deltaSec);
@@ -179,7 +185,12 @@ class Game extends EventEmitter {
     // Update entities
     for (i = 0; i < this.entities.length; i++) {
       ent = this.entities[i];
-      if (ent.canEverTick) ent.fixedUpdate(delta, deltaSec);
+      if (!ent.isRemoved && ent.canFixedTick) ent.fixedUpdate(delta, deltaSec);
+
+      if (ent.isRemoved) {
+        if (ent.CTOR.canBePooled) ent.CTOR.recycle(ent);
+        removeItems(this.entities, i--, 1);
+      }
     }
 
     this.emit('fixedUpdate', delta, deltaSec);
@@ -284,6 +295,9 @@ class Game extends EventEmitter {
     }
     ent.game = this;
 
+    // Add to list
+    this.entities.push(ent);
+
     // Add to name list
     if (ent.name) {
       this.namedEntities[ent.name] = ent;
@@ -359,6 +373,27 @@ class Game extends EventEmitter {
 
     // Change entity tag value
     ent._tag = tag;
+  }
+  /**
+   * Find an entity with specific name.
+   * @memberof Game#
+   * @param  {string} name Name of the entity
+   * @return {Entity}
+   */
+  getEntityByName(name) {
+    return this.namedEntities[name];
+  }
+  /**
+   * Find entities with a specific tag.
+   * @memberof Game#
+   * @param  {string} tag Tag of the entities
+   * @return {Array<Entity>|null}
+   */
+  getEntitiesByTag(tag) {
+    if (this.taggedEntities.hasOwnProperty(tag)) {
+      return this.taggedEntities[tag];
+    }
+    return null;
   }
 
   /**
