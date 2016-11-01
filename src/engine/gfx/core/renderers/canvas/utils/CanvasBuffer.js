@@ -6,8 +6,8 @@
  * @param width {number} the width for the newly created canvas
  * @param height {number} the height for the newly created canvas
  */
-function CanvasBuffer(width, height)
-{
+class CanvasBuffer {
+  constructor(width, height) {
     /**
      * The Canvas object that belongs to this CanvasBuffer.
      *
@@ -24,10 +24,41 @@ function CanvasBuffer(width, height)
 
     this.canvas.width = width;
     this.canvas.height = height;
-}
+  }
 
-CanvasBuffer.prototype.constructor = CanvasBuffer;
-module.exports = CanvasBuffer;
+  /**
+   * Clears the canvas that was created by the CanvasBuffer class.
+   *
+   * @private
+   */
+  clear()
+  {
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+  }
+
+  /**
+   * Resizes the canvas to the specified width and height.
+   *
+   * @param width {number} the new width of the canvas
+   * @param height {number} the new height of the canvas
+   */
+  resize(width, height)
+  {
+      this.canvas.width = width;
+      this.canvas.height = height;
+  }
+
+  /**
+   * Destroys this canvas.
+   *
+   */
+  destroy()
+  {
+      this.context = null;
+      this.canvas = null;
+  }
+}
 
 Object.defineProperties(CanvasBuffer.prototype, {
     /**
@@ -64,35 +95,4 @@ Object.defineProperties(CanvasBuffer.prototype, {
     }
 });
 
-/**
- * Clears the canvas that was created by the CanvasBuffer class.
- *
- * @private
- */
-CanvasBuffer.prototype.clear = function ()
-{
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-    this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
-};
-
-/**
- * Resizes the canvas to the specified width and height.
- *
- * @param width {number} the new width of the canvas
- * @param height {number} the new height of the canvas
- */
-CanvasBuffer.prototype.resize = function (width, height)
-{
-    this.canvas.width = width;
-    this.canvas.height = height;
-};
-
-/**
- * Destroys this canvas.
- *
- */
-CanvasBuffer.prototype.destroy = function ()
-{
-    this.context = null;
-    this.canvas = null;
-};
+module.exports = CanvasBuffer;

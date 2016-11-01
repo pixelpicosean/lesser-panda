@@ -1,4 +1,4 @@
-var CONST = require('../../../const');
+const CONST = require('../../../const');
 
 /**
  * A set of functions used by the canvas renderer to draw the primitive graphics data.
@@ -6,8 +6,7 @@ var CONST = require('../../../const');
  * @class
  * @memberof PIXI
  */
-var CanvasGraphics = {};
-module.exports = CanvasGraphics;
+const CanvasGraphics = {};
 
 /*
  * Renders a Graphics object to a canvas.
@@ -350,3 +349,4 @@ CanvasGraphics.updateGraphicsTint = function (graphics)
     }
 };
 
+module.exports = CanvasGraphics;

@@ -1,4 +1,4 @@
-var utils = require('../../../utils');
+const utils = require('../../../utils');
 
 /**
  * Utility methods for Sprite/Texture tinting.
@@ -6,8 +6,7 @@ var utils = require('../../../utils');
  * @class
  * @memberof PIXI
  */
-var CanvasTinter = {};
-module.exports = CanvasTinter;
+const CanvasTinter = {};
 
 /**
  * Basically this method just needs a sprite and a color and tints the sprite with the given color.
@@ -248,3 +247,5 @@ CanvasTinter.canUseMultiply = utils.canUseNewCanvasBlendModes();
  *
  */
 CanvasTinter.tintMethod = CanvasTinter.canUseMultiply ? CanvasTinter.tintWithMultiply :  CanvasTinter.tintWithPerPixel;
+
+module.exports = CanvasTinter;

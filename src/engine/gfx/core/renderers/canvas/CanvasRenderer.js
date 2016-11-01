@@ -1,8 +1,8 @@
-var SystemRenderer = require('../SystemRenderer'),
-    CanvasMaskManager = require('./utils/CanvasMaskManager'),
-    utils = require('../../utils'),
-    math = require('../../math'),
-    CONST = require('../../const');
+const SystemRenderer = require('../SystemRenderer');
+const CanvasMaskManager = require('./utils/CanvasMaskManager');
+const utils = require('../../utils');
+const math = require('../../math');
+const CONST = require('../../const');
 
 /**
  * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.
