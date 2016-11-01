@@ -11,6 +11,7 @@ class System {
 
   onEntitySpawn() {}
   onEntityRemove() {}
+  onEntityTagChange() {}
 
   onPause() {}
   onResume() {}

@@ -34,6 +34,22 @@ class Game extends EventEmitter {
     this.systemOrder = [];
 
     /**
+     * List of entities in the game world.
+     * @type {Array<Entity>}
+     */
+    this.entities = [];
+    /**
+     * Holding all the named entities(has `name` been set).
+     * @type {Object}
+     */
+    this.namedEntities = {};
+    /**
+     * Holding all the tagged entities(has `tag` been set).
+     * @type {Object}
+     */
+    this.taggedEntities = {};
+
+    /**
      * Caches update informations
      * @type {Object}
      * @private
@@ -129,10 +145,18 @@ class Game extends EventEmitter {
    * @memberof Game#
    */
   update(delta, deltaSec) {
-    let i, sys;
+    let i, sys, ent;
+
+    // Update systems
     for (i = 0; i < this.systemOrder.length; i++) {
       sys = this.systemOrder[i];
       this.systems[sys] && this.systems[sys].update(delta, deltaSec);
+    }
+
+    // Update entities
+    for (i = 0; i < this.entities.length; i++) {
+      ent = this.entities[i];
+      if (ent.canEverTick) ent.update(delta, deltaSec);
     }
 
     this.emit('update', delta, deltaSec);
@@ -144,10 +168,18 @@ class Game extends EventEmitter {
    * @memberof Game#
    */
   fixedUpdate(delta, deltaSec) {
-    let i, sys;
+    let i, sys, ent;
+
+    // Update systems
     for (i = 0; i < this.systemOrder.length; i++) {
       sys = this.systemOrder[i];
       this.systems[sys] && this.systems[sys].fixedUpdate(delta, deltaSec);
+    }
+
+    // Update entities
+    for (i = 0; i < this.entities.length; i++) {
+      ent = this.entities[i];
+      if (ent.canEverTick) ent.fixedUpdate(delta, deltaSec);
     }
 
     this.emit('fixedUpdate', delta, deltaSec);
@@ -168,14 +200,19 @@ class Game extends EventEmitter {
     this.emit('freeze');
   }
 
+  /**
+   * Add a system instance to this game.
+   * @method addSystem
+   * @memberof Game#
+   */
   addSystem(sys) {
     if (sys.name.length === 0) {
-      console.log('System name "' + sys.name + '" is invalid!');
+      console.log(`System name "${sys.name}" is invalid!`);
       return this;
     }
 
     if (this.systemOrder.indexOf(sys.name) >= 0) {
-      console.log('System "' + sys.name + '" already added!');
+      console.log(`System "${sys.name}" already added!`);
       return this;
     }
 
@@ -217,24 +254,118 @@ class Game extends EventEmitter {
   };
 
   /**
+   * Spawn an `Entity` into game world.
+   * @method spawnEntity
+   * @memberof Game#
+   * @param  {[type]} type     [description]
+   * @param  {[type]} x        [description]
+   * @param  {[type]} y        [description]
+   * @param  {[type]} settings [description]
+   * @return {[type]}          [description]
+   */
+  spawnEntity(type, x, y, settings) {
+    let ctor = type;
+    if (typeof(type) === 'string') {
+      ctor = Entity.types[type];
+      if (!ctor) {
+        console.log(`[WARNING]: Entity type "${type}" does not exist!`);
+        return undefined;
+      }
+    }
+
+    // Create entity instance
+    let ent;
+    if (ctor.canBePooled) {
+      ent = ctor.create(x, y, settings);
+    }
+    else {
+      ent = new ctor(x, y, settings);
+      ent.CTOR = ctor;
+    }
+    ent.game = this;
+
+    // Add to name list
+    if (ent.name) {
+      this.namedEntities[ent.name] = ent;
+    }
+
+    // Add to tag list
+    if (ent._tag) {
+      if (!this.taggedEntities.hasOwnProperty(ent._tag)) {
+        this.taggedEntities[ent._tag] = [];
+      }
+      this.taggedEntities[ent._tag].push(ent);
+    }
+
+    // Notify systems
+    let i, sys;
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].onEntitySpawn(ent);
+    }
+
+    // Entity is ready to rock :D
+    ent.ready();
+  }
+  removeEntity(ent) {
+    // Mark as removed
+    ent.isRemoved = true;
+
+    // Remove from name list
+    if (ent.name) {
+      delete this.namedEntities[ent.name];
+    }
+
+    // Remove from tag list
+    if (ent._tag && this.taggedEntities.hasOwnProperty(ent._tag)) {
+      let idx = this.taggedEntities[ent._tag].indexOf(ent);
+
+      if (idx !== -1) {
+        removeItems(this.taggedEntities[ent._tag], idx, 1);
+      }
+    }
+
+    // Notify systems
+    let i, sys;
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].onEntityRemove(ent);
+    }
+  }
+  changeEntityTag(ent, tag) {
+    // Remove from tag list
+    if (ent._tag && this.taggedEntities.hasOwnProperty(tag)) {
+      let idx = this.taggedEntities[tag].indexOf(ent);
+
+      if (idx !== -1) {
+        removeItems(this.taggedEntities[tag], idx, 1);
+      }
+    }
+
+    // Add to new tag group
+    if (!this.taggedEntities.hasOwnProperty(tag)) {
+      this.taggedEntities[tag] = [];
+    }
+    this.taggedEntities[tag].push(ent);
+
+    // Notify systems
+    let i, sys;
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].onEntityTagChange(ent, tag);
+    }
+
+    // Change entity tag value
+    ent._tag = tag;
+  }
+
+  /**
    * Resize callback.
    * @method resize
    * @memberof Game#
    */
   resize(/*w, h*/) {};
 }
-
-/**
- * Sub-system updating order
- * @memberof Game
- * @type {array}
- */
-// systems: [
-//   'Actor',
-//   'Animation',
-//   'Physics',
-//   'Renderer',
-// ]
 
 /**
  * @example <captain>Create a new game class</captain>
