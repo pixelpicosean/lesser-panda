@@ -1,4 +1,4 @@
-var TextureShader = require('../../renderers/webgl/shaders/TextureShader');
+const TextureShader = require('../../renderers/webgl/shaders/TextureShader');
 
 /**
  * @class
@@ -6,10 +6,9 @@ var TextureShader = require('../../renderers/webgl/shaders/TextureShader');
  * @memberof PIXI
  * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  */
-function ParticleShader(shaderManager)
-{
-    TextureShader.call(this,
-        shaderManager,
+class ParticleShader extends TextureShader {
+  constructor(shaderManager) {
+    super(shaderManager,
         // vertex shader
         [
             'attribute vec2 aVertexPosition;',
@@ -68,9 +67,7 @@ function ParticleShader(shaderManager)
 
     // TEMP HACK
 
+  }
 }
-
-ParticleShader.prototype = Object.create(TextureShader.prototype);
-ParticleShader.prototype.constructor = ParticleShader;
 
 module.exports = ParticleShader;

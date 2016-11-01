@@ -1,5 +1,5 @@
-var Container = require('../display/Container'),
-    CONST = require('../const');
+const Container = require('../display/Container');
+const CONST = require('../const');
 
 /**
  * The ParticleContainer class is a really fast version of the Container built solely for speed,
