@@ -135,11 +135,21 @@ class SystemGfx extends System {
   }
 
   onEntitySpawn(ent) {
+    let name = ent.layerName;
     if (ent.gfx) {
-      let layer = ent.layer
+      // Default layer is the root
+      if (!name) {
+        this.root.addChild(ent.gfx);
+      }
+      // Find the layer and add this entitiy into it
+      else if (this.layers.hasOwnProperty(name)) {
+        this.layers[name].addChild(ent.gfx);
+      }
     }
   }
-  onEntityRemove(ent) {}
+  onEntityRemove(ent) {
+    if (ent.gfx) ent.gfx.remove();
+  }
 
   onPause() {}
   onResume() {}
