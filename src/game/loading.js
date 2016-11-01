@@ -39,7 +39,7 @@ class Loading extends Game {
 
   awake({ gameClass }) {
     let redraw = () => {
-      this.pct.text = `${loader.progress}%`;
+      this.pct.text = `${loader.progress | 0}%`;
 
       this.bar.clear();
       this.bar.beginFill(0xffffff);
