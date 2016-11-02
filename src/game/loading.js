@@ -1,5 +1,5 @@
 const core = require('engine/core');
-const Game = require('engine/game');
+const Game = require('engine/Game');
 const loader = require('engine/loader');
 const SystemGfx = require('engine/gfx');
 const graphics = require('engine/gfx/Graphics');

@@ -2,7 +2,8 @@
 const core = require('engine/core');
 const loader = require('engine/loader');
 const device = require('engine/device');
-const Game = require('engine/game');
+const Game = require('engine/Game');
+const Vector = require('engine/Vector');
 
 const SystemTimer = require('engine/timer');
 
@@ -40,7 +41,7 @@ loader
   .add('KenPixel.fnt')
   .add('font-sheet', 'KenPixel.png')
   .add('bgm', 'bgm.mp3|webm')
-  .load((loader, res) => {
+  .load(() => {
     console.log('== loading completed! ==');
   });
 
@@ -143,15 +144,30 @@ class MyGame extends Game {
     this.sysGfx
       .createLayer('background')
       .createLayer('entities')
-        .createLayer('deco', 'entities')
-        .createLayer('actor', 'entities')
-        .createLayer('fx', 'entities')
+      .createLayer('deco', 'entities')
+      .createLayer('actor', 'entities')
+      .createLayer('fx', 'entities')
       .createLayer('ui');
 
     this.sysGfx.backgroundColor = 0xcccccc;
-    let spr = Sprite({
+    Sprite({ texture: 'font-sheet' })
+      .addTo(this.sysGfx.layers['ui']);
+
+    let p = Plane({ texture: 'font-sheet' })
+      .addTo(this.sysGfx.layers['ui']);
+    p.position.set(200, 0);
+
+    let r = Rope({
       texture: 'font-sheet',
+      points: [
+        new Vector(0, 0),
+        new Vector(32, -20),
+        new Vector(64, 0),
+        new Vector(96, 20),
+        new Vector(128, 0),
+      ],
     }).addTo(this.sysGfx.layers['ui']);
+    r.position.set(100, 300);
 
     // Entity
     let ent = this.spawnEntity(EntityCircle, core.width / 2, core.height / 2);
