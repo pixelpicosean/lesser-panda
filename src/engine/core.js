@@ -23,6 +23,12 @@ Object.assign(core, {
   version: 'v1.0.0-dev',
 
   /**
+   * Set to `false` to disable version info console output.
+   * @type {Boolean}
+   */
+  sayHello: true,
+
+  /**
    * Main Canvas element.
    * @memberof module:engine/core
    * @type {HTMLCanvasElement}
