@@ -83,7 +83,7 @@ AnimatedSprite.prototype.remove = function remove() {
  * @param {Object} [props]
  */
 AnimatedSprite.prototype.addAnim = function addAnim(name, frames, props) {
-  if (!name) return;
+  if (!name) {return;}
   if (!frames) {
     frames = [];
     for (var i = 0; i < this.textures.length; i++) {
@@ -105,7 +105,7 @@ AnimatedSprite.prototype.addAnim = function addAnim(name, frames, props) {
 AnimatedSprite.prototype.play = function play(name, frame) {
   name = name || this.currentAnim;
   var anim = this.anims[name];
-  if (!anim) return;
+  if (!anim) {return;}
   this.playing = true;
   this._finishEvtEmit = false;
   this.finished = false;
@@ -132,7 +132,7 @@ AnimatedSprite.prototype.play = function play(name, frame) {
  */
 AnimatedSprite.prototype.stop = function stop(frame) {
   this.playing = false;
-  if (typeof frame === 'number') this.gotoFrame(frame);
+  if (typeof frame === 'number') {this.gotoFrame(frame);}
 
   // No more updates
   if (this._willTick) {
@@ -150,7 +150,7 @@ AnimatedSprite.prototype.stop = function stop(frame) {
  */
 AnimatedSprite.prototype.gotoFrame = function gotoFrame(frame) {
   var anim = this.anims[this.currentAnim];
-  if (!anim) return;
+  if (!anim) {return;}
   this.currentFrame = frame;
   this._frameTime = 0;
   this.texture = this.textures[anim.frames[frame]];

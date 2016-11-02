@@ -13,8 +13,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function NoiseFilter()
-{
+function NoiseFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -40,12 +39,10 @@ Object.defineProperties(NoiseFilter.prototype, {
      * @default 0.5
      */
   noise: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.noise.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.noise.value = value;
     },
   },

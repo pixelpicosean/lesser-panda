@@ -27,7 +27,7 @@ class Analytics {
      */
     this.trackId = settings.id;
 
-    if (!navigator.onLine) return;
+    if (!navigator.onLine) {return;}
 
     if (device.cocoonJS) {
       this.clientId = Date.now();
@@ -66,13 +66,13 @@ class Analytics {
    * @param {string} [value]
    */
   send(category, action, label, value) {
-    if (!navigator.onLine) return;
+    if (!navigator.onLine) {return;}
 
     if (device.cocoonJS) {
       let request = new XMLHttpRequest();
       let params = 'v=1&tid=' + this.trackId + '&cid=' + this.clientId + '&t=event&ec=' + category + '&ea=' + action;
-      if (typeof label !== 'undefined') params += '&el=' + label;
-      if (typeof value !== 'undefined') params += '&ev=' + value;
+      if (typeof label !== 'undefined') {params += '&el=' + label;}
+      if (typeof value !== 'undefined') {params += '&ev=' + value;}
       request.open('POST', 'http://www.google-analytics.com/collect', true);
       request.send(params);
     }

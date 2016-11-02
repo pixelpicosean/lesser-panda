@@ -12,8 +12,7 @@ var TiltShiftAxisFilter = require('./TiltShiftAxisFilter');
  * @extends PIXI.TiltShiftAxisFilter
  * @memberof PIXI.filters
  */
-function TiltShiftYFilter()
-{
+function TiltShiftYFilter() {
   TiltShiftAxisFilter.call(this);
 }
 
@@ -25,8 +24,7 @@ module.exports = TiltShiftYFilter;
  * Updates the filter delta values.
  *
  */
-TiltShiftYFilter.prototype.updateDelta = function()
-{
+TiltShiftYFilter.prototype.updateDelta = function() {
   var dx = this.uniforms.end.value.x - this.uniforms.start.value.x;
   var dy = this.uniforms.end.value.y - this.uniforms.start.value.y;
   var d = Math.sqrt(dx * dx + dy * dy);

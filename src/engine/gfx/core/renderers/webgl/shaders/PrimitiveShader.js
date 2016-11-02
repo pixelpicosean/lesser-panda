@@ -7,8 +7,7 @@ var Shader = require('./Shader');
  * @extends Shader
  * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  */
-function PrimitiveShader(shaderManager)
-{
+function PrimitiveShader(shaderManager) {
   Shader.call(this,
         shaderManager,
         // vertex shader
@@ -42,8 +41,8 @@ function PrimitiveShader(shaderManager)
     ].join('\n'),
         // custom uniforms
     {
-      tint:   { type: '3f', value: [0, 0, 0] },
-      alpha:  { type: '1f', value: 0 },
+      tint: { type: '3f', value: [0, 0, 0] },
+      alpha: { type: '1f', value: 0 },
       translationMatrix: { type: 'mat3', value: new Float32Array(9) },
       projectionMatrix: { type: 'mat3', value: new Float32Array(9) },
     },

@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function ColorStepFilter()
-{
+function ColorStepFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -34,12 +33,10 @@ Object.defineProperties(ColorStepFilter.prototype, {
      * @memberof PIXI.filters.ColorStepFilter#
      */
   step: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.step.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.step.value = value;
     },
   },

@@ -178,8 +178,8 @@ Vector.prototype.squaredLength = function() {
  * @return {number} Result of dot operation.
  */
 Vector.prototype.dot = function(vector) {
-  if (vector instanceof Vector) return this.x * vector.x + this.y * vector.y;
-  else return this.x * this.x + this.y * this.y;
+  if (vector instanceof Vector) {return this.x * vector.x + this.y * vector.y;}
+  else {return this.x * this.x + this.y * this.y;}
 };
 
 /**
@@ -199,7 +199,8 @@ Vector.prototype.dotNormalized = function(vector) {
     var x2 = vector.x / len2;
     var y2 = vector.y / len2;
     return x1 * x2 + y1 * y2;
-  } else return x1 * x1 + y1 * y1;
+  }
+  else {return x1 * x1 + y1 * y1;}
 };
 
 /**
@@ -255,7 +256,8 @@ Vector.prototype.limit = function(vector) {
 Vector.prototype.angle = function(vector) {
   if (vector) {
     return Math.atan2(vector.y - this.y, vector.x - this.x);
-  } else {
+  }
+  else {
     return Math.atan2(this.y, this.x);
   }
 };

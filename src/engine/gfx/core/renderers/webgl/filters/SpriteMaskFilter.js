@@ -1,5 +1,5 @@
 var AbstractFilter = require('./AbstractFilter'),
-  math =  require('../../../math');
+  math = require('../../../math');
 
 
 
@@ -11,17 +11,16 @@ var AbstractFilter = require('./AbstractFilter'),
  * @memberof PIXI
  * @param sprite {PIXI.Sprite} the target sprite
  */
-function SpriteMaskFilter(sprite)
-{
+function SpriteMaskFilter(sprite) {
   var maskMatrix = new math.Matrix();
 
   AbstractFilter.call(this,
         require('./spriteMaskFilter.vert'),
         require('./spriteMaskFilter.frag'),
     {
-      mask:           { type: 'sampler2D', value: sprite._texture },
-      alpha:          { type: 'f', value: 1},
-      otherMatrix:    { type: 'mat3', value: maskMatrix.toArray(true) },
+      mask: { type: 'sampler2D', value: sprite._texture },
+      alpha: { type: 'f', value: 1 },
+      otherMatrix: { type: 'mat3', value: maskMatrix.toArray(true) },
     }
     );
 
@@ -40,8 +39,7 @@ module.exports = SpriteMaskFilter;
  * @param input {PIXI.RenderTarget}
  * @param output {PIXI.RenderTarget}
  */
-SpriteMaskFilter.prototype.applyFilter = function(renderer, input, output)
-{
+SpriteMaskFilter.prototype.applyFilter = function(renderer, input, output) {
   var filterManager = renderer.filterManager;
 
   this.uniforms.mask.value = this.maskSprite._texture;
@@ -65,12 +63,10 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
      * @memberof PIXI.SpriteMaskFilter#
      */
   map: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.mask.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.mask.value = value;
     },
   },
@@ -82,12 +78,10 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
      * @memberof PIXI.SpriteMaskFilter#
      */
   offset: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.offset.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.offset.value = value;
     },
   },

@@ -29,24 +29,22 @@ class TextureUvs {
    * @param rotate {number} Rotation of frame, see {@link PIXI.GroupD8}
    * @private
    */
-  set(frame, baseFrame, rotate)
-  {
+  set(frame, baseFrame, rotate) {
     var tw = baseFrame.width;
     var th = baseFrame.height;
 
-    if(rotate)
-      {
-          //width and height div 2 div baseFrame size
+    if (rotate) {
+          // width and height div 2 div baseFrame size
       var swapWidthHeight = GroupD8.isSwapWidthHeight(rotate);
       var w2 = (swapWidthHeight ? frame.height : frame.width) / 2 / tw;
       var h2 = (swapWidthHeight ? frame.width : frame.height) / 2 / th;
-          //coordinates of center
+          // coordinates of center
       var cX = frame.x / tw + w2;
       var cY = frame.y / th + h2;
-      rotate = GroupD8.add(rotate, GroupD8.NW); //NW is top-left corner
+      rotate = GroupD8.add(rotate, GroupD8.NW); // NW is top-left corner
       this.x0 = cX + w2 * GroupD8.uX(rotate);
       this.y0 = cY + h2 * GroupD8.uY(rotate);
-      rotate = GroupD8.add(rotate, 2); //rotate 90 degrees clockwise
+      rotate = GroupD8.add(rotate, 2); // rotate 90 degrees clockwise
       this.x1 = cX + w2 * GroupD8.uX(rotate);
       this.y1 = cY + h2 * GroupD8.uY(rotate);
       rotate = GroupD8.add(rotate, 2);
@@ -56,8 +54,7 @@ class TextureUvs {
       this.x3 = cX + w2 * GroupD8.uX(rotate);
       this.y3 = cY + h2 * GroupD8.uY(rotate);
     }
-    else
-      {
+    else {
 
       this.x0 = frame.x / tw;
       this.y0 = frame.y / th;

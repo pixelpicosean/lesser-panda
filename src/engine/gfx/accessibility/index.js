@@ -6,6 +6,6 @@
  */
 
 module.exports = {
-  accessibleTarget:     require('./accessibleTarget'),
+  accessibleTarget: require('./accessibleTarget'),
   AccessibilityManager: require('./AccessibilityManager'),
 };

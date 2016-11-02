@@ -10,8 +10,7 @@ var core = require('../../core'),
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function BloomFilter()
-{
+function BloomFilter() {
   core.AbstractFilter.call(this);
 
   this.blurXFilter = new BlurXFilter();
@@ -24,11 +23,10 @@ BloomFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BloomFilter.prototype.constructor = BloomFilter;
 module.exports = BloomFilter;
 
-BloomFilter.prototype.applyFilter = function(renderer, input, output)
-{
+BloomFilter.prototype.applyFilter = function(renderer, input, output) {
   var renderTarget = renderer.filterManager.getRenderTarget(true);
 
-    //TODO - copyTexSubImage2D could be used here?
+    // TODO - copyTexSubImage2D could be used here?
   this.defaultFilter.applyFilter(renderer, input, output);
 
   this.blurXFilter.applyFilter(renderer, input, renderTarget);
@@ -51,12 +49,10 @@ Object.defineProperties(BloomFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
+    get: function() {
       return this.blurXFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurXFilter.blur = this.blurYFilter.blur = value;
     },
   },
@@ -69,12 +65,10 @@ Object.defineProperties(BloomFilter.prototype, {
      * @default 2
      */
   blurX: {
-    get: function()
-        {
+    get: function() {
       return this.blurXFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurXFilter.blur = value;
     },
   },
@@ -87,12 +81,10 @@ Object.defineProperties(BloomFilter.prototype, {
      * @default 2
      */
   blurY: {
-    get: function()
-        {
+    get: function() {
       return this.blurYFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurYFilter.blur = value;
     },
   },

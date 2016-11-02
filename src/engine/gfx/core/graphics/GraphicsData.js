@@ -67,8 +67,7 @@ class GraphicsData {
    *
    * @return {PIXI.GraphicsData}
    */
-  clone()
-  {
+  clone() {
     return new GraphicsData(
           this.lineWidth,
           this.lineColor,

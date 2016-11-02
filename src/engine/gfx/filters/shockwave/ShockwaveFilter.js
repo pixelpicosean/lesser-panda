@@ -10,8 +10,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function ShockwaveFilter()
-{
+function ShockwaveFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -39,12 +38,10 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * @memberof PIXI.filters.ShockwaveFilter#
      */
   center: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.center.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.center.value = value;
     },
   },
@@ -56,12 +53,10 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * @memberof PIXI.filters.ShockwaveFilter#
      */
   params: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.params.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.params.value = value;
     },
   },
@@ -73,12 +68,10 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * @memberof PIXI.filters.ShockwaveFilter#
      */
   time: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.time.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.time.value = value;
     },
   },

@@ -52,9 +52,9 @@ var CONST = {
    * @property {number} RENDERER_TYPE.CANVAS
    */
   RENDERER_TYPE: {
-    UNKNOWN:    0,
-    WEBGL:      1,
-    CANVAS:     2,
+    UNKNOWN: 0,
+    WEBGL: 1,
+    CANVAS: 2,
   },
 
   /**
@@ -84,23 +84,23 @@ var CONST = {
    * @property {number} BLEND_MODES.LUMINOSITY
    */
   BLEND_MODES: {
-    NORMAL:         0,
-    ADD:            1,
-    MULTIPLY:       2,
-    SCREEN:         3,
-    OVERLAY:        4,
-    DARKEN:         5,
-    LIGHTEN:        6,
-    COLOR_DODGE:    7,
-    COLOR_BURN:     8,
-    HARD_LIGHT:     9,
-    SOFT_LIGHT:     10,
-    DIFFERENCE:     11,
-    EXCLUSION:      12,
-    HUE:            13,
-    SATURATION:     14,
-    COLOR:          15,
-    LUMINOSITY:     16,
+    NORMAL: 0,
+    ADD: 1,
+    MULTIPLY: 2,
+    SCREEN: 3,
+    OVERLAY: 4,
+    DARKEN: 5,
+    LIGHTEN: 6,
+    COLOR_DODGE: 7,
+    COLOR_BURN: 8,
+    HARD_LIGHT: 9,
+    SOFT_LIGHT: 10,
+    DIFFERENCE: 11,
+    EXCLUSION: 12,
+    HUE: 13,
+    SATURATION: 14,
+    COLOR: 15,
+    LUMINOSITY: 16,
   },
 
   /**
@@ -119,13 +119,13 @@ var CONST = {
    * @property {number} DRAW_MODES.TRIANGLE_FAN
    */
   DRAW_MODES: {
-    POINTS:         0,
-    LINES:          1,
-    LINE_LOOP:      2,
-    LINE_STRIP:     3,
-    TRIANGLES:      4,
+    POINTS: 0,
+    LINES: 1,
+    LINE_LOOP: 2,
+    LINE_STRIP: 3,
+    TRIANGLES: 4,
     TRIANGLE_STRIP: 5,
-    TRIANGLE_FAN:   6,
+    TRIANGLE_FAN: 6,
   },
 
   /**
@@ -142,9 +142,9 @@ var CONST = {
    * @property {number} SCALE_MODES.NEAREST Pixelating scaling
    */
   SCALE_MODES: {
-    DEFAULT:    0,
-    LINEAR:     0,
-    NEAREST:    1,
+    DEFAULT: 0,
+    LINEAR: 0,
+    NEAREST: 1,
   },
 
   /**
@@ -154,7 +154,7 @@ var CONST = {
    * @constant
    * @property {string} RETINA_PREFIX
    */
-  //example: '@2x',
+  // example: '@2x',
   RETINA_PREFIX: /@(.+)x/,
 
   RESOLUTION:1,

@@ -37,8 +37,7 @@ class GraphicsRenderer extends ObjectRenderer {
    * @private
    *
    */
-  onContextChange()
-  {
+  onContextChange() {
 
   }
 
@@ -61,16 +60,14 @@ class GraphicsRenderer extends ObjectRenderer {
    *
    * @param graphics {PIXI.Graphics} The graphics object to render.
    */
-  render(graphics)
-  {
+  render(graphics) {
     var renderer = this.renderer;
     var gl = renderer.gl;
 
     var shader = renderer.shaderManager.plugins.primitiveShader,
       webGLData;
 
-    if (graphics.dirty || !graphics._webGL[gl.id])
-      {
+    if (graphics.dirty || !graphics._webGL[gl.id]) {
       this.updateGraphics(graphics);
     }
 
@@ -78,34 +75,31 @@ class GraphicsRenderer extends ObjectRenderer {
 
       // This  could be speeded up for sure!
 
-    renderer.blendModeManager.setBlendMode( graphics.blendMode );
+    renderer.blendModeManager.setBlendMode(graphics.blendMode);
 
   //    var matrix =  graphics.worldTransform.clone();
   //    var matrix =  renderer.currentRenderTarget.projectionMatrix.clone();
   //    matrix.append(graphics.worldTransform);
 
-    for (var i = 0, n = webGL.data.length; i < n; i++)
-      {
+    for (var i = 0, n = webGL.data.length; i < n; i++) {
       webGLData = webGL.data[i];
 
-      if (webGL.data[i].mode === 1)
-          {
+      if (webGL.data[i].mode === 1) {
 
         renderer.stencilManager.pushStencil(graphics, webGLData);
 
         gl.uniform1f(renderer.shaderManager.complexPrimitiveShader.uniforms.alpha._location, graphics.worldAlpha * webGLData.alpha);
 
               // render quad..
-        gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_SHORT, ( webGLData.indices.length - 4 ) * 2 );
+        gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_SHORT, (webGLData.indices.length - 4) * 2);
 
         renderer.stencilManager.popStencil(graphics, webGLData);
       }
-      else
-          {
+      else {
 
         shader = renderer.shaderManager.primitiveShader;
 
-        renderer.shaderManager.setShader( shader );//activatePrimitiveShader();
+        renderer.shaderManager.setShader(shader);// activatePrimitiveShader();
 
         gl.uniformMatrix3fv(shader.uniforms.translationMatrix._location, false, graphics.worldTransform.toArray(true));
 
@@ -123,7 +117,7 @@ class GraphicsRenderer extends ObjectRenderer {
 
               // set the index buffer!
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, webGLData.indexBuffer);
-        gl.drawElements(gl.TRIANGLE_STRIP,  webGLData.indices.length, gl.UNSIGNED_SHORT, 0 );
+        gl.drawElements(gl.TRIANGLE_STRIP, webGLData.indices.length, gl.UNSIGNED_SHORT, 0);
       }
 
       renderer.drawCount++;
@@ -136,17 +130,15 @@ class GraphicsRenderer extends ObjectRenderer {
    * @private
    * @param graphics {PIXI.Graphics} The graphics object to update
    */
-  updateGraphics(graphics)
-  {
+  updateGraphics(graphics) {
     var gl = this.renderer.gl;
 
        // get the contexts graphics object
     var webGL = graphics._webGL[gl.id];
 
       // if the graphics object does not exist in the webGL context time to create it!
-    if (!webGL)
-      {
-      webGL = graphics._webGL[gl.id] = {lastIndex:0, data:[], gl:gl};
+    if (!webGL) {
+      webGL = graphics._webGL[gl.id] = { lastIndex:0, data:[], gl:gl };
     }
 
       // flag the graphics as not dirty as we are about to update it...
@@ -155,16 +147,14 @@ class GraphicsRenderer extends ObjectRenderer {
     var i;
 
       // if the user cleared the graphics object we will need to clear every object
-    if (graphics.clearDirty)
-      {
+    if (graphics.clearDirty) {
       graphics.clearDirty = false;
 
           // loop through and return all the webGLDatas to the object pool so than can be reused later on
-      for (i = 0; i < webGL.data.length; i++)
-          {
+      for (i = 0; i < webGL.data.length; i++) {
         var graphicsData = webGL.data[i];
         graphicsData.reset();
-        this.graphicsDataPool.push( graphicsData );
+        this.graphicsDataPool.push(graphicsData);
       }
 
           // clear the array and reset the index..
@@ -177,69 +167,55 @@ class GraphicsRenderer extends ObjectRenderer {
       // loop through the graphics datas and construct each one..
       // if the object is a complex fill then the new stencil buffer technique will be used
       // other wise graphics objects will be pushed into a batch..
-    for (i = webGL.lastIndex; i < graphics.graphicsData.length; i++)
-      {
+    for (i = webGL.lastIndex; i < graphics.graphicsData.length; i++) {
       var data = graphics.graphicsData[i];
 
-      if (data.type === CONST.SHAPES.POLY)
-          {
+      if (data.type === CONST.SHAPES.POLY) {
               // need to add the points the the graphics object..
         data.points = data.shape.points.slice();
-        if (data.shape.closed)
-              {
+        if (data.shape.closed) {
                   // close the poly if the value is true!
-          if (data.points[0] !== data.points[data.points.length-2] || data.points[1] !== data.points[data.points.length-1])
-                  {
+          if (data.points[0] !== data.points[data.points.length - 2] || data.points[1] !== data.points[data.points.length - 1]) {
             data.points.push(data.points[0], data.points[1]);
           }
         }
 
               // MAKE SURE WE HAVE THE CORRECT TYPE..
-        if (data.fill)
-              {
-          if (data.points.length >= 6)
-                  {
-            if (data.points.length < this.maximumSimplePolySize * 2)
-                      {
+        if (data.fill) {
+          if (data.points.length >= 6) {
+            if (data.points.length < this.maximumSimplePolySize * 2) {
               webGLData = this.switchMode(webGL, 0);
 
               var canDrawUsingSimple = this.buildPoly(data, webGLData);
 
-              if (!canDrawUsingSimple)
-                          {
+              if (!canDrawUsingSimple) {
                 webGLData = this.switchMode(webGL, 1);
                 this.buildComplexPoly(data, webGLData);
               }
 
             }
-            else
-                      {
+            else {
               webGLData = this.switchMode(webGL, 1);
               this.buildComplexPoly(data, webGLData);
             }
           }
         }
 
-        if (data.lineWidth > 0)
-              {
+        if (data.lineWidth > 0) {
           webGLData = this.switchMode(webGL, 0);
           this.buildLine(data, webGLData);
         }
       }
-      else
-          {
+      else {
         webGLData = this.switchMode(webGL, 0);
 
-        if (data.type === CONST.SHAPES.RECT)
-              {
+        if (data.type === CONST.SHAPES.RECT) {
           this.buildRectangle(data, webGLData);
         }
-        else if (data.type === CONST.SHAPES.CIRC || data.type === CONST.SHAPES.ELIP)
-              {
+        else if (data.type === CONST.SHAPES.CIRC || data.type === CONST.SHAPES.ELIP) {
           this.buildCircle(data, webGLData);
         }
-        else if (data.type === CONST.SHAPES.RREC)
-              {
+        else if (data.type === CONST.SHAPES.RREC) {
           this.buildRoundedRectangle(data, webGLData);
         }
       }
@@ -248,12 +224,10 @@ class GraphicsRenderer extends ObjectRenderer {
     }
 
       // upload all the dirty data...
-    for (i = 0; i < webGL.data.length; i++)
-      {
+    for (i = 0; i < webGL.data.length; i++) {
       webGLData = webGL.data[i];
 
-      if (webGLData.dirty)
-          {
+      if (webGLData.dirty) {
         webGLData.upload();
       }
     }
@@ -266,22 +240,18 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param webGL {WebGLRenderingContext} the current WebGL drawing context
    * @param type {number} TODO @Alvin
    */
-  switchMode(webGL, type)
-  {
+  switchMode(webGL, type) {
     var webGLData;
 
-    if (!webGL.data.length)
-      {
+    if (!webGL.data.length) {
       webGLData = this.graphicsDataPool.pop() || new WebGLGraphicsData(webGL.gl);
       webGLData.mode = type;
       webGL.data.push(webGLData);
     }
-    else
-      {
-      webGLData = webGL.data[webGL.data.length-1];
+    else {
+      webGLData = webGL.data[webGL.data.length - 1];
 
-      if ((webGLData.points.length > 320000) || webGLData.mode !== type || type === 1)
-          {
+      if ((webGLData.points.length > 320000) || webGLData.mode !== type || type === 1) {
         webGLData = this.graphicsDataPool.pop() || new WebGLGraphicsData(webGL.gl);
         webGLData.mode = type;
         webGL.data.push(webGLData);
@@ -300,8 +270,7 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
    * @param webGLData {object} an object containing all the webGL-specific information to create this shape
    */
-  buildRectangle(graphicsData, webGLData)
-  {
+  buildRectangle(graphicsData, webGLData) {
       // --- //
       // need to convert points to a nice regular data
       //
@@ -311,8 +280,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var width = rectData.width;
     var height = rectData.height;
 
-    if (graphicsData.fill)
-      {
+    if (graphicsData.fill) {
       var color = utils.hex2rgb(graphicsData.fillColor);
       var alpha = graphicsData.fillAlpha;
 
@@ -323,7 +291,7 @@ class GraphicsRenderer extends ObjectRenderer {
       var verts = webGLData.points;
       var indices = webGLData.indices;
 
-      var vertPos = verts.length/6;
+      var vertPos = verts.length / 6;
 
           // start
       verts.push(x, y);
@@ -339,18 +307,17 @@ class GraphicsRenderer extends ObjectRenderer {
       verts.push(r, g, b, alpha);
 
           // insert 2 dead triangles..
-      indices.push(vertPos, vertPos, vertPos+1, vertPos+2, vertPos+3, vertPos+3);
+      indices.push(vertPos, vertPos, vertPos + 1, vertPos + 2, vertPos + 3, vertPos + 3);
     }
 
-    if (graphicsData.lineWidth)
-      {
+    if (graphicsData.lineWidth) {
       var tempPoints = graphicsData.points;
 
       graphicsData.points = [x, y,
-                    x + width, y,
-                    x + width, y + height,
-                    x, y + height,
-                    x, y];
+        x + width, y,
+        x + width, y + height,
+        x, y + height,
+        x, y];
 
 
       this.buildLine(graphicsData, webGLData);
@@ -366,8 +333,7 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
    * @param webGLData {object} an object containing all the webGL-specific information to create this shape
    */
-  buildRoundedRectangle(graphicsData, webGLData)
-  {
+  buildRoundedRectangle(graphicsData, webGLData) {
     var rrectData = graphicsData.shape;
     var x = rrectData.x;
     var y = rrectData.y;
@@ -386,8 +352,7 @@ class GraphicsRenderer extends ObjectRenderer {
       // this tiny number deals with the issue that occurs when points overlap and earcut fails to triangulate the item.
       // TODO - fix this properly, this is not very elegant.. but it works for now.
 
-    if (graphicsData.fill)
-      {
+    if (graphicsData.fill) {
       var color = utils.hex2rgb(graphicsData.fillColor);
       var alpha = graphicsData.fillAlpha;
 
@@ -398,28 +363,25 @@ class GraphicsRenderer extends ObjectRenderer {
       var verts = webGLData.points;
       var indices = webGLData.indices;
 
-      var vecPos = verts.length/6;
+      var vecPos = verts.length / 6;
 
       var triangles = earcut(recPoints, null, 2);
 
       var i = 0;
-      for (i = 0; i < triangles.length; i+=3)
-          {
+      for (i = 0; i < triangles.length; i += 3) {
         indices.push(triangles[i] + vecPos);
         indices.push(triangles[i] + vecPos);
-        indices.push(triangles[i+1] + vecPos);
-        indices.push(triangles[i+2] + vecPos);
-        indices.push(triangles[i+2] + vecPos);
+        indices.push(triangles[i + 1] + vecPos);
+        indices.push(triangles[i + 2] + vecPos);
+        indices.push(triangles[i + 2] + vecPos);
       }
 
-      for (i = 0; i < recPoints.length; i++)
-          {
+      for (i = 0; i < recPoints.length; i++) {
         verts.push(recPoints[i], recPoints[++i], r, g, b, alpha);
       }
     }
 
-    if (graphicsData.lineWidth)
-      {
+    if (graphicsData.lineWidth) {
       var tempPoints = graphicsData.points;
 
       graphicsData.points = recPoints;
@@ -444,8 +406,7 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param [out] {number[]} The output array to add points into. If not passed, a new array is created.
    * @return {number[]} an array of points
    */
-  quadraticBezierCurve(fromX, fromY, cpX, cpY, toX, toY, out)
-  {
+  quadraticBezierCurve(fromX, fromY, cpX, cpY, toX, toY, out) {
     var xa,
       ya,
       xb,
@@ -458,22 +419,22 @@ class GraphicsRenderer extends ObjectRenderer {
     function getPt(n1 , n2, perc) {
       var diff = n2 - n1;
 
-      return n1 + ( diff * perc );
+      return n1 + (diff * perc);
     }
 
     var j = 0;
-    for (var i = 0; i <= n; i++ ) {
+    for (var i = 0; i <= n; i++) {
       j = i / n;
 
           // The Green Line
-      xa = getPt( fromX , cpX , j );
-      ya = getPt( fromY , cpY , j );
-      xb = getPt( cpX , toX , j );
-      yb = getPt( cpY , toY , j );
+      xa = getPt(fromX , cpX , j);
+      ya = getPt(fromY , cpY , j);
+      xb = getPt(cpX , toX , j);
+      yb = getPt(cpY , toY , j);
 
           // The Black Dot
-      x = getPt( xa , xb , j );
-      y = getPt( ya , yb , j );
+      x = getPt(xa , xb , j);
+      y = getPt(ya , yb , j);
 
       points.push(x, y);
     }
@@ -488,8 +449,7 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param graphicsData {PIXI.Graphics} The graphics object to draw
    * @param webGLData {object} an object containing all the webGL-specific information to create this shape
    */
-  buildCircle(graphicsData, webGLData)
-  {
+  buildCircle(graphicsData, webGLData) {
       // need to convert points to a nice regular data
     var circleData = graphicsData.shape;
     var x = circleData.x;
@@ -498,24 +458,21 @@ class GraphicsRenderer extends ObjectRenderer {
     var height;
 
       // TODO - bit hacky??
-    if (graphicsData.type === CONST.SHAPES.CIRC)
-      {
+    if (graphicsData.type === CONST.SHAPES.CIRC) {
       width = circleData.radius;
       height = circleData.radius;
     }
-    else
-      {
+    else {
       width = circleData.width;
       height = circleData.height;
     }
 
     var totalSegs = Math.floor(30 * Math.sqrt(circleData.radius)) || Math.floor(15 * Math.sqrt(circleData.width + circleData.height));
-    var seg = (Math.PI * 2) / totalSegs ;
+    var seg = (Math.PI * 2) / totalSegs;
 
     var i = 0;
 
-    if (graphicsData.fill)
-      {
+    if (graphicsData.fill) {
       var color = utils.hex2rgb(graphicsData.fillColor);
       var alpha = graphicsData.fillAlpha;
 
@@ -526,12 +483,11 @@ class GraphicsRenderer extends ObjectRenderer {
       var verts = webGLData.points;
       var indices = webGLData.indices;
 
-      var vecPos = verts.length/6;
+      var vecPos = verts.length / 6;
 
       indices.push(vecPos);
 
-      for (i = 0; i < totalSegs + 1 ; i++)
-          {
+      for (i = 0; i < totalSegs + 1; i++) {
         verts.push(x,y, r, g, b, alpha);
 
         verts.push(x + Math.sin(seg * i) * width,
@@ -541,17 +497,15 @@ class GraphicsRenderer extends ObjectRenderer {
         indices.push(vecPos++, vecPos++);
       }
 
-      indices.push(vecPos-1);
+      indices.push(vecPos - 1);
     }
 
-    if (graphicsData.lineWidth)
-      {
+    if (graphicsData.lineWidth) {
       var tempPoints = graphicsData.points;
 
       graphicsData.points = [];
 
-      for (i = 0; i < totalSegs + 1; i++)
-          {
+      for (i = 0; i < totalSegs + 1; i++) {
         graphicsData.points.push(x + Math.sin(seg * i) * width,
                                        y + Math.cos(seg * i) * height);
       }
@@ -569,14 +523,12 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
    * @param webGLData {object} an object containing all the webGL-specific information to create this shape
    */
-  buildLine(graphicsData, webGLData)
-  {
+  buildLine(graphicsData, webGLData) {
       // TODO OPTIMISE!
     var i = 0;
     var points = graphicsData.points;
 
-    if (points.length === 0)
-      {
+    if (points.length === 0) {
       return;
     }
       // if the line width is an odd number add 0.5 to align to a whole pixel
@@ -594,8 +546,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var lastPoint = new math.Point(points[points.length - 2], points[points.length - 1]);
 
       // if the first point is the last point - gonna have issues :)
-    if (firstPoint.x === lastPoint.x && firstPoint.y === lastPoint.y)
-      {
+    if (firstPoint.x === lastPoint.x && firstPoint.y === lastPoint.y) {
           // need to clone as we are going to slightly modify the shape..
       points = points.slice();
 
@@ -604,8 +555,8 @@ class GraphicsRenderer extends ObjectRenderer {
 
       lastPoint = new math.Point(points[points.length - 2], points[points.length - 1]);
 
-      var midPointX = lastPoint.x + (firstPoint.x - lastPoint.x) *0.5;
-      var midPointY = lastPoint.y + (firstPoint.y - lastPoint.y) *0.5;
+      var midPointX = lastPoint.x + (firstPoint.x - lastPoint.x) * 0.5;
+      var midPointY = lastPoint.y + (firstPoint.y - lastPoint.y) * 0.5;
 
       points.unshift(midPointX, midPointY);
       points.push(midPointX, midPointY);
@@ -615,7 +566,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var indices = webGLData.indices;
     var length = points.length / 2;
     var indexCount = points.length;
-    var indexStart = verts.length/6;
+    var indexStart = verts.length / 6;
 
       // DRAW the Line
     var width = graphicsData.lineWidth / 2;
@@ -639,9 +590,9 @@ class GraphicsRenderer extends ObjectRenderer {
     p2y = points[3];
 
     perpx = -(p1y - p2y);
-    perpy =  p1x - p2x;
+    perpy = p1x - p2x;
 
-    dist = Math.sqrt(perpx*perpx + perpy*perpy);
+    dist = Math.sqrt(perpx * perpx + perpy * perpy);
 
     perpx /= dist;
     perpy /= dist;
@@ -655,21 +606,20 @@ class GraphicsRenderer extends ObjectRenderer {
     verts.push(p1x + perpx , p1y + perpy,
                   r, g, b, alpha);
 
-    for (i = 1; i < length-1; i++)
-      {
-      p1x = points[(i-1)*2];
-      p1y = points[(i-1)*2 + 1];
+    for (i = 1; i < length - 1; i++) {
+      p1x = points[(i - 1) * 2];
+      p1y = points[(i - 1) * 2 + 1];
 
-      p2x = points[(i)*2];
-      p2y = points[(i)*2 + 1];
+      p2x = points[(i) * 2];
+      p2y = points[(i) * 2 + 1];
 
-      p3x = points[(i+1)*2];
-      p3y = points[(i+1)*2 + 1];
+      p3x = points[(i + 1) * 2];
+      p3y = points[(i + 1) * 2 + 1];
 
       perpx = -(p1y - p2y);
       perpy = p1x - p2x;
 
-      dist = Math.sqrt(perpx*perpx + perpy*perpy);
+      dist = Math.sqrt(perpx * perpx + perpy * perpy);
       perpx /= dist;
       perpy /= dist;
       perpx *= width;
@@ -678,7 +628,7 @@ class GraphicsRenderer extends ObjectRenderer {
       perp2x = -(p2y - p3y);
       perp2y = p2x - p3x;
 
-      dist = Math.sqrt(perp2x*perp2x + perp2y*perp2y);
+      dist = Math.sqrt(perp2x * perp2x + perp2y * perp2y);
       perp2x /= dist;
       perp2y /= dist;
       perp2x *= width;
@@ -691,12 +641,11 @@ class GraphicsRenderer extends ObjectRenderer {
       b2 = (-perp2x + p2x) - (-perp2x + p3x);
       c2 = (-perp2x + p3x) * (-perp2y + p2y) - (-perp2x + p2x) * (-perp2y + p3y);
 
-      denom = a1*b2 - a2*b1;
+      denom = a1 * b2 - a2 * b1;
 
-      if (Math.abs(denom) < 0.1 )
-          {
+      if (Math.abs(denom) < 0.1) {
 
-        denom+=10.1;
+        denom += 10.1;
         verts.push(p2x - perpx , p2y - perpy,
                   r, g, b, alpha);
 
@@ -706,56 +655,54 @@ class GraphicsRenderer extends ObjectRenderer {
         continue;
       }
 
-      px = (b1*c2 - b2*c1)/denom;
-      py = (a2*c1 - a1*c2)/denom;
+      px = (b1 * c2 - b2 * c1) / denom;
+      py = (a2 * c1 - a1 * c2) / denom;
 
 
-      pdist = (px -p2x) * (px -p2x) + (py -p2y) * (py -p2y);
+      pdist = (px - p2x) * (px - p2x) + (py - p2y) * (py - p2y);
 
 
-      if (pdist > 140 * 140)
-          {
+      if (pdist > 140 * 140) {
         perp3x = perpx - perp2x;
         perp3y = perpy - perp2y;
 
-        dist = Math.sqrt(perp3x*perp3x + perp3y*perp3y);
+        dist = Math.sqrt(perp3x * perp3x + perp3y * perp3y);
         perp3x /= dist;
         perp3y /= dist;
         perp3x *= width;
         perp3y *= width;
 
-        verts.push(p2x - perp3x, p2y -perp3y);
+        verts.push(p2x - perp3x, p2y - perp3y);
         verts.push(r, g, b, alpha);
 
-        verts.push(p2x + perp3x, p2y +perp3y);
+        verts.push(p2x + perp3x, p2y + perp3y);
         verts.push(r, g, b, alpha);
 
-        verts.push(p2x - perp3x, p2y -perp3y);
+        verts.push(p2x - perp3x, p2y - perp3y);
         verts.push(r, g, b, alpha);
 
         indexCount++;
       }
-      else
-          {
+      else {
 
         verts.push(px , py);
         verts.push(r, g, b, alpha);
 
-        verts.push(p2x - (px-p2x), p2y - (py - p2y));
+        verts.push(p2x - (px - p2x), p2y - (py - p2y));
         verts.push(r, g, b, alpha);
       }
     }
 
-    p1x = points[(length-2)*2];
-    p1y = points[(length-2)*2 + 1];
+    p1x = points[(length - 2) * 2];
+    p1y = points[(length - 2) * 2 + 1];
 
-    p2x = points[(length-1)*2];
-    p2y = points[(length-1)*2 + 1];
+    p2x = points[(length - 1) * 2];
+    p2y = points[(length - 1) * 2 + 1];
 
     perpx = -(p1y - p2y);
     perpy = p1x - p2x;
 
-    dist = Math.sqrt(perpx*perpx + perpy*perpy);
+    dist = Math.sqrt(perpx * perpx + perpy * perpy);
     perpx /= dist;
     perpy /= dist;
     perpx *= width;
@@ -769,12 +716,11 @@ class GraphicsRenderer extends ObjectRenderer {
 
     indices.push(indexStart);
 
-    for (i = 0; i < indexCount; i++)
-      {
+    for (i = 0; i < indexCount; i++) {
       indices.push(indexStart++);
     }
 
-    indices.push(indexStart-1);
+    indices.push(indexStart - 1);
   }
 
   /**
@@ -784,13 +730,11 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
    * @param webGLData {object} an object containing all the webGL-specific information to create this shape
    */
-  buildComplexPoly(graphicsData, webGLData)
-  {
-      //TODO - no need to copy this as it gets turned into a FLoat32Array anyways..
+  buildComplexPoly(graphicsData, webGLData) {
+      // TODO - no need to copy this as it gets turned into a FLoat32Array anyways..
     var points = graphicsData.points.slice();
 
-    if (points.length < 6)
-      {
+    if (points.length < 6) {
       return;
     }
 
@@ -810,10 +754,9 @@ class GraphicsRenderer extends ObjectRenderer {
     var x,y;
 
       // get size..
-    for (var i = 0; i < points.length; i+=2)
-      {
+    for (var i = 0; i < points.length; i += 2) {
       x = points[i];
-      y = points[i+1];
+      y = points[i + 1];
 
       minX = x < minX ? x : minX;
       maxX = x > maxX ? x : maxX;
@@ -830,11 +773,10 @@ class GraphicsRenderer extends ObjectRenderer {
 
       // push a quad onto the end..
 
-      //TODO - this aint needed!
+      // TODO - this aint needed!
     var length = points.length / 2;
-    for (i = 0; i < length; i++)
-      {
-      indices.push( i );
+    for (i = 0; i < length; i++) {
+      indices.push(i);
     }
 
   }
@@ -846,12 +788,10 @@ class GraphicsRenderer extends ObjectRenderer {
    * @param graphicsData {PIXI.WebGLGraphicsData} The graphics object containing all the necessary properties
    * @param webGLData {object} an object containing all the webGL-specific information to create this shape
    */
-  buildPoly(graphicsData, webGLData)
-  {
+  buildPoly(graphicsData, webGLData) {
     var points = graphicsData.points;
 
-    if (points.length < 6)
-      {
+    if (points.length < 6) {
       return;
     }
 
@@ -878,17 +818,15 @@ class GraphicsRenderer extends ObjectRenderer {
 
     var i = 0;
 
-    for (i = 0; i < triangles.length; i+=3)
-      {
+    for (i = 0; i < triangles.length; i += 3) {
       indices.push(triangles[i] + vertPos);
       indices.push(triangles[i] + vertPos);
-      indices.push(triangles[i+1] + vertPos);
-      indices.push(triangles[i+2] +vertPos);
-      indices.push(triangles[i+2] + vertPos);
+      indices.push(triangles[i + 1] + vertPos);
+      indices.push(triangles[i + 2] + vertPos);
+      indices.push(triangles[i + 2] + vertPos);
     }
 
-    for (i = 0; i < length; i++)
-      {
+    for (i = 0; i < length; i++) {
       verts.push(points[i * 2], points[i * 2 + 1],
                      r, g, b, alpha);
     }

@@ -355,8 +355,9 @@ class ActionPlayer extends EventEmitter {
         channel = this.channelCache[c];
 
         // Already passed the last key?
-        if (this.time > channel.duration)
+        if (this.time > channel.duration) {
           continue;
+        }
 
         keys = channel[2];
         keyIdx = channel[3];
@@ -438,7 +439,7 @@ class ActionPlayer extends EventEmitter {
    * @method goto
    * @param  {number} time
    */
-  goto(/*time*/) {}
+  goto(/* time*/) {}
 }
 
 /**

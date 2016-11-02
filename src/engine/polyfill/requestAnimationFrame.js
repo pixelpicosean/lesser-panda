@@ -33,7 +33,7 @@ if (!(global.performance && global.performance.now)) {
 var lastTime = Date.now();
 var vendors = ['ms', 'moz', 'webkit', 'o'];
 
-for(var x = 0; x < vendors.length && !global.requestAnimationFrame; ++x) {
+for (var x = 0; x < vendors.length && !global.requestAnimationFrame; ++x) {
   global.requestAnimationFrame = global[vendors[x] + 'RequestAnimationFrame'];
   global.cancelAnimationFrame = global[vendors[x] + 'CancelAnimationFrame'] ||
         global[vendors[x] + 'CancelRequestAnimationFrame'];

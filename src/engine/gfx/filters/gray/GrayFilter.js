@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function GrayFilter()
-{
+function GrayFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -34,12 +33,10 @@ Object.defineProperties(GrayFilter.prototype, {
      * @memberof PIXI.filters.GrayFilter#
      */
   gray: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.gray.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.gray.value = value;
     },
   },

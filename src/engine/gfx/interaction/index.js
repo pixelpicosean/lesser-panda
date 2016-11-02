@@ -9,7 +9,7 @@
  * @namespace PIXI.interaction
  */
 module.exports = {
-  InteractionData:    require('./InteractionData'),
+  InteractionData: require('./InteractionData'),
   InteractionManager: require('./InteractionManager'),
-  interactiveTarget:  require('./interactiveTarget'),
+  interactiveTarget: require('./interactiveTarget'),
 };

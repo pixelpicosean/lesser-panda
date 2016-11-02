@@ -18,8 +18,8 @@ module.exports.removeItems = function(arr, startIdx, removeCount) {
     return;
   }
 
-  removeCount = (startIdx+removeCount > length ? length-startIdx : removeCount);
-  for (i = startIdx, len = length-removeCount; i < len; ++i) {
+  removeCount = (startIdx + removeCount > length ? length - startIdx : removeCount);
+  for (i = startIdx, len = length - removeCount; i < len; ++i) {
     arr[i] = arr[i + removeCount];
   }
 

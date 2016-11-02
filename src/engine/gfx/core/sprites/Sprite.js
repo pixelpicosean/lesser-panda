@@ -104,12 +104,10 @@ Object.defineProperties(Sprite.prototype, {
      * @memberof Sprite#
      */
   width: {
-    get: function()
-        {
+    get: function() {
       return Math.abs(this.scale.x) * this.texture._frame.width;
     },
-    set: function(value)
-        {
+    set: function(value) {
       var sign = utils.sign(this.scale.x) || 1;
       this.scale.x = sign * value / this.texture._frame.width;
       this._width = value;
@@ -123,12 +121,10 @@ Object.defineProperties(Sprite.prototype, {
      * @memberof Sprite#
      */
   height: {
-    get: function()
-        {
-      return  Math.abs(this.scale.y) * this.texture._frame.height;
+    get: function() {
+      return Math.abs(this.scale.y) * this.texture._frame.height;
     },
-    set: function(value)
-        {
+    set: function(value) {
       var sign = utils.sign(this.scale.y) || 1;
       this.scale.y = sign * value / this.texture._frame.height;
       this._height = value;
@@ -142,29 +138,23 @@ Object.defineProperties(Sprite.prototype, {
      * @memberof Sprite#
      */
   texture: {
-    get: function()
-        {
-      return  this._texture;
+    get: function() {
+      return this._texture;
     },
-    set: function(value)
-        {
-      if (this._texture === value)
-            {
+    set: function(value) {
+      if (this._texture === value) {
         return;
       }
 
       this._texture = value;
       this.cachedTint = 0xFFFFFF;
 
-      if (value)
-            {
+      if (value) {
                 // wait for the texture to load
-        if (value.baseTexture.hasLoaded)
-                {
+        if (value.baseTexture.hasLoaded) {
           this._onTextureUpdate();
         }
-        else
-                {
+        else {
           value.once('update', this._onTextureUpdate, this);
         }
       }
@@ -177,16 +167,13 @@ Object.defineProperties(Sprite.prototype, {
  *
  * @private
  */
-Sprite.prototype._onTextureUpdate = function()
-{
+Sprite.prototype._onTextureUpdate = function() {
     // so if _width is 0 then width was not set..
-  if (this._width)
-    {
+  if (this._width) {
     this.scale.x = utils.sign(this.scale.x) * this._width / this.texture.frame.width;
   }
 
-  if (this._height)
-    {
+  if (this._height) {
     this.scale.y = utils.sign(this.scale.y) * this._height / this.texture.frame.height;
   }
 };
@@ -198,8 +185,7 @@ Sprite.prototype._onTextureUpdate = function()
 * @param renderer {WebGLRenderer}
 * @private
 */
-Sprite.prototype._renderWebGL = function(renderer)
-{
+Sprite.prototype._renderWebGL = function(renderer) {
   renderer.setObjectRenderer(renderer.plugins.sprite);
   renderer.plugins.sprite.render(this);
 };
@@ -210,21 +196,19 @@ Sprite.prototype._renderWebGL = function(renderer)
  * @param matrix {Matrix} the transformation matrix of the sprite
  * @return {Rectangle} the framing rectangle
  */
-Sprite.prototype.getBounds = function(matrix)
-{
-  if(!this._currentBounds)
-    {
+Sprite.prototype.getBounds = function(matrix) {
+  if (!this._currentBounds) {
 
     var width = this._texture._frame.width;
     var height = this._texture._frame.height;
 
-    var w0 = width * (1-this.anchor.x);
+    var w0 = width * (1 - this.anchor.x);
     var w1 = width * -this.anchor.x;
 
-    var h0 = height * (1-this.anchor.y);
+    var h0 = height * (1 - this.anchor.y);
     var h1 = height * -this.anchor.y;
 
-    var worldTransform = matrix || this.worldTransform ;
+    var worldTransform = matrix || this.worldTransform;
 
     var a = worldTransform.a;
     var b = worldTransform.b;
@@ -238,7 +222,7 @@ Sprite.prototype.getBounds = function(matrix)
       minY,
       maxY;
 
-        //TODO - I am SURE this can be optimised, but the below is not accurate enough..
+        // TODO - I am SURE this can be optimised, but the below is not accurate enough..
         /*
         if (b === 0 && c === 0)
         {
@@ -273,8 +257,8 @@ Sprite.prototype.getBounds = function(matrix)
     var x3 = a * w0 + c * h0 + tx;
     var y3 = d * h0 + b * w0 + ty;
 
-    var x4 =  a * w1 + c * h0 + tx;
-    var y4 =  d * h0 + b * w1 + ty;
+    var x4 = a * w1 + c * h0 + tx;
+    var y4 = d * h0 + b * w1 + ty;
 
     minX = x1;
     minX = x2 < minX ? x2 : minX;
@@ -296,11 +280,10 @@ Sprite.prototype.getBounds = function(matrix)
     maxY = y3 > maxY ? y3 : maxY;
     maxY = y4 > maxY ? y4 : maxY;
 
-        //}
+        // }
 
         // check for children
-    if(this.children.length)
-        {
+    if (this.children.length) {
       var childBounds = this.containerGetBounds();
 
       w0 = childBounds.x;
@@ -334,8 +317,7 @@ Sprite.prototype.getBounds = function(matrix)
  * Gets the local bounds of the sprite object.
  *
  */
-Sprite.prototype.getLocalBounds = function()
-{
+Sprite.prototype.getLocalBounds = function() {
   this._bounds.x = -this._texture._frame.width * this.anchor.x;
   this._bounds.y = -this._texture._frame.height * this.anchor.y;
   this._bounds.width = this._texture._frame.width;
@@ -349,21 +331,18 @@ Sprite.prototype.getLocalBounds = function()
 * @param point {Point} the point to test
 * @return {boolean} the result of the test
 */
-Sprite.prototype.containsPoint = function( point )
-{
-  this.worldTransform.applyInverse(point,  tempPoint);
+Sprite.prototype.containsPoint = function(point) {
+  this.worldTransform.applyInverse(point, tempPoint);
 
   var width = this._texture._frame.width;
   var height = this._texture._frame.height;
   var x1 = -width * this.anchor.x;
   var y1;
 
-  if ( tempPoint.x > x1 && tempPoint.x < x1 + width )
-    {
+  if (tempPoint.x > x1 && tempPoint.x < x1 + width) {
     y1 = -height * this.anchor.y;
 
-    if ( tempPoint.y > y1 && tempPoint.y < y1 + height )
-        {
+    if (tempPoint.y > y1 && tempPoint.y < y1 + height) {
       return true;
     }
   }
@@ -377,22 +356,18 @@ Sprite.prototype.containsPoint = function( point )
 * @param renderer {CanvasRenderer} The renderer
 * @private
 */
-Sprite.prototype._renderCanvas = function(renderer)
-{
-  if (this.texture.crop.width <= 0 || this.texture.crop.height <= 0)
-    {
+Sprite.prototype._renderCanvas = function(renderer) {
+  if (this.texture.crop.width <= 0 || this.texture.crop.height <= 0) {
     return;
   }
 
   var compositeOperation = renderer.blendModes[this.blendMode];
-  if (compositeOperation !== renderer.context.globalCompositeOperation)
-    {
+  if (compositeOperation !== renderer.context.globalCompositeOperation) {
     renderer.context.globalCompositeOperation = compositeOperation;
   }
 
     //  Ignore null sources
-  if (this.texture.valid)
-    {
+  if (this.texture.valid) {
     var texture = this._texture,
       wt = this.worldTransform,
       dx,
@@ -404,24 +379,24 @@ Sprite.prototype._renderCanvas = function(renderer)
 
         // If smoothingEnabled is supported and we need to change the smoothing property for this texture
     var smoothingEnabled = texture.baseTexture.scaleMode === CONST.SCALE_MODES.LINEAR;
-    if (renderer.smoothProperty && renderer.context[renderer.smoothProperty] !== smoothingEnabled)
-        {
+    if (renderer.smoothProperty && renderer.context[renderer.smoothProperty] !== smoothingEnabled) {
       renderer.context[renderer.smoothProperty] = smoothingEnabled;
     }
 
-        //inline GroupD8.isSwapWidthHeight
+        // inline GroupD8.isSwapWidthHeight
     if ((texture.rotate & 3) === 2) {
       width = texture.crop.height;
       height = texture.crop.width;
     }
     if (texture.trim) {
-      dx = texture.crop.width/2 + texture.trim.x - this.anchor.x * texture.trim.width;
-      dy = texture.crop.height/2 + texture.trim.y - this.anchor.y * texture.trim.height;
-    } else {
+      dx = texture.crop.width / 2 + texture.trim.x - this.anchor.x * texture.trim.width;
+      dy = texture.crop.height / 2 + texture.trim.y - this.anchor.y * texture.trim.height;
+    }
+    else {
       dx = (0.5 - this.anchor.x) * texture._frame.width;
       dy = (0.5 - this.anchor.y) * texture._frame.height;
     }
-    if(texture.rotate) {
+    if (texture.rotate) {
       wt.copy(canvasRenderWorldTransform);
       wt = canvasRenderWorldTransform;
       GroupD8.matrixAppendRotationInv(wt, texture.rotate, dx, dy);
@@ -429,11 +404,10 @@ Sprite.prototype._renderCanvas = function(renderer)
       dx = 0;
       dy = 0;
     }
-    dx -= width/2;
-    dy -= height/2;
+    dx -= width / 2;
+    dy -= height / 2;
         // Allow for pixel rounding
-    if (renderer.roundPixels)
-        {
+    if (renderer.roundPixels) {
       renderer.context.setTransform(
                 wt.a,
                 wt.b,
@@ -446,8 +420,7 @@ Sprite.prototype._renderCanvas = function(renderer)
       dx = dx | 0;
       dy = dy | 0;
     }
-    else
-        {
+    else {
 
       renderer.context.setTransform(
                 wt.a,
@@ -463,10 +436,8 @@ Sprite.prototype._renderCanvas = function(renderer)
 
     var resolution = texture.baseTexture.resolution;
 
-    if (this.tint !== 0xFFFFFF)
-        {
-      if (this.cachedTint !== this.tint)
-            {
+    if (this.tint !== 0xFFFFFF) {
+      if (this.cachedTint !== this.tint) {
         this.cachedTint = this.tint;
 
                 // TODO clean up caching - how to clean up the caches?
@@ -485,16 +456,15 @@ Sprite.prototype._renderCanvas = function(renderer)
                 height * renderer.resolution
             );
     }
-    else
-        {
+    else {
       renderer.context.drawImage(
                 texture.baseTexture.source,
                 texture.crop.x * resolution,
                 texture.crop.y * resolution,
                 width * resolution,
                 height * resolution,
-                dx  * renderer.resolution,
-                dy  * renderer.resolution,
+                dx * renderer.resolution,
+                dy * renderer.resolution,
                 width * renderer.resolution,
                 height * renderer.resolution
             );
@@ -508,14 +478,12 @@ Sprite.prototype._renderCanvas = function(renderer)
  * @param [destroyTexture=false] {boolean} Should it destroy the current texture of the sprite as well
  * @param [destroyBaseTexture=false] {boolean} Should it destroy the base texture of the sprite as well
  */
-Sprite.prototype.destroy = function(destroyTexture, destroyBaseTexture)
-{
+Sprite.prototype.destroy = function(destroyTexture, destroyBaseTexture) {
   Container.prototype.destroy.call(this);
 
   this.anchor = null;
 
-  if (destroyTexture)
-    {
+  if (destroyTexture) {
     this._texture.destroy(destroyBaseTexture);
   }
 
@@ -535,12 +503,10 @@ Sprite.prototype.destroy = function(destroyTexture, destroyBaseTexture)
  * @param [scaleMode=SCALE_MODES.DEFAULT] {number} if you want to specify the scale mode, see {@link SCALE_MODES} for possible values
  * @return {Sprite} A new Sprite using a texture from the texture cache matching the frameId
  */
-Sprite.fromFrame = function(frameId)
-{
+Sprite.fromFrame = function(frameId) {
   var texture = utils.TextureCache[frameId];
 
-  if (!texture)
-    {
+  if (!texture) {
     throw new Error('The frameId "' + frameId + '" does not exist in the texture cache');
   }
 
@@ -555,8 +521,7 @@ Sprite.fromFrame = function(frameId)
  * @param imageId {string} The image url of the texture
  * @return {Sprite} A new Sprite using a texture from the texture cache matching the image id
  */
-Sprite.fromImage = function(imageId, crossorigin, scaleMode)
-{
+Sprite.fromImage = function(imageId, crossorigin, scaleMode) {
   return new Sprite(Texture.fromImage(imageId, crossorigin, scaleMode));
 };
 

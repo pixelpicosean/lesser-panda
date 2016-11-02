@@ -15,8 +15,7 @@ var AbstractFilter = require('./AbstractFilter');
  * @extends AbstractFilter
  *
  */
-function FXAAFilter()
-{
+function FXAAFilter() {
   AbstractFilter.call(this,
         // vertex shader
         require('./FXAA.vert'),
@@ -41,11 +40,10 @@ module.exports = FXAAFilter;
  * @param input {PIXI.RenderTarget}
  * @param output {PIXI.RenderTarget}
  */
-FXAAFilter.prototype.applyFilter = function(renderer, input, output)
-{
+FXAAFilter.prototype.applyFilter = function(renderer, input, output) {
   var filterManager = renderer.filterManager;
 
-  var shader = this.getShader( renderer );
+  var shader = this.getShader(renderer);
      // draw the filter...
   filterManager.applyFilter(shader, input, output);
 };

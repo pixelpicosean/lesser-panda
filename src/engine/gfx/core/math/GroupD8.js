@@ -37,7 +37,7 @@ function init() {
     }
   }
 
-  for (i=0;i<16;i++) {
+  for (i = 0; i < 16; i++) {
     var mat = new Matrix();
     mat.set(ux[i], uy[i], vx[i], vy[i], 0, 0);
     tempMatrices.push(mat);
@@ -117,14 +117,16 @@ var GroupD8 = {
       else {
         return GroupD8.N;
       }
-    } else if (Math.abs(dy) * 2 <= Math.abs(dx)) {
+    }
+    else if (Math.abs(dy) * 2 <= Math.abs(dx)) {
       if (dx > 0) {
         return GroupD8.E;
       }
       else {
         return GroupD8.W;
       }
-    } else {
+    }
+    else {
       if (dy > 0) {
         if (dx > 0) {
           return GroupD8.SE;
@@ -149,7 +151,7 @@ var GroupD8 = {
      * @param ty {number|*} sprite anchoring
      */
   matrixAppendRotationInv: function(matrix, rotation, tx, ty) {
-        //Packer used "rotation", we use "inv(rotation)"
+        // Packer used "rotation", we use "inv(rotation)"
     var mat = tempMatrices[GroupD8.inv(rotation)];
     tx = tx || 0;
     ty = ty || 0;

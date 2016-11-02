@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function BlurYFilter()
-{
+function BlurYFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         require('./blurY.vert'),
@@ -29,24 +28,20 @@ BlurYFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BlurYFilter.prototype.constructor = BlurYFilter;
 module.exports = BlurYFilter;
 
-BlurYFilter.prototype.applyFilter = function(renderer, input, output, clear)
-{
+BlurYFilter.prototype.applyFilter = function(renderer, input, output, clear) {
   var shader = this.getShader(renderer);
 
   this.uniforms.strength.value = Math.abs(this.strength) / 4 / this.passes * (input.frame.height / input.size.height);
 
-  if(this.passes === 1)
-    {
+  if (this.passes === 1) {
     renderer.filterManager.applyFilter(shader, input, output, clear);
   }
-  else
-    {
+  else {
     var renderTarget = renderer.filterManager.getRenderTarget(true);
     var flip = input;
     var flop = renderTarget;
 
-    for(var i = 0; i < this.passes-1; i++)
-        {
+    for (var i = 0; i < this.passes - 1; i++) {
       renderer.filterManager.applyFilter(shader, flip, flop, true);
 
       var temp = flop;
@@ -70,12 +65,10 @@ Object.defineProperties(BlurYFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
-      return  this.strength;
+    get: function() {
+      return this.strength;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.padding = Math.abs(value) * 0.5;
       this.strength = value;
     },

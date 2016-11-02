@@ -118,7 +118,7 @@ class Entity {
     merge(this, settings);
   }
   remove() {
-    if (this.game) this.game.removeEntity(this);
+    if (this.game) {this.game.removeEntity(this);}
   }
 
   /**
@@ -133,14 +133,14 @@ class Entity {
    * @method update
    * @memberof Entity#
    */
-  update(/*dt, dtSec*/) {}
+  update(/* dt, dtSec*/) {}
   /**
    * Update method to be called each fixed step. Set `canFixedTick = true` to activate.
    * Doing nothing by default.
    * @method fixedUpdate
    * @memberof Entity#
    */
-  fixedUpdate(/*dt, dtSec*/) {}
+  fixedUpdate(/* dt, dtSec*/) {}
 }
 Entity.nextId = 0;
 

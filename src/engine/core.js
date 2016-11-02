@@ -176,7 +176,7 @@ Object.assign(core, {
     let i, alreadyPaused = false;
 
     for (i in core.pauses) {
-      if (!core.pauses.hasOwnProperty(i)) continue;
+      if (!core.pauses.hasOwnProperty(i)) {continue;}
       // Do not pause again if game is paused by other reasons
       if (core.pauses[i]) {
         alreadyPaused = true;
@@ -202,7 +202,7 @@ Object.assign(core, {
     if (force) {
       // Resume everything
       for (i in core.pauses) {
-        if (!core.pauses.hasOwnProperty(i)) continue;
+        if (!core.pauses.hasOwnProperty(i)) {continue;}
         core.pauses[i] = false;
       }
       core.emit('resume');
@@ -210,7 +210,7 @@ Object.assign(core, {
     else if (typeof(core.pauses[reason]) === 'boolean') {
       core.pauses[reason] = false;
       for (i in core.pauses) {
-        if (!core.pauses.hasOwnProperty(i)) continue;
+        if (!core.pauses.hasOwnProperty(i)) {continue;}
         // Do not resume if game is still paused by other reasons
         if (core.pauses[i]) {
           return;
@@ -320,7 +320,7 @@ function loop(timestamp) {
       core.game = null;
 
       // Create instance of game if not exist
-      if (!pair.inst) pair.inst = new pair.ctor();
+      if (!pair.inst) {pair.inst = new pair.ctor();}
 
       // Awake the game
       core.game = pair.inst;
@@ -334,7 +334,7 @@ function loop(timestamp) {
     }
 
     // Update current game
-    if (core.game) core.game.run(timestamp);
+    if (core.game) {core.game.run(timestamp);}
   }
 }
 core.endLoop = function endLoop() {
@@ -386,10 +386,10 @@ function boot() {
 
   // Setup visibility change API
   const visibleResume = function() {
-    if (config.pauseOnHide) core.resume('visibility');
+    if (config.pauseOnHide) {core.resume('visibility');}
   };
   const visiblePause = function() {
-    if (config.pauseOnHide) core.pause('visibility');
+    if (config.pauseOnHide) {core.pause('visibility');}
   };
 
   // Main visibility API function
@@ -408,7 +408,7 @@ function boot() {
       }
     }
     return function(c) {
-      if (c) document.addEventListener(eventKey, c, false);
+      if (c) {document.addEventListener(eventKey, c, false);}
       return !document[stateKey];
     };
   })();

@@ -15,8 +15,7 @@ var core = require('../../core');
  * @param width {number} Width of the object you are transforming
  * @param height {number} Height of the object you are transforming
  */
-function ConvolutionFilter(matrix, width, height)
-{
+function ConvolutionFilter(matrix, width, height) {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -24,8 +23,8 @@ function ConvolutionFilter(matrix, width, height)
         require('./convolution.frag'),
         // custom uniforms
     {
-      matrix:     { type: '1fv', value: new Float32Array(matrix) },
-      texelSize:  { type: 'v2', value: { x: 1 / width, y: 1 / height } },
+      matrix: { type: '1fv', value: new Float32Array(matrix) },
+      texelSize: { type: 'v2', value: { x: 1 / width, y: 1 / height } },
     }
     );
 }
@@ -42,12 +41,10 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * @memberof PIXI.filters.ConvolutionFilter#
      */
   matrix: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.matrix.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.matrix.value = new Float32Array(value);
     },
   },
@@ -59,13 +56,11 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * @memberof PIXI.filters.ConvolutionFilter#
      */
   width: {
-    get: function()
-        {
-      return 1/this.uniforms.texelSize.value.x;
+    get: function() {
+      return 1 / this.uniforms.texelSize.value.x;
     },
-    set: function(value)
-        {
-      this.uniforms.texelSize.value.x = 1/value;
+    set: function(value) {
+      this.uniforms.texelSize.value.x = 1 / value;
     },
   },
 
@@ -76,13 +71,11 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * @memberof PIXI.filters.ConvolutionFilter#
      */
   height: {
-    get: function()
-        {
-      return 1/this.uniforms.texelSize.value.y;
+    get: function() {
+      return 1 / this.uniforms.texelSize.value.y;
     },
-    set: function(value)
-        {
-      this.uniforms.texelSize.value.y = 1/value;
+    set: function(value) {
+      this.uniforms.texelSize.value.y = 1 / value;
     },
   },
 });

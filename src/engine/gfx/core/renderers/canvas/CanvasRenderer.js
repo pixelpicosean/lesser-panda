@@ -56,22 +56,17 @@ class CanvasRenderer extends SystemRenderer {
      */
     this.smoothProperty = 'imageSmoothingEnabled';
 
-    if (!this.context.imageSmoothingEnabled)
-    {
-      if (this.context.webkitImageSmoothingEnabled)
-        {
+    if (!this.context.imageSmoothingEnabled) {
+      if (this.context.webkitImageSmoothingEnabled) {
         this.smoothProperty = 'webkitImageSmoothingEnabled';
       }
-      else if (this.context.mozImageSmoothingEnabled)
-        {
+      else if (this.context.mozImageSmoothingEnabled) {
         this.smoothProperty = 'mozImageSmoothingEnabled';
       }
-      else if (this.context.oImageSmoothingEnabled)
-        {
+      else if (this.context.oImageSmoothingEnabled) {
         this.smoothProperty = 'oImageSmoothingEnabled';
       }
-      else if (this.context.msImageSmoothingEnabled)
-        {
+      else if (this.context.msImageSmoothingEnabled) {
         this.smoothProperty = 'msImageSmoothingEnabled';
       }
     }
@@ -103,8 +98,7 @@ utils.pluginTarget.mixin(CanvasRenderer);
  *
  * @param object {PIXI.DisplayObject} the object to be rendered
  */
-CanvasRenderer.prototype.render = function(object)
-{
+CanvasRenderer.prototype.render = function(object) {
   this.emit('prerender');
 
   var cacheParent = object.parent;
@@ -124,20 +118,16 @@ CanvasRenderer.prototype.render = function(object)
 
   this.context.globalCompositeOperation = this.blendModes[CONST.BLEND_MODES.NORMAL];
 
-  if (navigator.isCocoonJS && this.view.screencanvas)
-    {
+  if (navigator.isCocoonJS && this.view.screencanvas) {
     this.context.fillStyle = 'black';
     this.context.clear();
   }
 
-  if (this.clearBeforeRender)
-    {
-    if (this.transparent)
-        {
+  if (this.clearBeforeRender) {
+    if (this.transparent) {
       this.context.clearRect(0, 0, this.width, this.height);
     }
-    else
-        {
+    else {
       this.context.fillStyle = this._backgroundColorString;
       this.context.fillRect(0, 0, this.width , this.height);
     }
@@ -153,8 +143,7 @@ CanvasRenderer.prototype.render = function(object)
  *
  * @param [removeView=false] {boolean} Removes the Canvas element from the DOM.
  */
-CanvasRenderer.prototype.destroy = function(removeView)
-{
+CanvasRenderer.prototype.destroy = function(removeView) {
   this.destroyPlugins();
 
     // call the base destroy
@@ -176,8 +165,7 @@ CanvasRenderer.prototype.destroy = function(removeView)
  * @param displayObject {PIXI.DisplayObject} The displayObject to render
  * @private
  */
-CanvasRenderer.prototype.renderDisplayObject = function(displayObject, context)
-{
+CanvasRenderer.prototype.renderDisplayObject = function(displayObject, context) {
   var tempContext = this.context;
 
   this.context = context;
@@ -191,14 +179,12 @@ CanvasRenderer.prototype.renderDisplayObject = function(displayObject, context)
  * @param {number} w
  * @param {number} h
  */
-CanvasRenderer.prototype.resize = function(w, h)
-{
+CanvasRenderer.prototype.resize = function(w, h) {
   SystemRenderer.prototype.resize.call(this, w, h);
 
-    //reset the scale mode.. oddly this seems to be reset when the canvas is resized.
-    //surely a browser bug?? Let pixi fix that for you..
-  if(this.smoothProperty)
-    {
+    // reset the scale mode.. oddly this seems to be reset when the canvas is resized.
+    // surely a browser bug?? Let pixi fix that for you..
+  if (this.smoothProperty) {
     this.context[this.smoothProperty] = (CONST.SCALE_MODES.DEFAULT === CONST.SCALE_MODES.LINEAR);
   }
 
@@ -209,52 +195,48 @@ CanvasRenderer.prototype.resize = function(w, h)
  *
  * @private
  */
-CanvasRenderer.prototype._mapBlendModes = function()
-{
-  if (!this.blendModes)
-    {
+CanvasRenderer.prototype._mapBlendModes = function() {
+  if (!this.blendModes) {
     this.blendModes = {};
 
-    if (utils.canUseNewCanvasBlendModes())
-        {
-      this.blendModes[CONST.BLEND_MODES.NORMAL]        = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.ADD]           = 'lighter'; //IS THIS OK???
-      this.blendModes[CONST.BLEND_MODES.MULTIPLY]      = 'multiply';
-      this.blendModes[CONST.BLEND_MODES.SCREEN]        = 'screen';
-      this.blendModes[CONST.BLEND_MODES.OVERLAY]       = 'overlay';
-      this.blendModes[CONST.BLEND_MODES.DARKEN]        = 'darken';
-      this.blendModes[CONST.BLEND_MODES.LIGHTEN]       = 'lighten';
-      this.blendModes[CONST.BLEND_MODES.COLOR_DODGE]   = 'color-dodge';
-      this.blendModes[CONST.BLEND_MODES.COLOR_BURN]    = 'color-burn';
-      this.blendModes[CONST.BLEND_MODES.HARD_LIGHT]    = 'hard-light';
-      this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT]    = 'soft-light';
-      this.blendModes[CONST.BLEND_MODES.DIFFERENCE]    = 'difference';
-      this.blendModes[CONST.BLEND_MODES.EXCLUSION]     = 'exclusion';
-      this.blendModes[CONST.BLEND_MODES.HUE]           = 'hue';
-      this.blendModes[CONST.BLEND_MODES.SATURATION]    = 'saturate';
-      this.blendModes[CONST.BLEND_MODES.COLOR]         = 'color';
-      this.blendModes[CONST.BLEND_MODES.LUMINOSITY]    = 'luminosity';
+    if (utils.canUseNewCanvasBlendModes()) {
+      this.blendModes[CONST.BLEND_MODES.NORMAL] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.ADD] = 'lighter'; // IS THIS OK???
+      this.blendModes[CONST.BLEND_MODES.MULTIPLY] = 'multiply';
+      this.blendModes[CONST.BLEND_MODES.SCREEN] = 'screen';
+      this.blendModes[CONST.BLEND_MODES.OVERLAY] = 'overlay';
+      this.blendModes[CONST.BLEND_MODES.DARKEN] = 'darken';
+      this.blendModes[CONST.BLEND_MODES.LIGHTEN] = 'lighten';
+      this.blendModes[CONST.BLEND_MODES.COLOR_DODGE] = 'color-dodge';
+      this.blendModes[CONST.BLEND_MODES.COLOR_BURN] = 'color-burn';
+      this.blendModes[CONST.BLEND_MODES.HARD_LIGHT] = 'hard-light';
+      this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT] = 'soft-light';
+      this.blendModes[CONST.BLEND_MODES.DIFFERENCE] = 'difference';
+      this.blendModes[CONST.BLEND_MODES.EXCLUSION] = 'exclusion';
+      this.blendModes[CONST.BLEND_MODES.HUE] = 'hue';
+      this.blendModes[CONST.BLEND_MODES.SATURATION] = 'saturate';
+      this.blendModes[CONST.BLEND_MODES.COLOR] = 'color';
+      this.blendModes[CONST.BLEND_MODES.LUMINOSITY] = 'luminosity';
     }
-    else
-        {
+    else {
             // this means that the browser does not support the cool new blend modes in canvas 'cough' ie 'cough'
-      this.blendModes[CONST.BLEND_MODES.NORMAL]        = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.ADD]           = 'lighter'; //IS THIS OK???
-      this.blendModes[CONST.BLEND_MODES.MULTIPLY]      = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.SCREEN]        = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.OVERLAY]       = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.DARKEN]        = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.LIGHTEN]       = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.COLOR_DODGE]   = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.COLOR_BURN]    = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.HARD_LIGHT]    = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT]    = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.DIFFERENCE]    = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.EXCLUSION]     = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.HUE]           = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.SATURATION]    = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.COLOR]         = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.LUMINOSITY]    = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.NORMAL] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.ADD] = 'lighter'; // IS THIS OK???
+      this.blendModes[CONST.BLEND_MODES.MULTIPLY] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.SCREEN] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.OVERLAY] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.DARKEN] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.LIGHTEN] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.COLOR_DODGE] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.COLOR_BURN] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.HARD_LIGHT] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.DIFFERENCE] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.EXCLUSION] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.HUE] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.SATURATION] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.COLOR] = 'source-over';
+      this.blendModes[CONST.BLEND_MODES.LUMINOSITY] = 'source-over';
     }
   }
 };

@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function PixelateFilter()
-{
+function PixelateFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -17,8 +16,8 @@ function PixelateFilter()
         require('./pixelate.frag'),
         // custom uniforms
     {
-      dimensions: { type: '4fv',  value: new Float32Array([0, 0, 0, 0]) },
-      pixelSize:  { type: 'v2',   value: { x: 10, y: 10 } },
+      dimensions: { type: '4fv', value: new Float32Array([0, 0, 0, 0]) },
+      pixelSize: { type: 'v2', value: { x: 10, y: 10 } },
     }
     );
 }
@@ -36,12 +35,10 @@ Object.defineProperties(PixelateFilter.prototype, {
      * @memberof PIXI.filters.PixelateFilter#
      */
   size: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.pixelSize.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.pixelSize.value = value;
     },
   },

@@ -203,8 +203,8 @@ class RandomDataGenerator {
   uuid() {
     let a = '', b = '';
 
-    /*eslint no-empty:0*/
-    for (b = a = ''; a++ < 36; b +=~a % 5 | a * 3&4 ? (a^15 ? 8^this.frac() * (a^20 ? 16 : 4) : 4).toString(16) : '-') {}
+    /* eslint no-empty:0*/
+    for (b = a = ''; a++ < 36; b += ~a % 5 | a * 3 & 4 ? (a ^ 15 ? 8 ^ this.frac() * (a ^ 20 ? 16 : 4) : 4).toString(16) : '-') {}
 
     return b;
   }

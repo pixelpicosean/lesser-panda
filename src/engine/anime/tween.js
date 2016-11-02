@@ -9,9 +9,9 @@ const { Easing, Interpolation } = require('./easing');
  * @memberof Tween
  */
 const ACTION_TYPES = {
-  REPEAT:   0,
-  WAIT:     1,
-  ANIMATE:  2,
+  REPEAT: 0,
+  WAIT: 1,
+  ANIMATE: 2,
 };
 
 // TODO: better easing support (https://github.com/rezoner/ease)
@@ -307,7 +307,7 @@ class Tween extends EventEmitter {
   }
 
   _step(delta) {
-    if (this.isRemoved || this.isPaused) return;
+    if (this.isRemoved || this.isPaused) {return;}
 
     this.delta += delta;
 
@@ -343,7 +343,7 @@ class Tween extends EventEmitter {
         break;
         // Instantly value changing for boolean and objects
       case 2:
-        if (this.progress >= 1) this.propCtx[i][key] = this.change[i];
+        if (this.progress >= 1) {this.propCtx[i][key] = this.change[i];}
         break;
       }
     }

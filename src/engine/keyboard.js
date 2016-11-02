@@ -46,7 +46,7 @@ class Keyboard extends EventEmitter {
       Keyboard.keys[event.keyCode] = event.keyCode;
     }
 
-    if (this._keysDown[Keyboard.keys[event.keyCode]]) return;
+    if (this._keysDown[Keyboard.keys[event.keyCode]]) {return;}
 
     this._keysDown[Keyboard.keys[event.keyCode]] = true;
     this.emit('keydown', Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));

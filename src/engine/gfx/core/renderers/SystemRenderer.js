@@ -29,18 +29,14 @@ class SystemRenderer extends EventEmitter {
     utils.sayHello(system);
 
     // prepare options
-    if (options)
-    {
-      for (var i in CONST.DEFAULT_RENDER_OPTIONS)
-        {
-        if (typeof options[i] === 'undefined')
-            {
+    if (options) {
+      for (var i in CONST.DEFAULT_RENDER_OPTIONS) {
+        if (typeof options[i] === 'undefined') {
           options[i] = CONST.DEFAULT_RENDER_OPTIONS[i];
         }
       }
     }
-    else
-    {
+    else {
       options = CONST.DEFAULT_RENDER_OPTIONS;
     }
 
@@ -163,7 +159,7 @@ class SystemRenderer extends EventEmitter {
      * @member {DisplayObject}
      * @private
      */
-    this._tempDisplayObjectParent = {worldTransform:new math.Matrix(), worldAlpha:1, children:[]};
+    this._tempDisplayObjectParent = { worldTransform:new math.Matrix(), worldAlpha:1, children:[] };
 
     /**
      * The last root object that the renderer tried to render.
@@ -184,12 +180,10 @@ Object.defineProperties(SystemRenderer.prototype, {
      */
   backgroundColor:
   {
-    get: function()
-        {
+    get: function() {
       return this._backgroundColor;
     },
-    set: function(val)
-        {
+    set: function(val) {
       this._backgroundColor = val;
       this._backgroundColorString = utils.hex2string(val);
       utils.hex2rgb(val, this._backgroundColorRgb);
@@ -210,8 +204,7 @@ SystemRenderer.prototype.resize = function(width, height) {
   this.view.width = this.width;
   this.view.height = this.height;
 
-  if (this.autoResize)
-    {
+  if (this.autoResize) {
     this.view.style.width = this.width / this.resolution + 'px';
     this.view.style.height = this.height / this.resolution + 'px';
   }
@@ -223,8 +216,7 @@ SystemRenderer.prototype.resize = function(width, height) {
  * @param [removeView=false] {boolean} Removes the Canvas element from the DOM.
  */
 SystemRenderer.prototype.destroy = function(removeView) {
-  if (removeView && this.view.parentNode)
-    {
+  if (removeView && this.view.parentNode) {
     this.view.parentNode.removeChild(this.view);
   }
 

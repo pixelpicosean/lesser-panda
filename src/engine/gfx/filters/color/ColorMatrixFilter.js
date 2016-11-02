@@ -16,8 +16,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function ColorMatrixFilter()
-{
+function ColorMatrixFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -48,8 +47,7 @@ module.exports = ColorMatrixFilter;
  * @param matrix {number[]} (mat 5x4)
  * @param multiply {boolean} if true, current matrix and matrix are multiplied. If false, just set the current matrix with @param matrix
  */
-ColorMatrixFilter.prototype._loadMatrix = function(matrix, multiply)
-{
+ColorMatrixFilter.prototype._loadMatrix = function(matrix, multiply) {
   multiply = !!multiply;
 
   var newMatrix = matrix;
@@ -71,8 +69,7 @@ ColorMatrixFilter.prototype._loadMatrix = function(matrix, multiply)
  * @param b {number[]} (mat 5x4) the second operand
  * @returns out {number[]} (mat 5x4)
  */
-ColorMatrixFilter.prototype._multiply = function(out, a, b)
-{
+ColorMatrixFilter.prototype._multiply = function(out, a, b) {
 
     // Red Channel
   out[0] = (a[0] * b[0]) + (a[1] * b[5]) + (a[2] * b[10]) + (a[3] * b[15]);
@@ -111,8 +108,7 @@ ColorMatrixFilter.prototype._multiply = function(out, a, b)
  * @param matrix {number[]} (mat 5x4)
  * @return m {number[]} (mat 5x4) with all values between 0-1
  */
-ColorMatrixFilter.prototype._colorMatrix = function(matrix)
-{
+ColorMatrixFilter.prototype._colorMatrix = function(matrix) {
     // Create a Float32 Array and normalize the offset component to 0-1
   var m = new Float32Array(matrix);
   m[4] /= 255;
@@ -129,8 +125,7 @@ ColorMatrixFilter.prototype._colorMatrix = function(matrix)
  * @param b {number} value of the brigthness (0 is black)
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.brightness = function(b, multiply)
-{
+ColorMatrixFilter.prototype.brightness = function(b, multiply) {
   var matrix = [
     b, 0, 0, 0, 0,
     0, b, 0, 0, 0,
@@ -147,8 +142,7 @@ ColorMatrixFilter.prototype.brightness = function(b, multiply)
  * @param scale {number} value of the grey (0 is black)
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.greyscale = function(scale, multiply)
-{
+ColorMatrixFilter.prototype.greyscale = function(scale, multiply) {
   var matrix = [
     scale, scale, scale, 0, 0,
     scale, scale, scale, 0, 0,
@@ -158,7 +152,7 @@ ColorMatrixFilter.prototype.greyscale = function(scale, multiply)
 
   this._loadMatrix(matrix, multiply);
 };
-//Americanized alias
+// Americanized alias
 ColorMatrixFilter.prototype.grayscale = ColorMatrixFilter.prototype.greyscale;
 
 /**
@@ -167,8 +161,7 @@ ColorMatrixFilter.prototype.grayscale = ColorMatrixFilter.prototype.greyscale;
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.blackAndWhite = function(multiply)
-{
+ColorMatrixFilter.prototype.blackAndWhite = function(multiply) {
   var matrix = [
     0.3, 0.6, 0.1, 0, 0,
     0.3, 0.6, 0.1, 0, 0,
@@ -185,8 +178,7 @@ ColorMatrixFilter.prototype.blackAndWhite = function(multiply)
  * @param rotation {number} in degrees
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.hue = function(rotation, multiply)
-{
+ColorMatrixFilter.prototype.hue = function(rotation, multiply) {
   rotation = (rotation || 0) / 180 * Math.PI;
   var cos = Math.cos(rotation),
     sin = Math.sin(rotation);
@@ -215,8 +207,7 @@ ColorMatrixFilter.prototype.hue = function(rotation, multiply)
  * @param amount {number} value of the contrast
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.contrast = function(amount, multiply)
-{
+ColorMatrixFilter.prototype.contrast = function(amount, multiply) {
   var v = (amount || 0) + 1;
   var o = -128 * (v - 1);
 
@@ -237,8 +228,7 @@ ColorMatrixFilter.prototype.contrast = function(amount, multiply)
  * @param amount {number}
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.saturate = function(amount, multiply)
-{
+ColorMatrixFilter.prototype.saturate = function(amount, multiply) {
   var x = (amount || 0) * 2 / 3 + 1;
   var y = ((x - 1) * -0.5);
 
@@ -259,8 +249,7 @@ ColorMatrixFilter.prototype.saturate = function(amount, multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.desaturate = function(multiply) /*eslint no-unused-vars:0*/
-{
+ColorMatrixFilter.prototype.desaturate = function(multiply) { /* eslint no-unused-vars:0 */
   this.saturate(-1);
 };
 
@@ -269,8 +258,7 @@ ColorMatrixFilter.prototype.desaturate = function(multiply) /*eslint no-unused-v
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.negative = function(multiply)
-{
+ColorMatrixFilter.prototype.negative = function(multiply) {
   var matrix = [
     0, 1, 1, 0, 0,
     1, 0, 1, 0, 0,
@@ -286,8 +274,7 @@ ColorMatrixFilter.prototype.negative = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.sepia = function(multiply)
-{
+ColorMatrixFilter.prototype.sepia = function(multiply) {
   var matrix = [
     0.393, 0.7689999, 0.18899999, 0, 0,
     0.349, 0.6859999, 0.16799999, 0, 0,
@@ -303,8 +290,7 @@ ColorMatrixFilter.prototype.sepia = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.technicolor = function(multiply)
-{
+ColorMatrixFilter.prototype.technicolor = function(multiply) {
   var matrix = [
     1.9125277891456083, -0.8545344976951645, -0.09155508482755585, 0, 11.793603434377337,
     -0.3087833385928097, 1.7658908555458428, -0.10601743074722245, 0, -70.35205161461398,
@@ -320,8 +306,7 @@ ColorMatrixFilter.prototype.technicolor = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.polaroid = function(multiply)
-{
+ColorMatrixFilter.prototype.polaroid = function(multiply) {
   var matrix = [
     1.438, -0.062, -0.062, 0, 0,
     -0.122, 1.378, -0.122, 0, 0,
@@ -337,8 +322,7 @@ ColorMatrixFilter.prototype.polaroid = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.toBGR = function(multiply)
-{
+ColorMatrixFilter.prototype.toBGR = function(multiply) {
   var matrix = [
     0, 0, 1, 0, 0,
     0, 1, 0, 0, 0,
@@ -354,8 +338,7 @@ ColorMatrixFilter.prototype.toBGR = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.kodachrome = function(multiply)
-{
+ColorMatrixFilter.prototype.kodachrome = function(multiply) {
   var matrix = [
     1.1285582396593525, -0.3967382283601348, -0.03992559172921793, 0, 63.72958762196502,
     -0.16404339962244616, 1.0835251566291304, -0.05498805115633132, 0, 24.732407896706203,
@@ -371,8 +354,7 @@ ColorMatrixFilter.prototype.kodachrome = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.browni = function(multiply)
-{
+ColorMatrixFilter.prototype.browni = function(multiply) {
   var matrix = [
     0.5997023498159715, 0.34553243048391263, -0.2708298674538042, 0, 47.43192855600873,
     -0.037703249837783157, 0.8609577587992641, 0.15059552388459913, 0, -36.96841498319127,
@@ -388,8 +370,7 @@ ColorMatrixFilter.prototype.browni = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.vintage = function(multiply)
-{
+ColorMatrixFilter.prototype.vintage = function(multiply) {
   var matrix = [
     0.6279345635605994, 0.3202183420819367, -0.03965408211312453, 0, 9.651285835294123,
     0.02578397704808868, 0.6441188644374771, 0.03259127616149294, 0, 7.462829176470591,
@@ -410,8 +391,7 @@ ColorMatrixFilter.prototype.vintage = function(multiply)
  *
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.colorTone = function(desaturation, toned, lightColor, darkColor, multiply)
-{
+ColorMatrixFilter.prototype.colorTone = function(desaturation, toned, lightColor, darkColor, multiply) {
   desaturation = desaturation || 0.2;
   toned = toned || 0.15;
   lightColor = lightColor || 0xFFE580;
@@ -441,11 +421,10 @@ ColorMatrixFilter.prototype.colorTone = function(desaturation, toned, lightColor
  * @param intensity {number}
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.night = function(intensity, multiply)
-{
+ColorMatrixFilter.prototype.night = function(intensity, multiply) {
   intensity = intensity || 0.1;
   var matrix = [
-    intensity * ( -2.0), -intensity, 0, 0, 0,
+    intensity * (-2.0), -intensity, 0, 0, 0,
     -intensity, 0, intensity, 0, 0,
     0, intensity, intensity * 2.0, 0, 0,
     0, 0, 0, 1, 0,
@@ -463,8 +442,7 @@ ColorMatrixFilter.prototype.night = function(intensity, multiply)
  * @param amount {number} how much the predator feels his future victim
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.predator = function(amount, multiply)
-{
+ColorMatrixFilter.prototype.predator = function(amount, multiply) {
   var matrix = [
     11.224130630493164 * amount, -4.794486999511719 * amount, -2.8746118545532227 * amount, 0 * amount, 0.40342438220977783 * amount,
     -3.6330697536468506 * amount, 9.193157196044922 * amount, -2.951810836791992 * amount, 0 * amount, -1.316135048866272 * amount,
@@ -483,8 +461,7 @@ ColorMatrixFilter.prototype.predator = function(amount, multiply)
  * @param amount {number} How crazy is your effect
  * @param multiply {boolean} refer to ._loadMatrix() method
  */
-ColorMatrixFilter.prototype.lsd = function(multiply)
-{
+ColorMatrixFilter.prototype.lsd = function(multiply) {
   var matrix = [
     2, -0.4, 0.5, 0, 0,
     -0.5, 2, -0.4, 0, 0,
@@ -499,8 +476,7 @@ ColorMatrixFilter.prototype.lsd = function(multiply)
  * Erase the current matrix by setting the default one
  *
  */
-ColorMatrixFilter.prototype.reset = function()
-{
+ColorMatrixFilter.prototype.reset = function() {
   var matrix = [
     1, 0, 0, 0, 0,
     0, 1, 0, 0, 0,
@@ -521,12 +497,10 @@ Object.defineProperties(ColorMatrixFilter.prototype, {
      * @default [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
      */
   matrix: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.m.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.m.value = value;
     },
   },

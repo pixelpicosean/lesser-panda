@@ -42,8 +42,7 @@ var CONST = {
  * @param [style.miterLimit=10] {number} The miter limit to use when using the 'miter' lineJoin mode. This can reduce
  *      or increase the spikiness of rendered text.
  */
-function CocoonText(text, style, resolution)
-{
+function CocoonText(text, style, resolution) {
     /**
      * The canvas element that everything is drawn to
      *
@@ -87,17 +86,15 @@ function CocoonText(text, style, resolution)
      */
   this._generatedStyle = null;
 
-  this._pixiId = text+JSON.stringify(style)+this.resolution;
+  this._pixiId = text + JSON.stringify(style) + this.resolution;
 
   var baseTexture = PIXI.utils.BaseTextureCache[this._pixiId];
-  if (!baseTexture)
-    {
+  if (!baseTexture) {
     this.canvas = document.createElement('canvas');
     this.canvas._pixiId = this._pixiId;
     this.cacheDirty = true;
   }
-  else
-    {
+  else {
     this.canvas = baseTexture.source;
     this.cacheDirty = false;
   }
@@ -126,17 +123,14 @@ Object.defineProperties(CocoonText.prototype, {
      * @memberof CocoonText#
      */
   width: {
-    get: function()
-        {
-      if (this.dirty)
-            {
+    get: function() {
+      if (this.dirty) {
         this.updateText();
       }
 
       return this.scale.x * this._texture._frame.width;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.scale.x = value / this._texture._frame.width;
       this._width = value;
     },
@@ -149,17 +143,14 @@ Object.defineProperties(CocoonText.prototype, {
      * @memberof CocoonText#
      */
   height: {
-    get: function()
-        {
-      if (this.dirty)
-            {
+    get: function() {
+      if (this.dirty) {
         this.updateText();
       }
 
-      return  this.scale.y * this._texture._frame.height;
+      return this.scale.y * this._texture._frame.height;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.scale.y = value / this._texture._frame.height;
       this._height = value;
     },
@@ -190,17 +181,15 @@ Object.defineProperties(CocoonText.prototype, {
      * @memberof CocoonText#
      */
   style: {
-    get: function()
-        {
+    get: function() {
       return this._style;
     },
-    set: function(value)
-        {
+    set: function(value) {
       var style = {};
       style.font = value.font || 'bold 20px Arial';
       style.fill = value.fill || 'black';
       style.align = value.align || 'left';
-      style.stroke = value.stroke || 'black'; //provide a default, see: https://github.com/GoodBoyDigital/pixi.js/issues/136
+      style.stroke = value.stroke || 'black'; // provide a default, see: https://github.com/GoodBoyDigital/pixi.js/issues/136
       style.strokeThickness = value.strokeThickness || 0;
       style.wordWrap = value.wordWrap || false;
       style.wordWrapWidth = value.wordWrapWidth || 100;
@@ -217,28 +206,27 @@ Object.defineProperties(CocoonText.prototype, {
       style.lineJoin = value.lineJoin || 'miter';
       style.miterLimit = value.miterLimit || 10;
 
-            //multiply the font style by the resolution
-            //TODO : warn if font size not in px unit
+            // multiply the font style by the resolution
+            // TODO : warn if font size not in px unit
       this._generatedStyle = {
-        font : style.font.replace(/[0-9]+/,Math.round(parseInt(style.font.match(/[0-9]+/)[0],10)*this.resolution)),
+        font : style.font.replace(/[0-9]+/,Math.round(parseInt(style.font.match(/[0-9]+/)[0],10) * this.resolution)),
         fill : style.fill,
         align : style.align,
         stroke : style.stroke,
-        strokeThickness : Math.round(style.strokeThickness*this.resolution),
+        strokeThickness : Math.round(style.strokeThickness * this.resolution),
         wordWrap : style.wordWrap,
-        wordWrapWidth : Math.round(style.wordWrapWidth*this.resolution),
+        wordWrapWidth : Math.round(style.wordWrapWidth * this.resolution),
         dropShadow : style.dropShadow,
         dropShadowColor : style.dropShadowColor,
         dropShadowAngle : style.dropShadowAngle,
-        dropShadowDistance : Math.round(style.dropShadowDistance*this.resolution),
-        padding : Math.round(style.padding*this.resolution),
+        dropShadowDistance : Math.round(style.dropShadowDistance * this.resolution),
+        padding : Math.round(style.padding * this.resolution),
         textBaseline : style.textBaseline,
         lineJoin : style.lineJoin,
         miterLimit : style.miterLimit,
       };
 
-      if (this._style !== null)
-            {
+      if (this._style !== null) {
         this.prepareUpdateText(this._text,value);
       }
 
@@ -254,18 +242,15 @@ Object.defineProperties(CocoonText.prototype, {
      * @memberof CocoonText#
      */
   text: {
-    get: function()
-        {
+    get: function() {
       return this._text;
     },
-    set: function(text){
+    set: function(text) {
       text = text.toString() || ' ';
-      if (this._text === text)
-            {
+      if (this._text === text) {
         return;
       }
-      if (this._text !== null)
-            {
+      if (this._text !== null) {
         this.prepareUpdateText(text,this._style);
       }
       this._text = text;
@@ -279,9 +264,8 @@ Object.defineProperties(CocoonText.prototype, {
  *
  * @private
  */
-CocoonText.prototype.prepareUpdateText = function(text,style)
-{
-  this._pixiId = text+JSON.stringify(style)+this.resolution;
+CocoonText.prototype.prepareUpdateText = function(text,style) {
+  this._pixiId = text + JSON.stringify(style) + this.resolution;
   this.switchNeeded = true;
 };
 
@@ -290,19 +274,16 @@ CocoonText.prototype.prepareUpdateText = function(text,style)
  *
  * @private
  */
-CocoonText.prototype.switchCanvas = function()
-{
+CocoonText.prototype.switchCanvas = function() {
   var baseTexture = PIXI.utils.BaseTextureCache[this._pixiId];
-  if (baseTexture)
-    {
-        //there is a cached text for these parameters
+  if (baseTexture) {
+        // there is a cached text for these parameters
     this.canvas = baseTexture.source;
     this.context = this.canvas.getContext('2d');
 
     this.cacheDirty = false;
   }
-  else
-    {
+  else {
     this.canvas = document.createElement('canvas');
     this.context = this.canvas.getContext('2d');
     this.canvas._pixiId = this._pixiId;
@@ -321,14 +302,11 @@ CocoonText.prototype.switchCanvas = function()
  *
  * @private
  */
-CocoonText.prototype.updateText = function()
-{
-  if (this.switchNeeded)
-    {
+CocoonText.prototype.updateText = function() {
+  if (this.switchNeeded) {
     this.switchCanvas();
   }
-  if (this.cacheDirty)
-    {
+  if (this.cacheDirty) {
     var style = this._generatedStyle;
     this.context.font = style.font;
 
@@ -343,34 +321,30 @@ CocoonText.prototype.updateText = function()
     var lineWidths = new Array(lines.length);
     var maxLineWidth = 0;
     var fontProperties = this.determineFontProperties(style.font);
-    for (var i = 0; i < lines.length; i++)
-        {
+    for (var i = 0; i < lines.length; i++) {
       var lineWidth = this.context.measureText(lines[i]).width;
       lineWidths[i] = lineWidth;
       maxLineWidth = Math.max(maxLineWidth, lineWidth);
     }
 
     var width = maxLineWidth + style.strokeThickness;
-    if (style.dropShadow)
-        {
+    if (style.dropShadow) {
       width += style.dropShadowDistance;
     }
 
-    this.canvas.width = ( width + this.context.lineWidth );
+    this.canvas.width = (width + this.context.lineWidth);
 
         // calculate text height
     var lineHeight = this.style.lineHeight || fontProperties.fontSize + style.strokeThickness;
 
     var height = lineHeight * lines.length;
-    if (style.dropShadow)
-        {
+    if (style.dropShadow) {
       height += style.dropShadowDistance;
     }
 
-    this.canvas.height = ( height + style.padding * 2 );
+    this.canvas.height = (height + style.padding * 2);
 
-    if (navigator.isCocoonJS)
-        {
+    if (navigator.isCocoonJS) {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -384,59 +358,49 @@ CocoonText.prototype.updateText = function()
     var linePositionX;
     var linePositionY;
 
-    if (style.dropShadow)
-        {
+    if (style.dropShadow) {
       this.context.fillStyle = style.dropShadowColor;
 
       var xShadowOffset = Math.cos(style.dropShadowAngle) * style.dropShadowDistance;
       var yShadowOffset = Math.sin(style.dropShadowAngle) * style.dropShadowDistance;
 
-      for (i = 0; i < lines.length; i++)
-            {
+      for (i = 0; i < lines.length; i++) {
         linePositionX = style.strokeThickness / 2;
         linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
 
-        if (style.align === 'right')
-                {
+        if (style.align === 'right') {
           linePositionX += maxLineWidth - lineWidths[i];
         }
-        else if (style.align === 'center')
-                {
+        else if (style.align === 'center') {
           linePositionX += (maxLineWidth - lineWidths[i]) / 2;
         }
 
-        if (style.fill)
-                {
+        if (style.fill) {
           this.context.fillText(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + style.padding);
         }
       }
     }
 
-        //set canvas text styles
+        // set canvas text styles
     this.context.fillStyle = style.fill;
 
-        //draw lines line by line
-    for (i = 0; i < lines.length; i++)
-        {
+        // draw lines line by line
+    for (i = 0; i < lines.length; i++) {
       linePositionX = style.strokeThickness / 2;
       linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
 
-      if (style.align === 'right')
-            {
+      if (style.align === 'right') {
         linePositionX += maxLineWidth - lineWidths[i];
       }
-      else if (style.align === 'center')
-            {
+      else if (style.align === 'center') {
         linePositionX += (maxLineWidth - lineWidths[i]) / 2;
       }
 
-      if (style.stroke && style.strokeThickness)
-            {
+      if (style.stroke && style.strokeThickness) {
         this.context.strokeText(lines[i], linePositionX, linePositionY + style.padding);
       }
 
-      if (style.fill)
-            {
+      if (style.fill) {
         this.context.fillText(lines[i], linePositionX, linePositionY + style.padding);
       }
     }
@@ -450,12 +414,10 @@ CocoonText.prototype.updateText = function()
  *
  * @private
  */
-CocoonText.prototype.updateTexture = function()
-{
+CocoonText.prototype.updateTexture = function() {
   var texture = this._texture;
 
-  if (this.cacheDirty)
-    {
+  if (this.cacheDirty) {
     texture.baseTexture.hasLoaded = true;
     texture.baseTexture.resolution = this.resolution;
 
@@ -470,7 +432,7 @@ CocoonText.prototype.updateTexture = function()
   texture.trim.y = -this._style.padding;
 
   texture.trim.width = texture._frame.width;
-  texture.trim.height = texture._frame.height - this._style.padding*2;
+  texture.trim.height = texture._frame.height - this._style.padding * 2;
 
   this._width = this.canvas.width / this.resolution;
   this._height = this.canvas.height / this.resolution;
@@ -478,9 +440,8 @@ CocoonText.prototype.updateTexture = function()
   this.scale.x = 1;
   this.scale.y = 1;
 
-  if (this.cacheDirty)
-    {
-    texture.baseTexture.emit('update',  texture.baseTexture);
+  if (this.cacheDirty) {
+    texture.baseTexture.emit('update', texture.baseTexture);
   }
 
   this.dirty = false;
@@ -493,12 +454,10 @@ CocoonText.prototype.updateTexture = function()
  * @param fontStyle {object}
  * @private
  */
-CocoonText.prototype.determineFontProperties = function(fontStyle)
-{
+CocoonText.prototype.determineFontProperties = function(fontStyle) {
   var properties = PIXI.Text.fontPropertiesCache[fontStyle];
 
-  if (!properties)
-    {
+  if (!properties) {
     properties = {};
 
     var canvas = PIXI.Text.fontPropertiesCanvas;
@@ -535,22 +494,17 @@ CocoonText.prototype.determineFontProperties = function(fontStyle)
     var stop = false;
 
         // ascent. scan from top to bottom until we find a non red pixel
-    for (i = 0; i < baseline; i++)
-        {
-      for (j = 0; j < line; j += 4)
-            {
-        if (imagedata[idx + j] !== 255)
-                {
+    for (i = 0; i < baseline; i++) {
+      for (j = 0; j < line; j += 4) {
+        if (imagedata[idx + j] !== 255) {
           stop = true;
           break;
         }
       }
-      if (!stop)
-            {
+      if (!stop) {
         idx += line;
       }
-      else
-            {
+      else {
         break;
       }
     }
@@ -561,22 +515,17 @@ CocoonText.prototype.determineFontProperties = function(fontStyle)
     stop = false;
 
         // descent. scan from bottom to top until we find a non red pixel
-    for (i = height; i > baseline; i--)
-        {
-      for (j = 0; j < line; j += 4)
-            {
-        if (imagedata[idx + j] !== 255)
-                {
+    for (i = height; i > baseline; i--) {
+      for (j = 0; j < line; j += 4) {
+        if (imagedata[idx + j] !== 255) {
           stop = true;
           break;
         }
       }
-      if (!stop)
-            {
+      if (!stop) {
         idx -= line;
       }
-      else
-            {
+      else {
         break;
       }
     }
@@ -597,41 +546,34 @@ CocoonText.prototype.determineFontProperties = function(fontStyle)
  * @param text {string}
  * @private
  */
-CocoonText.prototype.wordWrap = function(text)
-{
+CocoonText.prototype.wordWrap = function(text) {
     // Greedy wrapping algorithm that will wrap words as the line grows longer
     // than its horizontal bounds.
   var result = '';
   var lines = text.split('\n');
   var wordWrapWidth = this._generatedStyle.wordWrapWidth;
-  for (var i = 0; i < lines.length; i++)
-    {
+  for (var i = 0; i < lines.length; i++) {
     var spaceLeft = wordWrapWidth;
     var words = lines[i].split(' ');
-    for (var j = 0; j < words.length; j++)
-        {
+    for (var j = 0; j < words.length; j++) {
       var wordWidth = this.context.measureText(words[j]).width;
       var wordWidthWithSpace = wordWidth + this.context.measureText(' ').width;
-      if (j === 0 || wordWidthWithSpace > spaceLeft)
-            {
+      if (j === 0 || wordWidthWithSpace > spaceLeft) {
                 // Skip printing the newline if it's the first word of the line that is
                 // greater than the word wrap width.
-        if (j > 0)
-                {
+        if (j > 0) {
           result += '\n';
         }
         result += words[j];
         spaceLeft = wordWrapWidth - wordWidth;
       }
-      else
-            {
+      else {
         spaceLeft -= wordWidthWithSpace;
         result += ' ' + words[j];
       }
     }
 
-    if (i < lines.length-1)
-        {
+    if (i < lines.length - 1) {
       result += '\n';
     }
   }
@@ -643,10 +585,8 @@ CocoonText.prototype.wordWrap = function(text)
  *
  * @param renderer {WebGLRenderer}
  */
-CocoonText.prototype.renderWebGL = function(renderer)
-{
-  if (this.dirty)
-    {
+CocoonText.prototype.renderWebGL = function(renderer) {
+  if (this.dirty) {
     this.updateText();
   }
 
@@ -659,10 +599,8 @@ CocoonText.prototype.renderWebGL = function(renderer)
  * @param renderer {CanvasRenderer}
  * @private
  */
-CocoonText.prototype._renderCanvas = function(renderer)
-{
-  if (this.dirty)
-    {
+CocoonText.prototype._renderCanvas = function(renderer) {
+  if (this.dirty) {
     this.updateText();
   }
 
@@ -675,10 +613,8 @@ CocoonText.prototype._renderCanvas = function(renderer)
  * @param matrix {Matrix} the transformation matrix of the Text
  * @return {Rectangle} the framing rectangle
  */
-CocoonText.prototype.getBounds = function(matrix)
-{
-  if (this.dirty)
-    {
+CocoonText.prototype.getBounds = function(matrix) {
+  if (this.dirty) {
     this.updateText();
   }
 
@@ -690,8 +626,7 @@ CocoonText.prototype.getBounds = function(matrix)
  *
  * @param [destroyBaseTexture=true] {boolean} whether to destroy the base texture as well
  */
-CocoonText.prototype.destroy = function(destroyBaseTexture)
-{
+CocoonText.prototype.destroy = function(destroyBaseTexture) {
     // make sure to reset the the context and canvas.. dont want this hanging around in memory!
   this.context = null;
   this.canvas = null;

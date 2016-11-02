@@ -27,7 +27,7 @@ class Plane extends Mesh {
        */
     this._ready = true;
 
-    this.segmentsX =  segmentsX;
+    this.segmentsX = segmentsX;
     this.segmentsY = segmentsY;
 
     this.drawMode = Mesh.DRAW_MODES.TRIANGLES;
@@ -56,14 +56,14 @@ class Plane extends Mesh {
     for (i = 0; i < total; i++) {
 
       var x = (i % this.segmentsX);
-      var y = ( (i / this.segmentsX ) | 0 );
+      var y = ((i / this.segmentsX) | 0);
 
 
       verts.push((x * sizeX),
                      (y * sizeY));
 
           // this works for rectangular textures.
-      uvs.push(texture._uvs.x0 + (texture._uvs.x1 - texture._uvs.x0) * (x / (this.segmentsX-1)), texture._uvs.y0 + (texture._uvs.y3-texture._uvs.y0) * (y/ (this.segmentsY-1)));
+      uvs.push(texture._uvs.x0 + (texture._uvs.x1 - texture._uvs.x0) * (x / (this.segmentsX - 1)), texture._uvs.y0 + (texture._uvs.y3 - texture._uvs.y0) * (y / (this.segmentsY - 1)));
     }
 
       //  cons
@@ -73,20 +73,20 @@ class Plane extends Mesh {
     for (i = 0; i < totalSub; i++) {
 
       var xpos = i % segmentsXSub;
-      var ypos = (i / segmentsXSub ) | 0;
+      var ypos = (i / segmentsXSub) | 0;
 
 
-      var  value = (ypos * this.segmentsX) + xpos;
-      var  value2 = (ypos * this.segmentsX) + xpos + 1;
-      var  value3 = ((ypos+1) * this.segmentsX) + xpos;
-      var  value4 = ((ypos+1) * this.segmentsX) + xpos + 1;
+      var value = (ypos * this.segmentsX) + xpos;
+      var value2 = (ypos * this.segmentsX) + xpos + 1;
+      var value3 = ((ypos + 1) * this.segmentsX) + xpos;
+      var value4 = ((ypos + 1) * this.segmentsX) + xpos + 1;
 
       indices.push(value, value2, value3);
       indices.push(value2, value4, value3);
     }
 
 
-      //console.log(indices)
+      // console.log(indices)
     this.vertices = new Float32Array(verts);
     this.uvs = new Float32Array(uvs);
     this.colors = new Float32Array(colors);

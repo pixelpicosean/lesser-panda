@@ -7,8 +7,7 @@ var WebGLManager = require('../managers/WebGLManager');
  * @extends WebGLManager
  * @param renderer {WebGLRenderer} The renderer this object renderer works for.
  */
-function ObjectRenderer(renderer)
-{
+function ObjectRenderer(renderer) {
   WebGLManager.call(this, renderer);
 }
 
@@ -21,17 +20,15 @@ module.exports = ObjectRenderer;
  * Starts the renderer and sets the shader
  *
  */
-ObjectRenderer.prototype.start = function()
-{
-    // set the shader..
+ObjectRenderer.prototype.start = function() {
+  // set the shader..
 };
 
 /**
  * Stops the renderer
  *
  */
-ObjectRenderer.prototype.stop = function()
-{
+ObjectRenderer.prototype.stop = function() {
   this.flush();
 };
 
@@ -39,9 +36,8 @@ ObjectRenderer.prototype.stop = function()
  * flushes
  *
  */
-ObjectRenderer.prototype.flush = function()
-{
-    // flush!
+ObjectRenderer.prototype.flush = function() {
+  // flush!
 };
 
 /**
@@ -49,7 +45,6 @@ ObjectRenderer.prototype.flush = function()
  *
  * @param object {DisplayObject} The object to render.
  */
-ObjectRenderer.prototype.render = function(object) /*eslint no-unused-vars:0*/
-{
-    // render the object
+ObjectRenderer.prototype.render = function(object) { /* eslint no-unused-vars:0*/
+  // render the object
 };

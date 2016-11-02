@@ -723,11 +723,11 @@ class Resource {
           this.data = JSON.parse(xhr.responseText);
           this.type = Resource.TYPE.JSON;
         }
-                catch (e) {
-                  this.abort(`Error trying to parse loaded json: ${e}`);
+        catch (e) {
+          this.abort(`Error trying to parse loaded json: ${e}`);
 
-                  return;
-                }
+          return;
+        }
       }
             // if xml, parse into an xml document or div element
       else if (this.xhrType === Resource.XHR_RESPONSE_TYPE.DOCUMENT) {
@@ -747,11 +747,11 @@ class Resource {
 
           this.type = Resource.TYPE.XML;
         }
-                catch (e) {
-                  this.abort(`Error trying to parse loaded xml: ${e}`);
+        catch (e) {
+          this.abort(`Error trying to parse loaded xml: ${e}`);
 
-                  return;
-                }
+          return;
+        }
       }
             // other types just return the response
       else {
@@ -899,10 +899,10 @@ module.exports = Resource;
  * @enum {number}
  */
 Resource.STATUS_FLAGS = {
-  NONE:       0,
-  DATA_URL:   (1 << 0),
-  COMPLETE:   (1 << 1),
-  LOADING:    (1 << 2),
+  NONE: 0,
+  DATA_URL: (1 << 0),
+  COMPLETE: (1 << 1),
+  LOADING: (1 << 2),
 };
 
 /**
@@ -913,13 +913,13 @@ Resource.STATUS_FLAGS = {
  * @enum {number}
  */
 Resource.TYPE = {
-  UNKNOWN:    0,
-  JSON:       1,
-  XML:        2,
-  IMAGE:      3,
-  AUDIO:      4,
-  VIDEO:      5,
-  TEXT:       6,
+  UNKNOWN: 0,
+  JSON: 1,
+  XML: 2,
+  IMAGE: 3,
+  AUDIO: 4,
+  VIDEO: 5,
+  TEXT: 6,
 };
 
 /**
@@ -931,13 +931,13 @@ Resource.TYPE = {
  */
 Resource.LOAD_TYPE = {
     /** Uses XMLHttpRequest to load the resource. */
-  XHR:    1,
+  XHR: 1,
     /** Uses an `Image` object to load the resource. */
-  IMAGE:  2,
+  IMAGE: 2,
     /** Uses an `Audio` object to load the resource. */
-  AUDIO:  3,
+  AUDIO: 3,
     /** Uses a `Video` object to load the resource. */
-  VIDEO:  4,
+  VIDEO: 4,
 };
 
 /**
@@ -949,78 +949,78 @@ Resource.LOAD_TYPE = {
  */
 Resource.XHR_RESPONSE_TYPE = {
     /** string */
-  DEFAULT:    'text',
+  DEFAULT: 'text',
     /** ArrayBuffer */
-  BUFFER:     'arraybuffer',
+  BUFFER: 'arraybuffer',
     /** Blob */
-  BLOB:       'blob',
+  BLOB: 'blob',
     /** Document */
-  DOCUMENT:   'document',
+  DOCUMENT: 'document',
     /** Object */
-  JSON:       'json',
+  JSON: 'json',
     /** String */
-  TEXT:       'text',
+  TEXT: 'text',
 };
 
 Resource._loadTypeMap = {
     // images
-  gif:        Resource.LOAD_TYPE.IMAGE,
-  png:        Resource.LOAD_TYPE.IMAGE,
-  bmp:        Resource.LOAD_TYPE.IMAGE,
-  jpg:        Resource.LOAD_TYPE.IMAGE,
-  jpeg:       Resource.LOAD_TYPE.IMAGE,
-  tif:        Resource.LOAD_TYPE.IMAGE,
-  tiff:       Resource.LOAD_TYPE.IMAGE,
-  webp:       Resource.LOAD_TYPE.IMAGE,
-  tga:        Resource.LOAD_TYPE.IMAGE,
-  svg:        Resource.LOAD_TYPE.IMAGE,
-  'svg+xml':  Resource.LOAD_TYPE.IMAGE, // for SVG data urls
+  gif: Resource.LOAD_TYPE.IMAGE,
+  png: Resource.LOAD_TYPE.IMAGE,
+  bmp: Resource.LOAD_TYPE.IMAGE,
+  jpg: Resource.LOAD_TYPE.IMAGE,
+  jpeg: Resource.LOAD_TYPE.IMAGE,
+  tif: Resource.LOAD_TYPE.IMAGE,
+  tiff: Resource.LOAD_TYPE.IMAGE,
+  webp: Resource.LOAD_TYPE.IMAGE,
+  tga: Resource.LOAD_TYPE.IMAGE,
+  svg: Resource.LOAD_TYPE.IMAGE,
+  'svg+xml': Resource.LOAD_TYPE.IMAGE, // for SVG data urls
 
     // audio
-  mp3:        Resource.LOAD_TYPE.AUDIO,
-  ogg:        Resource.LOAD_TYPE.AUDIO,
-  wav:        Resource.LOAD_TYPE.AUDIO,
+  mp3: Resource.LOAD_TYPE.AUDIO,
+  ogg: Resource.LOAD_TYPE.AUDIO,
+  wav: Resource.LOAD_TYPE.AUDIO,
 
     // videos
-  mp4:        Resource.LOAD_TYPE.VIDEO,
-  webm:       Resource.LOAD_TYPE.VIDEO,
+  mp4: Resource.LOAD_TYPE.VIDEO,
+  webm: Resource.LOAD_TYPE.VIDEO,
 };
 
 Resource._xhrTypeMap = {
     // xml
-  xhtml:      Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-  html:       Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-  htm:        Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-  xml:        Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-  tmx:        Resource.XHR_RESPONSE_TYPE.DOCUMENT,
-  svg:        Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  xhtml: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  html: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  htm: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  xml: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  tmx: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  svg: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
 
     // This was added to handle Tiled Tileset XML, but .tsx is also a TypeScript React Component.
     // Since it is way less likely for people to be loading TypeScript files instead of Tiled files,
     // this should probably be fine.
-  tsx:        Resource.XHR_RESPONSE_TYPE.DOCUMENT,
+  tsx: Resource.XHR_RESPONSE_TYPE.DOCUMENT,
 
     // images
-  gif:        Resource.XHR_RESPONSE_TYPE.BLOB,
-  png:        Resource.XHR_RESPONSE_TYPE.BLOB,
-  bmp:        Resource.XHR_RESPONSE_TYPE.BLOB,
-  jpg:        Resource.XHR_RESPONSE_TYPE.BLOB,
-  jpeg:       Resource.XHR_RESPONSE_TYPE.BLOB,
-  tif:        Resource.XHR_RESPONSE_TYPE.BLOB,
-  tiff:       Resource.XHR_RESPONSE_TYPE.BLOB,
-  webp:       Resource.XHR_RESPONSE_TYPE.BLOB,
-  tga:        Resource.XHR_RESPONSE_TYPE.BLOB,
+  gif: Resource.XHR_RESPONSE_TYPE.BLOB,
+  png: Resource.XHR_RESPONSE_TYPE.BLOB,
+  bmp: Resource.XHR_RESPONSE_TYPE.BLOB,
+  jpg: Resource.XHR_RESPONSE_TYPE.BLOB,
+  jpeg: Resource.XHR_RESPONSE_TYPE.BLOB,
+  tif: Resource.XHR_RESPONSE_TYPE.BLOB,
+  tiff: Resource.XHR_RESPONSE_TYPE.BLOB,
+  webp: Resource.XHR_RESPONSE_TYPE.BLOB,
+  tga: Resource.XHR_RESPONSE_TYPE.BLOB,
 
     // json
-  json:       Resource.XHR_RESPONSE_TYPE.JSON,
+  json: Resource.XHR_RESPONSE_TYPE.JSON,
 
     // text
-  text:       Resource.XHR_RESPONSE_TYPE.TEXT,
-  txt:        Resource.XHR_RESPONSE_TYPE.TEXT,
+  text: Resource.XHR_RESPONSE_TYPE.TEXT,
+  txt: Resource.XHR_RESPONSE_TYPE.TEXT,
 
     // fonts
-  ttf:        Resource.XHR_RESPONSE_TYPE.BUFFER,
-  otf:        Resource.XHR_RESPONSE_TYPE.BUFFER,
+  ttf: Resource.XHR_RESPONSE_TYPE.BUFFER,
+  otf: Resource.XHR_RESPONSE_TYPE.BUFFER,
 };
 
 // We can't set the `src` attribute to empty string, so on abort we set it to this 1px transparent gif

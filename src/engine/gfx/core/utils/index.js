@@ -51,10 +51,8 @@ var utils = {
    *
    * @return {boolean} whether they are supported
    */
-  canUseNewCanvasBlendModes: function()
-  {
-    if (typeof document === 'undefined')
-      {
+  canUseNewCanvasBlendModes: function() {
+    if (typeof document === 'undefined') {
       return false;
     }
 
@@ -88,19 +86,15 @@ var utils = {
    * @param number {number}
    * @return {number} the closest number that is a power of two
    */
-  getNextPowerOfTwo: function(number)
-  {
+  getNextPowerOfTwo: function(number) {
       // see: http://en.wikipedia.org/wiki/Power_of_two#Fast_algorithm_to_check_if_a_positive_number_is_a_power_of_two
-    if (number > 0 && (number & (number - 1)) === 0)
-      {
+    if (number > 0 && (number & (number - 1)) === 0) {
       return number;
     }
-    else
-      {
+    else {
       var result = 1;
 
-      while (result < number)
-          {
+      while (result < number) {
         result <<= 1;
       }
 
@@ -115,8 +109,7 @@ var utils = {
    * @param height {number}
    * @return {boolean}
    */
-  isPowerOfTwo: function(width, height)
-  {
+  isPowerOfTwo: function(width, height) {
     return (width > 0 && (width & (width - 1)) === 0 && height > 0 && (height & (height - 1)) === 0);
   },
 
@@ -127,12 +120,10 @@ var utils = {
    * @param url {string} the image path
    * @return {number}
    */
-  getResolutionOfUrl: function(url)
-  {
+  getResolutionOfUrl: function(url) {
     var resolution = CONST.RETINA_PREFIX.exec(url);
 
-    if (resolution)
-      {
+    if (resolution) {
       return parseFloat(resolution[1]);
     }
 
@@ -148,15 +139,12 @@ var utils = {
    * @constant
    * @static
    */
-  sayHello: function(type)
-  {
-    if (!core.sayHello || utils.saidHello)
-      {
+  sayHello: function(type) {
+    if (!core.sayHello || utils.saidHello) {
       return;
     }
 
-    if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
-      {
+    if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
       var args = [
         '\n %c %c LesserPanda ' + core.version + ' - ✰ ' + type + ' ✰ %c \n\n',
         'background: #ff66a5; padding:5px 0;',
@@ -164,11 +152,10 @@ var utils = {
         'background: #ff66a5; padding:5px 0;',
       ];
 
-      window.console.log.apply(console, args); //jshint ignore:line
+      window.console.log.apply(console, args); // jshint ignore:line
     }
-    else if (window.console)
-      {
-      window.console.log('LesserPanda ' + core.version); //jshint ignore:line
+    else if (window.console) {
+      window.console.log('LesserPanda ' + core.version); // jshint ignore:line
     }
 
     utils.saidHello = true;
@@ -179,25 +166,21 @@ var utils = {
    *
    * @return {boolean}
    */
-  isWebGLSupported: function()
-  {
+  isWebGLSupported: function() {
     var contextOptions = { stencil: true };
-    try
-      {
-        if (!window.WebGLRenderingContext)
-          {
-          return false;
-        }
-
-        var canvas = document.createElement('canvas'),
-          gl = canvas.getContext('webgl', contextOptions) || canvas.getContext('experimental-webgl', contextOptions);
-
-        return !!(gl && gl.getContextAttributes().stencil);
-      }
-      catch (e)
-      {
+    try {
+      if (!window.WebGLRenderingContext) {
         return false;
       }
+
+      var canvas = document.createElement('canvas'),
+        gl = canvas.getContext('webgl', contextOptions) || canvas.getContext('experimental-webgl', contextOptions);
+
+      return !!(gl && gl.getContextAttributes().stencil);
+    }
+    catch (e) {
+      return false;
+    }
   },
 
   /**
@@ -206,8 +189,7 @@ var utils = {
    * @param n {number}
    * @returns {number} 0 if n is 0, -1 if n is negative, 1 if n i positive
    */
-  sign: function(n)
-  {
+  sign: function(n) {
     return n ? (n < 0 ? -1 : 1) : 0;
   },
 

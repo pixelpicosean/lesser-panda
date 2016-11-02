@@ -16,7 +16,7 @@ class MiniSignalBinding {
   }
 
   detach() {
-    if (this._owner === null) return false;
+    if (this._owner === null) {return false;}
     this._owner.detach(this);
     return true;
   }
@@ -30,7 +30,8 @@ function _addMiniSignalBinding(self, node) {
   if (!self._head) {
     self._head = node;
     self._tail = node;
-  } else {
+  }
+  else {
     self._tail._next = node;
     node._prev = self._tail;
     self._tail = node;
@@ -68,7 +69,7 @@ class MiniSignal {
   handlers(exists = false) {
     let node = this._head;
 
-    if (exists) return !!node;
+    if (exists) {return !!node;}
 
     const ee = [];
 
@@ -104,10 +105,10 @@ class MiniSignal {
   dispatch() {
     let node = this._head;
 
-    if (!node) return false;
+    if (!node) {return false;}
 
     while (node) {
-      if (node._once) this.detach(node);
+      if (node._once) {this.detach(node);}
       node._fn.apply(node._thisArg, arguments);
       node = node._next;
     }
@@ -155,17 +156,18 @@ class MiniSignal {
     if (!(node instanceof MiniSignalBinding)) {
       throw new Error('MiniSignal#detach(): First arg must be a MiniSignalBinding object.');
     }
-    if (node._owner !== this) return this;  // todo: or error?
+    if (node._owner !== this) {return this;}  // todo: or error?
 
-    if (node._prev) node._prev._next = node._next;
-    if (node._next) node._next._prev = node._prev;
+    if (node._prev) {node._prev._next = node._next;}
+    if (node._next) {node._next._prev = node._prev;}
 
     if (node === this._head) {  // first node
       this._head = node._next;
       if (node._next === null) {
         this._tail = null;
       }
-    } else if (node === this._tail) {  // last node
+    }
+    else if (node === this._tail) {  // last node
       this._tail = node._prev;
       this._tail._next = null;
     }
@@ -182,7 +184,7 @@ class MiniSignal {
   */
   detachAll() {
     let node = this._head;
-    if (!node) return this;
+    if (!node) {return this;}
 
     this._head = this._tail = null;
 

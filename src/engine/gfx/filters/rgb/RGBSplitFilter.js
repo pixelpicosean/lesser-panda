@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function RGBSplitFilter()
-{
+function RGBSplitFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -17,9 +16,9 @@ function RGBSplitFilter()
         require('./rgbSplit.frag'),
         // custom uniforms
     {
-      red:        { type: 'v2', value: { x: 20, y: 20 } },
-      green:      { type: 'v2', value: { x: -20, y: 20 } },
-      blue:       { type: 'v2', value: { x: 20, y: -20 } },
+      red: { type: 'v2', value: { x: 20, y: 20 } },
+      green: { type: 'v2', value: { x: -20, y: 20 } },
+      blue: { type: 'v2', value: { x: 20, y: -20 } },
       dimensions: { type: '4fv', value: [0, 0, 0, 0] },
     }
     );
@@ -37,12 +36,10 @@ Object.defineProperties(RGBSplitFilter.prototype, {
      * @memberof PIXI.filters.RGBSplitFilter#
      */
   red: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.red.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.red.value = value;
     },
   },
@@ -54,12 +51,10 @@ Object.defineProperties(RGBSplitFilter.prototype, {
      * @memberof PIXI.filters.RGBSplitFilter#
      */
   green: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.green.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.green.value = value;
     },
   },
@@ -71,12 +66,10 @@ Object.defineProperties(RGBSplitFilter.prototype, {
      * @memberof PIXI.filters.RGBSplitFilter#
      */
   blue: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.blue.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.blue.value = value;
     },
   },

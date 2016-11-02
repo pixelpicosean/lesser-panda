@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function SmartBlurFilter()
-{
+function SmartBlurFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,

@@ -34,7 +34,7 @@ class SystemAnime extends System {
   update(dt) {
     let i, key, anims, t;
     for (key in this.anims) {
-      if (this.activeTags.indexOf(key) < 0) continue;
+      if (this.activeTags.indexOf(key) < 0) {continue;}
 
       anims = this.anims[key];
       for (i = 0; i < anims.length; i++) {

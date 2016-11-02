@@ -33,8 +33,8 @@ class MeshRenderer extends ObjectRenderer {
 
     this.indices = new Uint16Array(15000);
 
-      //TODO this could be a single buffer shared amongst all renderers as we reuse this set up in most renderers
-    for (var i=0, j=0; i < 15000; i += 6, j += 4) {
+      // TODO this could be a single buffer shared amongst all renderers as we reuse this set up in most renderers
+    for (var i = 0, j = 0; i < 15000; i += 6, j += 4) {
       this.indices[i + 0] = j + 0;
       this.indices[i + 1] = j + 1;
       this.indices[i + 2] = j + 2;
@@ -60,8 +60,7 @@ class MeshRenderer extends ObjectRenderer {
    * @param mesh {mesh.Mesh} the mesh to render
    */
   render(mesh) {
-    if(!mesh._vertexBuffer)
-      {
+    if (!mesh._vertexBuffer) {
       this._initWebGL(mesh);
     }
 
@@ -74,7 +73,7 @@ class MeshRenderer extends ObjectRenderer {
 
     renderer.blendModeManager.setBlendMode(mesh.blendMode);
 
-    //TODO cache custom state..
+    // TODO cache custom state..
     if (!shader) {
       shader = renderer.shaderManager.plugins.meshShader;
     }
@@ -102,8 +101,7 @@ class MeshRenderer extends ObjectRenderer {
 
       gl.activeTexture(gl.TEXTURE0);
 
-      if (!texture._glTextures[gl.id])
-          {
+      if (!texture._glTextures[gl.id]) {
         this.renderer.updateTexture(texture);
       }
       else {
@@ -127,8 +125,7 @@ class MeshRenderer extends ObjectRenderer {
 
       gl.activeTexture(gl.TEXTURE0);
 
-      if (!texture._glTextures[gl.id])
-          {
+      if (!texture._glTextures[gl.id]) {
         this.renderer.updateTexture(texture);
       }
       else {
@@ -160,9 +157,9 @@ class MeshRenderer extends ObjectRenderer {
     gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.DYNAMIC_DRAW);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh._uvBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER,  mesh.uvs, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, mesh.uvs, gl.STATIC_DRAW);
 
-    if(mesh.colors){
+    if (mesh.colors) {
       mesh._colorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, mesh._colorBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, mesh.colors, gl.STATIC_DRAW);
@@ -170,7 +167,7 @@ class MeshRenderer extends ObjectRenderer {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh._indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.indices, gl.STATIC_DRAW);
-  };
+  }
 
 
   /**

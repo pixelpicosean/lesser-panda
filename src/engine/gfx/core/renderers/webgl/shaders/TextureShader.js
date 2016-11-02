@@ -9,35 +9,30 @@ var Shader = require('./Shader');
  * @param [customUniforms] {object} Custom uniforms to use to augment the built-in ones.
  * @param [fragmentSrc] {string} The source of the fragment shader.
  */
-function TextureShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes)
-{
+function TextureShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
   var uniforms = {
 
-    uSampler:           { type: 'sampler2D', value: 0 },
-    projectionMatrix:   { type: 'mat3', value: new Float32Array([1, 0, 0,
-                                                                     0, 1, 0,
-                                                                     0, 0, 1]) },
+    uSampler: { type: 'sampler2D', value: 0 },
+    projectionMatrix: { type: 'mat3', value: new Float32Array([1, 0, 0,
+      0, 1, 0,
+      0, 0, 1]) },
   };
 
-  if (customUniforms)
-    {
-    for (var u in customUniforms)
-        {
+  if (customUniforms) {
+    for (var u in customUniforms) {
       uniforms[u] = customUniforms[u];
     }
   }
 
 
   var attributes = {
-    aVertexPosition:    0,
-    aTextureCoord:      0,
-    aColor:             0,
+    aVertexPosition: 0,
+    aTextureCoord: 0,
+    aColor: 0,
   };
 
-  if (customAttributes)
-    {
-    for (var a in customAttributes)
-        {
+  if (customAttributes) {
+    for (var a in customAttributes) {
       attributes[a] = customAttributes[a];
     }
   }

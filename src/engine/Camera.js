@@ -177,7 +177,7 @@ class Camera {
   setTarget(target, lerp) {
     this.target = target;
 
-    if (!this.target) return;
+    if (!this.target) {return;}
 
     let bounds = target.getBounds();
     this.sensor.x = bounds.x + bounds.width * 0.5 - this.sensor.width * 0.5;
@@ -221,7 +221,8 @@ class Camera {
     if (Number.isFinite(this.minX) && this.position.x < this.minX) {
       this.position.x = this.minX;
       this.speed.x = 0;
-    } else if (Number.isFinite(this.maxX) && this.position.x > this.maxX) {
+    }
+    else if (Number.isFinite(this.maxX) && this.position.x > this.maxX) {
       this.position.x = this.maxX;
       this.speed.x = 0;
     }
@@ -229,7 +230,8 @@ class Camera {
     if (Number.isFinite(this.minY) && this.position.y < this.minY) {
       this.position.y = this.minY;
       this.speed.y = 0;
-    } else if (Number.isFinite(this.maxY) && this.position.y > this.maxY) {
+    }
+    else if (Number.isFinite(this.maxY) && this.position.y > this.maxY) {
       this.position.y = this.maxY;
       this.speed.y = 0;
     }
@@ -258,7 +260,8 @@ class Camera {
   shake(force, duration, count, forward) {
     if (Number.isFinite(force)) {
       this._shakeForce = this._shakeForce.set(force, force);
-    } else {
+    }
+    else {
       this._shakeForce = this._shakeForce.set(force.x, force.y);
     }
 
@@ -276,7 +279,8 @@ class Camera {
       if (this._shakeForward) {
         this._shakeOffset.x = Math.random() * this._shakeForce.x;
         this._shakeOffset.y = Math.random() * this._shakeForce.y;
-      } else {
+      }
+      else {
         this._shakeOffset.x = (Math.random() * 2 - 1) * this._shakeForce.x;
         this._shakeOffset.y = (Math.random() * 2 - 1) * this._shakeForce.y;
       }
@@ -284,7 +288,8 @@ class Camera {
       // Next shake
       this._shakeCount -= 1;
       Timer.later(this._shakeDelay, this._startShake);
-    } else {
+    }
+    else {
       // Reset offset
       this._shakeOffset.set(0, 0);
       this._setPosition(this.position.x, this.position.y);
@@ -321,13 +326,15 @@ class Camera {
 
     if (this._targetLeft < this._sensorLeft) {
       this.sensor.x = this._targetLeft;
-    } else if (this._targetRight > this._sensorRight) {
+    }
+    else if (this._targetRight > this._sensorRight) {
       this.sensor.x = this._targetRight - this.sensor.width;
     }
 
     if (this._targetTop < this._sensorTop) {
       this.sensor.y = this._targetTop;
-    } else if (this._targetBottom > this._sensorBottom) {
+    }
+    else if (this._targetBottom > this._sensorBottom) {
       this.sensor.y = this._targetBottom - this.sensor.height;
     }
   }
@@ -338,7 +345,7 @@ class Camera {
    * @private
    */
   moveCamera(dt) {
-    if (!this.target) return;
+    if (!this.target) {return;}
 
     this.speed.x = clamp(this.position.x - (this.sensor.x + this.sensor.width * 0.5), -this.maxSpeed, this.maxSpeed);
     this.speed.y = clamp(this.position.y - (this.sensor.y + this.sensor.height * 0.5), -this.maxSpeed, this.maxSpeed);
@@ -352,7 +359,8 @@ class Camera {
         this.position.x - this.speed.x * this.acceleration.x * dt,
         this.position.y - this.speed.y * this.acceleration.y * dt
       );
-    } else {
+    }
+    else {
       this.speed.set(0, 0);
     }
 

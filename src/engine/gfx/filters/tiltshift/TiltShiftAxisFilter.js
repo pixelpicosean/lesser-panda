@@ -13,8 +13,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function TiltShiftAxisFilter()
-{
+function TiltShiftAxisFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -22,12 +21,12 @@ function TiltShiftAxisFilter()
         require('./tiltShift.frag'),
         // custom uniforms
     {
-      blur:           { type: '1f', value: 100 },
-      gradientBlur:   { type: '1f', value: 600 },
-      start:          { type: 'v2', value: { x: 0,    y: window.innerHeight / 2 } },
-      end:            { type: 'v2', value: { x: 600,  y: window.innerHeight / 2 } },
-      delta:          { type: 'v2', value: { x: 30,   y: 30 } },
-      texSize:        { type: 'v2', value: { x: window.innerWidth, y: window.innerHeight } },
+      blur: { type: '1f', value: 100 },
+      gradientBlur: { type: '1f', value: 600 },
+      start: { type: 'v2', value: { x: 0, y: window.innerHeight / 2 } },
+      end: { type: 'v2', value: { x: 600, y: window.innerHeight / 2 } },
+      delta: { type: 'v2', value: { x: 30, y: 30 } },
+      texSize: { type: 'v2', value: { x: window.innerWidth, y: window.innerHeight } },
     }
     );
 
@@ -43,8 +42,7 @@ module.exports = TiltShiftAxisFilter;
  * This is overridden in the X and Y filters, does nothing for this class.
  *
  */
-TiltShiftAxisFilter.prototype.updateDelta = function()
-{
+TiltShiftAxisFilter.prototype.updateDelta = function() {
   this.uniforms.delta.value.x = 0;
   this.uniforms.delta.value.y = 0;
 };
@@ -57,12 +55,10 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
   blur: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.blur.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.blur.value = value;
     },
   },
@@ -74,12 +70,10 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
   gradientBlur: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.gradientBlur.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.gradientBlur.value = value;
     },
   },
@@ -91,12 +85,10 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
   start: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.start.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.start.value = value;
       this.updateDelta();
     },
@@ -109,12 +101,10 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * @memberof PIXI.filters.TiltShiftAxisFilter#
      */
   end: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.end.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.end.value = value;
       this.updateDelta();
     },

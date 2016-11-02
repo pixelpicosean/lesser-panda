@@ -7,8 +7,7 @@ var Shader = require('./Shader');
  * @extends Shader
  * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  */
-function ComplexPrimitiveShader(shaderManager)
-{
+function ComplexPrimitiveShader(shaderManager) {
   Shader.call(this,
         shaderManager,
         // vertex shader
@@ -26,7 +25,7 @@ function ComplexPrimitiveShader(shaderManager)
 
       'void main(void){',
       '   gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
-      '   vColor = vec4(color * alpha * tint, alpha);',//" * vec4(tint * alpha, alpha);',
+      '   vColor = vec4(color * alpha * tint, alpha);',// " * vec4(tint * alpha, alpha);',
       '}',
     ].join('\n'),
         // fragment shader
@@ -41,9 +40,9 @@ function ComplexPrimitiveShader(shaderManager)
     ].join('\n'),
         // custom uniforms
     {
-      tint:   { type: '3f', value: [0, 0, 0] },
-      alpha:  { type: '1f', value: 0 },
-      color:  { type: '3f', value: [0,0,0] },
+      tint: { type: '3f', value: [0, 0, 0] },
+      alpha: { type: '1f', value: 0 },
+      color: { type: '3f', value: [0,0,0] },
       translationMatrix: { type: 'mat3', value: new Float32Array(9) },
       projectionMatrix: { type: 'mat3', value: new Float32Array(9) },
     },

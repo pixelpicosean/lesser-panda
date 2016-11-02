@@ -22,21 +22,17 @@ Object.defineProperties(DisplayObject.prototype, {
      * @memberof PIXI.DisplayObject#
      */
   cacheAsBitmap: {
-    get: function()
-        {
+    get: function() {
       return this._cacheAsBitmap;
     },
-    set: function(value)
-        {
-      if (this._cacheAsBitmap === value)
-            {
+    set: function(value) {
+      if (this._cacheAsBitmap === value) {
         return;
       }
 
       this._cacheAsBitmap = value;
 
-      if (value)
-            {
+      if (value) {
         this._originalRenderWebGL = this.renderWebGL;
         this._originalRenderCanvas = this.renderCanvas;
 
@@ -53,10 +49,8 @@ Object.defineProperties(DisplayObject.prototype, {
         this.destroy = this._cacheAsBitmapDestroy;
 
       }
-      else
-            {
-        if (this._cachedSprite)
-                {
+      else {
+        if (this._cachedSprite) {
           this._destroyCachedDisplayObject();
         }
 
@@ -78,19 +72,17 @@ Object.defineProperties(DisplayObject.prototype, {
 * @param renderer {PIXI.WebGLRenderer} the WebGL renderer
 * @private
 */
-DisplayObject.prototype._renderCachedWebGL = function(renderer)
-{
-  if (!this.visible || this.worldAlpha <= 0 || !this.renderable)
-    {
+DisplayObject.prototype._renderCachedWebGL = function(renderer) {
+  if (!this.visible || this.worldAlpha <= 0 || !this.renderable) {
     return;
   }
 
-  this._initCachedDisplayObject( renderer );
+  this._initCachedDisplayObject(renderer);
 
   this._cachedSprite.worldAlpha = this.worldAlpha;
 
   renderer.setObjectRenderer(renderer.plugins.sprite);
-  renderer.plugins.sprite.render( this._cachedSprite );
+  renderer.plugins.sprite.render(this._cachedSprite);
 };
 
 /**
@@ -99,24 +91,21 @@ DisplayObject.prototype._renderCachedWebGL = function(renderer)
 * @param renderer {PIXI.WebGLRenderer} the WebGL renderer
 * @private
 */
-DisplayObject.prototype._initCachedDisplayObject = function(renderer)
-{
-  if(this._cachedSprite)
-    {
+DisplayObject.prototype._initCachedDisplayObject = function(renderer) {
+  if (this._cachedSprite) {
     return;
   }
 
     // first we flush anything left in the renderer (otherwise it would get rendered to the cached texture)
   renderer.currentRenderer.flush();
-    //this.filters= [];
+    // this.filters= [];
     // next we find the dimensions of the untransformed object
     // this function also calls updatetransform on all its children as part of the measuring. This means we don't need to update the transform again in this function
     // TODO pass an object to clone too? saves having to create a new one each time!
   var bounds = this.getLocalBounds().clone();
 
     // add some padding!
-  if(this._filters)
-    {
+  if (this._filters) {
     var padding = this._filters[0].padding;
     bounds.x -= padding;
     bounds.y -= padding;
@@ -151,16 +140,16 @@ DisplayObject.prototype._initCachedDisplayObject = function(renderer)
   renderer.setRenderTarget(cachedRenderTarget);
   renderer.filterManager.filterStack = stack;
 
-  this.renderWebGL     = this._renderCachedWebGL;
+  this.renderWebGL = this._renderCachedWebGL;
   this.updateTransform = this.displayObjectUpdateTransform;
-  this.getBounds       = this._getCachedBounds;
+  this.getBounds = this._getCachedBounds;
 
 
     // create our cached sprite
   this._cachedSprite = new core.Sprite(renderTexture);
   this._cachedSprite.worldTransform = this.worldTransform;
-  this._cachedSprite.anchor.x = -( bounds.x / bounds.width );
-  this._cachedSprite.anchor.y = -( bounds.y / bounds.height );
+  this._cachedSprite.anchor.x = -(bounds.x / bounds.width);
+  this._cachedSprite.anchor.y = -(bounds.y / bounds.height);
 
     // restore the transform of the cached sprite to avoid the nasty flicker..
   this.updateTransform();
@@ -175,35 +164,31 @@ DisplayObject.prototype._initCachedDisplayObject = function(renderer)
 * @param renderer {PIXI.CanvasRenderer} the Canvas renderer
 * @private
 */
-DisplayObject.prototype._renderCachedCanvas = function(renderer)
-{
-  if (!this.visible || this.worldAlpha <= 0 || !this.renderable)
-    {
+DisplayObject.prototype._renderCachedCanvas = function(renderer) {
+  if (!this.visible || this.worldAlpha <= 0 || !this.renderable) {
     return;
   }
 
-  this._initCachedDisplayObjectCanvas( renderer );
+  this._initCachedDisplayObjectCanvas(renderer);
 
   this._cachedSprite.worldAlpha = this.worldAlpha;
 
   this._cachedSprite.renderCanvas(renderer);
 };
 
-//TODO this can be the same as the webGL verison.. will need to do a little tweaking first though..
+// TODO this can be the same as the webGL verison.. will need to do a little tweaking first though..
 /**
 * Prepares the Canvas renderer to cache the sprite
 *
 * @param renderer {PIXI.CanvasRenderer} the Canvas renderer
 * @private
 */
-DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer)
-{
-  if(this._cachedSprite)
-    {
+DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer) {
+  if (this._cachedSprite) {
     return;
   }
 
-    //get bounds actually transforms the object for us already!
+    // get bounds actually transforms the object for us already!
   var bounds = this.getLocalBounds();
 
   var cachedRenderTarget = renderer.context;
@@ -226,14 +211,14 @@ DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer)
 
   this.renderCanvas = this._renderCachedCanvas;
   this.updateTransform = this.displayObjectUpdateTransform;
-  this.getBounds  = this._getCachedBounds;
+  this.getBounds = this._getCachedBounds;
 
 
     // create our cached sprite
   this._cachedSprite = new core.Sprite(renderTexture);
   this._cachedSprite.worldTransform = this.worldTransform;
-  this._cachedSprite.anchor.x = -( bounds.x / bounds.width );
-  this._cachedSprite.anchor.y = -( bounds.y / bounds.height );
+  this._cachedSprite.anchor.x = -(bounds.x / bounds.width);
+  this._cachedSprite.anchor.y = -(bounds.y / bounds.height);
 
   this.updateTransform();
 
@@ -245,8 +230,7 @@ DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer)
 *
 * @private
 */
-DisplayObject.prototype._getCachedBounds = function()
-{
+DisplayObject.prototype._getCachedBounds = function() {
   this._cachedSprite._currentBounds = null;
 
   return this._cachedSprite.getBounds();
@@ -257,14 +241,12 @@ DisplayObject.prototype._getCachedBounds = function()
 *
 * @private
 */
-DisplayObject.prototype._destroyCachedDisplayObject = function()
-{
+DisplayObject.prototype._destroyCachedDisplayObject = function() {
   this._cachedSprite._texture.destroy();
   this._cachedSprite = null;
 };
 
-DisplayObject.prototype._cacheAsBitmapDestroy = function()
-{
+DisplayObject.prototype._cacheAsBitmapDestroy = function() {
   this.cacheAsBitmap = false;
   this._originalDestroy();
 };

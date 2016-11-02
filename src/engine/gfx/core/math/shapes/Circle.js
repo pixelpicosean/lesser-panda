@@ -42,8 +42,7 @@ class Circle {
    *
    * @return {PIXI.Circle} a copy of the Circle
    */
-  clone()
-  {
+  clone() {
     return new Circle(this.x, this.y, this.radius);
   }
 
@@ -54,10 +53,8 @@ class Circle {
    * @param y {number} The Y coordinate of the point to test
    * @return {boolean} Whether the x/y coordinates are within this Circle
    */
-  contains(x, y)
-  {
-    if (this.radius <= 0)
-      {
+  contains(x, y) {
+    if (this.radius <= 0) {
       return false;
     }
 
@@ -76,8 +73,7 @@ class Circle {
   *
   * @return {PIXI.Rectangle} the framing rectangle
   */
-  getBounds()
-  {
+  getBounds() {
     return new Rectangle(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
   }
 }

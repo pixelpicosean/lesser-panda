@@ -54,13 +54,13 @@ class ParticleShader extends TextureShader {
       ].join('\n'),
         // custom uniforms
       {
-        uAlpha:  { type: '1f', value: 1 },
+        uAlpha: { type: '1f', value: 1 },
       },
         // custom attributes
       {
         aPositionCoord: 0,
            // aScale:         0,
-        aRotation:      0,
+        aRotation: 0,
       }
     );
 

@@ -165,25 +165,23 @@ class Graphics extends Container {
  *
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.clone = function()
-{
+Graphics.prototype.clone = function() {
   var clone = new Graphics();
 
-  clone.renderable    = this.renderable;
-  clone.fillAlpha     = this.fillAlpha;
-  clone.lineWidth     = this.lineWidth;
-  clone.lineColor     = this.lineColor;
-  clone.tint          = this.tint;
-  clone.blendMode     = this.blendMode;
-  clone.isMask        = this.isMask;
+  clone.renderable = this.renderable;
+  clone.fillAlpha = this.fillAlpha;
+  clone.lineWidth = this.lineWidth;
+  clone.lineColor = this.lineColor;
+  clone.tint = this.tint;
+  clone.blendMode = this.blendMode;
+  clone.isMask = this.isMask;
   clone.boundsPadding = this.boundsPadding;
-  clone.dirty         = true;
-  clone.glDirty       = true;
+  clone.dirty = true;
+  clone.glDirty = true;
   clone.cachedSpriteDirty = this.cachedSpriteDirty;
 
     // copy graphics data
-  for (var i = 0; i < this.graphicsData.length; ++i)
-    {
+  for (var i = 0; i < this.graphicsData.length; ++i) {
     clone.graphicsData.push(this.graphicsData[i].clone());
   }
 
@@ -202,23 +200,19 @@ Graphics.prototype.clone = function()
  * @param alpha {number} alpha of the line to draw, will update the objects stored style
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.lineStyle = function(lineWidth, color, alpha)
-{
+Graphics.prototype.lineStyle = function(lineWidth, color, alpha) {
   this.lineWidth = lineWidth || 0;
   this.lineColor = color || 0;
   this.lineAlpha = (alpha === undefined) ? 1 : alpha;
 
-  if (this.currentPath)
-    {
-    if (this.currentPath.shape.points.length)
-        {
+  if (this.currentPath) {
+    if (this.currentPath.shape.points.length) {
             // halfway through a line? start a new one!
       var shape = new math.Polygon(this.currentPath.shape.points.slice(-2));
       shape.closed = false;
       this.drawShape(shape);
     }
-    else
-        {
+    else {
             // otherwise its empty so lets just set the line properties
       this.currentPath.lineWidth = this.lineWidth;
       this.currentPath.lineColor = this.lineColor;
@@ -236,8 +230,7 @@ Graphics.prototype.lineStyle = function(lineWidth, color, alpha)
  * @param y {number} the Y coordinate to move to
  * @return {PIXI.Graphics}
   */
-Graphics.prototype.moveTo = function(x, y)
-{
+Graphics.prototype.moveTo = function(x, y) {
   var shape = new math.Polygon([x,y]);
   shape.closed = false;
   this.drawShape(shape);
@@ -253,8 +246,7 @@ Graphics.prototype.moveTo = function(x, y)
  * @param y {number} the Y coordinate to draw to
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.lineTo = function(x, y)
-{
+Graphics.prototype.lineTo = function(x, y) {
   this.currentPath.shape.points.push(x, y);
   this.dirty = true;
 
@@ -271,17 +263,13 @@ Graphics.prototype.lineTo = function(x, y)
  * @param toY {number} Destination point y
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY)
-{
-  if (this.currentPath)
-    {
-    if (this.currentPath.shape.points.length === 0)
-        {
+Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY) {
+  if (this.currentPath) {
+    if (this.currentPath.shape.points.length === 0) {
       this.currentPath.shape.points = [0, 0];
     }
   }
-  else
-    {
+  else {
     this.moveTo(0,0);
   }
 
@@ -290,24 +278,22 @@ Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY)
     n = 20,
     points = this.currentPath.shape.points;
 
-  if (points.length === 0)
-    {
+  if (points.length === 0) {
     this.moveTo(0, 0);
   }
 
-  var fromX = points[points.length-2];
-  var fromY = points[points.length-1];
+  var fromX = points[points.length - 2];
+  var fromY = points[points.length - 1];
 
   var j = 0;
-  for (var i = 1; i <= n; ++i)
-    {
+  for (var i = 1; i <= n; ++i) {
     j = i / n;
 
-    xa = fromX + ( (cpX - fromX) * j );
-    ya = fromY + ( (cpY - fromY) * j );
+    xa = fromX + ((cpX - fromX) * j);
+    ya = fromY + ((cpY - fromY) * j);
 
-    points.push( xa + ( ((cpX + ( (toX - cpX) * j )) - xa) * j ),
-                     ya + ( ((cpY + ( (toY - cpY) * j )) - ya) * j ) );
+    points.push(xa + (((cpX + ((toX - cpX) * j)) - xa) * j),
+                     ya + (((cpY + ((toY - cpY) * j)) - ya) * j));
   }
 
   this.dirty = this.boundsDirty = true;
@@ -326,17 +312,13 @@ Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY)
  * @param toY {number} Destination point y
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY)
-{
-  if (this.currentPath)
-    {
-    if (this.currentPath.shape.points.length === 0)
-        {
+Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY) {
+  if (this.currentPath) {
+    if (this.currentPath.shape.points.length === 0) {
       this.currentPath.shape.points = [0, 0];
     }
   }
-  else
-    {
+  else {
     this.moveTo(0,0);
   }
 
@@ -348,13 +330,12 @@ Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY)
     t3,
     points = this.currentPath.shape.points;
 
-  var fromX = points[points.length-2];
-  var fromY = points[points.length-1];
+  var fromX = points[points.length - 2];
+  var fromY = points[points.length - 1];
 
   var j = 0;
 
-  for (var i = 1; i <= n; ++i)
-    {
+  for (var i = 1; i <= n; ++i) {
     j = i / n;
 
     dt = (1 - j);
@@ -364,7 +345,7 @@ Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY)
     t2 = j * j;
     t3 = t2 * j;
 
-    points.push( dt3 * fromX + 3 * dt2 * j * cpX + 3 * dt * t2 * cpX2 + t3 * toX,
+    points.push(dt3 * fromX + 3 * dt2 * j * cpX + 3 * dt * t2 * cpX2 + t3 * toX,
                      dt3 * fromY + 3 * dt2 * j * cpY + 3 * dt * t2 * cpY2 + t3 * toY);
   }
 
@@ -385,38 +366,31 @@ Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY)
  * @param radius {number} The radius of the arc
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.arcTo = function(x1, y1, x2, y2, radius)
-{
-  if (this.currentPath)
-    {
-    if (this.currentPath.shape.points.length === 0)
-        {
+Graphics.prototype.arcTo = function(x1, y1, x2, y2, radius) {
+  if (this.currentPath) {
+    if (this.currentPath.shape.points.length === 0) {
       this.currentPath.shape.points.push(x1, y1);
     }
   }
-  else
-    {
+  else {
     this.moveTo(x1, y1);
   }
 
   var points = this.currentPath.shape.points,
-    fromX = points[points.length-2],
-    fromY = points[points.length-1],
+    fromX = points[points.length - 2],
+    fromY = points[points.length - 1],
     a1 = fromY - y1,
     b1 = fromX - x1,
-    a2 = y2   - y1,
-    b2 = x2   - x1,
+    a2 = y2 - y1,
+    b2 = x2 - x1,
     mm = Math.abs(a1 * b2 - b1 * a2);
 
-  if (mm < 1.0e-8 || radius === 0)
-    {
-    if (points[points.length-2] !== x1 || points[points.length-1] !== y1)
-        {
+  if (mm < 1.0e-8 || radius === 0) {
+    if (points[points.length - 2] !== x1 || points[points.length - 1] !== y1) {
       points.push(x1, y1);
     }
   }
-  else
-    {
+  else {
     var dd = a1 * a1 + b1 * b1,
       cc = a2 * a2 + b2 * b2,
       tt = a1 * a2 + b1 * b2,
@@ -431,7 +405,7 @@ Graphics.prototype.arcTo = function(x1, y1, x2, y2, radius)
       qx = b2 * (k1 + j2),
       qy = a2 * (k1 + j2),
       startAngle = Math.atan2(py - cy, px - cx),
-      endAngle   = Math.atan2(qy - cy, qx - cx);
+      endAngle = Math.atan2(qy - cy, qx - cx);
 
     this.arc(cx + x1, cy + y1, radius, startAngle, endAngle, b1 * a2 > b2 * a1);
   }
@@ -452,59 +426,51 @@ Graphics.prototype.arcTo = function(x1, y1, x2, y2, radius)
  * @param anticlockwise {boolean} Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, anticlockwise)
-{
+Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, anticlockwise) {
   anticlockwise = anticlockwise || false;
 
-  if (startAngle === endAngle)
-    {
+  if (startAngle === endAngle) {
     return this;
   }
 
-  if( !anticlockwise && endAngle <= startAngle )
-    {
+  if (!anticlockwise && endAngle <= startAngle) {
     endAngle += Math.PI * 2;
   }
-  else if( anticlockwise && startAngle <= endAngle )
-    {
+  else if (anticlockwise && startAngle <= endAngle) {
     startAngle += Math.PI * 2;
   }
 
   var sweep = anticlockwise ? (startAngle - endAngle) * -1 : (endAngle - startAngle);
-  var segs =  Math.ceil(Math.abs(sweep) / (Math.PI * 2)) * 40;
+  var segs = Math.ceil(Math.abs(sweep) / (Math.PI * 2)) * 40;
 
-  if(sweep === 0)
-    {
+  if (sweep === 0) {
     return this;
   }
 
   var startX = cx + Math.cos(startAngle) * radius;
   var startY = cy + Math.sin(startAngle) * radius;
 
-  if (this.currentPath)
-    {
+  if (this.currentPath) {
     this.currentPath.shape.points.push(startX, startY);
   }
-  else
-    {
+  else {
     this.moveTo(startX, startY);
   }
 
   var points = this.currentPath.shape.points;
 
-  var theta = sweep/(segs*2);
-  var theta2 = theta*2;
+  var theta = sweep / (segs * 2);
+  var theta2 = theta * 2;
 
   var cTheta = Math.cos(theta);
   var sTheta = Math.sin(theta);
 
   var segMinus = segs - 1;
 
-  var remainder = ( segMinus % 1 ) / segMinus;
+  var remainder = (segMinus % 1) / segMinus;
 
-  for(var i=0; i<=segMinus; i++)
-    {
-    var real =  i + remainder * i;
+  for (var i = 0; i <= segMinus; i++) {
+    var real = i + remainder * i;
 
 
     var angle = ((theta) + startAngle + (theta2 * real));
@@ -512,8 +478,8 @@ Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, anticloc
     var c = Math.cos(angle);
     var s = -Math.sin(angle);
 
-    points.push(( (cTheta *  c) + (sTheta * s) ) * radius + cx,
-                    ( (cTheta * -s) + (sTheta * c) ) * radius + cy);
+    points.push(((cTheta * c) + (sTheta * s)) * radius + cx,
+                    ((cTheta * -s) + (sTheta * c)) * radius + cy);
   }
 
   this.dirty = this.boundsDirty = true;
@@ -529,16 +495,13 @@ Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, anticloc
  * @param alpha {number} the alpha of the fill
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.beginFill = function(color, alpha)
-{
+Graphics.prototype.beginFill = function(color, alpha) {
   this.filling = true;
   this.fillColor = color || 0;
   this.fillAlpha = (alpha === undefined) ? 1 : alpha;
 
-  if (this.currentPath)
-    {
-    if (this.currentPath.shape.points.length <= 2)
-        {
+  if (this.currentPath) {
+    if (this.currentPath.shape.points.length <= 2) {
       this.currentPath.fill = this.filling;
       this.currentPath.fillColor = this.fillColor;
       this.currentPath.fillAlpha = this.fillAlpha;
@@ -552,8 +515,7 @@ Graphics.prototype.beginFill = function(color, alpha)
  *
  * @return {Graphics}
  */
-Graphics.prototype.endFill = function()
-{
+Graphics.prototype.endFill = function() {
   this.filling = false;
   this.fillColor = null;
   this.fillAlpha = 1;
@@ -569,8 +531,7 @@ Graphics.prototype.endFill = function()
  * @param height {number} The height of the rectangle
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.drawRect = function( x, y, width, height )
-{
+Graphics.prototype.drawRect = function(x, y, width, height) {
   this.drawShape(new math.Rectangle(x,y, width, height));
 
   return this;
@@ -585,8 +546,7 @@ Graphics.prototype.drawRect = function( x, y, width, height )
  * @param radius {number} Radius of the rectangle corners
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.drawRoundedRect = function( x, y, width, height, radius )
-{
+Graphics.prototype.drawRoundedRect = function(x, y, width, height, radius) {
   this.drawShape(new math.RoundedRectangle(x, y, width, height, radius));
 
   return this;
@@ -600,8 +560,7 @@ Graphics.prototype.drawRoundedRect = function( x, y, width, height, radius )
  * @param radius {number} The radius of the circle
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.drawCircle = function(x, y, radius)
-{
+Graphics.prototype.drawCircle = function(x, y, radius) {
   this.drawShape(new math.Circle(x,y, radius));
 
   return this;
@@ -616,8 +575,7 @@ Graphics.prototype.drawCircle = function(x, y, radius)
  * @param height {number} The half height of the ellipse
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.drawEllipse = function(x, y, width, height)
-{
+Graphics.prototype.drawEllipse = function(x, y, width, height) {
   this.drawShape(new math.Ellipse(x, y, width, height));
 
   return this;
@@ -629,28 +587,24 @@ Graphics.prototype.drawEllipse = function(x, y, width, height)
  * @param path {number[]|PIXI.Point[]} The path data used to construct the polygon.
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.drawPolygon = function(path)
-{
+Graphics.prototype.drawPolygon = function(path) {
     // prevents an argument assignment deopt
     // see section 3.1: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
   var points = path;
 
   var closed = true;
 
-  if (points instanceof math.Polygon)
-    {
+  if (points instanceof math.Polygon) {
     closed = points.closed;
     points = points.points;
   }
 
-  if (!Array.isArray(points))
-    {
+  if (!Array.isArray(points)) {
         // prevents an argument leak deopt
         // see section 3.2: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
     points = new Array(arguments.length);
 
-    for (var i = 0; i < points.length; ++i)
-        {
+    for (var i = 0; i < points.length; ++i) {
       points[i] = arguments[i];
     }
   }
@@ -668,8 +622,7 @@ Graphics.prototype.drawPolygon = function(path)
  *
  * @return {PIXI.Graphics}
  */
-Graphics.prototype.clear = function()
-{
+Graphics.prototype.clear = function() {
   this.lineWidth = 0;
   this.filling = false;
 
@@ -688,8 +641,7 @@ Graphics.prototype.clear = function()
  * @param scaleMode {number} Should be one of the scaleMode consts
  * @return {PIXI.Texture} a texture of the graphics object
  */
-Graphics.prototype.generateTexture = function(renderer, resolution, scaleMode)
-{
+Graphics.prototype.generateTexture = function(renderer, resolution, scaleMode) {
 
   resolution = resolution || 1;
 
@@ -715,8 +667,7 @@ Graphics.prototype.generateTexture = function(renderer, resolution, scaleMode)
  * @param renderer {PIXI.WebGLRenderer}
  * @private
  */
-Graphics.prototype._renderWebGL = function(renderer)
-{
+Graphics.prototype._renderWebGL = function(renderer) {
     // if the sprite is not visible or the alpha is 0 then no need to render this element
 
     // this code may still be needed so leaving for now..
@@ -744,8 +695,7 @@ Graphics.prototype._renderWebGL = function(renderer)
 
     */
 
-  if (this.glDirty)
-    {
+  if (this.glDirty) {
     this.dirty = true;
     this.glDirty = false;
   }
@@ -761,10 +711,8 @@ Graphics.prototype._renderWebGL = function(renderer)
  * @param renderer {PIXI.CanvasRenderer}
  * @private
  */
-Graphics.prototype._renderCanvas = function(renderer)
-{
-  if (this.isMask === true)
-    {
+Graphics.prototype._renderCanvas = function(renderer) {
+  if (this.isMask === true) {
     return;
   }
 
@@ -800,8 +748,7 @@ Graphics.prototype._renderCanvas = function(renderer)
   var transform = this.worldTransform;
 
   var compositeOperation = renderer.blendModes[this.blendMode];
-  if (compositeOperation !== context.globalCompositeOperation)
-    {
+  if (compositeOperation !== context.globalCompositeOperation) {
     context.globalCompositeOperation = compositeOperation;
   }
 
@@ -825,19 +772,15 @@ Graphics.prototype._renderCanvas = function(renderer)
  *  object's worldTransform.
  * @return {PIXI.Rectangle} the rectangular bounding area
  */
-Graphics.prototype.getBounds = function(matrix)
-{
-  if(!this._currentBounds)
-    {
+Graphics.prototype.getBounds = function(matrix) {
+  if (!this._currentBounds) {
 
         // return an empty object if the item is a mask!
-    if (!this.renderable)
-        {
+    if (!this.renderable) {
       return math.Rectangle.EMPTY;
     }
 
-    if (this.boundsDirty)
-        {
+    if (this.boundsDirty) {
       this.updateLocalBounds();
 
       this.glDirty = true;
@@ -871,8 +814,8 @@ Graphics.prototype.getBounds = function(matrix)
     var x3 = a * w0 + c * h0 + tx;
     var y3 = d * h0 + b * w0 + ty;
 
-    var x4 =  a * w1 + c * h0 + tx;
-    var y4 =  d * h0 + b * w1 + ty;
+    var x4 = a * w1 + c * h0 + tx;
+    var y4 = d * h0 + b * w1 + ty;
 
     var maxX = x1;
     var maxY = y1;
@@ -914,26 +857,21 @@ Graphics.prototype.getBounds = function(matrix)
 * @param point {PIXI.Point} the point to test
 * @return {boolean} the result of the test
 */
-Graphics.prototype.containsPoint = function( point )
-{
-  this.worldTransform.applyInverse(point,  tempPoint);
+Graphics.prototype.containsPoint = function(point) {
+  this.worldTransform.applyInverse(point, tempPoint);
 
   var graphicsData = this.graphicsData;
 
-  for (var i = 0; i < graphicsData.length; i++)
-    {
+  for (var i = 0; i < graphicsData.length; i++) {
     var data = graphicsData[i];
 
-    if (!data.fill)
-        {
+    if (!data.fill) {
       continue;
     }
 
         // only deal with fills..
-    if (data.shape)
-        {
-      if ( data.shape.contains( tempPoint.x, tempPoint.y ) )
-            {
+    if (data.shape) {
+      if (data.shape.contains(tempPoint.x, tempPoint.y)) {
         return true;
       }
     }
@@ -946,29 +884,25 @@ Graphics.prototype.containsPoint = function( point )
  * Update the bounds of the object
  *
  */
-Graphics.prototype.updateLocalBounds = function()
-{
+Graphics.prototype.updateLocalBounds = function() {
   var minX = Infinity;
   var maxX = -Infinity;
 
   var minY = Infinity;
   var maxY = -Infinity;
 
-  if (this.graphicsData.length)
-    {
+  if (this.graphicsData.length) {
     var shape, points, x, y, w, h;
 
-    for (var i = 0; i < this.graphicsData.length; i++)
-        {
+    for (var i = 0; i < this.graphicsData.length; i++) {
       var data = this.graphicsData[i];
       var type = data.type;
       var lineWidth = data.lineWidth;
       shape = data.shape;
 
-      if (type === CONST.SHAPES.RECT || type === CONST.SHAPES.RREC)
-            {
-        x = shape.x - lineWidth/2;
-        y = shape.y - lineWidth/2;
+      if (type === CONST.SHAPES.RECT || type === CONST.SHAPES.RREC) {
+        x = shape.x - lineWidth / 2;
+        y = shape.y - lineWidth / 2;
         w = shape.width + lineWidth;
         h = shape.height + lineWidth;
 
@@ -978,12 +912,11 @@ Graphics.prototype.updateLocalBounds = function()
         minY = y < minY ? y : minY;
         maxY = y + h > maxY ? y + h : maxY;
       }
-      else if (type === CONST.SHAPES.CIRC)
-            {
+      else if (type === CONST.SHAPES.CIRC) {
         x = shape.x;
         y = shape.y;
-        w = shape.radius + lineWidth/2;
-        h = shape.radius + lineWidth/2;
+        w = shape.radius + lineWidth / 2;
+        h = shape.radius + lineWidth / 2;
 
         minX = x - w < minX ? x - w : minX;
         maxX = x + w > maxX ? x + w : maxX;
@@ -991,12 +924,11 @@ Graphics.prototype.updateLocalBounds = function()
         minY = y - h < minY ? y - h : minY;
         maxY = y + h > maxY ? y + h : maxY;
       }
-      else if (type === CONST.SHAPES.ELIP)
-            {
+      else if (type === CONST.SHAPES.ELIP) {
         x = shape.x;
         y = shape.y;
-        w = shape.width + lineWidth/2;
-        h = shape.height + lineWidth/2;
+        w = shape.width + lineWidth / 2;
+        h = shape.height + lineWidth / 2;
 
         minX = x - w < minX ? x - w : minX;
         maxX = x + w > maxX ? x + w : maxX;
@@ -1004,27 +936,24 @@ Graphics.prototype.updateLocalBounds = function()
         minY = y - h < minY ? y - h : minY;
         maxY = y + h > maxY ? y + h : maxY;
       }
-      else
-            {
+      else {
                 // POLY
         points = shape.points;
 
-        for (var j = 0; j < points.length; j += 2)
-                {
+        for (var j = 0; j < points.length; j += 2) {
           x = points[j];
-          y = points[j+1];
+          y = points[j + 1];
 
-          minX = x-lineWidth < minX ? x-lineWidth : minX;
-          maxX = x+lineWidth > maxX ? x+lineWidth : maxX;
+          minX = x - lineWidth < minX ? x - lineWidth : minX;
+          maxX = x + lineWidth > maxX ? x + lineWidth : maxX;
 
-          minY = y-lineWidth < minY ? y-lineWidth : minY;
-          maxY = y+lineWidth > maxY ? y+lineWidth : maxY;
+          minY = y - lineWidth < minY ? y - lineWidth : minY;
+          maxY = y + lineWidth > maxY ? y + lineWidth : maxY;
         }
       }
     }
   }
-  else
-    {
+  else {
     minX = 0;
     maxX = 0;
     minY = 0;
@@ -1125,13 +1054,10 @@ Graphics.prototype.destroyCachedSprite = function ()
  * @param shape {PIXI.Circle|PIXI.Rectangle|PIXI.Ellipse|PIXI.Line|PIXI.Polygon} The shape object to draw.
  * @return {PIXI.GraphicsData} The generated GraphicsData object.
  */
-Graphics.prototype.drawShape = function(shape)
-{
-  if (this.currentPath)
-    {
+Graphics.prototype.drawShape = function(shape) {
+  if (this.currentPath) {
         // check current path!
-    if (this.currentPath.shape.points.length <= 2)
-        {
+    if (this.currentPath.shape.points.length <= 2) {
       this.graphicsData.pop();
     }
   }
@@ -1142,8 +1068,7 @@ Graphics.prototype.drawShape = function(shape)
 
   this.graphicsData.push(data);
 
-  if (data.type === CONST.SHAPES.POLY)
-    {
+  if (data.type === CONST.SHAPES.POLY) {
     data.shape.closed = data.shape.closed || this.filling;
     this.currentPath = data;
   }

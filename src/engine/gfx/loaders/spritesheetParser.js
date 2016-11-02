@@ -22,15 +22,12 @@ Loader.prototype.getTexture = function(key) {
   }
 };
 
-module.exports = function()
-{
-  return function(resource, next)
-    {
+module.exports = function() {
+  return function(resource, next) {
     var imageResourceName = resource.name + '_image';
 
         // skip if no data, its not json, it isn't spritesheet data, or the image resource already exists
-    if (!resource.data || (resource.xhrType !== Resource.XHR_RESPONSE_TYPE.JSON) || !resource.data.frames || this.resources[imageResourceName])
-        {
+    if (!resource.data || (resource.xhrType !== Resource.XHR_RESPONSE_TYPE.JSON) || !resource.data.frames || this.resources[imageResourceName]) {
       return next();
     }
 
@@ -43,8 +40,7 @@ module.exports = function()
     var route = dirname(resource.url.replace(this.baseUrl, ''));
 
         // load the image for this sheet
-    this.add(imageResourceName, route + '/' + resource.data.meta.image, loadOptions, function(res)
-        {
+    this.add(imageResourceName, route + '/' + resource.data.meta.image, loadOptions, function(res) {
       resource.textures = {};
 
       var frames = resource.data.frames;
@@ -52,32 +48,26 @@ module.exports = function()
       var resolution = utils.getResolutionOfUrl(resource.url);
       var batchIndex = 0;
 
-      function processFrames(initialFrameIndex, maxFrames)
-            {
+      function processFrames(initialFrameIndex, maxFrames) {
         var frameIndex = initialFrameIndex;
 
-        while (frameIndex - initialFrameIndex < maxFrames && frameIndex < frameKeys.length)
-                {
+        while (frameIndex - initialFrameIndex < maxFrames && frameIndex < frameKeys.length) {
           var frame = frames[frameKeys[frameIndex]];
           var rect = frame.frame;
 
-          if (rect)
-                    {
+          if (rect) {
             var size = null;
             var trim = null;
 
-            if (frame.rotated)
-                        {
+            if (frame.rotated) {
               size = new math.Rectangle(rect.x, rect.y, rect.h, rect.w);
             }
-            else
-                        {
+            else {
               size = new math.Rectangle(rect.x, rect.y, rect.w, rect.h);
             }
 
                         //  Check to see if the sprite is trimmed
-            if (frame.trimmed)
-                        {
+            if (frame.trimmed) {
               trim = new math.Rectangle(
                                 frame.spriteSourceSize.x / resolution,
                                 frame.spriteSourceSize.y / resolution,
@@ -87,8 +77,7 @@ module.exports = function()
             }
 
                         // flip the width and height!
-            if (frame.rotated)
-                        {
+            if (frame.rotated) {
               var temp = size.width;
               size.width = size.height;
               size.height = temp;
@@ -108,25 +97,21 @@ module.exports = function()
         }
       }
 
-      function shouldProcessNextBatch()
-            {
+      function shouldProcessNextBatch() {
         return batchIndex * BATCH_SIZE < frameKeys.length;
       }
 
-      function processNextBatch(done)
-            {
+      function processNextBatch(done) {
         processFrames(batchIndex * BATCH_SIZE, BATCH_SIZE);
         batchIndex++;
         setTimeout(done, 0);
       }
 
-      if (frameKeys.length <= BATCH_SIZE)
-            {
+      if (frameKeys.length <= BATCH_SIZE) {
         processFrames(0, BATCH_SIZE);
         next();
       }
-      else
-            {
+      else {
         async.whilst(shouldProcessNextBatch, processNextBatch, next);
       }
     });

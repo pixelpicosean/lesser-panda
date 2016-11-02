@@ -1,6 +1,6 @@
 const Vector = require('engine/Vector');
-const { Polygon, Rectangle } = require('../core/math')
-const Container = require('../core/display/Container')
+const { Polygon, Rectangle } = require('../core/math');
+const Container = require('../core/display/Container');
 const CONST = require('../const');
 
 const tempPoint = new Vector();
@@ -19,7 +19,7 @@ const tempPolygon = new Polygon();
  */
 class Mesh extends Container {
   constructor(texture, vertices, uvs, indices, drawMode) {
-    super(this);
+    super();
 
       /**
        * The texture of the Mesh
@@ -35,9 +35,9 @@ class Mesh extends Container {
        * @member {Float32Array}
        */
     this.uvs = uvs || new Float32Array([0, 0,
-          1, 0,
-          1, 1,
-          0, 1]);
+      1, 0,
+      1, 1,
+      0, 1]);
 
       /**
        * An array of vertices
@@ -45,9 +45,9 @@ class Mesh extends Container {
        * @member {Float32Array}
        */
     this.vertices = vertices || new Float32Array([0, 0,
-          100, 0,
-          100, 100,
-          0, 100]);
+      100, 0,
+      100, 100,
+      0, 100]);
 
       /*
        * @member {Uint16Array} An array containing the indices of the vertices
@@ -120,21 +120,17 @@ class Mesh extends Container {
     var transform = this.worldTransform;
     var res = renderer.resolution;
 
-    if (renderer.roundPixels)
-      {
+    if (renderer.roundPixels) {
       context.setTransform(transform.a * res, transform.b * res, transform.c * res, transform.d * res, (transform.tx * res) | 0, (transform.ty * res) | 0);
     }
-    else
-      {
+    else {
       context.setTransform(transform.a * res, transform.b * res, transform.c * res, transform.d * res, transform.tx * res, transform.ty * res);
     }
 
-    if (this.drawMode === Mesh.DRAW_MODES.TRIANGLE_MESH)
-      {
+    if (this.drawMode === Mesh.DRAW_MODES.TRIANGLE_MESH) {
       this._renderCanvasTriangleMesh(context);
     }
-    else
-      {
+    else {
       this._renderCanvasTriangles(context);
     }
   }
@@ -175,8 +171,7 @@ class Mesh extends Container {
     var length = indices.length;
       // this.count++;
 
-    for (var i = 0; i < length; i += 3)
-      {
+    for (var i = 0; i < length; i += 3) {
           // draw some triangles!
       var index0 = indices[i] * 2, index1 = indices[i + 1] * 2, index2 = indices[i + 2] * 2;
       this._renderCanvasDrawTriangle(context, vertices, uvs, index0, index1, index2);
@@ -249,12 +244,12 @@ class Mesh extends Container {
     context.clip();
 
       // Compute matrix transform
-    var delta =  (u0 * v1)      + (v0 * u2)      + (u1 * v2)      - (v1 * u2)      - (v0 * u1)      - (u0 * v2);
-    var deltaA = (x0 * v1)      + (v0 * x2)      + (x1 * v2)      - (v1 * x2)      - (v0 * x1)      - (x0 * v2);
-    var deltaB = (u0 * x1)      + (x0 * u2)      + (u1 * x2)      - (x1 * u2)      - (x0 * u1)      - (u0 * x2);
+    var delta = (u0 * v1) + (v0 * u2) + (u1 * v2) - (v1 * u2) - (v0 * u1) - (u0 * v2);
+    var deltaA = (x0 * v1) + (v0 * x2) + (x1 * v2) - (v1 * x2) - (v0 * x1) - (x0 * v2);
+    var deltaB = (u0 * x1) + (x0 * u2) + (u1 * x2) - (x1 * u2) - (x0 * u1) - (u0 * x2);
     var deltaC = (u0 * v1 * x2) + (v0 * x1 * u2) + (x0 * u1 * v2) - (x0 * v1 * u2) - (v0 * u1 * x2) - (u0 * x1 * v2);
-    var deltaD = (y0 * v1)      + (v0 * y2)      + (y1 * v2)      - (v1 * y2)      - (v0 * y1)      - (y0 * v2);
-    var deltaE = (u0 * y1)      + (y0 * u2)      + (u1 * y2)      - (y1 * u2)      - (y0 * u1)      - (u0 * y2);
+    var deltaD = (y0 * v1) + (v0 * y2) + (y1 * v2) - (v1 * y2) - (v0 * y1) - (y0 * v2);
+    var deltaE = (u0 * y1) + (y0 * u2) + (u1 * y2) - (y1 * u2) - (y0 * u1) - (u0 * y2);
     var deltaF = (u0 * v1 * y2) + (v0 * y1 * u2) + (y0 * u1 * v2) - (y0 * v1 * u2) - (v0 * u1 * y2) - (u0 * y1 * v2);
 
     context.transform(deltaA / delta, deltaD / delta,
@@ -277,17 +272,16 @@ class Mesh extends Container {
     var context = this.context;
     var vertices = Mesh.vertices;
 
-    var length = vertices.length/2;
+    var length = vertices.length / 2;
       // this.count++;
 
     context.beginPath();
-    for (var i=1; i < length-2; i++)
-      {
+    for (var i = 1; i < length - 2; i++) {
           // draw some triangles!
-      var index = i*2;
+      var index = i * 2;
 
-      var x0 = vertices[index],   x1 = vertices[index+2], x2 = vertices[index+4];
-      var y0 = vertices[index+1], y1 = vertices[index+3], y2 = vertices[index+5];
+      var x0 = vertices[index], x1 = vertices[index + 2], x2 = vertices[index + 4];
+      var y0 = vertices[index + 1], y1 = vertices[index + 3], y2 = vertices[index + 5];
 
       context.moveTo(x0, y0);
       context.lineTo(x1, y1);
@@ -370,11 +364,11 @@ class Mesh extends Container {
    * @param point {Point} the point to test
    * @return {boolean} the result of the test
    */
-  containsPoint( point ) {
+  containsPoint(point) {
     if (!this.getBounds().contains(point.x, point.y)) {
       return false;
     }
-    this.worldTransform.applyInverse(point,  tempPoint);
+    this.worldTransform.applyInverse(point, tempPoint);
 
     var vertices = this.vertices;
     var points = tempPolygon.points;
@@ -383,28 +377,29 @@ class Mesh extends Container {
     if (this.drawMode === Mesh.DRAW_MODES.TRIANGLES) {
       var indices = this.indices;
       len = this.indices.length;
-          //TODO: inline this.
-      for (i=0;i<len;i+=3) {
-        var ind0 = indices[i]*2, ind1 = indices[i+1]*2, ind2 = indices[i+2]*2;
+          // TODO: inline this.
+      for (i = 0; i < len; i += 3) {
+        var ind0 = indices[i] * 2, ind1 = indices[i + 1] * 2, ind2 = indices[i + 2] * 2;
         points[0] = vertices[ind0];
-        points[1] = vertices[ind0+1];
+        points[1] = vertices[ind0 + 1];
         points[2] = vertices[ind1];
-        points[3] = vertices[ind1+1];
+        points[3] = vertices[ind1 + 1];
         points[4] = vertices[ind2];
-        points[5] = vertices[ind2+1];
+        points[5] = vertices[ind2 + 1];
         if (tempPolygon.contains(tempPoint.x, tempPoint.y)) {
           return true;
         }
       }
-    } else {
+    }
+    else {
       len = vertices.length;
-      for (i=0;i<len;i+=6) {
+      for (i = 0; i < len; i += 6) {
         points[0] = vertices[i];
-        points[1] = vertices[i+1];
-        points[2] = vertices[i+2];
-        points[3] = vertices[i+3];
-        points[4] = vertices[i+4];
-        points[5] = vertices[i+5];
+        points[1] = vertices[i + 1];
+        points[2] = vertices[i + 2];
+        points[3] = vertices[i + 3];
+        points[4] = vertices[i + 4];
+        points[5] = vertices[i + 5];
         if (tempPolygon.contains(tempPoint.x, tempPoint.y)) {
           return true;
         }
@@ -422,28 +417,22 @@ Object.defineProperties(Mesh.prototype, {
      * @memberof mesh.Mesh#
      */
   texture: {
-    get: function()
-        {
-      return  this._texture;
+    get: function() {
+      return this._texture;
     },
-    set: function(value)
-        {
-      if (this._texture === value)
-            {
+    set: function(value) {
+      if (this._texture === value) {
         return;
       }
 
       this._texture = value;
 
-      if (value)
-            {
+      if (value) {
                 // wait for the texture to load
-        if (value.baseTexture.hasLoaded)
-                {
+        if (value.baseTexture.hasLoaded) {
           this._onTextureUpdate();
         }
-        else
-                {
+        else {
           value.once('update', this._onTextureUpdate, this);
         }
       }

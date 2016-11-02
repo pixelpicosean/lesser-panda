@@ -23,8 +23,7 @@ var core = require('../core');
  * @param textures[].texture {PIXI.Texture} the {@link PIXI.Texture} of the frame
  * @param textures[].time {number} the duration of the frame in ms
  */
-function MovieClip(textures)
-{
+function MovieClip(textures) {
   core.Sprite.call(this, textures[0] instanceof core.Texture ? textures[0] : textures[0].texture);
 
     /**
@@ -96,8 +95,7 @@ Object.defineProperties(MovieClip.prototype, {
      * @readonly
      */
   totalFrames: {
-    get: function()
-        {
+    get: function() {
       return this._textures.length;
     },
   },
@@ -110,23 +108,18 @@ Object.defineProperties(MovieClip.prototype, {
      *
      */
   textures: {
-    get: function()
-        {
+    get: function() {
       return this._textures;
     },
-    set: function(value)
-        {
-      if(value[0] instanceof core.Texture)
-            {
+    set: function(value) {
+      if (value[0] instanceof core.Texture) {
         this._textures = value;
         this._durations = null;
       }
-      else
-            {
+      else {
         this._textures = [];
         this._durations = [];
-        for(var i = 0; i < value.length; i++)
-                {
+        for (var i = 0; i < value.length; i++) {
           this._textures.push(value[i].texture);
           this._durations.push(value[i].time);
         }
@@ -142,11 +135,9 @@ Object.defineProperties(MovieClip.prototype, {
     * @readonly
     */
   currentFrame: {
-    get: function()
-        {
+    get: function() {
       var currentFrame = Math.floor(this._currentTime) % this._textures.length;
-      if (currentFrame < 0)
-            {
+      if (currentFrame < 0) {
         currentFrame += this._textures.length;
       }
       return currentFrame;
@@ -159,10 +150,8 @@ Object.defineProperties(MovieClip.prototype, {
  * Stops the MovieClip
  *
  */
-MovieClip.prototype.stop = function()
-{
-  if(!this.playing)
-    {
+MovieClip.prototype.stop = function() {
+  if (!this.playing) {
     return;
   }
 
@@ -174,10 +163,8 @@ MovieClip.prototype.stop = function()
  * Plays the MovieClip
  *
  */
-MovieClip.prototype.play = function()
-{
-  if(this.playing)
-    {
+MovieClip.prototype.play = function() {
+  if (this.playing) {
     return;
   }
 
@@ -190,8 +177,7 @@ MovieClip.prototype.play = function()
  *
  * @param frameNumber {number} frame index to stop at
  */
-MovieClip.prototype.gotoAndStop = function(frameNumber)
-{
+MovieClip.prototype.gotoAndStop = function(frameNumber) {
   this.stop();
 
   this._currentTime = frameNumber;
@@ -204,8 +190,7 @@ MovieClip.prototype.gotoAndStop = function(frameNumber)
  *
  * @param frameNumber {number} frame index to start at
  */
-MovieClip.prototype.gotoAndPlay = function(frameNumber)
-{
+MovieClip.prototype.gotoAndPlay = function(frameNumber) {
   this._currentTime = frameNumber;
 
   this.play();
@@ -215,18 +200,15 @@ MovieClip.prototype.gotoAndPlay = function(frameNumber)
  * Updates the object transform for rendering
  * @private
  */
-MovieClip.prototype.update = function(deltaTime)
-{
+MovieClip.prototype.update = function(deltaTime) {
   var elapsed = this.animationSpeed * deltaTime;
 
-  if (this._durations !== null)
-    {
+  if (this._durations !== null) {
     var lag = this._currentTime % 1 * this._durations[this.currentFrame];
 
     lag += elapsed / 60 * 1000;
 
-    while (lag < 0)
-        {
+    while (lag < 0) {
       this._currentTime--;
       lag += this._durations[this.currentFrame];
     }
@@ -234,39 +216,32 @@ MovieClip.prototype.update = function(deltaTime)
     var sign = Math.sign(this.animationSpeed * deltaTime);
     this._currentTime = Math.floor(this._currentTime);
 
-    while (lag >= this._durations[this.currentFrame])
-        {
+    while (lag >= this._durations[this.currentFrame]) {
       lag -= this._durations[this.currentFrame] * sign;
       this._currentTime += sign;
     }
 
     this._currentTime += lag / this._durations[this.currentFrame];
   }
-  else
-    {
+  else {
     this._currentTime += elapsed;
   }
 
-  if (this._currentTime < 0 && !this.loop)
-    {
+  if (this._currentTime < 0 && !this.loop) {
     this.gotoAndStop(0);
 
-    if (this.onComplete)
-        {
+    if (this.onComplete) {
       this.onComplete();
     }
   }
-  else if (this._currentTime >= this._textures.length && !this.loop)
-    {
+  else if (this._currentTime >= this._textures.length && !this.loop) {
     this.gotoAndStop(this._textures.length - 1);
 
-    if (this.onComplete)
-        {
+    if (this.onComplete) {
       this.onComplete();
     }
   }
-  else
-    {
+  else {
     this._texture = this._textures[this.currentFrame];
   }
 
@@ -276,8 +251,7 @@ MovieClip.prototype.update = function(deltaTime)
  * Stops the MovieClip and destroys it
  *
  */
-MovieClip.prototype.destroy = function( )
-{
+MovieClip.prototype.destroy = function() {
   this.stop();
   core.Sprite.prototype.destroy.call(this);
 };
@@ -288,12 +262,10 @@ MovieClip.prototype.destroy = function( )
  * @static
  * @param frames {string[]} the array of frames ids the movieclip will use as its texture frames
  */
-MovieClip.fromFrames = function(frames)
-{
+MovieClip.fromFrames = function(frames) {
   var textures = [];
 
-  for (var i = 0; i < frames.length; ++i)
-    {
+  for (var i = 0; i < frames.length; ++i) {
     textures.push(new core.Texture.fromFrame(frames[i]));
   }
 
@@ -306,12 +278,10 @@ MovieClip.fromFrames = function(frames)
  * @static
  * @param images {string[]} the array of image urls the movieclip will use as its texture frames
  */
-MovieClip.fromImages = function(images)
-{
+MovieClip.fromImages = function(images) {
   var textures = [];
 
-  for (var i = 0; i < images.length; ++i)
-    {
+  for (var i = 0; i < images.length; ++i) {
     textures.push(new core.Texture.fromImage(images[i]));
   }
 

@@ -1,5 +1,6 @@
 const Mesh = require('./mesh/Mesh');
 const Rope = require('./mesh/Rope');
+const CONST = require('./const');
 const textureFromData = require('./utils').textureFromData;
 require('./mesh/webgl/MeshRenderer');
 require('./mesh/webgl/MeshShader');

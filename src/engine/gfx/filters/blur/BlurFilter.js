@@ -10,8 +10,7 @@ var core = require('../../core'),
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function BlurFilter()
-{
+function BlurFilter() {
   core.AbstractFilter.call(this);
 
   this.blurXFilter = new BlurXFilter();
@@ -22,8 +21,7 @@ BlurFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BlurFilter.prototype.constructor = BlurFilter;
 module.exports = BlurFilter;
 
-BlurFilter.prototype.applyFilter = function(renderer, input, output)
-{
+BlurFilter.prototype.applyFilter = function(renderer, input, output) {
   var renderTarget = renderer.filterManager.getRenderTarget(true);
 
   this.blurXFilter.applyFilter(renderer, input, renderTarget);
@@ -41,12 +39,10 @@ Object.defineProperties(BlurFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
+    get: function() {
       return this.blurXFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.padding = Math.abs(value) * 0.5;
       this.blurXFilter.blur = this.blurYFilter.blur = value;
     },
@@ -60,12 +56,10 @@ Object.defineProperties(BlurFilter.prototype, {
      * @default 1
      */
   passes: {
-    get: function()
-        {
-      return  this.blurXFilter.passes;
+    get: function() {
+      return this.blurXFilter.passes;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurXFilter.passes = this.blurYFilter.passes = value;
     },
   },
@@ -78,12 +72,10 @@ Object.defineProperties(BlurFilter.prototype, {
      * @default 2
      */
   blurX: {
-    get: function()
-        {
+    get: function() {
       return this.blurXFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurXFilter.blur = value;
     },
   },
@@ -96,12 +88,10 @@ Object.defineProperties(BlurFilter.prototype, {
      * @default 2
      */
   blurY: {
-    get: function()
-        {
+    get: function() {
       return this.blurYFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurYFilter.blur = value;
     },
   },

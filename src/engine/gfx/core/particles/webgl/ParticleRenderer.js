@@ -38,8 +38,7 @@ class ParticleRenderer extends ObjectRenderer {
      */
     this.indices = new Uint16Array(numIndices);
 
-    for (var i=0, j=0; i < numIndices; i += 6, j += 4)
-    {
+    for (var i = 0, j = 0; i < numIndices; i += 6, j += 4) {
       this.indices[i + 0] = j + 0;
       this.indices[i + 1] = j + 1;
       this.indices[i + 2] = j + 2;
@@ -67,8 +66,7 @@ class ParticleRenderer extends ObjectRenderer {
    *
    * @private
    */
-  onContextChange()
-  {
+  onContextChange() {
     var gl = this.renderer.gl;
 
       // setup default shader
@@ -78,7 +76,7 @@ class ParticleRenderer extends ObjectRenderer {
 
       // 65535 is max index, so 65535 / 6 = 10922.
 
-      //upload the index data
+      // upload the index data
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
 
@@ -125,8 +123,7 @@ class ParticleRenderer extends ObjectRenderer {
    * Starts a new particle batch.
    *
    */
-  start()
-  {
+  start() {
     var gl = this.renderer.gl;
 
       // bind the main texture
@@ -147,25 +144,21 @@ class ParticleRenderer extends ObjectRenderer {
    *
    * @param container {PIXI.ParticleContainer} The container to render using this ParticleRenderer
    */
-  render(container)
-  {
+  render(container) {
     var children = container.children,
       totalChildren = children.length,
       maxSize = container._maxSize,
       batchSize = container._batchSize;
 
-    if(totalChildren === 0)
-      {
+    if (totalChildren === 0) {
       return;
     }
-    else if(totalChildren > maxSize)
-      {
+    else if (totalChildren > maxSize) {
       totalChildren = maxSize;
     }
 
-    if(!container._buffers)
-      {
-      container._buffers = this.generateBuffers( container );
+    if (!container._buffers) {
+      container._buffers = this.generateBuffers(container);
     }
 
       // if the uvs have not updated then no point rendering just yet!
@@ -173,8 +166,8 @@ class ParticleRenderer extends ObjectRenderer {
 
     var gl = this.renderer.gl;
 
-    var m =  container.worldTransform.copy( this.tempMatrix );
-    m.prepend( this.renderer.currentRenderTarget.projectionMatrix );
+    var m = container.worldTransform.copy(this.tempMatrix);
+    m.prepend(this.renderer.currentRenderTarget.projectionMatrix);
     gl.uniformMatrix3fv(this.shader.uniforms.projectionMatrix._location, false, m.toArray(true));
     gl.uniform1f(this.shader.uniforms.uAlpha._location, container.worldAlpha);
 
@@ -182,30 +175,24 @@ class ParticleRenderer extends ObjectRenderer {
       // make sure the texture is bound..
     var baseTexture = children[0]._texture.baseTexture;
 
-    if (!baseTexture._glTextures[gl.id])
-      {
+    if (!baseTexture._glTextures[gl.id]) {
           // if the texture has not updated then lets not upload any static properties
-      if(!this.renderer.updateTexture(baseTexture))
-          {
+      if (!this.renderer.updateTexture(baseTexture)) {
         return;
       }
 
-      if(!container._properties[0] || !container._properties[3])
-          {
+      if (!container._properties[0] || !container._properties[3]) {
         container._bufferToUpdate = 0;
       }
     }
-    else
-      {
+    else {
       gl.bindTexture(gl.TEXTURE_2D, baseTexture._glTextures[gl.id]);
     }
 
       // now lets upload and render the buffers..
-    for (var i = 0, j = 0; i < totalChildren; i += batchSize, j += 1)
-      {
-      var amount = ( totalChildren - i);
-      if(amount > batchSize)
-          {
+    for (var i = 0, j = 0; i < totalChildren; i += batchSize, j += 1) {
+      var amount = (totalChildren - i);
+      if (amount > batchSize) {
         amount = batchSize;
       }
 
@@ -215,14 +202,13 @@ class ParticleRenderer extends ObjectRenderer {
       buffer.uploadDynamic(children, i, amount);
 
           // we only upload the static content when we have to!
-      if(container._bufferToUpdate === j)
-          {
+      if (container._bufferToUpdate === j) {
         buffer.uploadStatic(children, i, amount);
         container._bufferToUpdate = j + 1;
       }
 
           // bind the buffer
-      buffer.bind( this.shader );
+      buffer.bind(this.shader);
 
            // now draw those suckas!
       gl.drawElements(gl.TRIANGLES, amount * 6, gl.UNSIGNED_SHORT, 0);
@@ -235,8 +221,7 @@ class ParticleRenderer extends ObjectRenderer {
    *
    * @param container {PIXI.ParticleContainer} The container to render using this ParticleRenderer
    */
-  generateBuffers(container)
-  {
+  generateBuffers(container) {
     var gl = this.renderer.gl,
       buffers = [],
       size = container._maxSize,
@@ -244,8 +229,7 @@ class ParticleRenderer extends ObjectRenderer {
       dynamicPropertyFlags = container._properties,
       i;
 
-    for (i = 0; i < size; i += batchSize)
-      {
+    for (i = 0; i < size; i += batchSize) {
       buffers.push(new ParticleBuffer(gl, this.properties, dynamicPropertyFlags, batchSize));
     }
 
@@ -262,8 +246,7 @@ class ParticleRenderer extends ObjectRenderer {
    * @param stride {number}
    * @param offset {number}
    */
-  uploadVertices(children, startIndex, amount, array, stride, offset)
-  {
+  uploadVertices(children, startIndex, amount, array, stride, offset) {
     var sprite,
       texture,
       trim,
@@ -278,8 +261,7 @@ class ParticleRenderer extends ObjectRenderer {
       sx = sprite.scale.x;
       sy = sprite.scale.y;
 
-      if (texture.trim)
-          {
+      if (texture.trim) {
               // if the sprite is trimmed then we need to add the extra space before transforming the sprite coords..
         trim = texture.trim;
 
@@ -289,12 +271,11 @@ class ParticleRenderer extends ObjectRenderer {
         h1 = trim.y - sprite.anchor.y * trim.height;
         h0 = h1 + texture.crop.height;
       }
-      else
-          {
-        w0 = (texture._frame.width ) * (1-sprite.anchor.x);
-        w1 = (texture._frame.width ) * -sprite.anchor.x;
+      else {
+        w0 = (texture._frame.width) * (1 - sprite.anchor.x);
+        w1 = (texture._frame.width) * -sprite.anchor.x;
 
-        h0 = texture._frame.height * (1-sprite.anchor.y);
+        h0 = texture._frame.height * (1 - sprite.anchor.y);
         h1 = texture._frame.height * -sprite.anchor.y;
       }
 
@@ -324,10 +305,8 @@ class ParticleRenderer extends ObjectRenderer {
    * @param stride {number}
    * @param offset {number}
    */
-  uploadPosition(children,startIndex, amount, array, stride, offset)
-  {
-    for (var i = 0; i < amount; i++)
-      {
+  uploadPosition(children,startIndex, amount, array, stride, offset) {
+    for (var i = 0; i < amount; i++) {
       var spritePosition = children[startIndex + i].position;
 
       array[offset] = spritePosition.x;
@@ -356,10 +335,8 @@ class ParticleRenderer extends ObjectRenderer {
    * @param stride {number}
    * @param offset {number}
    */
-  uploadRotation(children,startIndex, amount, array, stride, offset)
-  {
-    for (var i = 0; i < amount; i++)
-      {
+  uploadRotation(children,startIndex, amount, array, stride, offset) {
+    for (var i = 0; i < amount; i++) {
       var spriteRotation = children[startIndex + i].rotation;
 
 
@@ -381,14 +358,11 @@ class ParticleRenderer extends ObjectRenderer {
    * @param stride {number}
    * @param offset {number}
    */
-  uploadUvs(children,startIndex, amount, array, stride, offset)
-  {
-    for (var i = 0; i < amount; i++)
-      {
+  uploadUvs(children,startIndex, amount, array, stride, offset) {
+    for (var i = 0; i < amount; i++) {
       var textureUvs = children[startIndex + i]._texture._uvs;
 
-      if (textureUvs)
-          {
+      if (textureUvs) {
         array[offset] = textureUvs.x0;
         array[offset + 1] = textureUvs.y0;
 
@@ -403,9 +377,8 @@ class ParticleRenderer extends ObjectRenderer {
 
         offset += stride * 4;
       }
-      else
-          {
-              //TODO you know this can be easier!
+      else {
+              // TODO you know this can be easier!
         array[offset] = 0;
         array[offset + 1] = 0;
 
@@ -432,10 +405,8 @@ class ParticleRenderer extends ObjectRenderer {
    * @param stride {number}
    * @param offset {number}
    */
-  uploadAlpha(children,startIndex, amount, array, stride, offset)
-  {
-    for (var i = 0; i < amount; i++)
-       {
+  uploadAlpha(children,startIndex, amount, array, stride, offset) {
+    for (var i = 0; i < amount; i++) {
       var spriteAlpha = children[startIndex + i].alpha;
 
       array[offset] = spriteAlpha;
@@ -452,8 +423,7 @@ class ParticleRenderer extends ObjectRenderer {
    * Destroys the ParticleRenderer.
    *
    */
-  destroy()
-  {
+  destroy() {
     if (this.renderer.gl) {
       this.renderer.gl.deleteBuffer(this.indexBuffer);
     }

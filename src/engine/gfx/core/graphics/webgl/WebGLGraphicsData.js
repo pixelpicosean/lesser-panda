@@ -16,7 +16,7 @@ class WebGLGraphicsData {
      */
     this.gl = gl;
 
-    //TODO does this need to be split before uploding??
+    // TODO does this need to be split before uploding??
     /**
      * An array of color components (r,g,b)
      * @member {number[]}

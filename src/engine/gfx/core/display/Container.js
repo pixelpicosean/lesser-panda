@@ -42,25 +42,20 @@ class Container extends DisplayObject {
    * @param child {PIXI.DisplayObject} The DisplayObject to add to the container
    * @return {PIXI.DisplayObject} The child that was added.
    */
-  addChild(child)
-  {
+  addChild(child) {
     var argumentsLength = arguments.length;
 
       // if there is only one argument we can bypass looping through the them
-    if(argumentsLength > 1)
-      {
+    if (argumentsLength > 1) {
           // loop through the arguments property and add all children
           // use it the right way (.length and [i]) so that this function can still be optimised by JS runtimes
-      for (var i = 0; i < argumentsLength; i++)
-          {
-        this.addChild( arguments[i] );
+      for (var i = 0; i < argumentsLength; i++) {
+        this.addChild(arguments[i]);
       }
     }
-    else
-      {
+    else {
           // if the child has a parent then lets remove it as Pixi objects can only exist in one place
-      if (child.parent)
-          {
+      if (child.parent) {
         child.parent.removeChild(child);
       }
 
@@ -69,7 +64,7 @@ class Container extends DisplayObject {
       this.children.push(child);
 
           // TODO - lets either do all callbacks or all events.. not both!
-      this.onChildrenChange(this.children.length-1);
+      this.onChildrenChange(this.children.length - 1);
       child.emit('added', this);
     }
 
@@ -83,12 +78,9 @@ class Container extends DisplayObject {
    * @param index {number} The index to place the child in
    * @return {PIXI.DisplayObject} The child that was added.
    */
-  addChildAt(child, index)
-  {
-    if (index >= 0 && index <= this.children.length)
-      {
-      if (child.parent)
-          {
+  addChildAt(child, index) {
+    if (index >= 0 && index <= this.children.length) {
+      if (child.parent) {
         child.parent.removeChild(child);
       }
 
@@ -102,9 +94,8 @@ class Container extends DisplayObject {
 
       return child;
     }
-    else
-      {
-      throw new Error(child + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
+    else {
+      throw new Error(child + 'addChildAt: The index ' + index + ' supplied is out of bounds ' + this.children.length);
     }
   }
 
@@ -114,18 +105,15 @@ class Container extends DisplayObject {
    * @param child {PIXI.DisplayObject}
    * @param child2 {PIXI.DisplayObject}
    */
-  swapChildren(child, child2)
-  {
-    if (child === child2)
-      {
+  swapChildren(child, child2) {
+    if (child === child2) {
       return;
     }
 
     var index1 = this.getChildIndex(child);
     var index2 = this.getChildIndex(child2);
 
-    if (index1 < 0 || index2 < 0)
-      {
+    if (index1 < 0 || index2 < 0) {
       throw new Error('swapChildren: Both the supplied DisplayObjects must be children of the caller.');
     }
 
@@ -140,12 +128,10 @@ class Container extends DisplayObject {
    * @param child {PIXI.DisplayObject} The DisplayObject instance to identify
    * @return {number} The index position of the child display object to identify
    */
-  getChildIndex(child)
-  {
+  getChildIndex(child) {
     var index = this.children.indexOf(child);
 
-    if (index === -1)
-      {
+    if (index === -1) {
       throw new Error('The supplied DisplayObject must be a child of the caller');
     }
 
@@ -158,17 +144,15 @@ class Container extends DisplayObject {
    * @param child {PIXI.DisplayObject} The child DisplayObject instance for which you want to change the index number
    * @param index {number} The resulting index number for the child display object
    */
-  setChildIndex(child, index)
-  {
-    if (index < 0 || index >= this.children.length)
-      {
+  setChildIndex(child, index) {
+    if (index < 0 || index >= this.children.length) {
       throw new Error('The supplied index is out of bounds');
     }
 
     var currentIndex = this.getChildIndex(child);
 
     utils.removeItems(this.children, currentIndex, 1); // remove from old position
-    this.children.splice(index, 0, child); //add at new position
+    this.children.splice(index, 0, child); // add at new position
     this.onChildrenChange(index);
   }
 
@@ -178,10 +162,8 @@ class Container extends DisplayObject {
    * @param index {number} The index to get the child at
    * @return {PIXI.DisplayObject} The child at the given index, if any.
    */
-  getChildAt(index)
-  {
-    if (index < 0 || index >= this.children.length)
-      {
+  getChildAt(index) {
+    if (index < 0 || index >= this.children.length) {
       throw new Error('getChildAt: Supplied index ' + index + ' does not exist in the child list, or the supplied DisplayObject is not a child of the caller');
     }
 
@@ -194,26 +176,21 @@ class Container extends DisplayObject {
    * @param child {PIXI.DisplayObject} The DisplayObject to remove
    * @return {PIXI.DisplayObject} The child that was removed.
    */
-  removeChild(child)
-  {
+  removeChild(child) {
     var argumentsLength = arguments.length;
 
       // if there is only one argument we can bypass looping through the them
-    if(argumentsLength > 1)
-      {
+    if (argumentsLength > 1) {
           // loop through the arguments property and add all children
           // use it the right way (.length and [i]) so that this function can still be optimised by JS runtimes
-      for (var i = 0; i < argumentsLength; i++)
-          {
-        this.removeChild( arguments[i] );
+      for (var i = 0; i < argumentsLength; i++) {
+        this.removeChild(arguments[i]);
       }
     }
-    else
-      {
+    else {
       var index = this.children.indexOf(child);
 
-      if (index === -1)
-          {
+      if (index === -1) {
         return;
       }
 
@@ -234,8 +211,7 @@ class Container extends DisplayObject {
    * @param index {number} The index to get the child from
    * @return {PIXI.DisplayObject} The child that was removed.
    */
-  removeChildAt(index)
-  {
+  removeChildAt(index) {
     var child = this.getChildAt(index);
 
     child.parent = null;
@@ -254,37 +230,31 @@ class Container extends DisplayObject {
    * @param beginIndex {number} The beginning position. Default value is 0.
    * @param endIndex {number} The ending position. Default value is size of the container.
    */
-  removeChildren(beginIndex, endIndex)
-  {
+  removeChildren(beginIndex, endIndex) {
     var begin = beginIndex || 0;
     var end = typeof endIndex === 'number' ? endIndex : this.children.length;
     var range = end - begin;
     var removed, i;
 
-    if (range > 0 && range <= end)
-      {
+    if (range > 0 && range <= end) {
       removed = this.children.splice(begin, range);
 
-      for (i = 0; i < removed.length; ++i)
-          {
+      for (i = 0; i < removed.length; ++i) {
         removed[i].parent = null;
       }
 
       this.onChildrenChange(beginIndex);
 
-      for (i = 0; i < removed.length; ++i)
-          {
+      for (i = 0; i < removed.length; ++i) {
         removed[i].emit('removed', this);
       }
 
       return removed;
     }
-    else if (range === 0 && this.children.length === 0)
-      {
+    else if (range === 0 && this.children.length === 0) {
       return [];
     }
-    else
-      {
+    else {
       throw new RangeError('removeChildren: numeric values are outside the acceptable range.');
     }
   }
@@ -298,8 +268,7 @@ class Container extends DisplayObject {
    * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
    * @return {PIXI.Texture} a texture of the display object
    */
-  generateTexture(renderer, resolution, scaleMode)
-  {
+  generateTexture(renderer, resolution, scaleMode) {
     var bounds = this.getLocalBounds();
 
     var renderTexture = new RenderTexture(renderer, bounds.width | 0, bounds.height | 0, scaleMode, resolution);
@@ -317,17 +286,14 @@ class Container extends DisplayObject {
    *
    * @private
    */
-  updateTransform()
-  {
-    if (!this.visible)
-      {
+  updateTransform() {
+    if (!this.visible) {
       return;
     }
 
     this.displayObjectUpdateTransform();
 
-    for (var i = 0, j = this.children.length; i < j; ++i)
-      {
+    for (var i = 0, j = this.children.length; i < j; ++i) {
       this.children[i].updateTransform();
     }
   }
@@ -337,13 +303,10 @@ class Container extends DisplayObject {
    *
    * @return {PIXI.Rectangle} The rectangular bounding area
    */
-  getBounds()
-  {
-    if(!this._currentBounds)
-      {
+  getBounds() {
+    if (!this._currentBounds) {
 
-      if (this.children.length === 0)
-          {
+      if (this.children.length === 0) {
         return math.Rectangle.EMPTY;
       }
 
@@ -361,12 +324,10 @@ class Container extends DisplayObject {
 
       var childVisible = false;
 
-      for (var i = 0, j = this.children.length; i < j; ++i)
-          {
+      for (var i = 0, j = this.children.length; i < j; ++i) {
         var child = this.children[i];
 
-        if (!child.visible)
-              {
+        if (!child.visible) {
           continue;
         }
 
@@ -384,8 +345,7 @@ class Container extends DisplayObject {
         maxY = maxY > childMaxY ? maxY : childMaxY;
       }
 
-      if (!childVisible)
-          {
+      if (!childVisible) {
         return math.Rectangle.EMPTY;
       }
 
@@ -408,14 +368,12 @@ class Container extends DisplayObject {
    *
    * @return {PIXI.Rectangle} The rectangular bounding area
    */
-  getLocalBounds()
-  {
+  getLocalBounds() {
     var matrixCache = this.worldTransform;
 
     this.worldTransform = math.Matrix.IDENTITY;
 
-    for (var i = 0, j = this.children.length; i < j; ++i)
-      {
+    for (var i = 0, j = this.children.length; i < j; ++i) {
       this.children[i].updateTransform();
     }
 
@@ -423,7 +381,7 @@ class Container extends DisplayObject {
 
     this._currentBounds = null;
 
-    return this.getBounds( math.Matrix.IDENTITY );
+    return this.getBounds(math.Matrix.IDENTITY);
   }
 
   /**
@@ -431,30 +389,25 @@ class Container extends DisplayObject {
    *
    * @param renderer {PIXI.WebGLRenderer} The renderer
    */
-  renderWebGL(renderer)
-  {
+  renderWebGL(renderer) {
 
       // if the object is not visible or the alpha is 0 then no need to render this element
-    if (!this.visible || this.worldAlpha <= 0 || !this.renderable)
-      {
+    if (!this.visible || this.worldAlpha <= 0 || !this.renderable) {
       return;
     }
 
     var i, j;
 
       // do a quick check to see if this element has a mask or a filter.
-    if (this._mask || this._filters)
-      {
+    if (this._mask || this._filters) {
       renderer.currentRenderer.flush();
 
           // push filter first as we need to ensure the stencil buffer is correct for any masking
-      if (this._filters && this._filters.length)
-          {
+      if (this._filters && this._filters.length) {
         renderer.filterManager.pushFilter(this, this._filters);
       }
 
-      if (this._mask)
-          {
+      if (this._mask) {
         renderer.maskManager.pushMask(this, this._mask);
       }
 
@@ -464,32 +417,27 @@ class Container extends DisplayObject {
       this._renderWebGL(renderer);
 
           // now loop through the children and make sure they get rendered
-      for (i = 0, j = this.children.length; i < j; i++)
-          {
+      for (i = 0, j = this.children.length; i < j; i++) {
         this.children[i].renderWebGL(renderer);
       }
 
       renderer.currentRenderer.flush();
 
-      if (this._mask)
-          {
+      if (this._mask) {
         renderer.maskManager.popMask(this, this._mask);
       }
 
-      if (this._filters)
-          {
+      if (this._filters) {
         renderer.filterManager.popFilter();
 
       }
       renderer.currentRenderer.start();
     }
-    else
-      {
+    else {
       this._renderWebGL(renderer);
 
           // simple render children!
-      for (i = 0, j = this.children.length; i < j; ++i)
-          {
+      for (i = 0, j = this.children.length; i < j; ++i) {
         this.children[i].renderWebGL(renderer);
       }
     }
@@ -501,9 +449,8 @@ class Container extends DisplayObject {
    * @param renderer {PIXI.WebGLRenderer} The renderer
    * @private
    */
-  _renderWebGL(renderer) /*eslint no-unused-vars:0*/
-  {
-      // this is where content itself gets rendered...
+  _renderWebGL(renderer) {/* eslint no-unused-vars:0 */
+    // this is where content itself gets rendered...
   }
 
   /**
@@ -512,9 +459,8 @@ class Container extends DisplayObject {
    * @param renderer {PIXI.CanvasRenderer} The renderer
    * @private
    */
-  _renderCanvas(renderer) /*eslint no-unused-vars:0*/
-  {
-      // this is where content itself gets rendered...
+  _renderCanvas(renderer) { /* eslint no-unused-vars:0 */
+    // this is where content itself gets rendered...
   }
 
 
@@ -523,27 +469,22 @@ class Container extends DisplayObject {
    *
    * @param renderer {PIXI.CanvasRenderer} The renderer
    */
-  renderCanvas(renderer)
-  {
+  renderCanvas(renderer) {
       // if not visible or the alpha is 0 then no need to render this
-    if (!this.visible || this.alpha <= 0 || !this.renderable)
-      {
+    if (!this.visible || this.alpha <= 0 || !this.renderable) {
       return;
     }
 
-    if (this._mask)
-      {
+    if (this._mask) {
       renderer.maskManager.pushMask(this._mask, renderer);
     }
 
     this._renderCanvas(renderer);
-    for (var i = 0, j = this.children.length; i < j; ++i)
-      {
+    for (var i = 0, j = this.children.length; i < j; ++i) {
       this.children[i].renderCanvas(renderer);
     }
 
-    if (this._mask)
-      {
+    if (this._mask) {
       renderer.maskManager.popMask(renderer);
     }
   }
@@ -552,14 +493,11 @@ class Container extends DisplayObject {
    * Destroys the container
    * @param [destroyChildren=false] {boolean} if set to true, all the children will have their destroy method called as well
    */
-  destroy(destroyChildren)
-  {
+  destroy(destroyChildren) {
     DisplayObject.prototype.destroy.call(this);
 
-    if (destroyChildren)
-      {
-      for (var i = 0, j = this.children.length; i < j; ++i)
-          {
+    if (destroyChildren) {
+      for (var i = 0, j = this.children.length; i < j; ++i) {
         this.children[i].destroy(destroyChildren);
       }
     }
@@ -582,21 +520,17 @@ Object.defineProperties(Container.prototype, {
      * @memberof PIXI.Container#
      */
   width: {
-    get: function()
-        {
+    get: function() {
       return this.scale.x * this.getLocalBounds().width;
     },
-    set: function(value)
-        {
+    set: function(value) {
 
       var width = this.getLocalBounds().width;
 
-      if (width !== 0)
-            {
+      if (width !== 0) {
         this.scale.x = value / width;
       }
-      else
-            {
+      else {
         this.scale.x = 1;
       }
 
@@ -612,21 +546,17 @@ Object.defineProperties(Container.prototype, {
      * @memberof PIXI.Container#
      */
   height: {
-    get: function()
-        {
-      return  this.scale.y * this.getLocalBounds().height;
+    get: function() {
+      return this.scale.y * this.getLocalBounds().height;
     },
-    set: function(value)
-        {
+    set: function(value) {
 
       var height = this.getLocalBounds().height;
 
-      if (height !== 0)
-            {
-        this.scale.y = value / height ;
+      if (height !== 0) {
+        this.scale.y = value / height;
       }
-      else
-            {
+      else {
         this.scale.y = 1;
       }
 

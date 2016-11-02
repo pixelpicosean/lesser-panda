@@ -9,8 +9,7 @@ var DefaultShader = require('../shaders/TextureShader');
  * @param fragmentSrc {string|string[]} The fragment shader source as an array of strings.
  * @param uniforms {object} An object containing the uniforms for this filter.
  */
-function AbstractFilter(vertexSrc, fragmentSrc, uniforms)
-{
+function AbstractFilter(vertexSrc, fragmentSrc, uniforms) {
 
     /**
      * An array of shaders
@@ -46,9 +45,9 @@ function AbstractFilter(vertexSrc, fragmentSrc, uniforms)
      */
   this.fragmentSrc = fragmentSrc || DefaultShader.defaultFragmentSrc;
 
-    //TODO a reminder - would be cool to have lower res filters as this would give better performance.
+    // TODO a reminder - would be cool to have lower res filters as this would give better performance.
 
-    //typeof fragmentSrc === 'string' ? fragmentSrc.split('') : (fragmentSrc || []);
+    // typeof fragmentSrc === 'string' ? fragmentSrc.split('') : (fragmentSrc || []);
 
 }
 
@@ -60,14 +59,12 @@ module.exports = AbstractFilter;
  *
  * @param renderer {PIXI.WebGLRenderer} The renderer to retrieve the shader from
  */
-AbstractFilter.prototype.getShader = function(renderer)
-{
+AbstractFilter.prototype.getShader = function(renderer) {
   var gl = renderer.gl;
 
   var shader = this.shaders[gl.id];
 
-  if (!shader)
-    {
+  if (!shader) {
     shader = new DefaultShader(renderer.shaderManager,
             this.vertexSrc,
             this.fragmentSrc,
@@ -89,8 +86,7 @@ AbstractFilter.prototype.getShader = function(renderer)
  * @param output {PIXI.RenderTarget}
  * @param clear {boolean} Whether or not we want to clear the outputTarget
  */
-AbstractFilter.prototype.applyFilter = function(renderer, input, output, clear)
-{
+AbstractFilter.prototype.applyFilter = function(renderer, input, output, clear) {
   var shader = this.getShader(renderer);
 
   renderer.filterManager.applyFilter(shader, input, output, clear);
@@ -100,10 +96,8 @@ AbstractFilter.prototype.applyFilter = function(renderer, input, output, clear)
  * Syncs a uniform between the class object and the shaders.
  *
  */
-AbstractFilter.prototype.syncUniform = function(uniform)
-{
-  for (var i = 0, j = this.shaders.length; i < j; ++i)
-    {
+AbstractFilter.prototype.syncUniform = function(uniform) {
+  for (var i = 0, j = this.shaders.length; i < j; ++i) {
     this.shaders[i].syncUniform(uniform);
   }
 };

@@ -31,7 +31,7 @@ class Storage {
    * @param {*} value
    */
   set(key, value) {
-    if (!this.supported) return false;
+    if (!this.supported) {return false;}
     localStorage.setItem(this.id + '.' + key, this._encode(value));
   }
 
@@ -45,7 +45,7 @@ class Storage {
    */
   get(key, defaultValue) {
     let raw = localStorage.getItem(this.id + '.' + key);
-    if (raw === null) return defaultValue;
+    if (raw === null) {return defaultValue;}
     try {
       return this._decode(raw);
     }
@@ -84,7 +84,7 @@ class Storage {
     let i, key;
     for (i = localStorage.length - 1; i >= 0; i--) {
       key = localStorage.key(i);
-      if (key.indexOf(this.id + '.') !== -1) localStorage.removeItem(key);
+      if (key.indexOf(this.id + '.') !== -1) {localStorage.removeItem(key);}
     }
   }
 
@@ -112,7 +112,7 @@ class Storage {
    * @private
    */
   _isSupported() {
-    if (typeof localStorage !== 'object') return false;
+    if (typeof localStorage !== 'object') {return false;}
     try {
       localStorage.setItem('localStorage', 1);
       localStorage.removeItem('localStorage');

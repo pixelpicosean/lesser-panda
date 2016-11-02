@@ -30,8 +30,7 @@ class CanvasBuffer {
    *
    * @private
    */
-  clear()
-  {
+  clear() {
     this.context.setTransform(1, 0, 0, 1, 0, 0);
     this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
   }
@@ -42,8 +41,7 @@ class CanvasBuffer {
    * @param width {number} the new width of the canvas
    * @param height {number} the new height of the canvas
    */
-  resize(width, height)
-  {
+  resize(width, height) {
     this.canvas.width = width;
     this.canvas.height = height;
   }
@@ -52,8 +50,7 @@ class CanvasBuffer {
    * Destroys this canvas.
    *
    */
-  destroy()
-  {
+  destroy() {
     this.context = null;
     this.canvas = null;
   }
@@ -67,12 +64,10 @@ Object.defineProperties(CanvasBuffer.prototype, {
      * @memberof PIXI.CanvasBuffer#
      */
   width: {
-    get: function()
-        {
+    get: function() {
       return this.canvas.width;
     },
-    set: function(val)
-        {
+    set: function(val) {
       this.canvas.width = val;
     },
   },
@@ -83,12 +78,10 @@ Object.defineProperties(CanvasBuffer.prototype, {
      * @memberof PIXI.CanvasBuffer#
      */
   height: {
-    get: function()
-        {
+    get: function() {
       return this.canvas.height;
     },
-    set: function(val)
-        {
+    set: function(val) {
       this.canvas.height = val;
     },
   },

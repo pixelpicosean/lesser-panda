@@ -9,8 +9,7 @@ var WebGLManager = require('./WebGLManager'),
  * @extends WebGLManager
  * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
-function ShaderManager(renderer)
-{
+function ShaderManager(renderer) {
   WebGLManager.call(this, renderer);
 
     /**
@@ -28,8 +27,7 @@ function ShaderManager(renderer)
      */
   this.tempAttribState = [];
 
-  for (var i = 0; i < this.maxAttibs; i++)
-    {
+  for (var i = 0; i < this.maxAttibs; i++) {
     this.attribState[i] = false;
   }
 
@@ -63,8 +61,7 @@ module.exports = ShaderManager;
  * Called when there is a WebGL context change.
  *
  */
-ShaderManager.prototype.onContextChange = function()
-{
+ShaderManager.prototype.onContextChange = function() {
   this.initPlugins();
 
   var gl = this.renderer.gl;
@@ -74,8 +71,7 @@ ShaderManager.prototype.onContextChange = function()
 
   this.attribState = [];
 
-  for (var i = 0; i < this.maxAttibs; i++)
-    {
+  for (var i = 0; i < this.maxAttibs; i++) {
     this.attribState[i] = false;
   }
 
@@ -90,36 +86,29 @@ ShaderManager.prototype.onContextChange = function()
  *
  * @param attribs {any[]} attribs
  */
-ShaderManager.prototype.setAttribs = function(attribs)
-{
+ShaderManager.prototype.setAttribs = function(attribs) {
     // reset temp state
   var i;
 
-  for (i = 0; i < this.tempAttribState.length; i++)
-    {
+  for (i = 0; i < this.tempAttribState.length; i++) {
     this.tempAttribState[i] = false;
   }
 
     // set the new attribs
-  for (var a in attribs)
-    {
+  for (var a in attribs) {
     this.tempAttribState[attribs[a]] = true;
   }
 
   var gl = this.renderer.gl;
 
-  for (i = 0; i < this.attribState.length; i++)
-    {
-    if (this.attribState[i] !== this.tempAttribState[i])
-        {
+  for (i = 0; i < this.attribState.length; i++) {
+    if (this.attribState[i] !== this.tempAttribState[i]) {
       this.attribState[i] = this.tempAttribState[i];
 
-      if (this.attribState[i])
-            {
+      if (this.attribState[i]) {
         gl.enableVertexAttribArray(i);
       }
-      else
-            {
+      else {
         gl.disableVertexAttribArray(i);
       }
     }
@@ -131,10 +120,8 @@ ShaderManager.prototype.setAttribs = function(attribs)
  *
  * @param shader {Shader} the shader to upload
  */
-ShaderManager.prototype.setShader = function(shader)
-{
-  if (this._currentId === shader.uid)
-    {
+ShaderManager.prototype.setShader = function(shader) {
+  if (this._currentId === shader.uid) {
     return false;
   }
 
@@ -152,8 +139,7 @@ ShaderManager.prototype.setShader = function(shader)
  * Destroys this object.
  *
  */
-ShaderManager.prototype.destroy = function()
-{
+ShaderManager.prototype.destroy = function() {
   this.primitiveShader.destroy();
   this.complexPrimitiveShader.destroy();
   WebGLManager.prototype.destroy.call(this);

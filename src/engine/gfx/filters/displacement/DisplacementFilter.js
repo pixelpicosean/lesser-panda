@@ -11,8 +11,7 @@ var core = require('../../core');
  * @memberof PIXI.filters
  * @param sprite {PIXI.Sprite} the sprite used for the displacement map. (make sure its added to the scene!)
  */
-function DisplacementFilter(sprite, scale)
-{
+function DisplacementFilter(sprite, scale) {
   var maskMatrix = new core.Matrix();
   sprite.renderable = false;
 
@@ -23,17 +22,16 @@ function DisplacementFilter(sprite, scale)
         require('./displacement.frag'),
         // uniforms
     {
-      mapSampler:     { type: 'sampler2D', value: sprite.texture },
-      otherMatrix:    { type: 'mat3', value: maskMatrix.toArray(true) },
-      scale:          { type: 'v2', value: { x: 1, y: 1 } },
+      mapSampler: { type: 'sampler2D', value: sprite.texture },
+      otherMatrix: { type: 'mat3', value: maskMatrix.toArray(true) },
+      scale: { type: 'v2', value: { x: 1, y: 1 } },
     }
     );
 
   this.maskSprite = sprite;
   this.maskMatrix = maskMatrix;
 
-  if (scale === null || scale === undefined)
-    {
+  if (scale === null || scale === undefined) {
     scale = 20;
   }
 
@@ -44,15 +42,14 @@ DisplacementFilter.prototype = Object.create(core.AbstractFilter.prototype);
 DisplacementFilter.prototype.constructor = DisplacementFilter;
 module.exports = DisplacementFilter;
 
-DisplacementFilter.prototype.applyFilter = function(renderer, input, output)
-{
+DisplacementFilter.prototype.applyFilter = function(renderer, input, output) {
   var filterManager = renderer.filterManager;
 
   filterManager.calculateMappedMatrix(input.frame, this.maskSprite, this.maskMatrix);
 
   this.uniforms.otherMatrix.value = this.maskMatrix.toArray(true);
-  this.uniforms.scale.value.x = this.scale.x * (1/input.frame.width);
-  this.uniforms.scale.value.y = this.scale.y * (1/input.frame.height);
+  this.uniforms.scale.value.x = this.scale.x * (1 / input.frame.width);
+  this.uniforms.scale.value.y = this.scale.y * (1 / input.frame.height);
 
   var shader = this.getShader(renderer);
      // draw the filter...
@@ -68,12 +65,10 @@ Object.defineProperties(DisplacementFilter.prototype, {
      * @memberof PIXI.filters.DisplacementFilter#
      */
   map: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.mapSampler.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.mapSampler.value = value;
 
     },

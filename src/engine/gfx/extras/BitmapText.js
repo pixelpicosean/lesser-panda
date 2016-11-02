@@ -28,8 +28,7 @@ var core = require('../core');
  *      single line text
  * @param [style.tint=0xFFFFFF] {number} The tint color
  */
-function BitmapText(text, style)
-{
+function BitmapText(text, style) {
   core.Container.call(this);
 
   style = style || {};
@@ -127,12 +126,10 @@ Object.defineProperties(BitmapText.prototype, {
      * @memberof PIXI.extras.BitmapText#
      */
   tint: {
-    get: function()
-        {
+    get: function() {
       return this._font.tint;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this._font.tint = (typeof value === 'number' && value >= 0) ? value : 0xFFFFFF;
 
       this.dirty = true;
@@ -147,12 +144,10 @@ Object.defineProperties(BitmapText.prototype, {
      * @memberof PIXI.extras.BitmapText#
      */
   align: {
-    get: function()
-        {
+    get: function() {
       return this._font.align;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this._font.align = value || 'left';
 
       this.dirty = true;
@@ -166,12 +161,10 @@ Object.defineProperties(BitmapText.prototype, {
      * @memberof PIXI.extras.BitmapText#
      */
   font: {
-    get: function()
-        {
+    get: function() {
       return this._font;
     },
-    set: function(value)
-        {
+    set: function(value) {
       if (!value) {
         return;
       }
@@ -198,15 +191,12 @@ Object.defineProperties(BitmapText.prototype, {
      * @memberof PIXI.extras.BitmapText#
      */
   text: {
-    get: function()
-        {
+    get: function() {
       return this._text;
     },
-    set: function(value)
-        {
+    set: function(value) {
       value = value.toString() || ' ';
-      if (this._text === value)
-            {
+      if (this._text === value) {
         return;
       }
       this._text = value;
@@ -220,8 +210,7 @@ Object.defineProperties(BitmapText.prototype, {
  *
  * @private
  */
-BitmapText.prototype.updateText = function()
-{
+BitmapText.prototype.updateText = function() {
   var data = BitmapText.fonts[this._font.name];
   var pos = new core.Point();
   var prevCharCode = null;
@@ -234,13 +223,11 @@ BitmapText.prototype.updateText = function()
   var lastSpace = -1;
   var maxLineHeight = 0;
 
-  for (var i = 0; i < this.text.length; i++)
-    {
+  for (var i = 0; i < this.text.length; i++) {
     var charCode = this.text.charCodeAt(i);
     lastSpace = /(\s)/.test(this.text.charAt(i)) ? i : lastSpace;
 
-    if (/(?:\r\n|\r|\n)/.test(this.text.charAt(i)))
-        {
+    if (/(?:\r\n|\r|\n)/.test(this.text.charAt(i))) {
       lineWidths.push(lastLineWidth);
       maxLineWidth = Math.max(maxLineWidth, lastLineWidth);
       line++;
@@ -251,8 +238,7 @@ BitmapText.prototype.updateText = function()
       continue;
     }
 
-    if (lastSpace !== -1 && this.maxWidth > 0 && pos.x * scale > this.maxWidth)
-        {
+    if (lastSpace !== -1 && this.maxWidth > 0 && pos.x * scale > this.maxWidth) {
       core.utils.removeItems(chars, lastSpace, i - lastSpace);
       i = lastSpace;
       lastSpace = -1;
@@ -269,17 +255,15 @@ BitmapText.prototype.updateText = function()
 
     var charData = data.chars[charCode];
 
-    if (!charData)
-        {
+    if (!charData) {
       continue;
     }
 
-    if (prevCharCode && charData.kerning[prevCharCode])
-        {
+    if (prevCharCode && charData.kerning[prevCharCode]) {
       pos.x += charData.kerning[prevCharCode];
     }
 
-    chars.push({texture:charData.texture, line: line, charCode: charCode, position: new core.Point(pos.x + charData.xOffset, pos.y + charData.yOffset)});
+    chars.push({ texture:charData.texture, line: line, charCode: charCode, position: new core.Point(pos.x + charData.xOffset, pos.y + charData.yOffset) });
     lastLineWidth = pos.x + (charData.texture.width + charData.xOffset);
     pos.x += charData.xAdvance;
     maxLineHeight = Math.max(maxLineHeight, (charData.yOffset + charData.texture.height));
@@ -291,16 +275,13 @@ BitmapText.prototype.updateText = function()
 
   var lineAlignOffsets = [];
 
-  for (i = 0; i <= line; i++)
-    {
+  for (i = 0; i <= line; i++) {
     var alignOffset = 0;
 
-    if (this._font.align === 'right')
-        {
+    if (this._font.align === 'right') {
       alignOffset = maxLineWidth - lineWidths[i];
     }
-    else if (this._font.align === 'center')
-        {
+    else if (this._font.align === 'center') {
       alignOffset = (maxLineWidth - lineWidths[i]) / 2;
     }
 
@@ -310,16 +291,13 @@ BitmapText.prototype.updateText = function()
   var lenChars = chars.length;
   var tint = this.tint;
 
-  for (i = 0; i < lenChars; i++)
-    {
+  for (i = 0; i < lenChars; i++) {
     var c = this._glyphs[i]; // get the next glyph sprite
 
-    if (c)
-        {
+    if (c) {
       c.texture = chars[i].texture;
     }
-    else
-        {
+    else {
       c = new core.Sprite(chars[i].texture);
       this._glyphs.push(c);
     }
@@ -329,15 +307,13 @@ BitmapText.prototype.updateText = function()
     c.scale.x = c.scale.y = scale;
     c.tint = tint;
 
-    if (!c.parent)
-        {
+    if (!c.parent) {
       this.addChild(c);
     }
   }
 
     // remove unnecessary children.
-  for (i = lenChars; i < this._glyphs.length; ++i)
-    {
+  for (i = lenChars; i < this._glyphs.length; ++i) {
     this.removeChild(this._glyphs[i]);
   }
 
@@ -351,8 +327,7 @@ BitmapText.prototype.updateText = function()
  *
  * @private
  */
-BitmapText.prototype.updateTransform = function()
-{
+BitmapText.prototype.updateTransform = function() {
   this.validate();
   this.containerUpdateTransform();
 };
@@ -363,8 +338,7 @@ BitmapText.prototype.updateTransform = function()
  * @return {PIXI.Rectangle} The rectangular bounding area
  */
 
-BitmapText.prototype.getLocalBounds = function()
-{
+BitmapText.prototype.getLocalBounds = function() {
   this.validate();
   return core.Container.prototype.getLocalBounds.call(this);
 };
@@ -374,10 +348,8 @@ BitmapText.prototype.getLocalBounds = function()
  *
  * @private
  */
-BitmapText.prototype.validate = function()
-{
-  if (this.dirty)
-    {
+BitmapText.prototype.validate = function() {
+  if (this.dirty) {
     this.updateText();
     this.dirty = false;
   }

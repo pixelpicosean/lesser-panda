@@ -14,8 +14,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function DotScreenFilter()
-{
+function DotScreenFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -23,8 +22,8 @@ function DotScreenFilter()
         require('./dotScreen.frag'),
         // custom uniforms
     {
-      scale:      { type: '1f', value: 1 },
-      angle:      { type: '1f', value: 5 },
+      scale: { type: '1f', value: 1 },
+      angle: { type: '1f', value: 5 },
       dimensions: { type: '4fv', value: [0, 0, 0, 0] },
     }
     );
@@ -41,12 +40,10 @@ Object.defineProperties(DotScreenFilter.prototype, {
      * @memberof PIXI.filters.DotScreenFilter#
      */
   scale: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.scale.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.scale.value = value;
     },
   },
@@ -57,12 +54,10 @@ Object.defineProperties(DotScreenFilter.prototype, {
      * @memberof PIXI.filters.DotScreenFilter#
      */
   angle: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.angle.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.angle.value = value;
     },
   },

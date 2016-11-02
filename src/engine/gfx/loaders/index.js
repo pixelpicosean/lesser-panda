@@ -10,7 +10,7 @@
  */
 module.exports = {
     // parsers
-  bitmapFontParser:   require('./bitmapFontParser'),
-  spritesheetParser:  require('./spritesheetParser'),
-  textureParser:      require('./textureParser'),
+  bitmapFontParser: require('./bitmapFontParser'),
+  spritesheetParser: require('./spritesheetParser'),
+  textureParser: require('./textureParser'),
 };

@@ -36,14 +36,12 @@ class Texture extends EventEmitter {
      */
     this.noFrame = false;
 
-    if (!frame)
-    {
+    if (!frame) {
       this.noFrame = true;
       frame = new math.Rectangle(0, 0, 1, 1);
     }
 
-    if (baseTexture instanceof Texture)
-    {
+    if (baseTexture instanceof Texture) {
       baseTexture = baseTexture.baseTexture;
     }
 
@@ -111,23 +109,22 @@ class Texture extends EventEmitter {
      *
      * @member {PIXI.Rectangle}
      */
-    this.crop = crop || frame;//new math.Rectangle(0, 0, 1, 1);
+    this.crop = crop || frame;// new math.Rectangle(0, 0, 1, 1);
 
     this._rotate = +(rotate || 0);
 
     if (rotate === true) {
         // this is old texturepacker legacy, some games/libraries are passing "true" for rotated textures
       this._rotate = 2;
-    } else {
+    }
+    else {
       if (this._rotate % 2 !== 0) {
         throw 'attempt to use diamond-shaped UVs. If you are sure, set rotation manually';
       }
     }
 
-    if (baseTexture.hasLoaded)
-    {
-      if (this.noFrame)
-        {
+    if (baseTexture.hasLoaded) {
+      if (this.noFrame) {
         frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
 
             // if there is no frame we should monitor for any base texture changes..
@@ -135,8 +132,7 @@ class Texture extends EventEmitter {
       }
       this.frame = frame;
     }
-    else
-    {
+    else {
       baseTexture.once('loaded', this.onBaseTextureLoaded, this);
     }
 
@@ -153,8 +149,7 @@ class Texture extends EventEmitter {
    * Updates this texture on the gpu.
    *
    */
-  update()
-  {
+  update() {
     this.baseTexture.update();
   }
 
@@ -163,15 +158,12 @@ class Texture extends EventEmitter {
    *
    * @private
    */
-  onBaseTextureLoaded(baseTexture)
-  {
+  onBaseTextureLoaded(baseTexture) {
       // TODO this code looks confusing.. boo to abusing getters and setterss!
-    if (this.noFrame)
-      {
+    if (this.noFrame) {
       this.frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
     }
-    else
-      {
+    else {
       this.frame = this._frame;
     }
 
@@ -183,8 +175,7 @@ class Texture extends EventEmitter {
    *
    * @private
    */
-  onBaseTextureUpdated(baseTexture)
-  {
+  onBaseTextureUpdated(baseTexture) {
     this._frame.width = baseTexture.width;
     this._frame.height = baseTexture.height;
 
@@ -196,12 +187,9 @@ class Texture extends EventEmitter {
    *
    * @param [destroyBase=false] {boolean} Whether to destroy the base texture as well
    */
-  destroy(destroyBase)
-  {
-    if (this.baseTexture)
-      {
-      if (destroyBase)
-          {
+  destroy(destroyBase) {
+    if (this.baseTexture) {
+      if (destroyBase) {
         this.baseTexture.destroy();
       }
 
@@ -227,8 +215,7 @@ class Texture extends EventEmitter {
    *
    * @return {PIXI.Texture}
    */
-  clone()
-  {
+  clone() {
     return new Texture(this.baseTexture, this.frame, this.crop, this.trim, this.rotate);
   }
 
@@ -237,10 +224,8 @@ class Texture extends EventEmitter {
    *
    * @private
    */
-  _updateUvs()
-  {
-    if (!this._uvs)
-      {
+  _updateUvs() {
+    if (!this._uvs) {
       this._uvs = new TextureUvs();
     }
 
@@ -256,12 +241,10 @@ Object.defineProperties(Texture.prototype, {
      * @memberof PIXI.Texture#
      */
   frame: {
-    get: function()
-        {
+    get: function() {
       return this._frame;
     },
-    set: function(frame)
-        {
+    set: function(frame) {
       this._frame = frame;
 
       this.noFrame = false;
@@ -269,28 +252,24 @@ Object.defineProperties(Texture.prototype, {
       this.width = frame.width;
       this.height = frame.height;
 
-      if (!this.trim && !this.rotate && (frame.x + frame.width > this.baseTexture.width || frame.y + frame.height > this.baseTexture.height))
-            {
+      if (!this.trim && !this.rotate && (frame.x + frame.width > this.baseTexture.width || frame.y + frame.height > this.baseTexture.height)) {
         throw new Error('Texture Error: frame does not fit inside the base Texture dimensions ' + this);
       }
 
-            //this.valid = frame && frame.width && frame.height && this.baseTexture.source && this.baseTexture.hasLoaded;
+            // this.valid = frame && frame.width && frame.height && this.baseTexture.source && this.baseTexture.hasLoaded;
       this.valid = frame && frame.width && frame.height && this.baseTexture.hasLoaded;
 
-      if (this.trim)
-            {
+      if (this.trim) {
         this.width = this.trim.width;
         this.height = this.trim.height;
         this._frame.width = this.trim.width;
         this._frame.height = this.trim.height;
       }
-      else
-            {
+      else {
         this.crop = frame;
       }
 
-      if (this.valid)
-            {
+      if (this.valid) {
         this._updateUvs();
       }
     },
@@ -305,15 +284,12 @@ Object.defineProperties(Texture.prototype, {
      * @member {number}
      */
   rotate: {
-    get: function()
-        {
+    get: function() {
       return this._rotate;
     },
-    set: function(rotate)
-        {
+    set: function(rotate) {
       this._rotate = rotate;
-      if (this.valid)
-            {
+      if (this.valid) {
         this._updateUvs();
       }
     },
@@ -330,12 +306,10 @@ Object.defineProperties(Texture.prototype, {
  * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
  * @return {PIXI.Texture} The newly created texture
  */
-Texture.fromImage = function(imageUrl, crossorigin, scaleMode)
-{
+Texture.fromImage = function(imageUrl, crossorigin, scaleMode) {
   var texture = utils.TextureCache[imageUrl];
 
-  if (!texture)
-    {
+  if (!texture) {
     texture = new Texture(BaseTexture.fromImage(imageUrl, crossorigin, scaleMode));
     utils.TextureCache[imageUrl] = texture;
   }
@@ -351,12 +325,10 @@ Texture.fromImage = function(imageUrl, crossorigin, scaleMode)
  * @param frameId {string} The frame Id of the texture in the cache
  * @return {PIXI.Texture} The newly created texture
  */
-Texture.fromFrame = function(frameId)
-{
+Texture.fromFrame = function(frameId) {
   var texture = utils.TextureCache[frameId];
 
-  if (!texture)
-    {
+  if (!texture) {
     throw new Error('The frameId "' + frameId + '" does not exist in the texture cache');
   }
 
@@ -371,8 +343,7 @@ Texture.fromFrame = function(frameId)
  * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
  * @return {PIXI.Texture}
  */
-Texture.fromCanvas = function(canvas, scaleMode)
-{
+Texture.fromCanvas = function(canvas, scaleMode) {
   return new Texture(BaseTexture.fromCanvas(canvas, scaleMode));
 };
 
@@ -384,14 +355,11 @@ Texture.fromCanvas = function(canvas, scaleMode)
  * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
  * @return {PIXI.Texture} A Texture
  */
-Texture.fromVideo = function(video, scaleMode)
-{
-  if (typeof video === 'string')
-    {
+Texture.fromVideo = function(video, scaleMode) {
+  if (typeof video === 'string') {
     return Texture.fromVideoUrl(video, scaleMode);
   }
-  else
-    {
+  else {
     return new Texture(VideoBaseTexture.fromVideo(video, scaleMode));
   }
 };
@@ -404,8 +372,7 @@ Texture.fromVideo = function(video, scaleMode)
  * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
  * @return {PIXI.Texture} A Texture
  */
-Texture.fromVideoUrl = function(videoUrl, scaleMode)
-{
+Texture.fromVideoUrl = function(videoUrl, scaleMode) {
   return new Texture(VideoBaseTexture.fromUrl(videoUrl, scaleMode));
 };
 
@@ -416,8 +383,7 @@ Texture.fromVideoUrl = function(videoUrl, scaleMode)
  * @param texture {PIXI.Texture} The Texture to add to the cache.
  * @param id {string} The id that the texture will be stored against.
  */
-Texture.addTextureToCache = function(texture, id)
-{
+Texture.addTextureToCache = function(texture, id) {
   utils.TextureCache[id] = texture;
 };
 
@@ -428,8 +394,7 @@ Texture.addTextureToCache = function(texture, id)
  * @param id {string} The id of the texture to be removed
  * @return {PIXI.Texture} The texture that was removed
  */
-Texture.removeTextureFromCache = function(id)
-{
+Texture.removeTextureFromCache = function(id) {
   var texture = utils.TextureCache[id];
 
   delete utils.TextureCache[id];

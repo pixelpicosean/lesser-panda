@@ -40,7 +40,7 @@ class MeshShader extends Shader {
       ].join('\n'),
           // custom uniforms
       {
-        alpha:  { type: '1f', value: 0 },
+        alpha: { type: '1f', value: 0 },
         translationMatrix: { type: 'mat3', value: new Float32Array(9) },
         projectionMatrix: { type: 'mat3', value: new Float32Array(9) },
       },

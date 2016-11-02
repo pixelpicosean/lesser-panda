@@ -63,13 +63,11 @@ class Rope extends Mesh {
    * Refreshes
    *
    */
-  refresh()
-  {
+  refresh() {
     var points = this.points;
 
       // if too little points, or texture hasn't got UVs set yet just move on.
-    if (points.length < 1 || !this._texture._uvs)
-      {
+    if (points.length < 1 || !this._texture._uvs) {
       return;
     }
 
@@ -95,21 +93,20 @@ class Rope extends Mesh {
 
     var total = points.length, index, amount;
 
-    for (var i = 1; i < total; i++)
-      {
+    for (var i = 1; i < total; i++) {
       index = i * 4;
           // time to do some smart drawing!
-      amount = i / (total-1);
+      amount = i / (total - 1);
 
       uvs[index] = amount * factor.x + offset.x;
-      uvs[index+1] = 0 + offset.y;
+      uvs[index + 1] = 0 + offset.y;
 
-      uvs[index+2] = amount * factor.x + offset.x;
-      uvs[index+3] = 1 * factor.y + offset.y;
+      uvs[index + 2] = amount * factor.x + offset.x;
+      uvs[index + 3] = 1 * factor.y + offset.y;
 
       index = i * 2;
       colors[index] = 1;
-      colors[index+1] = 1;
+      colors[index + 1] = 1;
 
       index = i * 2;
       indices[index] = index;
@@ -124,8 +121,7 @@ class Rope extends Mesh {
    *
    * @private
    */
-  _onTextureUpdate()
-  {
+  _onTextureUpdate() {
     super._onTextureUpdate(this);
 
       // wait for the Rope ctor to finish before calling refresh
@@ -139,12 +135,10 @@ class Rope extends Mesh {
    *
    * @private
    */
-  updateTransform()
-  {
+  updateTransform() {
     var points = this.points;
 
-    if (points.length < 1)
-      {
+    if (points.length < 1) {
       return;
     }
 
@@ -159,32 +153,28 @@ class Rope extends Mesh {
     var total = points.length,
       point, index, ratio, perpLength, num;
 
-    for (var i = 0; i < total; i++)
-      {
+    for (var i = 0; i < total; i++) {
       point = points[i];
       index = i * 4;
 
-      if (i < points.length-1)
-          {
-        nextPoint = points[i+1];
+      if (i < points.length - 1) {
+        nextPoint = points[i + 1];
       }
-      else
-          {
+      else {
         nextPoint = point;
       }
 
       perpY = -(nextPoint.x - lastPoint.x);
       perpX = nextPoint.y - lastPoint.y;
 
-      ratio = (1 - (i / (total-1))) * 10;
+      ratio = (1 - (i / (total - 1))) * 10;
 
-      if (ratio > 1)
-          {
+      if (ratio > 1) {
         ratio = 1;
       }
 
       perpLength = Math.sqrt(perpX * perpX + perpY * perpY);
-      num = this._texture.height / 2; //(20 + Math.abs(Math.sin((i + this.count) * 0.3) * 50) )* ratio;
+      num = this._texture.height / 2; // (20 + Math.abs(Math.sin((i + this.count) * 0.3) * 50) )* ratio;
       perpX /= perpLength;
       perpY /= perpLength;
 
@@ -192,9 +182,9 @@ class Rope extends Mesh {
       perpY *= num;
 
       vertices[index] = point.x + perpX;
-      vertices[index+1] = point.y + perpY;
-      vertices[index+2] = point.x - perpX;
-      vertices[index+3] = point.y - perpY;
+      vertices[index + 1] = point.y + perpY;
+      vertices[index + 2] = point.x - perpX;
+      vertices[index + 3] = point.y - perpY;
 
       lastPoint = point;
     }

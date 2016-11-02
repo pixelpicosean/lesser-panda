@@ -93,8 +93,7 @@ class Text extends Sprite {
    *
    * @private
    */
-  updateText()
-  {
+  updateText() {
     var style = this._style;
     this.context.font = style.font;
 
@@ -109,42 +108,38 @@ class Text extends Sprite {
     var lineWidths = new Array(lines.length);
     var maxLineWidth = 0;
     var fontProperties = this.determineFontProperties(style.font);
-    for (var i = 0; i < lines.length; i++)
-      {
+    for (var i = 0; i < lines.length; i++) {
       var lineWidth = this.context.measureText(lines[i]).width + ((lines[i].length - 1) * style.letterSpacing);
       lineWidths[i] = lineWidth;
       maxLineWidth = Math.max(maxLineWidth, lineWidth);
     }
 
     var width = maxLineWidth + style.strokeThickness;
-    if (style.dropShadow)
-      {
+    if (style.dropShadow) {
       width += style.dropShadowDistance;
     }
 
-    this.canvas.width = Math.ceil( ( width + this.context.lineWidth ) * this.resolution );
+    this.canvas.width = Math.ceil((width + this.context.lineWidth) * this.resolution);
 
       // calculate text height
     var lineHeight = this.style.lineHeight || fontProperties.fontSize + style.strokeThickness;
 
     var height = lineHeight * lines.length;
-    if (style.dropShadow)
-      {
+    if (style.dropShadow) {
       height += style.dropShadowDistance;
     }
 
-    this.canvas.height = Math.ceil( ( height + this._style.padding * 2 ) * this.resolution );
+    this.canvas.height = Math.ceil((height + this._style.padding * 2) * this.resolution);
 
-    this.context.scale( this.resolution, this.resolution);
+    this.context.scale(this.resolution, this.resolution);
 
-    if (navigator.isCocoonJS)
-      {
+    if (navigator.isCocoonJS) {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     }
 
-      //this.context.fillStyle="#FF0000";
-      //this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      // this.context.fillStyle="#FF0000";
+      // this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.context.font = style.font;
     this.context.strokeStyle = style.stroke;
@@ -156,64 +151,55 @@ class Text extends Sprite {
     var linePositionX;
     var linePositionY;
 
-    if (style.dropShadow)
-      {
+    if (style.dropShadow) {
       if (style.dropShadowBlur > 0) {
         this.context.shadowColor = style.dropShadowColor;
         this.context.shadowBlur = style.dropShadowBlur;
-      } else {
+      }
+      else {
         this.context.fillStyle = style.dropShadowColor;
       }
 
       var xShadowOffset = Math.cos(style.dropShadowAngle) * style.dropShadowDistance;
       var yShadowOffset = Math.sin(style.dropShadowAngle) * style.dropShadowDistance;
 
-      for (i = 0; i < lines.length; i++)
-          {
+      for (i = 0; i < lines.length; i++) {
         linePositionX = style.strokeThickness / 2;
         linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
 
-        if (style.align === 'right')
-              {
+        if (style.align === 'right') {
           linePositionX += maxLineWidth - lineWidths[i];
         }
-        else if (style.align === 'center')
-              {
+        else if (style.align === 'center') {
           linePositionX += (maxLineWidth - lineWidths[i]) / 2;
         }
 
-        if (style.fill)
-              {
+        if (style.fill) {
           this.drawLetterSpacing(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + style.padding);
         }
       }
     }
 
-      //set canvas text styles
+      // set canvas text styles
     this.context.fillStyle = style.fill;
 
-      //draw lines line by line
-    for (i = 0; i < lines.length; i++)
-      {
+      // draw lines line by line
+    for (i = 0; i < lines.length; i++) {
       linePositionX = style.strokeThickness / 2;
       linePositionY = (style.strokeThickness / 2 + i * lineHeight) + fontProperties.ascent;
 
-      if (style.align === 'right')
-          {
+      if (style.align === 'right') {
         linePositionX += maxLineWidth - lineWidths[i];
       }
-      else if (style.align === 'center')
-          {
+      else if (style.align === 'center') {
         linePositionX += (maxLineWidth - lineWidths[i]) / 2;
       }
 
-      if (style.stroke && style.strokeThickness)
-          {
+      if (style.stroke && style.strokeThickness) {
         this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding, true);
       }
 
-      if (style.fill)
-          {
+      if (style.fill) {
         this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding);
       }
     }
@@ -226,21 +212,17 @@ class Text extends Sprite {
    *
    * @private
    */
-  drawLetterSpacing(text, x, y, isStroke)
-  {
+  drawLetterSpacing(text, x, y, isStroke) {
     var style = this._style;
 
       // letterSpacing of 0 means normal
     var letterSpacing = style.letterSpacing;
 
-    if (letterSpacing === 0)
-      {
-      if (isStroke)
-          {
+    if (letterSpacing === 0) {
+      if (isStroke) {
         this.context.strokeText(text, x, y);
       }
-      else
-          {
+      else {
         this.context.fillText(text, x, y);
       }
       return;
@@ -251,15 +233,12 @@ class Text extends Sprite {
       current,
       currentPosition = x;
 
-    while (index < text.length)
-      {
+    while (index < text.length) {
       current = characters[index++];
-      if (isStroke)
-          {
+      if (isStroke) {
         this.context.strokeText(current, currentPosition, y);
       }
-      else
-          {
+      else {
         this.context.fillText(current, currentPosition, y);
       }
       currentPosition += this.context.measureText(current).width + letterSpacing;
@@ -271,8 +250,7 @@ class Text extends Sprite {
    *
    * @private
    */
-  updateTexture()
-  {
+  updateTexture() {
     var texture = this._texture;
     var style = this._style;
 
@@ -288,12 +266,12 @@ class Text extends Sprite {
     texture.trim.y = -style.padding;
 
     texture.trim.width = texture._frame.width;
-    texture.trim.height = texture._frame.height - style.padding*2;
+    texture.trim.height = texture._frame.height - style.padding * 2;
 
     this._width = this.canvas.width / this.resolution;
     this._height = this.canvas.height / this.resolution;
 
-    texture.baseTexture.emit('update',  texture.baseTexture);
+    texture.baseTexture.emit('update', texture.baseTexture);
 
     this.dirty = false;
   }
@@ -303,11 +281,9 @@ class Text extends Sprite {
    *
    * @param renderer {WebGLRenderer}
    */
-  renderWebGL(renderer)
-  {
-    if (this.dirty)
-      {
-          //this.resolution = 1//renderer.resolution;
+  renderWebGL(renderer) {
+    if (this.dirty) {
+          // this.resolution = 1//renderer.resolution;
 
       this.updateText();
     }
@@ -321,10 +297,8 @@ class Text extends Sprite {
    * @param renderer {CanvasRenderer}
    * @private
    */
-  _renderCanvas(renderer)
-  {
-    if (this.dirty)
-      {
+  _renderCanvas(renderer) {
+    if (this.dirty) {
        //   this.resolution = 1//renderer.resolution;
 
       this.updateText();
@@ -339,12 +313,10 @@ class Text extends Sprite {
    * @param fontStyle {object}
    * @private
    */
-  determineFontProperties(fontStyle)
-  {
+  determineFontProperties(fontStyle) {
     var properties = Text.fontPropertiesCache[fontStyle];
 
-    if (!properties)
-      {
+    if (!properties) {
       properties = {};
 
       var canvas = Text.fontPropertiesCanvas;
@@ -380,22 +352,17 @@ class Text extends Sprite {
       var stop = false;
 
           // ascent. scan from top to bottom until we find a non red pixel
-      for (i = 0; i < baseline; i++)
-          {
-        for (j = 0; j < line; j += 4)
-              {
-          if (imagedata[idx + j] !== 255)
-                  {
+      for (i = 0; i < baseline; i++) {
+        for (j = 0; j < line; j += 4) {
+          if (imagedata[idx + j] !== 255) {
             stop = true;
             break;
           }
         }
-        if (!stop)
-              {
+        if (!stop) {
           idx += line;
         }
-        else
-              {
+        else {
           break;
         }
       }
@@ -406,22 +373,17 @@ class Text extends Sprite {
       stop = false;
 
           // descent. scan from bottom to top until we find a non red pixel
-      for (i = height; i > baseline; i--)
-          {
-        for (j = 0; j < line; j += 4)
-              {
-          if (imagedata[idx + j] !== 255)
-                  {
+      for (i = height; i > baseline; i--) {
+        for (j = 0; j < line; j += 4) {
+          if (imagedata[idx + j] !== 255) {
             stop = true;
             break;
           }
         }
-        if (!stop)
-              {
+        if (!stop) {
           idx -= line;
         }
-        else
-              {
+        else {
           break;
         }
       }
@@ -442,36 +404,28 @@ class Text extends Sprite {
    * @param text {string}
    * @private
    */
-  wordWrap(text)
-  {
+  wordWrap(text) {
       // Greedy wrapping algorithm that will wrap words as the line grows longer
       // than its horizontal bounds.
     var result = '';
     var lines = text.split('\n');
     var wordWrapWidth = this._style.wordWrapWidth;
-    for (var i = 0; i < lines.length; i++)
-      {
+    for (var i = 0; i < lines.length; i++) {
       var spaceLeft = wordWrapWidth;
       var words = lines[i].split(' ');
-      for (var j = 0; j < words.length; j++)
-          {
+      for (var j = 0; j < words.length; j++) {
         var wordWidth = this.context.measureText(words[j]).width;
-        if (this._style.breakWords && wordWidth > wordWrapWidth)
-              {
+        if (this._style.breakWords && wordWidth > wordWrapWidth) {
                   // Word should be split in the middle
           var characters = words[j].split('');
-          for (var c = 0; c < characters.length; c++)
-                  {
+          for (var c = 0; c < characters.length; c++) {
             var characterWidth = this.context.measureText(characters[c]).width;
-            if (characterWidth > spaceLeft)
-                    {
+            if (characterWidth > spaceLeft) {
               result += '\n' + characters[c];
               spaceLeft = wordWrapWidth - characterWidth;
             }
-            else
-                    {
-              if (c === 0)
-                      {
+            else {
+              if (c === 0) {
                 result += ' ';
               }
               result += characters[c];
@@ -479,30 +433,25 @@ class Text extends Sprite {
             }
           }
         }
-        else
-              {
+        else {
           var wordWidthWithSpace = wordWidth + this.context.measureText(' ').width;
-          if (j === 0 || wordWidthWithSpace > spaceLeft)
-                  {
+          if (j === 0 || wordWidthWithSpace > spaceLeft) {
                       // Skip printing the newline if it's the first word of the line that is
                       // greater than the word wrap width.
-            if (j > 0)
-                      {
+            if (j > 0) {
               result += '\n';
             }
             result += words[j];
             spaceLeft = wordWrapWidth - wordWidth;
           }
-          else
-                  {
+          else {
             spaceLeft -= wordWidthWithSpace;
             result += ' ' + words[j];
           }
         }
       }
 
-      if (i < lines.length-1)
-          {
+      if (i < lines.length - 1) {
         result += '\n';
       }
     }
@@ -515,10 +464,8 @@ class Text extends Sprite {
    * @param matrix {Matrix} the transformation matrix of the Text
    * @return {Rectangle} the framing rectangle
    */
-  getBounds(matrix)
-  {
-    if (this.dirty)
-      {
+  getBounds(matrix) {
+    if (this.dirty) {
       this.updateText();
     }
 
@@ -530,8 +477,7 @@ class Text extends Sprite {
    *
    * @param [destroyBaseTexture=true] {boolean} whether to destroy the base texture as well
    */
-  destroy(destroyBaseTexture)
-  {
+  destroy(destroyBaseTexture) {
       // make sure to reset the the context and canvas.. dont want this hanging around in memory!
     this.context = null;
     this.canvas = null;
@@ -554,17 +500,14 @@ Object.defineProperties(Text.prototype, {
      * @memberof Text#
      */
   width: {
-    get: function()
-        {
-      if (this.dirty)
-            {
+    get: function() {
+      if (this.dirty) {
         this.updateText();
       }
 
       return this.scale.x * this._texture._frame.width;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.scale.x = value / this._texture._frame.width;
       this._width = value;
     },
@@ -577,17 +520,14 @@ Object.defineProperties(Text.prototype, {
      * @memberof Text#
      */
   height: {
-    get: function()
-        {
-      if (this.dirty)
-            {
+    get: function() {
+      if (this.dirty) {
         this.updateText();
       }
 
-      return  this.scale.y * this._texture._frame.height;
+      return this.scale.y * this._texture._frame.height;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.scale.y = value / this._texture._frame.height;
       this._height = value;
     },
@@ -620,12 +560,10 @@ Object.defineProperties(Text.prototype, {
      * @memberof Text#
      */
   style: {
-    get: function()
-        {
+    get: function() {
       return this._style;
     },
-    set: function(style)
-        {
+    set: function(style) {
       style = style || {};
 
       if (typeof style.fill === 'number') {
@@ -643,7 +581,7 @@ Object.defineProperties(Text.prototype, {
       style.font = style.font || 'bold 20pt Arial';
       style.fill = style.fill || 'black';
       style.align = style.align || 'left';
-      style.stroke = style.stroke || 'black'; //provide a default, see: https://github.com/pixijs/pixi.js/issues/136
+      style.stroke = style.stroke || 'black'; // provide a default, see: https://github.com/pixijs/pixi.js/issues/136
       style.strokeThickness = style.strokeThickness || 0;
       style.wordWrap = style.wordWrap || false;
       style.wordWrapWidth = style.wordWrapWidth || 100;
@@ -654,7 +592,7 @@ Object.defineProperties(Text.prototype, {
       style.dropShadowColor = style.dropShadowColor || '#000000';
       style.dropShadowAngle = style.dropShadowAngle !== undefined ? style.dropShadowAngle : Math.PI / 6;
       style.dropShadowDistance = style.dropShadowDistance !== undefined ? style.dropShadowDistance : 5;
-      style.dropShadowBlur = style.dropShadowBlur !== undefined ? style.dropShadowBlur : 0; //shadowBlur is '0' by default according to HTML
+      style.dropShadowBlur = style.dropShadowBlur !== undefined ? style.dropShadowBlur : 0; // shadowBlur is '0' by default according to HTML
 
       style.padding = style.padding || 0;
 
@@ -675,14 +613,12 @@ Object.defineProperties(Text.prototype, {
      * @memberof Text#
      */
   text: {
-    get: function()
-        {
+    get: function() {
       return this._text;
     },
-    set: function(text){
+    set: function(text) {
       text = text.toString() || ' ';
-      if (this._text === text)
-            {
+      if (this._text === text) {
         return;
       }
       this._text = text;

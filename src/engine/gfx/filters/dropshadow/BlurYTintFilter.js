@@ -9,8 +9,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function BlurYTintFilter()
-{
+function BlurYTintFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         require('./blurYTint.vert'),
@@ -19,10 +18,10 @@ function BlurYTintFilter()
         // set the uniforms
     {
       blur: { type: '1f', value: 1 / 512 },
-      color: { type: 'c', value: [0,0,0]},
+      color: { type: 'c', value: [0,0,0] },
       alpha: { type: '1f', value: 0.7 },
-      offset: { type: '2f', value:[5, 5]},
-      strength: { type: '1f', value:1},
+      offset: { type: '2f', value:[5, 5] },
+      strength: { type: '1f', value:1 },
     }
     );
 
@@ -34,24 +33,20 @@ BlurYTintFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BlurYTintFilter.prototype.constructor = BlurYTintFilter;
 module.exports = BlurYTintFilter;
 
-BlurYTintFilter.prototype.applyFilter = function(renderer, input, output, clear)
-{
+BlurYTintFilter.prototype.applyFilter = function(renderer, input, output, clear) {
   var shader = this.getShader(renderer);
 
   this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.height / input.size.height);
 
-  if(this.passes === 1)
-    {
+  if (this.passes === 1) {
     renderer.filterManager.applyFilter(shader, input, output, clear);
   }
-  else
-    {
+  else {
     var renderTarget = renderer.filterManager.getRenderTarget(true);
     var flip = input;
     var flop = renderTarget;
 
-    for(var i = 0; i < this.passes-1; i++)
-        {
+    for (var i = 0; i < this.passes - 1; i++) {
       renderer.filterManager.applyFilter(shader, flip, flop, clear);
 
       var temp = flop;
@@ -75,12 +70,10 @@ Object.defineProperties(BlurYTintFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
-      return  this.strength;
+    get: function() {
+      return this.strength;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.padding = value * 0.5;
       this.strength = value;
     },

@@ -66,10 +66,10 @@ function splitExts(ext) {
 
 // Overrided functions
 function load(cb) {
-  if (this.isLoading) return;
+  if (this.isLoading) {return;}
 
   if (this.isComplete) {
-    if (cb) setTimeout(() => cb(this), 1);
+    if (cb) {setTimeout(() => cb(this), 1);}
 
     return;
   }

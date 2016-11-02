@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function CrossHatchFilter()
-{
+function CrossHatchFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,

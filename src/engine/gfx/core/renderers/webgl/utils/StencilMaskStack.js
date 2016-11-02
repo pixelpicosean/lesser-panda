@@ -2,8 +2,7 @@
  * Generic Mask Stack data structure
  * @class
  */
-function StencilMaskStack()
-{
+function StencilMaskStack() {
 	/**
    * The actual stack
    *

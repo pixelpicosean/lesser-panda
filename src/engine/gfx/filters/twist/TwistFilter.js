@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function TwistFilter()
-{
+function TwistFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -17,9 +16,9 @@ function TwistFilter()
         require('./twist.frag'),
         // custom uniforms
     {
-      radius:     { type: '1f', value: 0.5 },
-      angle:      { type: '1f', value: 5 },
-      offset:     { type: 'v2', value: { x: 0.5, y: 0.5 } },
+      radius: { type: '1f', value: 0.5 },
+      angle: { type: '1f', value: 5 },
+      offset: { type: 'v2', value: { x: 0.5, y: 0.5 } },
     }
     );
 }
@@ -36,12 +35,10 @@ Object.defineProperties(TwistFilter.prototype, {
      * @memberof PIXI.filters.TwistFilter#
      */
   offset: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.offset.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.offset.value = value;
     },
   },
@@ -53,12 +50,10 @@ Object.defineProperties(TwistFilter.prototype, {
      * @memberof PIXI.filters.TwistFilter#
      */
   radius: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.radius.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.radius.value = value;
     },
   },
@@ -70,12 +65,10 @@ Object.defineProperties(TwistFilter.prototype, {
      * @memberof PIXI.filters.TwistFilter#
      */
   angle: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.angle.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.angle.value = value;
     },
   },

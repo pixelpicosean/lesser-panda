@@ -14,8 +14,7 @@ class CanvasMaskManager {
    * @param maskData {object} the maskData that will be pushed
    * @param renderer {PIXI.WebGLRenderer|PIXI.CanvasRenderer} The renderer context to use.
    */
-  pushMask(maskData, renderer)
-  {
+  pushMask(maskData, renderer) {
 
     renderer.context.save();
 
@@ -32,10 +31,9 @@ class CanvasMaskManager {
           transform.ty * resolution
       );
 
-      //TODO suport sprite alpha masks??
-      //lots of effort required. If demand is great enough..
-    if(!maskData.texture)
-      {
+      // TODO suport sprite alpha masks??
+      // lots of effort required. If demand is great enough..
+    if (!maskData.texture) {
       CanvasGraphics.renderGraphicsMask(maskData, renderer.context);
       renderer.context.clip();
     }
@@ -48,8 +46,7 @@ class CanvasMaskManager {
    *
    * @param renderer {PIXI.WebGLRenderer|PIXI.CanvasRenderer} The renderer context to use.
    */
-  popMask(renderer)
-  {
+  popMask(renderer) {
     renderer.context.restore();
   }
 

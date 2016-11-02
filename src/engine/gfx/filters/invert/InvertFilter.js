@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function InvertFilter()
-{
+function InvertFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -35,12 +34,10 @@ Object.defineProperties(InvertFilter.prototype, {
      * @memberof PIXI.filters.InvertFilter#
      */
   invert: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.invert.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.invert.value = value;
     },
   },

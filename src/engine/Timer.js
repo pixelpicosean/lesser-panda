@@ -128,7 +128,7 @@ class Timer {
    * @param  {number} delta Delta time
    */
   update(delta) {
-    if (this.removed || this.paused) return;
+    if (this.removed || this.paused) {return;}
 
     this._count -= delta;
     if (this._count < 0) {
@@ -193,7 +193,7 @@ class SystemTimer extends System {
 
     let i, key, timers;
     for (key in this.timers) {
-      if (this.activeTags.indexOf(key) < 0) continue;
+      if (this.activeTags.indexOf(key) < 0) {continue;}
 
       timers = this.timers[key];
       for (i = 0; i < timers.length; i++) {
@@ -297,7 +297,7 @@ class SystemTimer extends System {
    * @param {Timer} timer
    */
   remove(timer) {
-    if (timer) timer.removed = true;
+    if (timer) {timer.removed = true;}
   }
 
   /**

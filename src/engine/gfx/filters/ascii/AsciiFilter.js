@@ -15,8 +15,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function AsciiFilter()
-{
+function AsciiFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -25,7 +24,7 @@ function AsciiFilter()
         // custom uniforms
     {
       dimensions: { type: '4fv', value: new Float32Array([0, 0, 0, 0]) },
-      pixelSize:  { type: '1f', value: 8 },
+      pixelSize: { type: '1f', value: 8 },
     }
     );
 }
@@ -42,12 +41,10 @@ Object.defineProperties(AsciiFilter.prototype, {
      * @memberof PIXI.filters.AsciiFilter#
      */
   size: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.pixelSize.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.pixelSize.value = value;
     },
   },

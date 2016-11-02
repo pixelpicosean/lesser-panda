@@ -26,10 +26,12 @@ module.exports.mergeMultiple = function mergeMultiple(a) {
       value = b[key];
 
       if (typeof a[key] !== 'undefined') {
-        if (typeof a[key] === 'object')
+        if (typeof a[key] === 'object') {
           mergeMultiple(a[key], value);
-        else
+        }
+        else {
           a[key] = value;
+        }
       }
       else {
         a[key] = value;

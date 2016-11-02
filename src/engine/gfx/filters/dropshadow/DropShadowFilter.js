@@ -10,8 +10,7 @@ var core = require('../../core'),
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function DropShadowFilter()
-{
+function DropShadowFilter() {
   core.AbstractFilter.call(this);
 
   this.blurXFilter = new BlurXFilter();
@@ -33,13 +32,11 @@ DropShadowFilter.prototype = Object.create(core.AbstractFilter.prototype);
 DropShadowFilter.prototype.constructor = DropShadowFilter;
 module.exports = DropShadowFilter;
 
-DropShadowFilter.prototype.applyFilter = function(renderer, input, output)
-{
+DropShadowFilter.prototype.applyFilter = function(renderer, input, output) {
   var renderTarget = renderer.filterManager.getRenderTarget(true);
 
-    //TODO - copyTexSubImage2D could be used here?
-  if(this._dirtyPosition)
-    {
+    // TODO - copyTexSubImage2D could be used here?
+  if (this._dirtyPosition) {
     this._dirtyPosition = false;
 
     this.blurYTintFilter.uniforms.offset.value[0] = Math.sin(this._angle) * this._distance;
@@ -54,8 +51,7 @@ DropShadowFilter.prototype.applyFilter = function(renderer, input, output)
 
   renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
 
-  if(!this.hideObject)
-    {
+  if (!this.hideObject) {
 
     this.defaultFilter.applyFilter(renderer, input, output);
   }
@@ -73,12 +69,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
+    get: function() {
       return this.blurXFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurXFilter.blur = this.blurYTintFilter.blur = value;
     },
   },
@@ -91,12 +85,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @default 2
      */
   blurX: {
-    get: function()
-        {
+    get: function() {
       return this.blurXFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurXFilter.blur = value;
     },
   },
@@ -109,12 +101,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @default 2
      */
   blurY: {
-    get: function()
-        {
+    get: function() {
       return this.blurYTintFilter.blur;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurYTintFilter.blur = value;
     },
   },
@@ -126,12 +116,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      */
   color: {
-    get: function()
-        {
-      return  core.utils.rgb2hex( this.blurYTintFilter.uniforms.color.value );
+    get: function() {
+      return core.utils.rgb2hex(this.blurYTintFilter.uniforms.color.value);
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurYTintFilter.uniforms.color.value = core.utils.hex2rgb(value);
     },
   },
@@ -143,12 +131,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      */
   alpha: {
-    get: function()
-        {
-      return  this.blurYTintFilter.uniforms.alpha.value;
+    get: function() {
+      return this.blurYTintFilter.uniforms.alpha.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.blurYTintFilter.uniforms.alpha.value = value;
     },
   },
@@ -160,12 +146,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      */
   distance: {
-    get: function()
-        {
-      return  this._distance;
+    get: function() {
+      return this._distance;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this._dirtyPosition = true;
       this._distance = value;
     },
@@ -178,12 +162,10 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * @memberOf PIXI.filters.DropShadowFilter#
      */
   angle: {
-    get: function()
-        {
-      return  this._angle;
+    get: function() {
+      return this._angle;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this._dirtyPosition = true;
       this._angle = value;
     },

@@ -36,7 +36,7 @@ class ParticleContainer extends Container {
   constructor(maxSize, properties, batchSize) {
     super();
 
-    batchSize = batchSize || 15000; //CONST.SPRITE_BATCH_SIZE; // 2000 is a nice balance between mobile / desktop
+    batchSize = batchSize || 15000; // CONST.SPRITE_BATCH_SIZE; // 2000 is a nice balance between mobile / desktop
     maxSize = maxSize || 15000;
 
     // Making sure the batch size is valid
@@ -115,9 +115,8 @@ class ParticleContainer extends Container {
  *
  * @param properties {object} The properties to be uploaded
  */
-ParticleContainer.prototype.setProperties = function(properties)
-{
-  if ( properties ) {
+ParticleContainer.prototype.setProperties = function(properties) {
+  if (properties) {
     this._properties[0] = 'scale' in properties ? !!properties.scale : this._properties[0];
     this._properties[1] = 'position' in properties ? !!properties.position : this._properties[1];
     this._properties[2] = 'rotation' in properties ? !!properties.rotation : this._properties[2];
@@ -131,8 +130,7 @@ ParticleContainer.prototype.setProperties = function(properties)
  *
  * @private
  */
-ParticleContainer.prototype.updateTransform = function()
-{
+ParticleContainer.prototype.updateTransform = function() {
 
     // TODO don't need to!
   this.displayObjectUpdateTransform();
@@ -145,15 +143,13 @@ ParticleContainer.prototype.updateTransform = function()
  * @param renderer {PIXI.WebGLRenderer} The webgl renderer
  * @private
  */
-ParticleContainer.prototype.renderWebGL = function(renderer)
-{
-  if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable)
-    {
+ParticleContainer.prototype.renderWebGL = function(renderer) {
+  if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable) {
     return;
   }
 
-  renderer.setObjectRenderer( renderer.plugins.particle );
-  renderer.plugins.particle.render( this );
+  renderer.setObjectRenderer(renderer.plugins.particle);
+  renderer.plugins.particle.render(this);
 };
 
 /**
@@ -161,8 +157,7 @@ ParticleContainer.prototype.renderWebGL = function(renderer)
  *
  * @private
  */
-ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex)
-{
+ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex) {
   var bufferIndex = Math.floor(smallestChildIndex / this._batchSize);
   if (bufferIndex < this._bufferToUpdate) {
     this._bufferToUpdate = bufferIndex;
@@ -175,10 +170,8 @@ ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex)
  * @param renderer {PIXI.CanvasRenderer} The canvas renderer
  * @private
  */
-ParticleContainer.prototype.renderCanvas = function(renderer)
-{
-  if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable)
-    {
+ParticleContainer.prototype.renderCanvas = function(renderer) {
+  if (!this.visible || this.worldAlpha <= 0 || !this.children.length || !this.renderable) {
     return;
   }
 
@@ -193,8 +186,7 @@ ParticleContainer.prototype.renderCanvas = function(renderer)
   var finalHeight = 0;
 
   var compositeOperation = renderer.blendModes[this.blendMode];
-  if (compositeOperation !== context.globalCompositeOperation)
-    {
+  if (compositeOperation !== context.globalCompositeOperation) {
     context.globalCompositeOperation = compositeOperation;
   }
 
@@ -202,12 +194,10 @@ ParticleContainer.prototype.renderCanvas = function(renderer)
 
   this.displayObjectUpdateTransform();
 
-  for (var i = 0; i < this.children.length; ++i)
-    {
+  for (var i = 0; i < this.children.length; ++i) {
     var child = this.children[i];
 
-    if (!child.visible)
-        {
+    if (!child.visible) {
       continue;
     }
 
@@ -215,11 +205,9 @@ ParticleContainer.prototype.renderCanvas = function(renderer)
 
     context.globalAlpha = this.worldAlpha * child.alpha;
 
-    if (child.rotation % (Math.PI * 2) === 0)
-        {
+    if (child.rotation % (Math.PI * 2) === 0) {
             // this is the fastest  way to optimise! - if rotation is 0 then we can avoid any kind of setTransform call
-      if (isRotated)
-            {
+      if (isRotated) {
         context.setTransform(
                     transform.a,
                     transform.b,
@@ -232,17 +220,15 @@ ParticleContainer.prototype.renderCanvas = function(renderer)
         isRotated = false;
       }
 
-      positionX = ((child.anchor.x) * (-frame.width * child.scale.x) + child.position.x  + 0.5);
-      positionY = ((child.anchor.y) * (-frame.height * child.scale.y) + child.position.y  + 0.5);
+      positionX = ((child.anchor.x) * (-frame.width * child.scale.x) + child.position.x + 0.5);
+      positionY = ((child.anchor.y) * (-frame.height * child.scale.y) + child.position.y + 0.5);
 
       finalWidth = frame.width * child.scale.x;
       finalHeight = frame.height * child.scale.y;
 
     }
-    else
-        {
-      if (!isRotated)
-            {
+    else {
+      if (!isRotated) {
         isRotated = true;
       }
 
@@ -250,8 +236,7 @@ ParticleContainer.prototype.renderCanvas = function(renderer)
 
       var childTransform = child.worldTransform;
 
-      if (renderer.roundPixels)
-            {
+      if (renderer.roundPixels) {
         context.setTransform(
                     childTransform.a,
                     childTransform.b,
@@ -261,8 +246,7 @@ ParticleContainer.prototype.renderCanvas = function(renderer)
                     childTransform.ty | 0
                 );
       }
-      else
-            {
+      else {
         context.setTransform(
                     childTransform.a,
                     childTransform.b,

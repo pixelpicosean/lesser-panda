@@ -40,8 +40,8 @@ const math = {
    * @return {number} result
    */
   wrap: function(value, min, max) {
-    if (value < min) return max + (value % max);
-    if (value >= max) return value % max;
+    if (value < min) {return max + (value % max);}
+    if (value >= max) {return value % max;}
     return value;
   },
 

@@ -14,11 +14,10 @@ function parse(resource, texture) {
   data.lineHeight = parseInt(common.getAttribute('lineHeight'), 10);
   data.chars = {};
 
-    //parse letters
+    // parse letters
   var letters = resource.data.getElementsByTagName('char');
 
-  for (var i = 0; i < letters.length; i++)
-    {
+  for (var i = 0; i < letters.length; i++) {
     var charCode = parseInt(letters[i].getAttribute('id'), 10);
 
     var textureRect = new core.Rectangle(
@@ -38,16 +37,14 @@ function parse(resource, texture) {
     };
   }
 
-    //parse kernings
+    // parse kernings
   var kernings = resource.data.getElementsByTagName('kerning');
-  for (i = 0; i < kernings.length; i++)
-    {
+  for (i = 0; i < kernings.length; i++) {
     var first = parseInt(kernings[i].getAttribute('first'), 10);
     var second = parseInt(kernings[i].getAttribute('second'), 10);
     var amount = parseInt(kernings[i].getAttribute('amount'), 10);
 
-    if(data.chars[second])
-        {
+    if (data.chars[second]) {
       data.chars[second].kerning[first] = amount;
     }
   }
@@ -60,13 +57,10 @@ function parse(resource, texture) {
 }
 
 
-module.exports = function()
-{
-  return function(resource, next)
-    {
+module.exports = function() {
+  return function(resource, next) {
         // skip if no data or not xml data
-    if (!resource.data || !resource.isXml)
-        {
+    if (!resource.data || !resource.isXml) {
       return next();
     }
 
@@ -75,8 +69,7 @@ module.exports = function()
             resource.data.getElementsByTagName('page').length === 0 ||
             resource.data.getElementsByTagName('info').length === 0 ||
             resource.data.getElementsByTagName('info')[0].getAttribute('face') === null
-            )
-        {
+            ) {
       return next();
     }
 
@@ -102,7 +95,7 @@ module.exports = function()
     }
     var textureUrl = xmlUrl + resource.data.getElementsByTagName('page')[0].getAttribute('file');
     if (core.utils.TextureCache[textureUrl]) {
-            //reuse existing texture
+            // reuse existing texture
       parse(resource, core.utils.TextureCache[textureUrl]);
       next();
     }

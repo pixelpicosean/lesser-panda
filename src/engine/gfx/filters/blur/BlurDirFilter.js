@@ -9,8 +9,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function BlurDirFilter(dirX, dirY)
-{
+function BlurDirFilter(dirX, dirY) {
   core.AbstractFilter.call(this,
         // vertex shader
         require('./blurDir.vert'),
@@ -65,14 +64,14 @@ BlurDirFilter.prototype.applyFilter = function(renderer, input, output, clear) {
 
   if (this.passes === 1) {
     renderer.filterManager.applyFilter(shader, input, output, clear);
-  } else {
+  }
+  else {
     var renderTarget = renderer.filterManager.getRenderTarget(true);
 
     renderer.filterManager.applyFilter(shader, input, renderTarget, clear);
 
-    for(var i = 0; i < this.passes-2; i++)
-        {
-            //this.uniforms.strength.value = this.strength / 4 / (this.passes+(i*2)) * (input.frame.width / input.size.width);
+    for (var i = 0; i < this.passes - 2; i++) {
+            // this.uniforms.strength.value = this.strength / 4 / (this.passes+(i*2)) * (input.frame.width / input.size.width);
       renderer.filterManager.applyFilter(shader, renderTarget, renderTarget, clear);
     }
 
@@ -92,12 +91,10 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
+    get: function() {
       return this.strength;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.padding = value * 0.5;
       this.strength = value;
     },
@@ -110,12 +107,10 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * @default 0
      */
   dirX: {
-    get: function()
-        {
+    get: function() {
       return this.dirX;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.dirX.value = value;
     },
   },
@@ -127,12 +122,10 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * @default 0
      */
   dirY: {
-    get: function()
-        {
+    get: function() {
       return this.dirY;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.dirY.value = value;
     },
   },

@@ -82,8 +82,7 @@ class SpriteRenderer extends ObjectRenderer {
     this.indices = new Uint16Array(numIndices);
 
     // fill the indices with the quads to draw
-    for (let i=0, j=0; i < numIndices; i += 6, j += 4)
-    {
+    for (let i = 0, j = 0; i < numIndices; i += 6, j += 4) {
       this.indices[i + 0] = j + 0;
       this.indices[i + 1] = j + 1;
       this.indices[i + 2] = j + 2;
@@ -120,8 +119,7 @@ class SpriteRenderer extends ObjectRenderer {
    * @private
    * @param gl {WebGLRenderingContext} the current WebGL drawing context
    */
-  onContextChange()
-  {
+  onContextChange() {
     var gl = this.renderer.gl;
 
       // setup default shader
@@ -131,7 +129,7 @@ class SpriteRenderer extends ObjectRenderer {
     this.vertexBuffer = gl.createBuffer();
     this.indexBuffer = gl.createBuffer();
 
-      //upload the index data
+      // upload the index data
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
 
@@ -146,14 +144,12 @@ class SpriteRenderer extends ObjectRenderer {
    *
    * @param sprite {Sprite} the sprite to render when using this spritebatch
    */
-  render(sprite)
-  {
+  render(sprite) {
     var texture = sprite._texture;
 
-      //TODO set blend modes..
+      // TODO set blend modes..
       // check texture..
-    if (this.currentBatchSize >= this.size)
-      {
+    if (this.currentBatchSize >= this.size) {
       this.flush();
     }
 
@@ -161,8 +157,7 @@ class SpriteRenderer extends ObjectRenderer {
     var uvs = texture._uvs;
 
       // if the uvs have not updated then no point rendering just yet!
-    if (!uvs)
-      {
+    if (!uvs) {
       return;
     }
 
@@ -172,8 +167,7 @@ class SpriteRenderer extends ObjectRenderer {
 
     var w0, w1, h0, h1;
 
-    if (texture.trim && sprite.tileScale === undefined)
-      {
+    if (texture.trim && sprite.tileScale === undefined) {
           // if the sprite is trimmed and is not a tilingsprite then we need to add the extra space before transforming the sprite coords..
       var trim = texture.trim;
 
@@ -184,12 +178,11 @@ class SpriteRenderer extends ObjectRenderer {
       h0 = h1 + texture.crop.height;
 
     }
-    else
-      {
-      w0 = (texture._frame.width ) * (1-aX);
-      w1 = (texture._frame.width ) * -aX;
+    else {
+      w0 = (texture._frame.width) * (1 - aX);
+      w1 = (texture._frame.width) * -aX;
 
-      h0 = texture._frame.height * (1-aY);
+      h0 = texture._frame.height * (1 - aY);
       h1 = texture._frame.height * -aY;
     }
 
@@ -207,65 +200,63 @@ class SpriteRenderer extends ObjectRenderer {
     var colors = this.colors;
     var positions = this.positions;
 
-    if (this.renderer.roundPixels)
-      {
+    if (this.renderer.roundPixels) {
       var resolution = this.renderer.resolution;
 
           // xy
       positions[index] = (((a * w1 + c * h1 + tx) * resolution) | 0) / resolution;
-      positions[index+1] = (((d * h1 + b * w1 + ty) * resolution) | 0) / resolution;
+      positions[index + 1] = (((d * h1 + b * w1 + ty) * resolution) | 0) / resolution;
 
           // xy
-      positions[index+5] = (((a * w0 + c * h1 + tx) * resolution) | 0) / resolution;
-      positions[index+6] = (((d * h1 + b * w0 + ty) * resolution) | 0) / resolution;
+      positions[index + 5] = (((a * w0 + c * h1 + tx) * resolution) | 0) / resolution;
+      positions[index + 6] = (((d * h1 + b * w0 + ty) * resolution) | 0) / resolution;
 
            // xy
-      positions[index+10] = (((a * w0 + c * h0 + tx) * resolution) | 0) / resolution;
-      positions[index+11] = (((d * h0 + b * w0 + ty) * resolution) | 0) / resolution;
+      positions[index + 10] = (((a * w0 + c * h0 + tx) * resolution) | 0) / resolution;
+      positions[index + 11] = (((d * h0 + b * w0 + ty) * resolution) | 0) / resolution;
 
           // xy
-      positions[index+15] = (((a * w1 + c * h0 + tx) * resolution) | 0) / resolution;
-      positions[index+16] = (((d * h0 + b * w1 + ty) * resolution) | 0) / resolution;
+      positions[index + 15] = (((a * w1 + c * h0 + tx) * resolution) | 0) / resolution;
+      positions[index + 16] = (((d * h0 + b * w1 + ty) * resolution) | 0) / resolution;
     }
-    else
-      {
+    else {
 
           // xy
       positions[index] = a * w1 + c * h1 + tx;
-      positions[index+1] = d * h1 + b * w1 + ty;
+      positions[index + 1] = d * h1 + b * w1 + ty;
 
           // xy
-      positions[index+5] = a * w0 + c * h1 + tx;
-      positions[index+6] = d * h1 + b * w0 + ty;
+      positions[index + 5] = a * w0 + c * h1 + tx;
+      positions[index + 6] = d * h1 + b * w0 + ty;
 
            // xy
-      positions[index+10] = a * w0 + c * h0 + tx;
-      positions[index+11] = d * h0 + b * w0 + ty;
+      positions[index + 10] = a * w0 + c * h0 + tx;
+      positions[index + 11] = d * h0 + b * w0 + ty;
 
           // xy
-      positions[index+15] = a * w1 + c * h0 + tx;
-      positions[index+16] = d * h0 + b * w1 + ty;
+      positions[index + 15] = a * w1 + c * h0 + tx;
+      positions[index + 16] = d * h0 + b * w1 + ty;
     }
 
       // uv
-    positions[index+2] = uvs.x0;
-    positions[index+3] = uvs.y0;
+    positions[index + 2] = uvs.x0;
+    positions[index + 3] = uvs.y0;
 
       // uv
-    positions[index+7] = uvs.x1;
-    positions[index+8] = uvs.y1;
+    positions[index + 7] = uvs.x1;
+    positions[index + 8] = uvs.y1;
 
        // uv
-    positions[index+12] = uvs.x2;
-    positions[index+13] = uvs.y2;
+    positions[index + 12] = uvs.x2;
+    positions[index + 13] = uvs.y2;
 
       // uv
-    positions[index+17] = uvs.x3;
-    positions[index+18] = uvs.y3;
+    positions[index + 17] = uvs.x3;
+    positions[index + 18] = uvs.y3;
 
       // color and alpha
     var tint = sprite.tint;
-    colors[index+4] = colors[index+9] = colors[index+14] = colors[index+19] = (tint >> 16) + (tint & 0xff00) + ((tint & 0xff) << 16) + (sprite.worldAlpha * 255 << 24);
+    colors[index + 4] = colors[index + 9] = colors[index + 14] = colors[index + 19] = (tint >> 16) + (tint & 0xff00) + ((tint & 0xff) << 16) + (sprite.worldAlpha * 255 << 24);
 
       // increment the batchsize
     this.sprites[this.currentBatchSize++] = sprite;
@@ -275,11 +266,9 @@ class SpriteRenderer extends ObjectRenderer {
    * Renders the content and empties the current batch.
    *
    */
-  flush()
-  {
+  flush() {
       // If the batch is length 0 then return as there is nothing to draw
-    if (this.currentBatchSize === 0)
-      {
+    if (this.currentBatchSize === 0) {
       return;
     }
 
@@ -287,12 +276,10 @@ class SpriteRenderer extends ObjectRenderer {
     var shader;
 
       // upload the verts to the buffer
-    if (this.currentBatchSize > ( this.size * 0.5 ) )
-      {
+    if (this.currentBatchSize > (this.size * 0.5)) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.vertices);
     }
-    else
-      {
+    else {
       var view = this.positions.subarray(0, this.currentBatchSize * this.vertByteSize);
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
     }
@@ -309,8 +296,7 @@ class SpriteRenderer extends ObjectRenderer {
     var shaderSwap = false;
     var sprite;
 
-    for (var i = 0, j = this.currentBatchSize; i < j; i++)
-      {
+    for (var i = 0, j = this.currentBatchSize; i < j; i++) {
 
       sprite = this.sprites[i];
 
@@ -321,30 +307,26 @@ class SpriteRenderer extends ObjectRenderer {
       blendSwap = currentBlendMode !== nextBlendMode;
       shaderSwap = currentShader !== nextShader; // should I use uidS???
 
-      if (currentBaseTexture !== nextTexture || blendSwap || shaderSwap)
-          {
+      if (currentBaseTexture !== nextTexture || blendSwap || shaderSwap) {
         this.renderBatch(currentBaseTexture, batchSize, start);
 
         start = i;
         batchSize = 0;
         currentBaseTexture = nextTexture;
 
-        if (blendSwap)
-              {
+        if (blendSwap) {
           currentBlendMode = nextBlendMode;
-          this.renderer.blendModeManager.setBlendMode( currentBlendMode );
+          this.renderer.blendModeManager.setBlendMode(currentBlendMode);
         }
 
-        if (shaderSwap)
-              {
+        if (shaderSwap) {
           currentShader = nextShader;
 
 
 
           shader = currentShader.shaders ? currentShader.shaders[gl.id] : currentShader;
 
-          if (!shader)
-                  {
+          if (!shader) {
             shader = currentShader.getShader(this.renderer);
 
           }
@@ -352,18 +334,18 @@ class SpriteRenderer extends ObjectRenderer {
                   // set shader function???
           this.renderer.shaderManager.setShader(shader);
 
-                  //TODO - i KNOW this can be optimised! Once v3 is stable il look at this next...
+                  // TODO - i KNOW this can be optimised! Once v3 is stable il look at this next...
           shader.uniforms.projectionMatrix.value = this.renderer.currentRenderTarget.projectionMatrix.toArray(true);
-                  //Make this a little more dynamic / intelligent!
+                  // Make this a little more dynamic / intelligent!
           shader.syncUniforms();
 
-                  //TODO investigate some kind of texture state managment??
+                  // TODO investigate some kind of texture state managment??
                   // need to make sure this texture is the active one for all the batch swaps..
           gl.activeTexture(gl.TEXTURE0);
 
                   // both thease only need to be set if they are changing..
                   // set the projection
-                  //gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, this.renderer.currentRenderTarget.projectionMatrix.toArray(true));
+                  // gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, this.renderer.currentRenderTarget.projectionMatrix.toArray(true));
 
 
         }
@@ -386,21 +368,17 @@ class SpriteRenderer extends ObjectRenderer {
    * @param size {number}
    * @param startIndex {number}
    */
-  renderBatch(texture, size, startIndex)
-  {
-    if (size === 0)
-      {
+  renderBatch(texture, size, startIndex) {
+    if (size === 0) {
       return;
     }
 
     var gl = this.renderer.gl;
 
-    if (!texture._glTextures[gl.id])
-      {
+    if (!texture._glTextures[gl.id]) {
       this.renderer.updateTexture(texture);
     }
-    else
-      {
+    else {
           // bind the current texture
       gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
     }
@@ -416,8 +394,7 @@ class SpriteRenderer extends ObjectRenderer {
    * Starts a new sprite batch.
    *
    */
-  start()
-  {
+  start() {
     var gl = this.renderer.gl;
 
       // bind the main texture
@@ -428,7 +405,7 @@ class SpriteRenderer extends ObjectRenderer {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
       // this is the same for each shader?
-    var stride =  this.vertByteSize;
+    var stride = this.vertByteSize;
     gl.vertexAttribPointer(this.shader.attributes.aVertexPosition, 2, gl.FLOAT, false, stride, 0);
     gl.vertexAttribPointer(this.shader.attributes.aTextureCoord, 2, gl.FLOAT, false, stride, 2 * 4);
 
@@ -440,8 +417,7 @@ class SpriteRenderer extends ObjectRenderer {
    * Destroys the SpriteBatch.
    *
    */
-  destroy()
-  {
+  destroy() {
     this.renderer.gl.deleteBuffer(this.vertexBuffer);
     this.renderer.gl.deleteBuffer(this.indexBuffer);
 

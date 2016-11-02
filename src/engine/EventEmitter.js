@@ -45,9 +45,9 @@ class EventEmitter {
   listeners(event, exists) {
     let available = this._events && this._events[event];
 
-    if (exists) return !!available;
-    if (!available) return [];
-    if (available.fn) return [available.fn];
+    if (exists) {return !!available;}
+    if (!available) {return [];}
+    if (available.fn) {return [available.fn];}
 
     let i, l, ee;
     for (i = 0, l = available.length, ee = new Array(l); i < l; i++) {
@@ -66,13 +66,13 @@ class EventEmitter {
    * @returns {boolean} Indication if we've emitted an event.
    */
   emit(event, a1, a2, a3, a4, a5) {
-    if (!this._events || !this._events[event]) return false;
+    if (!this._events || !this._events[event]) {return false;}
 
     let listeners = this._events[event],
       len = arguments.length, args, i;
 
     if ('function' === typeof listeners.fn) {
-      if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
+      if (listeners.once) {this.removeListener(event, listeners.fn, undefined, true);}
 
       switch (len) {
       case 1: return listeners.fn.call(listeners.context), true;
@@ -83,25 +83,27 @@ class EventEmitter {
       case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
       }
 
-      for (i = 1, args = new Array(len -1); i < len; i++) {
+      for (i = 1, args = new Array(len - 1); i < len; i++) {
         args[i - 1] = arguments[i];
       }
 
       listeners.fn.apply(listeners.context, args);
-    } else {
+    }
+    else {
       let length = listeners.length, j;
 
       for (i = 0; i < length; i++) {
-        if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
+        if (listeners[i].once) {this.removeListener(event, listeners[i].fn, undefined, true);}
 
         switch (len) {
         case 1: listeners[i].fn.call(listeners[i].context); break;
         case 2: listeners[i].fn.call(listeners[i].context, a1); break;
         case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
         default:
-          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
-            args[j - 1] = arguments[j];
-          }
+          if (!args) {
+            for (j = 1, args = new Array(len - 1); j < len; j++) {
+              args[j - 1] = arguments[j];
+            }}
 
           listeners[i].fn.apply(listeners[i].context, args);
         }
@@ -123,13 +125,14 @@ class EventEmitter {
   on(event, fn, context) {
     var listener = new EE(fn, context || this);
 
-    if (!this._events) this._events = Object.create(null);
-    if (!this._events[event]) this._events[event] = listener;
+    if (!this._events) {this._events = Object.create(null);}
+    if (!this._events[event]) {this._events[event] = listener;}
     else {
-      if (!this._events[event].fn) this._events[event].push(listener);
-      else this._events[event] = [
-        this._events[event], listener,
-      ];
+      if (!this._events[event].fn) {this._events[event].push(listener);}
+      else {
+        this._events[event] = [
+          this._events[event], listener,
+        ];}
     }
 
     return this;
@@ -147,13 +150,14 @@ class EventEmitter {
   once(event, fn, context) {
     let listener = new EE(fn, context || this, true);
 
-    if (!this._events) this._events = Object.create(null);
-    if (!this._events[event]) this._events[event] = listener;
+    if (!this._events) {this._events = Object.create(null);}
+    if (!this._events[event]) {this._events[event] = listener;}
     else {
-      if (!this._events[event].fn) this._events[event].push(listener);
-      else this._events[event] = [
-        this._events[event], listener,
-      ];
+      if (!this._events[event].fn) {this._events[event].push(listener);}
+      else {
+        this._events[event] = [
+          this._events[event], listener,
+        ];}
     }
 
     return this;
@@ -170,7 +174,7 @@ class EventEmitter {
    * @param {boolean} once Only remove once listeners.
    */
   removeListener(event, fn, context, once) {
-    if (!this._events || !this._events[event]) return this;
+    if (!this._events || !this._events[event]) {return this;}
 
     let listeners = this._events[event], events = [];
 
@@ -183,7 +187,8 @@ class EventEmitter {
         ) {
           events.push(listeners);
         }
-      } else {
+      }
+      else {
         for (let i = 0, length = listeners.length; i < length; i++) {
           if (
                listeners[i].fn !== fn
@@ -201,7 +206,8 @@ class EventEmitter {
     //
     if (events.length) {
       this._events[event] = events.length === 1 ? events[0] : events;
-    } else {
+    }
+    else {
       delete this._events[event];
     }
 
@@ -216,10 +222,10 @@ class EventEmitter {
    * @param {string} event The event want to remove all listeners for.
    */
   removeAllListeners(event) {
-    if (!this._events) return this;
+    if (!this._events) {return this;}
 
-    if (event) delete this._events[event];
-    else this._events = Object.create(null);
+    if (event) {delete this._events[event];}
+    else {this._events = Object.create(null);}
 
     return this;
   }

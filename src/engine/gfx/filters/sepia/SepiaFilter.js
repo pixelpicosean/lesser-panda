@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function SepiaFilter()
-{
+function SepiaFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         null,
@@ -35,12 +34,10 @@ Object.defineProperties(SepiaFilter.prototype, {
      * @memberof PIXI.filters.SepiaFilter#
      */
   sepia: {
-    get: function()
-        {
+    get: function() {
       return this.uniforms.sepia.value;
     },
-    set: function(value)
-        {
+    set: function(value) {
       this.uniforms.sepia.value = value;
     },
   },

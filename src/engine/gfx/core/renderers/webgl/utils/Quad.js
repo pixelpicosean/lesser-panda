@@ -4,8 +4,7 @@
  * @class
  * @param gl {WebGLRenderingContext} The gl context for this quad to use.
  */
-function Quad(gl)
-{
+function Quad(gl) {
   /*
    * the current WebGL drawing context
    *
@@ -40,7 +39,7 @@ function Quad(gl)
   ]);
 
 //    var white = (0xFFFFFF >> 16) + (0xFFFFFF & 0xff00) + ((0xFFFFFF & 0xff) << 16) + (1 * 255 << 24);
-    //TODO convert this to a 32 unsigned int array
+    // TODO convert this to a 32 unsigned int array
     /**
      * The color components of the triangles
      *
@@ -86,10 +85,9 @@ Quad.prototype.constructor = Quad;
  * @param rect {PIXI.Rectangle} the first rectangle
  * @param rect2 {PIXI.Rectangle} the second rectangle
  */
-Quad.prototype.map = function(rect, rect2)
-{
-  var x = 0; //rect2.x / rect.width;
-  var y = 0; //rect2.y / rect.height;
+Quad.prototype.map = function(rect, rect2) {
+  var x = 0; // rect2.x / rect.width;
+  var y = 0; // rect2.y / rect.height;
 
   this.uvs[0] = x;
   this.uvs[1] = y;
@@ -103,7 +101,7 @@ Quad.prototype.map = function(rect, rect2)
   this.uvs[6] = x;
   this.uvs[7] = y + rect2.height / rect.height;
 
-    /// -----
+    // / -----
   x = rect2.x;
   y = rect2.y;
 
@@ -125,12 +123,11 @@ Quad.prototype.map = function(rect, rect2)
 /**
  * Binds the buffer and uploads the data
  */
-Quad.prototype.upload = function()
-{
+Quad.prototype.upload = function() {
   var gl = this.gl;
 
     // TODO could probably be pushed into one upload!
-  gl.bindBuffer( gl.ARRAY_BUFFER, this.vertexBuffer );
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.vertices);
 
@@ -139,8 +136,7 @@ Quad.prototype.upload = function()
   gl.bufferSubData(gl.ARRAY_BUFFER, (8 + 8) * 4, this.colors);
 };
 
-Quad.prototype.destroy = function()
-{
+Quad.prototype.destroy = function() {
   var gl = this.gl;
 
   gl.deleteBuffer(this.vertexBuffer);

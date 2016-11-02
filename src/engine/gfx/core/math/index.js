@@ -7,13 +7,13 @@ module.exports = {
   // to avoid circular dependencies and cut down on
   // internal module requires.
 
-  Point:      require('engine/Vector'),
-  Matrix:     require('./Matrix'),
-  GroupD8:    require('./GroupD8'),
+  Point: require('engine/Vector'),
+  Matrix: require('./Matrix'),
+  GroupD8: require('./GroupD8'),
 
-  Circle:     require('./shapes/Circle'),
-  Ellipse:    require('./shapes/Ellipse'),
-  Polygon:    require('./shapes/Polygon'),
-  Rectangle:  require('./shapes/Rectangle'),
+  Circle: require('./shapes/Circle'),
+  Ellipse: require('./shapes/Ellipse'),
+  Polygon: require('./shapes/Polygon'),
+  Rectangle: require('./shapes/Rectangle'),
   RoundedRectangle: require('./shapes/RoundedRectangle'),
 };

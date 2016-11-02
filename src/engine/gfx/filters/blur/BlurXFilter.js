@@ -8,8 +8,7 @@ var core = require('../../core');
  * @extends PIXI.AbstractFilter
  * @memberof PIXI.filters
  */
-function BlurXFilter()
-{
+function BlurXFilter() {
   core.AbstractFilter.call(this,
         // vertex shader
         require('./blurX.vert'),
@@ -36,24 +35,20 @@ BlurXFilter.prototype = Object.create(core.AbstractFilter.prototype);
 BlurXFilter.prototype.constructor = BlurXFilter;
 module.exports = BlurXFilter;
 
-BlurXFilter.prototype.applyFilter = function(renderer, input, output, clear)
-{
+BlurXFilter.prototype.applyFilter = function(renderer, input, output, clear) {
   var shader = this.getShader(renderer);
 
   this.uniforms.strength.value = this.strength / 4 / this.passes * (input.frame.width / input.size.width);
 
-  if(this.passes === 1)
-    {
+  if (this.passes === 1) {
     renderer.filterManager.applyFilter(shader, input, output, clear);
   }
-  else
-    {
+  else {
     var renderTarget = renderer.filterManager.getRenderTarget(true);
     var flip = input;
     var flop = renderTarget;
 
-    for(var i = 0; i < this.passes-1; i++)
-        {
+    for (var i = 0; i < this.passes - 1; i++) {
       renderer.filterManager.applyFilter(shader, flip, flop, true);
 
       var temp = flop;
@@ -77,13 +72,11 @@ Object.defineProperties(BlurXFilter.prototype, {
      * @default 2
      */
   blur: {
-    get: function()
-        {
-      return  this.strength;
+    get: function() {
+      return this.strength;
     },
-    set: function(value)
-        {
-      this.padding =  Math.abs(value) * 0.5;
+    set: function(value) {
+      this.padding = Math.abs(value) * 0.5;
       this.strength = value;
     },
   },

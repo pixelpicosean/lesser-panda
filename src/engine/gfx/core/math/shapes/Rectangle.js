@@ -48,8 +48,7 @@ class Rectangle {
    *
    * @return {PIXI.Rectangle} a copy of the rectangle
    */
-  clone()
-  {
+  clone() {
     return new Rectangle(this.x, this.y, this.width, this.height);
   }
 
@@ -60,17 +59,13 @@ class Rectangle {
    * @param y {number} The Y coordinate of the point to test
    * @return {boolean} Whether the x/y coordinates are within this Rectangle
    */
-  contains(x, y)
-  {
-    if (this.width <= 0 || this.height <= 0)
-      {
+  contains(x, y) {
+    if (this.width <= 0 || this.height <= 0) {
       return false;
     }
 
-    if (x >= this.x && x < this.x + this.width)
-      {
-      if (y >= this.y && y < this.y + this.height)
-          {
+    if (x >= this.x && x < this.x + this.width) {
+      if (y >= this.y && y < this.y + this.height) {
         return true;
       }
     }

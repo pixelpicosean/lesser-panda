@@ -6,8 +6,7 @@ var core = require('../core');
  * @class
  * @memberof PIXI.interaction
  */
-function InteractionData()
-{
+function InteractionData() {
     /**
      * This point stores the global coords of where the touch/mouse event happened
      *
@@ -41,7 +40,6 @@ module.exports = InteractionData;
  * @param [globalPos] {PIXI.Point} A Point object containing your custom global coords, optional (otherwise will use the current global coords)
  * @return {PIXI.Point} A point containing the coordinates of the InteractionData position relative to the DisplayObject
  */
-InteractionData.prototype.getLocalPosition = function(displayObject, point, globalPos)
-{
+InteractionData.prototype.getLocalPosition = function(displayObject, point, globalPos) {
   return displayObject.worldTransform.applyInverse(globalPos || this.global, point);
 };
