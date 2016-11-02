@@ -1,6 +1,7 @@
 const math = require('../math');
 const RenderTexture = require('../textures/RenderTexture');
 const EventEmitter = require('engine/EventEmitter');
+const Vector = require('engine/Vector');
 const CONST = require('../../const');
 
 const _tempMatrix = new math.Matrix();
@@ -153,6 +154,30 @@ class DisplayObject extends EventEmitter {
      * @private
      */
     this._mask = null;
+  }
+
+  /**
+   * Returns the global position of the displayObject.
+   *
+   * @memberof DisplayObject#
+   * @param point {Vector} the point to write the global value to. If null a new point will be returned
+   * @return {Vector}
+   */
+  getGlobalPosition(point) {
+    point = point || Vector.create();
+
+    if (this.parent) {
+      this.displayObjectUpdateTransform();
+
+      point.x = this.worldTransform.tx;
+      point.y = this.worldTransform.ty;
+    }
+    else {
+      point.x = this.position.x;
+      point.y = this.position.y;
+    }
+
+    return point;
   }
 }
 

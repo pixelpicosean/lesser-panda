@@ -1,4 +1,4 @@
-var TilingSprite = require('./extras/TilingSprite');
+var TilingSprite = require('./core/sprites/TilingSprite');
 var textureFromData = require('./utils').textureFromData;
 var CONST = require('./const');
 
