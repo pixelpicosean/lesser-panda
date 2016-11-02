@@ -1,5 +1,5 @@
 var Graphics = require('./core/graphics/Graphics');
-var Vector = require('engine/vector');
+var Vector = require('engine/Vector');
 var CONST = require('./const');
 require('./core/graphics/webgl/GraphicsRenderer');
 

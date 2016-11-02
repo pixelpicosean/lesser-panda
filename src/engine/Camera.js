@@ -1,6 +1,6 @@
 const engine = require('engine/core');
-const Vector = require('engine/vector');
-const Timer = require('engine/timer');
+const Vector = require('engine/Vector');
+const Timer = require('engine/Timer');
 const { clamp } = require('engine/utils/math');
 
 /**
@@ -444,8 +444,8 @@ Object.defineProperty(Camera.prototype, 'bottom', {
  * @see Camera
  *
  * @requires module:engine/core
- * @requires module:engine/vector
- * @requires module:engine/timer
+ * @requires module:engine/Vector
+ * @requires module:engine/Timer
  * @requires module:engine/utils/math
  */
 module.exports = Camera;

@@ -1,7 +1,7 @@
 require('engine/polyfill');
 
 const EventEmitter = require('engine/EventEmitter');
-const Vector = require('engine/vector');
+const Vector = require('engine/Vector');
 const resize = require('engine/resize');
 const device = require('engine/device');
 const config = require('game/config');
@@ -660,10 +660,8 @@ function _noPageScroll() {
  * @exports engine/core
  *
  * @requires module:engine/polyfill
- * @requires module:engine/eventemitter3
- * @requires module:engine/renderer
- * @requires module:engine/timer
- * @requires module:engine/vector
+ * @requires module:engine/EventEmitter
+ * @requires module:engine/Vector
  * @requires module:engine/resize
  * @requires module:engine/device
  */

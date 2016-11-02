@@ -17,9 +17,11 @@ const rnd = require('engine/rnd');
 const keyboard = require('engine/keyboard');
 
 const SystemGfx = require('engine/gfx');
-const Sprite = require('engine/gfx/sprite');
-const Graphics = require('engine/gfx/graphics');
-const Text = require('engine/gfx/text');
+const Sprite = require('engine/gfx/Sprite');
+const Graphics = require('engine/gfx/Graphics');
+const Text = require('engine/gfx/Text');
+const Plane = require('engine/gfx/Plane');
+const Rope = require('engine/gfx/Rope');
 
 const Entity = require('engine/Entity');
 

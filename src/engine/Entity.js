@@ -1,4 +1,4 @@
-const Vector = require('engine/vector');
+const Vector = require('engine/Vector');
 const { merge } = require('engine/utils/object');
 
 /**

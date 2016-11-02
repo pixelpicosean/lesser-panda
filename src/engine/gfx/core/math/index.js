@@ -7,7 +7,7 @@ module.exports = {
   // to avoid circular dependencies and cut down on
   // internal module requires.
 
-  Point:      require('engine/vector'),
+  Point:      require('engine/Vector'),
   Matrix:     require('./Matrix'),
   GroupD8:    require('./GroupD8'),
 

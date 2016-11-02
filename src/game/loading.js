@@ -2,8 +2,8 @@ const core = require('engine/core');
 const Game = require('engine/game');
 const loader = require('engine/loader');
 const SystemGfx = require('engine/gfx');
-const graphics = require('engine/gfx/graphics');
-const text = require('engine/gfx/text');
+const graphics = require('engine/gfx/Graphics');
+const text = require('engine/gfx/Text');
 
 const BAR_WIDTH = Math.floor(core.width * 0.75);
 const BAR_HEIGHT = Math.floor(BAR_WIDTH * 0.075);

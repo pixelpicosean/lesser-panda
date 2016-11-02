@@ -1,5 +1,5 @@
 var core = require('../core');
-var Vector = require('engine/vector');
+var Vector = require('engine/Vector');
 var Point = Vector;
 var Sprite = require('../core/sprites/Sprite');
 // a sprite use dfor rendering textures..

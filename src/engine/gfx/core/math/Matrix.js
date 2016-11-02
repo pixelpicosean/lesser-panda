@@ -2,7 +2,7 @@
 // should either fix it or change the jshint config
 // jshint -W072
 
-const Vector = require('engine/vector');
+const Vector = require('engine/Vector');
 
 /**
  * The pixi Matrix class as an object, which makes it a lot faster,
