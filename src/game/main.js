@@ -19,10 +19,13 @@ const keyboard = require('engine/keyboard');
 
 const SystemGfx = require('engine/gfx');
 const Sprite = require('engine/gfx/Sprite');
+const AnimatedSprite = require('engine/gfx/AnimatedSprite');
+const TilingSprite = require('engine/gfx/TilingSprite');
 const Graphics = require('engine/gfx/Graphics');
 const Text = require('engine/gfx/Text');
 const Plane = require('engine/gfx/Plane');
 const Rope = require('engine/gfx/Rope');
+const { filmstrip } = require('engine/gfx/utils');
 
 const Entity = require('engine/Entity');
 
@@ -37,12 +40,15 @@ session.addString('name', 'Sean');
 
 
 // Resource loading
+let texExplo;
 loader
   .add('KenPixel.fnt')
   .add('font-sheet', 'KenPixel.png')
   .add('bgm', 'bgm.mp3|webm')
+  .add('explo', 'explo.png')
   .load(() => {
     console.log('== loading completed! ==');
+    texExplo = filmstrip(loader.resources['explo'].texture, 64, 64);
   });
 
 
@@ -150,8 +156,26 @@ class MyGame extends Game {
       .createLayer('ui');
 
     this.sysGfx.backgroundColor = 0xcccccc;
-    Sprite({ texture: 'font-sheet' })
-      .addTo(this.sysGfx.layers['ui']);
+    let spr = Sprite({
+      texture: 'font-sheet',
+      interactive: true,
+    }).addTo(this.sysGfx.layers['ui']);
+    spr.on('mousedown', () => {
+      console.log('clicked');
+    });
+
+    let tSpr = TilingSprite({
+      texture: 'font-sheet',
+      width: 40,
+      height: 40,
+    }).addTo(this.sysGfx.layers['ui']);
+    tSpr.position.set(300, 300);
+
+    let aSpr = AnimatedSprite({
+      textures: texExplo,
+    }).addTo(this.sysGfx.layers['ui']);
+    aSpr.position.set(200, 200);
+    aSpr.play();
 
     let p = Plane({ texture: 'font-sheet' })
       .addTo(this.sysGfx.layers['ui']);
