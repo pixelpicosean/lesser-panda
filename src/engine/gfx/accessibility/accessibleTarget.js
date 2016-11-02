@@ -3,7 +3,6 @@
  * used by {@link PIXI.accessibility.AccessibilityManager}.
  *
  * @mixin
- * @memberof PIXI
  * @example
  *      function MyObject() {}
  *
@@ -13,30 +12,30 @@
  *      );
  */
 var accessibleTarget = {
-    
-    /**
-     * @todo Needs docs.
-     */
+
+  /**
+   * @todo Needs docs.
+   */
   accessible:false,
 
-    /**
-     * @todo Needs docs.
-     */
+  /**
+   * @todo Needs docs.
+   */
   accessibleTitle:null,
 
-    /**
-     * @todo Needs docs.
-     */
+  /**
+   * @todo Needs docs.
+   */
   tabIndex:0,
 
-    /**
-     * @todo Needs docs.
-     */
+  /**
+   * @todo Needs docs.
+   */
   _accessibleActive:false,
 
-    /**
-     * @todo Needs docs.
-     */
+  /**
+   * @todo Needs docs.
+   */
   _accessibleDiv:false,
 
 };

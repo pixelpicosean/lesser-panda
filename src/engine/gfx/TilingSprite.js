@@ -1,6 +1,6 @@
 var TilingSprite = require('./extras/TilingSprite');
 var textureFromData = require('./utils').textureFromData;
-var CONST = require('./core/const');
+var CONST = require('./const');
 
 module.exports = function(data) {
   var tex = textureFromData(data.texture);

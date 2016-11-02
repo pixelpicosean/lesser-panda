@@ -1,6 +1,6 @@
 const ObjectRenderer = require('../../renderers/webgl/utils/ObjectRenderer');
 const WebGLRenderer = require('../../renderers/webgl/WebGLRenderer');
-const CONST = require('../../const');
+const CONST = require('../../../const');
 
 /**
  * @author Mat Groves
@@ -18,9 +18,8 @@ const CONST = require('../../const');
  *
  * @class
  * @private
- * @memberof PIXI
- * @extends PIXI.ObjectRenderer
- * @param renderer {PIXI.WebGLRenderer} The renderer this sprite batch works for.
+ * @extends ObjectRenderer
+ * @param renderer {WebGLRenderer} The renderer this sprite batch works for.
  */
 class SpriteRenderer extends ObjectRenderer {
   constructor(renderer) {
@@ -103,14 +102,14 @@ class SpriteRenderer extends ObjectRenderer {
     /**
      * The current sprites in the batch.
      *
-     * @member {PIXI.Sprite[]}
+     * @member {Sprite[]}
      */
     this.sprites = [];
 
     /**
      * The default shader that is used if a sprite doesn't have a more specific one.
      *
-     * @member {PIXI.Shader}
+     * @member {Shader}
      */
     this.shader = null;
   }
@@ -145,7 +144,7 @@ class SpriteRenderer extends ObjectRenderer {
   /**
    * Renders the sprite object.
    *
-   * @param sprite {PIXI.Sprite} the sprite to render when using this spritebatch
+   * @param sprite {Sprite} the sprite to render when using this spritebatch
    */
   render(sprite)
   {
@@ -383,7 +382,7 @@ class SpriteRenderer extends ObjectRenderer {
    * Draws the currently batches sprites.
    *
    * @private
-   * @param texture {PIXI.Texture}
+   * @param texture {Texture}
    * @param size {number}
    * @param startIndex {number}
    */

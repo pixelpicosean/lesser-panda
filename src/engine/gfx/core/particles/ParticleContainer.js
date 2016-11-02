@@ -1,5 +1,5 @@
 const Container = require('../display/Container');
-const CONST = require('../const');
+const CONST = require('../../const');
 
 /**
  * The ParticleContainer class is a really fast version of the Container built solely for speed,
@@ -14,7 +14,7 @@ const CONST = require('../const');
  *
  * for (var i = 0; i < 100; ++i)
  * {
- *     var sprite = new PIXI.Sprite.fromImage("myImage.png");
+ *     var sprite = new Sprite.fromImage("myImage.png");
  *     container.addChild(sprite);
  * }
  * ```
@@ -22,8 +22,7 @@ const CONST = require('../const');
  * And here you have a hundred sprites that will be renderer at the speed of light.
  *
  * @class
- * @extends PIXI.Container
- * @memberof PIXI
+ * @extends Container
  * @param [maxSize=15000] {number} The maximum number of particles that can be renderer by the container.
  * @param [properties] {object} The properties of children that should be uploaded to the gpu and applied.
  * @param [properties.scale=false] {boolean} When true, scale be uploaded and applied.

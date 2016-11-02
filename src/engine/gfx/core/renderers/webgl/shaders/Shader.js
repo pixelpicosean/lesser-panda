@@ -5,8 +5,7 @@ var utils = require('../../../utils');
  * Base shader class for PIXI managed shaders.
  *
  * @class
- * @memberof PIXI
- * @param shaderManager {PIXI.ShaderManager} The webgl shader manager this shader works for.
+ * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  * @param [vertexSrc] {string} The source of the vertex shader.
  * @param [fragmentSrc] {string} The source of the fragment shader.
  * @param [uniforms] {object} Uniforms for this shader.
@@ -237,96 +236,96 @@ Shader.prototype.syncUniform = function(uniform)
     gl.uniform1i(location, value ? 1 : 0);
     break;
 
-        // single int value
+  // single int value
   case 'i':
   case '1i':
     gl.uniform1i(location, value);
     break;
 
-        // single float value
+  // single float value
   case 'f':
   case '1f':
     gl.uniform1f(location, value);
     break;
 
-        // Float32Array(2) or JS Arrray
+  // Float32Array(2) or JS Arrray
   case '2f':
     gl.uniform2f(location, value[0], value[1]);
     break;
 
-        // Float32Array(3) or JS Arrray
+  // Float32Array(3) or JS Arrray
   case '3f':
     gl.uniform3f(location, value[0], value[1], value[2]);
     break;
 
-        // Float32Array(4) or JS Arrray
+  // Float32Array(4) or JS Arrray
   case '4f':
     gl.uniform4f(location, value[0], value[1], value[2], value[3]);
     break;
 
-        // a 2D Point object
+  // a 2D Point object
   case 'v2':
     gl.uniform2f(location, value.x, value.y);
     break;
 
-        // a 3D Point object
+  // a 3D Point object
   case 'v3':
     gl.uniform3f(location, value.x, value.y, value.z);
     break;
 
-        // a 4D Point object
+  // a 4D Point object
   case 'v4':
     gl.uniform4f(location, value.x, value.y, value.z, value.w);
     break;
 
-        // Int32Array or JS Array
+  // Int32Array or JS Array
   case '1iv':
     gl.uniform1iv(location, value);
     break;
 
-        // Int32Array or JS Array
+  // Int32Array or JS Array
   case '2iv':
     gl.uniform2iv(location, value);
     break;
 
-        // Int32Array or JS Array
+  // Int32Array or JS Array
   case '3iv':
     gl.uniform3iv(location, value);
     break;
 
-        // Int32Array or JS Array
+  // Int32Array or JS Array
   case '4iv':
     gl.uniform4iv(location, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case '1fv':
     gl.uniform1fv(location, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case '2fv':
     gl.uniform2fv(location, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case '3fv':
     gl.uniform3fv(location, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case '4fv':
     gl.uniform4fv(location, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case 'm2':
   case 'mat2':
   case 'Matrix2fv':
     gl.uniformMatrix2fv(location, uniform.transpose, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case 'm3':
   case 'mat3':
   case 'Matrix3fv':
@@ -334,14 +333,14 @@ Shader.prototype.syncUniform = function(uniform)
     gl.uniformMatrix3fv(location, uniform.transpose, value);
     break;
 
-        // Float32Array or JS Array
+  // Float32Array or JS Array
   case 'm4':
   case 'mat4':
   case 'Matrix4fv':
     gl.uniformMatrix4fv(location, uniform.transpose, value);
     break;
 
-        // a Color Value
+  // a Color Value
   case 'c':
     if (typeof value === 'number')
             {
@@ -351,27 +350,27 @@ Shader.prototype.syncUniform = function(uniform)
     gl.uniform3f(location, value[0], value[1], value[2]);
     break;
 
-        // flat array of integers (JS or typed array)
+  // flat array of integers (JS or typed array)
   case 'iv1':
     gl.uniform1iv(location, value);
     break;
 
-        // flat array of integers with 3 x N size (JS or typed array)
+  // flat array of integers with 3 x N size (JS or typed array)
   case 'iv':
     gl.uniform3iv(location, value);
     break;
 
-        // flat array of floats (JS or typed array)
+  // flat array of floats (JS or typed array)
   case 'fv1':
     gl.uniform1fv(location, value);
     break;
 
-        // flat array of floats with 3 x N size (JS or typed array)
+  // flat array of floats with 3 x N size (JS or typed array)
   case 'fv':
     gl.uniform3fv(location, value);
     break;
 
-        // array of 2D Point objects
+  // array of 2D Point objects
   case 'v2v':
     if (!uniform._array)
             {
@@ -387,7 +386,7 @@ Shader.prototype.syncUniform = function(uniform)
     gl.uniform2fv(location, uniform._array);
     break;
 
-        // array of 3D Point objects
+  // array of 3D Point objects
   case 'v3v':
     if (!uniform._array)
             {
@@ -405,7 +404,7 @@ Shader.prototype.syncUniform = function(uniform)
     gl.uniform3fv(location, uniform._array);
     break;
 
-        // array of 4D Point objects
+  // array of 4D Point objects
   case 'v4v':
     if (!uniform._array)
             {
@@ -424,7 +423,7 @@ Shader.prototype.syncUniform = function(uniform)
     gl.uniform4fv(location, uniform._array);
     break;
 
-        // PIXI.Texture
+  // Texture
   case 't':
   case 'sampler2D':
 
@@ -433,7 +432,7 @@ Shader.prototype.syncUniform = function(uniform)
       break;
     }
 
-            // activate this texture
+    // activate this texture
     gl.activeTexture(gl['TEXTURE' + this.textureCount]);
 
     var texture = uniform.value.baseTexture._glTextures[gl.id];
@@ -442,17 +441,17 @@ Shader.prototype.syncUniform = function(uniform)
             {
       this.initSampler2D(uniform);
 
-                // set the textur to the newly created one..
+      // set the textur to the newly created one..
       texture = uniform.value.baseTexture._glTextures[gl.id];
     }
 
-            // bind the texture
+    // bind the texture
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-            // set uniform to texture index
+    // set uniform to texture index
     gl.uniform1i(uniform._location, this.textureCount);
 
-            // increment next texture id
+    // increment next texture id
     this.textureCount++;
 
     break;
@@ -497,7 +496,7 @@ Shader.prototype.initSampler2D = function(uniform)
   if (uniform.textureData)
     {
 
-        //TODO move this...
+    //TODO move this...
     var data = uniform.textureData;
 
     texture._glTextures[gl.id] = gl.createTexture();
@@ -505,15 +504,15 @@ Shader.prototype.initSampler2D = function(uniform)
     gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id]);
 
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, texture.premultipliedAlpha);
-        // GLTexture = mag linear, min linear_mipmap_linear, wrap repeat + gl.generateMipmap(gl.TEXTURE_2D);
-        // GLTextureLinear = mag/min linear, wrap clamp
-        // GLTextureNearestRepeat = mag/min NEAREST, wrap repeat
-        // GLTextureNearest = mag/min nearest, wrap clamp
-        // AudioTexture = whatever + luminance + width 512, height 2, border 0
-        // KeyTexture = whatever + luminance + width 256, height 2, border 0
+    // GLTexture = mag linear, min linear_mipmap_linear, wrap repeat + gl.generateMipmap(gl.TEXTURE_2D);
+    // GLTextureLinear = mag/min linear, wrap clamp
+    // GLTextureNearestRepeat = mag/min NEAREST, wrap repeat
+    // GLTextureNearest = mag/min nearest, wrap clamp
+    // AudioTexture = whatever + luminance + width 512, height 2, border 0
+    // KeyTexture = whatever + luminance + width 256, height 2, border 0
 
-        //  magFilter can be: gl.LINEAR, gl.LINEAR_MIPMAP_LINEAR or gl.NEAREST
-        //  wrapS/T can be: gl.CLAMP_TO_EDGE or gl.REPEAT
+    //  magFilter can be: gl.LINEAR, gl.LINEAR_MIPMAP_LINEAR or gl.NEAREST
+    //  wrapS/T can be: gl.CLAMP_TO_EDGE or gl.REPEAT
 
     gl.texImage2D(gl.TEXTURE_2D, 0, data.luminance ? gl.LUMINANCE : gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.source);
 
@@ -531,7 +530,6 @@ Shader.prototype.initSampler2D = function(uniform)
 
 /**
  * Destroys the shader.
- *
  */
 Shader.prototype.destroy = function()
 {

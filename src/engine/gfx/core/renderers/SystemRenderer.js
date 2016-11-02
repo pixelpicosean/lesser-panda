@@ -1,6 +1,6 @@
 var utils = require('../utils'),
   math = require('../math'),
-  CONST = require('../const'),
+  CONST = require('../../const'),
   EventEmitter = require('engine/EventEmitter');
 
 /**
@@ -8,7 +8,6 @@ var utils = require('../utils'),
  * Don't forget to add the CanvasRenderer.view to your DOM or you will not see anything :)
  *
  * @class
- * @memberof PIXI
  * @param system {string} The name of the system this renderer is for.
  * @param [width=800] {number} the width of the canvas view
  * @param [height=600] {number} the height of the canvas view
@@ -49,8 +48,8 @@ class SystemRenderer extends EventEmitter {
      * The type of the renderer.
      *
      * @member {number}
-     * @default PIXI.RENDERER_TYPE.UNKNOWN
-     * @see PIXI.RENDERER_TYPE
+     * @default RENDERER_TYPE.UNKNOWN
+     * @see RENDERER_TYPE
      */
     this.type = CONST.RENDERER_TYPE.UNKNOWN;
 
@@ -161,7 +160,7 @@ class SystemRenderer extends EventEmitter {
     /**
      * This temporary display object used as the parent of the currently being rendered item
      *
-     * @member {PIXI.DisplayObject}
+     * @member {DisplayObject}
      * @private
      */
     this._tempDisplayObjectParent = {worldTransform:new math.Matrix(), worldAlpha:1, children:[]};
@@ -169,7 +168,7 @@ class SystemRenderer extends EventEmitter {
     /**
      * The last root object that the renderer tried to render.
      *
-     * @member {PIXI.DisplayObject}
+     * @member {DisplayObject}
      * @private
      */
     this._lastObjectRendered = this._tempDisplayObjectParent;
@@ -181,7 +180,7 @@ Object.defineProperties(SystemRenderer.prototype, {
      * The background color to fill if not transparent
      *
      * @member {number}
-     * @memberof PIXI.SystemRenderer#
+     * @memberof SystemRenderer#
      */
   backgroundColor:
   {

@@ -1,6 +1,6 @@
 var Sprite = require('./core/sprites/Sprite');
 var textureFromData = require('./utils').textureFromData;
-var CONST = require('./core/const');
+var CONST = require('./const');
 require('./core/sprites/webgl/SpriteRenderer');
 
 module.exports = function(data) {

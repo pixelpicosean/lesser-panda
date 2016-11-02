@@ -6,9 +6,8 @@ var WebGLManager = require('./WebGLManager'),
 
 /**
  * @class
- * @memberof PIXI
- * @extends PIXI.WebGLManager
- * @param renderer {PIXI.WebGLRenderer} The renderer this manager works for.
+ * @extends WebGLManager
+ * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
 function ShaderManager(renderer)
 {
@@ -46,7 +45,7 @@ function ShaderManager(renderer)
   this._currentId = -1;
 
     /**
-     * @member {PIXI.Shader}
+     * @member {Shader}
      * @private
      */
   this.currentShader = null;
@@ -130,7 +129,7 @@ ShaderManager.prototype.setAttribs = function(attribs)
 /**
  * Sets the current shader.
  *
- * @param shader {PIXI.Shader} the shader to upload
+ * @param shader {Shader} the shader to upload
  */
 ShaderManager.prototype.setShader = function(shader)
 {

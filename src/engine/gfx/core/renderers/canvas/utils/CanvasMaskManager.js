@@ -4,7 +4,6 @@ const CanvasGraphics = require('./CanvasGraphics');
  * A set of functions used to handle masking.
  *
  * @class
- * @memberof PIXI
  */
 class CanvasMaskManager {
   constructor() {}

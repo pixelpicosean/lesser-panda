@@ -4,14 +4,13 @@ const utils = require('../../../utils');
  * Utility methods for Sprite/Texture tinting.
  * @static
  * @class
- * @memberof PIXI
  */
 const CanvasTinter = {};
 
 /**
  * Basically this method just needs a sprite and a color and tints the sprite with the given color.
  *
- * @param sprite {PIXI.Sprite} the sprite to tint
+ * @param sprite {Sprite} the sprite to tint
  * @param color {number} the color to use to tint the sprite with
  * @return {HTMLCanvasElement} The tinted canvas
  */

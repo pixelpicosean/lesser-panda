@@ -8,7 +8,7 @@ var SystemRenderer = require('../SystemRenderer'),
   ObjectRenderer = require('./utils/ObjectRenderer'),
   FXAAFilter = require('./filters/FXAAFilter'),
   utils = require('../../utils'),
-  CONST = require('../../const');
+  CONST = require('../../../const');
 
 /**
  * The WebGLRenderer draws the scene and all its content onto a webGL enabled canvas. This renderer
@@ -17,8 +17,7 @@ var SystemRenderer = require('../SystemRenderer'),
  * Don't forget to add the view to your DOM or you will not see anything :)
  *
  * @class
- * @memberof PIXI
- * @extends PIXI.SystemRenderer
+ * @extends SystemRenderer
  * @param [width=0] {number} the width of the canvas view
  * @param [height=0] {number} the height of the canvas view
  * @param [options] {object} The optional renderer parameters
@@ -64,7 +63,7 @@ class WebGLRenderer extends SystemRenderer {
     /**
      * The fxaa filter
      *
-     * @member {PIXI.FXAAFilter}
+     * @member {FXAAFilter}
      * @private
      */
     this._FXAAFilter = null;
@@ -93,28 +92,28 @@ class WebGLRenderer extends SystemRenderer {
     /**
      * Deals with managing the shader programs and their attribs.
      *
-     * @member {PIXI.ShaderManager}
+     * @member {ShaderManager}
      */
     this.shaderManager = new ShaderManager(this);
 
     /**
      * Manages the masks using the stencil buffer.
      *
-     * @member {PIXI.MaskManager}
+     * @member {MaskManager}
      */
     this.maskManager = new MaskManager(this);
 
     /**
      * Manages the stencil buffer.
      *
-     * @member {PIXI.StencilManager}
+     * @member {StencilManager}
      */
     this.stencilManager = new StencilManager(this);
 
     /**
      * Manages the filters.
      *
-     * @member {PIXI.FilterManager}
+     * @member {FilterManager}
      */
     this.filterManager = new FilterManager(this);
 
@@ -122,21 +121,21 @@ class WebGLRenderer extends SystemRenderer {
     /**
      * Manages the blendModes
      *
-     * @member {PIXI.BlendModeManager}
+     * @member {BlendModeManager}
      */
     this.blendModeManager = new BlendModeManager(this);
 
     /**
      * Holds the current render target
      *
-     * @member {PIXI.RenderTarget}
+     * @member {RenderTarget}
      */
     this.currentRenderTarget = null;
 
     /**
      * The currently active ObjectRenderer.
      *
-     * @member {PIXI.ObjectRenderer}
+     * @member {ObjectRenderer}
      */
     this.currentRenderer = new ObjectRenderer(this);
 
@@ -154,7 +153,7 @@ class WebGLRenderer extends SystemRenderer {
 
     /**
      * An array of render targets
-     * @member {PIXI.RenderTarget[]}
+     * @member {RenderTarget[]}
      * @private
      */
     this._renderTargetStack = [];
@@ -224,7 +223,7 @@ WebGLRenderer.prototype._initContext = function()
 /**
  * Renders the object to its webGL view
  *
- * @param object {PIXI.DisplayObject} the object to be rendered
+ * @param object {DisplayObject} the object to be rendered
  */
 WebGLRenderer.prototype.render = function(object)
 {
@@ -284,8 +283,8 @@ WebGLRenderer.prototype.render = function(object)
 /**
  * Renders a Display Object.
  *
- * @param displayObject {PIXI.DisplayObject} The DisplayObject to render
- * @param renderTarget {PIXI.RenderTarget} The render target to use to render this display object
+ * @param displayObject {DisplayObject} The DisplayObject to render
+ * @param renderTarget {RenderTarget} The render target to use to render this display object
  *
  */
 WebGLRenderer.prototype.renderDisplayObject = function(displayObject, renderTarget, clear)//projection, buffer)
@@ -312,7 +311,7 @@ WebGLRenderer.prototype.renderDisplayObject = function(displayObject, renderTarg
 /**
  * Changes the current renderer to the one given in parameter
  *
- * @param objectRenderer {PIXI.ObjectRenderer} The object renderer to use.
+ * @param objectRenderer {ObjectRenderer} The object renderer to use.
  */
 WebGLRenderer.prototype.setObjectRenderer = function(objectRenderer)
 {
@@ -329,7 +328,7 @@ WebGLRenderer.prototype.setObjectRenderer = function(objectRenderer)
 /**
  * Changes the current render target to the one given in parameter
  *
- * @param renderTarget {PIXI.RenderTarget} the new render target
+ * @param renderTarget {RenderTarget} the new render target
  */
 WebGLRenderer.prototype.setRenderTarget = function(renderTarget)
 {
@@ -367,7 +366,7 @@ WebGLRenderer.prototype.resize = function(width, height)
 /**
  * Updates and/or Creates a WebGL texture for the renderer's context.
  *
- * @param texture {PIXI.BaseTexture|PIXI.Texture} the texture to update
+ * @param texture {BaseTexture|Texture} the texture to update
  */
 WebGLRenderer.prototype.updateTexture = function(texture)
 {
@@ -424,7 +423,7 @@ WebGLRenderer.prototype.updateTexture = function(texture)
 /**
  * Deletes the texture from WebGL
  *
- * @param texture {PIXI.BaseTexture|PIXI.Texture} the texture to destroy
+ * @param texture {BaseTexture|Texture} the texture to destroy
  */
 WebGLRenderer.prototype.destroyTexture = function(texture, _skipRemove)
 {

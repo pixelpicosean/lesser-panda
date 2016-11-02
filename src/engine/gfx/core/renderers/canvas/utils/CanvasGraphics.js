@@ -1,17 +1,16 @@
-const CONST = require('../../../const');
+const CONST = require('../../../../const');
 
 /**
  * A set of functions used by the canvas renderer to draw the primitive graphics data.
  * @static
  * @class
- * @memberof PIXI
  */
 const CanvasGraphics = {};
 
 /*
  * Renders a Graphics object to a canvas.
  *
- * @param graphics {PIXI.Graphics} the actual graphics object to render
+ * @param graphics {Graphics} the actual graphics object to render
  * @param context {CanvasRenderingContext2D} the 2d drawing method of the canvas
  */
 CanvasGraphics.renderGraphics = function(graphics, context)

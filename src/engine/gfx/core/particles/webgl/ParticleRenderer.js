@@ -19,8 +19,7 @@ const math = require('../../math');
  *
  * @class
  * @private
- * @memberof PIXI
- * @param renderer {PIXI.WebGLRenderer} The renderer this sprite batch works for.
+ * @param renderer {WebGLRenderer} The renderer this sprite batch works for.
  */
 class ParticleRenderer extends ObjectRenderer {
   constructor(renderer) {

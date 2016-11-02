@@ -1,6 +1,6 @@
 var math = require('../../../math'),
   utils = require('../../../utils'),
-  CONST = require('../../../const'),
+  CONST = require('../../../../const'),
     //StencilManager = require('../managers/StencilManager'),
   StencilMaskStack = require('./StencilMaskStack');
 
@@ -10,11 +10,10 @@ var math = require('../../../math'),
 
 /**
  * @class
- * @memberof PIXI
  * @param gl {WebGLRenderingContext} the current WebGL drawing context
  * @param width {number} the horizontal range of the filter
  * @param height {number} the vertical range of the filter
- * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
  * @param resolution {number} the current resolution
  * @param root {boolean} Whether this object is the root element or not
  */
@@ -41,14 +40,14 @@ var RenderTarget = function(gl, width, height, scaleMode, resolution, root)
     /**
      * The texture
      *
-     * @member {PIXI.Texture}
+     * @member {Texture}
      */
   this.texture = null;
 
     /**
      * The size of the object as a rectangle
      *
-     * @member {PIXI.Rectangle}
+     * @member {Rectangle}
      */
   this.size = new math.Rectangle(0, 0, 1, 1);
 
@@ -62,21 +61,21 @@ var RenderTarget = function(gl, width, height, scaleMode, resolution, root)
     /**
      * The projection matrix
      *
-     * @member {PIXI.Matrix}
+     * @member {Matrix}
      */
   this.projectionMatrix = new math.Matrix();
 
     /**
      * The object's transform
      *
-     * @member {PIXI.Matrix}
+     * @member {Matrix}
      */
   this.transform = null;
 
     /**
      * The frame.
      *
-     * @member {PIXI.Rectangle}
+     * @member {Rectangle}
      */
   this.frame = null;
 
@@ -90,7 +89,7 @@ var RenderTarget = function(gl, width, height, scaleMode, resolution, root)
     /**
      * The data structure for the stencil masks
      *
-     * @member {PIXI.StencilMaskStack}
+     * @member {StencilMaskStack}
      */
   this.stencilMaskStack = new StencilMaskStack();
 
@@ -112,8 +111,8 @@ var RenderTarget = function(gl, width, height, scaleMode, resolution, root)
      * The scale mode.
      *
      * @member {number}
-     * @default PIXI.SCALE_MODES.DEFAULT
-     * @see PIXI.SCALE_MODES
+     * @default SCALE_MODES.DEFAULT
+     * @see SCALE_MODES
      */
   this.scaleMode = scaleMode || CONST.SCALE_MODES.DEFAULT;
 

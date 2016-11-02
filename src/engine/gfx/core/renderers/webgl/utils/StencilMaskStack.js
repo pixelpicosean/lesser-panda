@@ -1,29 +1,28 @@
 /**
  * Generic Mask Stack data structure
  * @class
- * @memberof PIXI
  */
 function StencilMaskStack()
 {
 	/**
-     * The actual stack
-     *
-     * @member {any[]}
-     */
+   * The actual stack
+   *
+   * @member {any[]}
+   */
   this.stencilStack = [];
 
-    /**
-     * TODO @alvin
-     *
-     * @member {boolean}
-     */
+  /**
+   * TODO @alvin
+   *
+   * @member {boolean}
+   */
   this.reverse = true;
 
-    /**
-     * Internal count
-     *
-     * @member {number}
-     */
+  /**
+   * Internal count
+   *
+   * @member {number}
+   */
   this.count = 0;
 }
 

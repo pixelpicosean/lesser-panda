@@ -1,5 +1,5 @@
 var Text = require('./core/text/Text');
-var CONST = require('./core/const');
+var CONST = require('./const');
 
 module.exports = function(data) {
   var inst = new Text(data.text, data, data.resolution || 1);

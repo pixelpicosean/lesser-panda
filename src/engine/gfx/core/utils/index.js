@@ -1,11 +1,12 @@
-var CONST = require('../const');
+const core = require('engine/core');
+var CONST = require('../../const');
 
 /**
- * @namespace PIXI.utils
+ * @namespace utils
  */
 var utils = {
   _uid: 0,
-  _saidHello: false,
+  saidHello: false,
 
   EventEmitter: require('engine/EventEmitter'),
   pluginTarget: require('./pluginTarget'),
@@ -139,10 +140,9 @@ var utils = {
   },
 
   /**
-   * Logs out the version and renderer information for this running instance of PIXI.
-   * If you don't want to see this message you can set `PIXI.utils._saidHello = true;`
-   * so the library thinks it already said it. Keep in mind that doing that will forever
-   * makes you a jerk face.
+   * Logs out the version and renderer information for this running instance of
+   * If you don't want to see this message you can set `core.sayHello = true;`
+   * so the library thinks it already said it.
    *
    * @param {string} type - The string renderer type to log.
    * @constant
@@ -150,7 +150,7 @@ var utils = {
    */
   sayHello: function(type)
   {
-    if (utils._saidHello)
+    if (!core.sayHello || utils.saidHello)
       {
       return;
     }
@@ -158,26 +158,20 @@ var utils = {
     if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
       {
       var args = [
-        '\n %c %c %c Pixi.js ' + CONST.VERSION + ' - ✰ ' + type + ' ✰  %c ' + ' %c ' + ' http://www.pixijs.com/  %c %c ♥%c♥%c♥ \n\n',
-        'background: #ff66a5; padding:5px 0;',
+        '\n %c %c LesserPanda ' + core.version + ' - ✰ ' + type + ' ✰ %c \n\n',
         'background: #ff66a5; padding:5px 0;',
         'color: #ff66a5; background: #030307; padding:5px 0;',
         'background: #ff66a5; padding:5px 0;',
-        'background: #ffc3dc; padding:5px 0;',
-        'background: #ff66a5; padding:5px 0;',
-        'color: #ff2424; background: #fff; padding:5px 0;',
-        'color: #ff2424; background: #fff; padding:5px 0;',
-        'color: #ff2424; background: #fff; padding:5px 0;',
       ];
 
       window.console.log.apply(console, args); //jshint ignore:line
     }
     else if (window.console)
       {
-      window.console.log('Pixi.js ' + CONST.VERSION + ' - ' + type + ' - http://www.pixijs.com/'); //jshint ignore:line
+      window.console.log('LesserPanda ' + core.version); //jshint ignore:line
     }
 
-    utils._saidHello = true;
+    utils.saidHello = true;
   },
 
   /**

@@ -4,7 +4,7 @@ var Container = require('../display/Container'),
   CanvasGraphics = require('../renderers/canvas/utils/CanvasGraphics'),
   GraphicsData = require('./GraphicsData'),
   math = require('../math'),
-  CONST = require('../const'),
+  CONST = require('../../const'),
   tempPoint = new math.Point();
 
 /**

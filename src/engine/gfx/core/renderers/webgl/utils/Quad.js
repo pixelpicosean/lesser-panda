@@ -2,16 +2,15 @@
  * Helper class to create a quad
  *
  * @class
- * @memberof PIXI
  * @param gl {WebGLRenderingContext} The gl context for this quad to use.
  */
 function Quad(gl)
 {
-    /*
-     * the current WebGL drawing context
-     *
-     * @member {WebGLRenderingContext}
-     */
+  /*
+   * the current WebGL drawing context
+   *
+   * @member {WebGLRenderingContext}
+   */
   this.gl = gl;
 
 //    this.textures = new TextureUvs();
@@ -143,7 +142,7 @@ Quad.prototype.upload = function()
 Quad.prototype.destroy = function()
 {
   var gl = this.gl;
-    
+
   gl.deleteBuffer(this.vertexBuffer);
   gl.deleteBuffer(this.indexBuffer);
 };

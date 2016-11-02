@@ -1,14 +1,13 @@
 /**
  * @class
- * @memberof PIXI
- * @param renderer {PIXI.WebGLRenderer} The renderer this manager works for.
+ * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
 function WebGLManager(renderer)
 {
     /**
      * The renderer this manager works for.
      *
-     * @member {PIXI.WebGLRenderer}
+     * @member {WebGLRenderer}
      */
   this.renderer = renderer;
 

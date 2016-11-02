@@ -12,8 +12,7 @@ var AbstractFilter = require('./AbstractFilter');
  * https://github.com/mitsuhiko/webgl-meincraft
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI
+ * @extends AbstractFilter
  *
  */
 function FXAAFilter()

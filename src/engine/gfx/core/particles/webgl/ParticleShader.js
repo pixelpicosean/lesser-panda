@@ -2,8 +2,7 @@ const TextureShader = require('../../renderers/webgl/shaders/TextureShader');
 
 /**
  * @class
- * @extends PIXI.TextureShader
- * @memberof PIXI
+ * @extends TextureShader
  * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  */
 class ParticleShader extends TextureShader {

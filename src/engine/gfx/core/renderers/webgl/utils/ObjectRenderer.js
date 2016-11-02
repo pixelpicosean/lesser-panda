@@ -4,9 +4,8 @@ var WebGLManager = require('../managers/WebGLManager');
  * Base for a common object renderer that can be used as a system renderer plugin.
  *
  * @class
- * @extends PIXI.WebGLManager
- * @memberof PIXI
- * @param renderer {PIXI.WebGLRenderer} The renderer this object renderer works for.
+ * @extends WebGLManager
+ * @param renderer {WebGLRenderer} The renderer this object renderer works for.
  */
 function ObjectRenderer(renderer)
 {
@@ -48,7 +47,7 @@ ObjectRenderer.prototype.flush = function()
 /**
  * Renders an object
  *
- * @param object {PIXI.DisplayObject} The object to render.
+ * @param object {DisplayObject} The object to render.
  */
 ObjectRenderer.prototype.render = function(object) /*eslint no-unused-vars:0*/
 {

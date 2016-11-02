@@ -3,7 +3,7 @@ const Texture = require('../textures/Texture');
 const Container = require('../display/Container');
 const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
 const utils = require('../utils');
-const CONST = require('../const');
+const CONST = require('../../const');
 const tempPoint = new math.Point();
 const GroupD8 = math.GroupD8;
 const canvasRenderWorldTransform = new math.Matrix();
@@ -14,13 +14,12 @@ const canvasRenderWorldTransform = new math.Matrix();
  * A sprite can be created directly from an image like this:
  *
  * ```js
- * var sprite = new PIXI.Sprite.fromImage('assets/image.png');
+ * var sprite = new Sprite.fromImage('assets/image.png');
  * ```
  *
  * @class
- * @extends PIXI.Container
- * @memberof PIXI
- * @param texture {PIXI.Texture} The texture for this sprite
+ * @extends Container
+ * @param texture {Texture} The texture for this sprite
  */
 class Sprite extends Container {
   constructor(texture) {
@@ -32,14 +31,14 @@ class Sprite extends Container {
      * Setting the anchor to 0.5,0.5 means the texture's origin is centered
      * Setting the anchor to 1,1 would mean the texture's origin point will be the bottom right corner
      *
-     * @member {PIXI.Point}
+     * @member {Point}
      */
     this.anchor = new math.Point();
 
     /**
      * The texture that the sprite is using
      *
-     * @member {PIXI.Texture}
+     * @member {Texture}
      * @private
      */
     this._texture = null;
@@ -69,18 +68,18 @@ class Sprite extends Container {
     this.tint = 0xFFFFFF;
 
     /**
-     * The blend mode to be applied to the sprite. Apply a value of `PIXI.BLEND_MODES.NORMAL` to reset the blend mode.
+     * The blend mode to be applied to the sprite. Apply a value of `BLEND_MODES.NORMAL` to reset the blend mode.
      *
      * @member {number}
-     * @default PIXI.BLEND_MODES.NORMAL
-     * @see PIXI.BLEND_MODES
+     * @default BLEND_MODES.NORMAL
+     * @see BLEND_MODES
      */
     this.blendMode = CONST.BLEND_MODES.NORMAL;
 
     /**
      * The shader that will be used to render the sprite. Set to null to remove a current shader.
      *
-     * @member {PIXI.AbstractFilter|PIXI.Shader}
+     * @member {AbstractFilter|Shader}
      */
     this.shader = null;
 
@@ -102,7 +101,7 @@ Object.defineProperties(Sprite.prototype, {
      * The width of the sprite, setting this will actually modify the scale to achieve the value set
      *
      * @member {number}
-     * @memberof PIXI.Sprite#
+     * @memberof Sprite#
      */
   width: {
     get: function()
@@ -121,7 +120,7 @@ Object.defineProperties(Sprite.prototype, {
      * The height of the sprite, setting this will actually modify the scale to achieve the value set
      *
      * @member {number}
-     * @memberof PIXI.Sprite#
+     * @memberof Sprite#
      */
   height: {
     get: function()
@@ -139,8 +138,8 @@ Object.defineProperties(Sprite.prototype, {
     /**
      * The texture that the sprite is using
      *
-     * @member {PIXI.Texture}
-     * @memberof PIXI.Sprite#
+     * @member {Texture}
+     * @memberof Sprite#
      */
   texture: {
     get: function()
@@ -196,7 +195,7 @@ Sprite.prototype._onTextureUpdate = function()
 *
 * Renders the object using the WebGL renderer
 *
-* @param renderer {PIXI.WebGLRenderer}
+* @param renderer {WebGLRenderer}
 * @private
 */
 Sprite.prototype._renderWebGL = function(renderer)
@@ -208,8 +207,8 @@ Sprite.prototype._renderWebGL = function(renderer)
 /**
  * Returns the bounds of the Sprite as a rectangle. The bounds calculation takes the worldTransform into account.
  *
- * @param matrix {PIXI.Matrix} the transformation matrix of the sprite
- * @return {PIXI.Rectangle} the framing rectangle
+ * @param matrix {Matrix} the transformation matrix of the sprite
+ * @return {Rectangle} the framing rectangle
  */
 Sprite.prototype.getBounds = function(matrix)
 {
@@ -347,7 +346,7 @@ Sprite.prototype.getLocalBounds = function()
 /**
 * Tests if a point is inside this sprite
 *
-* @param point {PIXI.Point} the point to test
+* @param point {Point} the point to test
 * @return {boolean} the result of the test
 */
 Sprite.prototype.containsPoint = function( point )
@@ -375,7 +374,7 @@ Sprite.prototype.containsPoint = function( point )
 /**
 * Renders the object using the Canvas renderer
 *
-* @param renderer {PIXI.CanvasRenderer} The renderer
+* @param renderer {CanvasRenderer} The renderer
 * @private
 */
 Sprite.prototype._renderCanvas = function(renderer)
@@ -533,8 +532,8 @@ Sprite.prototype.destroy = function(destroyTexture, destroyBaseTexture)
  * @static
  * @param frameId {string} The frame Id of the texture in the cache
  * @param [crossorigin=(auto)] {boolean} if you want to specify the cross-origin parameter
- * @param [scaleMode=PIXI.SCALE_MODES.DEFAULT] {number} if you want to specify the scale mode, see {@link PIXI.SCALE_MODES} for possible values
- * @return {PIXI.Sprite} A new Sprite using a texture from the texture cache matching the frameId
+ * @param [scaleMode=SCALE_MODES.DEFAULT] {number} if you want to specify the scale mode, see {@link SCALE_MODES} for possible values
+ * @return {Sprite} A new Sprite using a texture from the texture cache matching the frameId
  */
 Sprite.fromFrame = function(frameId)
 {
@@ -554,7 +553,7 @@ Sprite.fromFrame = function(frameId)
  *
  * @static
  * @param imageId {string} The image url of the texture
- * @return {PIXI.Sprite} A new Sprite using a texture from the texture cache matching the image id
+ * @return {Sprite} A new Sprite using a texture from the texture cache matching the image id
  */
 Sprite.fromImage = function(imageId, crossorigin, scaleMode)
 {

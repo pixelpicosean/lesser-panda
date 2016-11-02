@@ -2,7 +2,7 @@ const Sprite = require('../sprites/Sprite');
 const Texture = require('../textures/Texture');
 const math = require('../math');
 const utils = require('../utils');
-const CONST = require('../const');
+const CONST = require('../../const');
 
 /**
  * A Text Object will create a line or multiple lines of text. To split a line you can use '\n' in your text string,
@@ -11,12 +11,11 @@ const CONST = require('../const');
  * A Text can be created directly from a string and a style object
  *
  * ```js
- * var text = new PIXI.Text('This is a pixi text',{font : '24px Arial', fill : 0xff1010, align : 'center'});
+ * var text = new Text('This is a pixi text',{font : '24px Arial', fill : 0xff1010, align : 'center'});
  * ```
  *
  * @class
- * @extends PIXI.Sprite
- * @memberof PIXI
+ * @extends Sprite
  * @param text {string} The copy that you would like the text to display
  * @param [style] {object} The style parameters
  * @param [style.font] {string} default 'bold 20px Arial' The style and size of the font
@@ -302,7 +301,7 @@ class Text extends Sprite {
   /**
    * Renders the object using the WebGL renderer
    *
-   * @param renderer {PIXI.WebGLRenderer}
+   * @param renderer {WebGLRenderer}
    */
   renderWebGL(renderer)
   {
@@ -319,7 +318,7 @@ class Text extends Sprite {
   /**
    * Renders the object using the Canvas renderer
    *
-   * @param renderer {PIXI.CanvasRenderer}
+   * @param renderer {CanvasRenderer}
    * @private
    */
   _renderCanvas(renderer)
@@ -513,8 +512,8 @@ class Text extends Sprite {
   /**
    * Returns the bounds of the Text as a rectangle. The bounds calculation takes the worldTransform into account.
    *
-   * @param matrix {PIXI.Matrix} the transformation matrix of the Text
-   * @return {PIXI.Rectangle} the framing rectangle
+   * @param matrix {Matrix} the transformation matrix of the Text
+   * @return {Rectangle} the framing rectangle
    */
   getBounds(matrix)
   {
@@ -552,7 +551,7 @@ Object.defineProperties(Text.prototype, {
      * The width of the Text, setting this will actually modify the scale to achieve the value set
      *
      * @member {number}
-     * @memberof PIXI.Text#
+     * @memberof Text#
      */
   width: {
     get: function()
@@ -575,7 +574,7 @@ Object.defineProperties(Text.prototype, {
      * The height of the Text, setting this will actually modify the scale to achieve the value set
      *
      * @member {number}
-     * @memberof PIXI.Text#
+     * @memberof Text#
      */
   height: {
     get: function()
@@ -618,7 +617,7 @@ Object.defineProperties(Text.prototype, {
      *      spiked text issues. Default is 'miter' (creates a sharp corner).
      * @param [style.miterLimit=10] {number} The miter limit to use when using the 'miter' lineJoin mode. This can reduce
      *      or increase the spikiness of rendered text.
-     * @memberof PIXI.Text#
+     * @memberof Text#
      */
   style: {
     get: function()
@@ -673,7 +672,7 @@ Object.defineProperties(Text.prototype, {
      * Set the copy for the text object. To split a line you can use '\n'.
      *
      * @param text {string} The copy that you would like the text to display
-     * @memberof PIXI.Text#
+     * @memberof Text#
      */
   text: {
     get: function()

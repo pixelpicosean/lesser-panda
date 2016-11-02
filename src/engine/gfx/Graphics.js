@@ -1,6 +1,6 @@
 var Graphics = require('./core/graphics/Graphics');
 var Vector = require('engine/vector');
-var CONST = require('./core/const');
+var CONST = require('./const');
 require('./core/graphics/webgl/GraphicsRenderer');
 
 var DEFAULT_POLYGON_VERTICES = [

@@ -1,14 +1,13 @@
 var WebGLManager = require('./WebGLManager'),
   RenderTarget = require('../utils/RenderTarget'),
-  CONST = require('../../../const'),
+  CONST = require('../../../../const'),
   Quad = require('../utils/Quad'),
   math =  require('../../../math');
 
 /**
  * @class
- * @memberof PIXI
- * @extends PIXI.WebGLManager
- * @param renderer {PIXI.WebGLRenderer} The renderer this manager works for.
+ * @extends WebGLManager
+ * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
 function FilterManager(renderer)
 {
@@ -26,14 +25,14 @@ function FilterManager(renderer)
   });
 
     /**
-     * @member {PIXI.RenderTarget[]}
+     * @member {RenderTarget[]}
      */
   this.texturePool = [];
 
     /**
      * The size of the texture
      *
-     * @member {PIXI.Rectangle}
+     * @member {Rectangle}
      */
     // listen for context and update necessary buffers
     //TODO make this dynamic!
@@ -43,7 +42,7 @@ function FilterManager(renderer)
     /**
      * The current frame
      *
-     * @member {PIXI.Rectangle}
+     * @member {Rectangle}
      */
   this.currentFrame = null;
 }
@@ -66,7 +65,7 @@ FilterManager.prototype.onContextChange = function()
 };
 
 /**
- * @param renderer {PIXI.WebGLRenderer}
+ * @param renderer {WebGLRenderer}
  * @param buffer {ArrayBuffer}
  */
 FilterManager.prototype.setFilterStack = function( filterStack )
@@ -77,8 +76,8 @@ FilterManager.prototype.setFilterStack = function( filterStack )
 /**
  * Applies the filter and adds it to the current filter stack.
  *
- * @param target {PIXI.DisplayObject}
- * @param filters {PIXI.AbstractFiler[]} the filters that will be pushed to the current filter stack
+ * @param target {DisplayObject}
+ * @param filters {AbstractFiler[]} the filters that will be pushed to the current filter stack
  */
 FilterManager.prototype.pushFilter = function(target, filters)
 {
@@ -434,9 +433,9 @@ FilterManager.prototype.resize = function( width, height )
 FilterManager.prototype.destroy = function()
 {
   this.quad.destroy();
-    
+
   WebGLManager.prototype.destroy.call(this);
-    
+
   this.filterStack = null;
   this.offsetY = 0;
 

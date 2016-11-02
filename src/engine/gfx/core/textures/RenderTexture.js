@@ -4,7 +4,7 @@ const RenderTarget = require('../renderers/webgl/utils/RenderTarget');
 const FilterManager = require('../renderers/webgl/managers/FilterManager');
 const CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer');
 const math = require('../math');
-const CONST = require('../const');
+const CONST = require('../../const');
 const tempMatrix = new math.Matrix();
 
 /**
@@ -17,9 +17,9 @@ const tempMatrix = new math.Matrix();
  * and rotation of the given Display Objects is ignored. For example:
  *
  * ```js
- * var renderer = PIXI.autoDetectRenderer(1024, 1024, { view: canvas, ratio: 1 });
- * var renderTexture = new PIXI.RenderTexture(renderer, 800, 600);
- * var sprite = PIXI.Sprite.fromImage("spinObj_01.png");
+ * var renderer = autoDetectRenderer(1024, 1024, { view: canvas, ratio: 1 });
+ * var renderTexture = new RenderTexture(renderer, 800, 600);
+ * var sprite = Sprite.fromImage("spinObj_01.png");
  *
  * sprite.position.x = 800/2;
  * sprite.position.y = 600/2;
@@ -33,7 +33,7 @@ const tempMatrix = new math.Matrix();
  * position a Container should be used:
  *
  * ```js
- * var doc = new PIXI.Container();
+ * var doc = new Container();
  *
  * doc.addChild(sprite);
  *
@@ -41,12 +41,11 @@ const tempMatrix = new math.Matrix();
  * ```
  *
  * @class
- * @extends PIXI.Texture
- * @memberof PIXI
- * @param renderer {PIXI.CanvasRenderer|PIXI.WebGLRenderer} The renderer used for this RenderTexture
+ * @extends Texture
+ * @param renderer {CanvasRenderer|WebGLRenderer} The renderer used for this RenderTexture
  * @param [width=100] {number} The width of the render texture
  * @param [height=100] {number} The height of the render texture
- * @param [scaleMode] {number} See {@link PIXI.SCALE_MODES} for possible values
+ * @param [scaleMode] {number} See {@link SCALE_MODES} for possible values
  * @param [resolution=1] {number} The resolution of the texture being generated
  */
 class RenderTexture extends Texture {
@@ -110,8 +109,8 @@ class RenderTexture extends Texture {
      * The display object is always rendered with a worldAlpha value of 1.
      *
      * @method
-     * @param displayObject {PIXI.DisplayObject} The display object to render this texture on
-     * @param [matrix] {PIXI.Matrix} Optional matrix to apply to the display object before rendering.
+     * @param displayObject {DisplayObject} The display object to render this texture on
+     * @param [matrix] {Matrix} Optional matrix to apply to the display object before rendering.
      * @param [clear=false] {boolean} If true the texture will be cleared before the displayObject is drawn
      * @param [updateTransform=true] {boolean} If true the displayObject's worldTransform/worldAlpha and all children
      *  transformations will be restored. Not restoring this information will be a little faster.
@@ -121,7 +120,7 @@ class RenderTexture extends Texture {
     /**
      * The renderer this RenderTexture uses. A RenderTexture can only belong to one renderer at the moment if its webGL.
      *
-     * @member {PIXI.CanvasRenderer|PIXI.WebGLRenderer}
+     * @member {CanvasRenderer|WebGLRenderer}
      */
     this.renderer = renderer;
 
@@ -219,8 +218,8 @@ class RenderTexture extends Texture {
    * Internal method assigned to the `render` property if using a CanvasRenderer.
    *
    * @private
-   * @param displayObject {PIXI.DisplayObject} The display object to render this texture on
-   * @param [matrix] {PIXI.Matrix} Optional matrix to apply to the display object before rendering.
+   * @param displayObject {DisplayObject} The display object to render this texture on
+   * @param [matrix] {Matrix} Optional matrix to apply to the display object before rendering.
    * @param [clear=false] {boolean} If true the texture will be cleared before the displayObject is drawn
    * @param [updateTransform=true] {boolean} If true the displayObject's worldTransform/worldAlpha and all children
    *  transformations will be restored. Not restoring this information will be a little faster.
@@ -275,8 +274,8 @@ class RenderTexture extends Texture {
    * Internal method assigned to the `render` property if using a CanvasRenderer.
    *
    * @private
-   * @param displayObject {PIXI.DisplayObject} The display object to render this texture on
-   * @param [matrix] {PIXI.Matrix} Optional matrix to apply to the display object before rendering.
+   * @param displayObject {DisplayObject} The display object to render this texture on
+   * @param [matrix] {Matrix} Optional matrix to apply to the display object before rendering.
    * @param [clear] {boolean} If true the texture will be cleared before the displayObject is drawn
    */
   renderCanvas(displayObject, matrix, clear)

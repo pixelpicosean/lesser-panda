@@ -15,7 +15,6 @@
  *
  * @class
  * @private
- * @memberof PIXI
  */
 class ParticleBuffer {
   constructor(gl, properties, dynamicPropertyFlags, size) {

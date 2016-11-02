@@ -1,14 +1,13 @@
 const utils = require('../utils');
-const CONST = require('../const');
+const CONST = require('../../const');
 const EventEmitter = require('engine/EventEmitter');
 
 /**
  * A texture stores the information that represents an image. All textures have a base texture.
  *
  * @class
- * @memberof PIXI
  * @param source {Image|Canvas} the source object of the texture.
- * @param [scaleMode=PIXI.SCALE_MODES.DEFAULT] {number} See {@link PIXI.SCALE_MODES} for possible values
+ * @param [scaleMode=SCALE_MODES.DEFAULT] {number} See {@link SCALE_MODES} for possible values
  * @param resolution {number} the resolution of the texture for devices with different pixel ratios
  */
 class BaseTexture extends EventEmitter {
@@ -61,8 +60,8 @@ class BaseTexture extends EventEmitter {
      * The scale mode to apply when scaling this texture
      *
      * @member {number}
-     * @default PIXI.SCALE_MODES.LINEAR
-     * @see PIXI.SCALE_MODES
+     * @default SCALE_MODES.LINEAR
+     * @see SCALE_MODES
      */
     this.scaleMode = scaleMode || CONST.SCALE_MODES.DEFAULT;
 
@@ -148,7 +147,7 @@ class BaseTexture extends EventEmitter {
      * Fired when a not-immediately-available source finishes loading.
      *
      * @event loaded
-     * @memberof PIXI.BaseTexture#
+     * @memberof BaseTexture#
      * @protected
      */
 
@@ -156,7 +155,7 @@ class BaseTexture extends EventEmitter {
      * Fired when a not-immediately-available source fails to load.
      *
      * @event error
-     * @memberof PIXI.BaseTexture#
+     * @memberof BaseTexture#
      * @protected
      */
   }
@@ -368,8 +367,8 @@ class BaseTexture extends EventEmitter {
  * @static
  * @param imageUrl {string} The image url of the texture
  * @param [crossorigin=(auto)] {boolean} Should use anonymous CORS? Defaults to true if the URL is not a data-URI.
- * @param [scaleMode=PIXI.SCALE_MODES.DEFAULT] {number} See {@link PIXI.SCALE_MODES} for possible values
- * @return PIXI.BaseTexture
+ * @param [scaleMode=SCALE_MODES.DEFAULT] {number} See {@link SCALE_MODES} for possible values
+ * @return BaseTexture
  */
 BaseTexture.fromImage = function(imageUrl, crossorigin, scaleMode)
 {
@@ -409,8 +408,8 @@ BaseTexture.fromImage = function(imageUrl, crossorigin, scaleMode)
  *
  * @static
  * @param canvas {Canvas} The canvas element source of the texture
- * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
- * @return PIXI.BaseTexture
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return BaseTexture
  */
 BaseTexture.fromCanvas = function(canvas, scaleMode)
 {

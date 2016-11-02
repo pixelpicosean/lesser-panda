@@ -1,13 +1,11 @@
 /**
- * Math classes and utilities mixed into PIXI namespace.
- *
- * @lends PIXI
+ * Math classes and utilities.
  */
 module.exports = {
-    // These will be mixed to be made publicly available,
-    // while this module is used internally in core
-    // to avoid circular dependencies and cut down on
-    // internal module requires.
+  // These will be mixed to be made publicly available,
+  // while this module is used internally in core
+  // to avoid circular dependencies and cut down on
+  // internal module requires.
 
   Point:      require('engine/vector'),
   Matrix:     require('./Matrix'),

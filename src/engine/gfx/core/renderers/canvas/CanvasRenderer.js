@@ -2,15 +2,14 @@ const SystemRenderer = require('../SystemRenderer');
 const CanvasMaskManager = require('./utils/CanvasMaskManager');
 const utils = require('../../utils');
 const math = require('../../math');
-const CONST = require('../../const');
+const CONST = require('../../../const');
 
 /**
  * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.
  * Don't forget to add the CanvasRenderer.view to your DOM or you will not see anything :)
  *
  * @class
- * @memberof PIXI
- * @extends PIXI.SystemRenderer
+ * @extends SystemRenderer
  * @param [width=800] {number} the width of the canvas view
  * @param [height=600] {number} the height of the canvas view
  * @param [options] {object} The optional renderer parameters

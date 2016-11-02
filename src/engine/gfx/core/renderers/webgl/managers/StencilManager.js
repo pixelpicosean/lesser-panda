@@ -3,8 +3,7 @@ var WebGLManager = require('./WebGLManager'),
 
 /**
  * @class
- * @memberof PIXI
- * @param renderer {PIXI.WebGLRenderer} The renderer this manager works for.
+ * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
 function WebGLMaskManager(renderer)
 {
@@ -19,7 +18,7 @@ module.exports = WebGLMaskManager;
 /**
  * Changes the mask stack that is used by this manager.
  *
- * @param stencilMaskStack {PIXI.StencilMaskStack} The mask stack
+ * @param stencilMaskStack {StencilMaskStack} The mask stack
  */
 WebGLMaskManager.prototype.setMaskStack = function( stencilMaskStack )
 {
@@ -40,7 +39,7 @@ WebGLMaskManager.prototype.setMaskStack = function( stencilMaskStack )
 /**
  * Applies the Mask and adds it to the current filter stack. @alvin
  *
- * @param graphics {PIXI.Graphics}
+ * @param graphics {Graphics}
  * @param webGLData {any[]}
  */
 WebGLMaskManager.prototype.pushStencil = function(graphics, webGLData)
@@ -134,7 +133,7 @@ WebGLMaskManager.prototype.pushStencil = function(graphics, webGLData)
 /**
  * TODO this does not belong here!
  *
- * @param graphics {PIXI.Graphics}
+ * @param graphics {Graphics}
  * @param webGLData {any[]}
  */
 WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData)
@@ -197,7 +196,7 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData)
 
 /**
  * TODO @alvin
- * @param graphics {PIXI.Graphics}
+ * @param graphics {Graphics}
  * @param webGLData {any[]}
  */
 WebGLMaskManager.prototype.popStencil = function(graphics, webGLData)

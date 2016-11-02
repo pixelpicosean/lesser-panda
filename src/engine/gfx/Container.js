@@ -1,5 +1,5 @@
 var Container = require('./core/display/Container');
-var CONST = require('./core/const');
+var CONST = require('./const');
 
 module.exports = function(data) {
   var inst = new Container();

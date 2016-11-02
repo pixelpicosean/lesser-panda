@@ -1,11 +1,10 @@
 var Shader = require('./Shader');
 
 /**
- * This shader is used to draw simple primitive shapes for {@link PIXI.Graphics}.
+ * This shader is used to draw simple primitive shapes for {@link Graphics}.
  *
  * @class
- * @memberof PIXI
- * @extends PIXI.Shader
+ * @extends Shader
  * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  */
 function PrimitiveShader(shaderManager)

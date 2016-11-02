@@ -9,12 +9,11 @@ const _tempMatrix = new math.Matrix();
  * It is the base class of all display objects that act as a container for other objects.
  *
  *```js
- * var container = new PIXI.Container();
+ * var container = new Container();
  * container.addChild(sprite);
  * ```
  * @class
- * @extends PIXI.DisplayObject
- * @memberof PIXI
+ * @extends DisplayObject
  */
 class Container extends DisplayObject {
   constructor() {
