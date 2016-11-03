@@ -94,7 +94,7 @@ class Entity {
     this.CTOR = Entity;
 
     // Apply settings
-    merge(this, settings);
+    this.setup(settings);
   }
 
   /**
@@ -115,10 +115,21 @@ class Entity {
   init(x, y, settings) {
     this.position.set(x, y);
 
-    merge(this, settings);
+    return this.setup(settings);
   }
   remove() {
-    if (this.game) {this.game.removeEntity(this);}
+    if (this.game) {
+      this.game.removeEntity(this);
+    }
+  }
+
+  /**
+   * Setup this entity with settings(deeply merge is used by default)
+   * @param  {object} settings Settings
+   */
+  setup(settings) {
+    merge(this, settings);
+    return this;
   }
 
   /**
@@ -133,14 +144,14 @@ class Entity {
    * @method update
    * @memberof Entity#
    */
-  update(/* dt, dtSec*/) {}
+  update(dt, dtSec) {} /* eslint no-unused-vars:0 */
   /**
    * Update method to be called each fixed step. Set `canFixedTick = true` to activate.
    * Doing nothing by default.
    * @method fixedUpdate
    * @memberof Entity#
    */
-  fixedUpdate(/* dt, dtSec*/) {}
+  fixedUpdate(dt, dtSec) {} /* eslint no-unused-vars:0 */
 }
 Entity.nextId = 0;
 
