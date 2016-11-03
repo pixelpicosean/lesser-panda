@@ -33,6 +33,11 @@ const Loading = require('game/Loading');
 
 const SystemAnime = require('engine/anime');
 
+const SystemPhysics = require('engine/physics');
+const { getGroupMask } = SystemPhysics;
+const AABBSolver = require('engine/physics/AABBSolver');
+const Collider = require('engine/physics/Collider');
+
 
 // Storage
 persistent.addInt('score', 0);
@@ -53,7 +58,7 @@ loader
 
 
 // Custom entity class
-class EntityCircle extends Entity {
+class EntityGfx extends Entity {
   constructor(x, y, settings) {
     super(x, y, settings);
 
@@ -90,22 +95,122 @@ class EntityCircle extends Entity {
   }
 }
 
+const GROUPS = {
+  SOLID: getGroupMask(0),
+  BOX: getGroupMask(1),
+};
+
+// Box with a collider
+class EntityBox extends Entity {
+  constructor(x, y, settings) {
+    super(x, y, settings);
+
+    this.name = 'b0';
+    this.tag = 'physics';
+
+    this.layerName = 'actor';
+    this.gfx = Graphics({
+      shape: 'Box',
+      color: 0xffffff,
+      width: 40, height: 40,
+    });
+
+    this.coll = Collider({
+      mass: 1,
+      shape: 'Box',
+      width: 40, height: 40,
+      collisionGroup: GROUPS.BOX,
+      collideAgainst: GROUPS.SOLID,
+      collide: function(other, dir) {
+        // Bounce back
+        if (dir === 'U') {
+          this.velocity.y = +Math.abs(this.velocity.y);
+        }
+        else if (dir === 'D') {
+          this.velocity.y = -Math.abs(this.velocity.y);
+        }
+        return true;
+      },
+    });
+  }
+}
+class EntityCircle extends Entity {
+  constructor(x, y, settings) {
+    super(x, y, settings);
+
+    this.name = 'c0';
+    this.tag = 'physics';
+
+    this.layerName = 'actor';
+    this.gfx = Graphics({
+      shape: 'Circle',
+      color: 0xffffff,
+      radius: 20,
+    });
+
+    this.coll = Collider({
+      mass: 1,
+      shape: 'Circle',
+      radius: 20,
+      collisionGroup: GROUPS.BOX,
+      collideAgainst: GROUPS.SOLID,
+      collide: function(other, angle) {
+        // Bounce back
+        if (angle > 0) {
+          this.velocity.y = -Math.abs(this.velocity.y);
+        }
+        else if (angle < 0) {
+          this.velocity.y = +Math.abs(this.velocity.y);
+        }
+        return true;
+      },
+    });
+  }
+}
+class EntitySolid extends Entity {
+  constructor(x, y, settings) {
+    super(x, y, settings);
+
+    this.name = 'ground';
+    this.tag = 'physics';
+
+    this.layerName = 'actor';
+    this.gfx = Graphics({
+      shape: 'Box',
+      color: 0xffffff,
+      width: 200, height: 30,
+    });
+
+    this.coll = Collider({
+      shape: 'Box',
+      width: 200, height: 30,
+      collisionGroup: GROUPS.SOLID,
+      collide: () => false,
+    });
+  }
+}
+
 
 // Custom game class
 class MyGame extends Game {
   constructor() {
     super();
 
-    this.desiredFPS = 10;
+    this.desiredFPS = 60;
 
     this
       .addSystem(new SystemTimer())
       .addSystem(new SystemAnime())
+      .addSystem(new SystemPhysics({
+        solver: new AABBSolver(),
+        gravity: { y: 500 },
+      }))
       .addSystem(new SystemGfx());
 
     this.systemOrder = [
       'Timer',
       'Anime',
+      'Physics',
       'Gfx',
     ];
 
@@ -194,7 +299,7 @@ class MyGame extends Game {
     r.position.set(100, 300);
 
     // Entity
-    let ent = this.spawnEntity(EntityCircle, core.width / 2, core.height / 2);
+    let ent = this.spawnEntity(EntityGfx, core.width / 2, core.height / 2);
     console.log((ent.gfx.parent === this.sysGfx.layers['actor']) ? '"ent" added to right layer' : '"ent" added to wrong layer!');
     console.log((ent === this.getEntityByName('c0')) ? '"ent" can be found by name' : '"ent" cannot be found by name!');
     console.log((ent === this.getEntitiesByTag('primitive')[0]) ? '"ent" can be found by tag' : '"ent" cannot be found by tag!');
@@ -208,6 +313,11 @@ class MyGame extends Game {
       .once('finish', () => {
         console.log('animation finished');
       });
+
+    // Physics
+    let a = this.spawnEntity(EntityBox, core.width / 2 - 60, core.height / 3);
+    let b = this.spawnEntity(EntityCircle, core.width / 2 + 60, core.height / 3);
+    let ground = this.spawnEntity(EntitySolid, core.width / 2, core.height / 3 * 2);
   }
   update(dt, dtSec) {
     super.update(dt, dtSec);
