@@ -1,15 +1,14 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * This filter applies a pixelate effect making display objects appear 'blocky'.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
+ * @memberof filters
  */
 function PixelateFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -22,7 +21,7 @@ function PixelateFilter() {
     );
 }
 
-PixelateFilter.prototype = Object.create(core.AbstractFilter.prototype);
+PixelateFilter.prototype = Object.create(AbstractFilter.prototype);
 PixelateFilter.prototype.constructor = PixelateFilter;
 module.exports = PixelateFilter;
 
@@ -31,8 +30,8 @@ Object.defineProperties(PixelateFilter.prototype, {
      * This a point that describes the size of the blocks.
      * x is the width of the block and y is the height.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.PixelateFilter#
+     * @member {Vector}
+     * @memberof filters.PixelateFilter#
      */
   size: {
     get: function() {

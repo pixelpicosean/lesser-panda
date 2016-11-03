@@ -1,22 +1,23 @@
-var core = require('../../core'),
-  BlurXFilter = require('../blur/BlurXFilter'),
-  BlurYTintFilter = require('./BlurYTintFilter');
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
+const BlurXFilter = require('../blur/BlurXFilter');
+const BlurYTintFilter = require('./BlurYTintFilter');
+const CONST = require('../../const');
+const { rgb2hex, hex2rgb } = require('engine/utils/color');
 
 /**
  * The DropShadowFilter applies a Gaussian blur to an object.
  * The strength of the blur can be set for x- and y-axis separately.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function DropShadowFilter() {
-  core.AbstractFilter.call(this);
+  AbstractFilter.call(this);
 
   this.blurXFilter = new BlurXFilter();
   this.blurYTintFilter = new BlurYTintFilter();
 
-  this.defaultFilter = new core.AbstractFilter();
+  this.defaultFilter = new AbstractFilter();
 
   this.padding = 30;
 
@@ -25,10 +26,10 @@ function DropShadowFilter() {
   this._distance = 10;
   this.alpha = 0.75;
   this.hideObject = false;
-  this.blendMode = core.BLEND_MODES.MULTIPLY;
+  this.blendMode = CONST.BLEND_MODES.MULTIPLY;
 }
 
-DropShadowFilter.prototype = Object.create(core.AbstractFilter.prototype);
+DropShadowFilter.prototype = Object.create(AbstractFilter.prototype);
 DropShadowFilter.prototype.constructor = DropShadowFilter;
 module.exports = DropShadowFilter;
 
@@ -49,7 +50,7 @@ DropShadowFilter.prototype.applyFilter = function(renderer, input, output) {
 
   this.blurYTintFilter.applyFilter(renderer, renderTarget, output);
 
-  renderer.blendModeManager.setBlendMode(core.BLEND_MODES.NORMAL);
+  renderer.blendModeManager.setBlendMode(CONST.BLEND_MODES.NORMAL);
 
   if (!this.hideObject) {
 
@@ -65,7 +66,7 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the strength of both the blurX and blurY properties simultaneously
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      * @default 2
      */
   blur: {
@@ -81,7 +82,7 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the strength of the blurX property
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      * @default 2
      */
   blurX: {
@@ -97,7 +98,7 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the strength of the blurY property
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      * @default 2
      */
   blurY: {
@@ -113,14 +114,14 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the color of the shadow
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      */
   color: {
     get: function() {
-      return core.utils.rgb2hex(this.blurYTintFilter.uniforms.color.value);
+      return rgb2hex(this.blurYTintFilter.uniforms.color.value);
     },
     set: function(value) {
-      this.blurYTintFilter.uniforms.color.value = core.utils.hex2rgb(value);
+      this.blurYTintFilter.uniforms.color.value = hex2rgb(value);
     },
   },
 
@@ -128,7 +129,7 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the alpha of the shadow
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      */
   alpha: {
     get: function() {
@@ -143,7 +144,7 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the distance of the shadow
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      */
   distance: {
     get: function() {
@@ -159,7 +160,7 @@ Object.defineProperties(DropShadowFilter.prototype, {
      * Sets the angle of the shadow
      *
      * @member {number}
-     * @memberOf PIXI.filters.DropShadowFilter#
+     * @memberOf filters.DropShadowFilter#
      */
   angle: {
     get: function() {

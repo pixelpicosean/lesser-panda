@@ -1,6 +1,6 @@
-var core = require('../../core'),
-  TiltShiftXFilter = require('./TiltShiftXFilter'),
-  TiltShiftYFilter = require('./TiltShiftYFilter');
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
+const TiltShiftXFilter = require('./TiltShiftXFilter');
+const TiltShiftYFilter = require('./TiltShiftYFilter');
 
 /**
  * @author Vico @vicocotea
@@ -11,17 +11,16 @@ var core = require('../../core'),
  * A TiltShift Filter. Manages the pass of both a TiltShiftXFilter and TiltShiftYFilter.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function TiltShiftFilter() {
-  core.AbstractFilter.call(this);
+  AbstractFilter.call(this);
 
   this.tiltShiftXFilter = new TiltShiftXFilter();
   this.tiltShiftYFilter = new TiltShiftYFilter();
 }
 
-TiltShiftFilter.prototype = Object.create(core.AbstractFilter.prototype);
+TiltShiftFilter.prototype = Object.create(AbstractFilter.prototype);
 TiltShiftFilter.prototype.constructor = TiltShiftFilter;
 module.exports = TiltShiftFilter;
 
@@ -40,7 +39,7 @@ Object.defineProperties(TiltShiftFilter.prototype, {
      * The strength of the blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.TiltShiftFilter#
+     * @memberof filters.TiltShiftFilter#
      */
   blur: {
     get: function() {
@@ -55,7 +54,7 @@ Object.defineProperties(TiltShiftFilter.prototype, {
      * The strength of the gradient blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.TiltShiftFilter#
+     * @memberof filters.TiltShiftFilter#
      */
   gradientBlur: {
     get: function() {
@@ -70,7 +69,7 @@ Object.defineProperties(TiltShiftFilter.prototype, {
      * The Y value to start the effect at.
      *
      * @member {number}
-     * @memberof PIXI.filters.TiltShiftFilter#
+     * @memberof filters.TiltShiftFilter#
      */
   start: {
     get: function() {
@@ -85,7 +84,7 @@ Object.defineProperties(TiltShiftFilter.prototype, {
      * The Y value to end the effect at.
      *
      * @member {number}
-     * @memberof PIXI.filters.TiltShiftFilter#
+     * @memberof filters.TiltShiftFilter#
      */
   end: {
     get: function() {

@@ -1,4 +1,4 @@
-var core = require('../../core');
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * The BlurDirFilter applies a Gaussian blur toward a direction to an object.
@@ -6,11 +6,10 @@ var core = require('../../core');
  * @class
  * @param {number} dirX
  * @param {number} dirY
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function BlurDirFilter(dirX, dirY) {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         require('./blurDir.vert'),
         // fragment shader
@@ -23,7 +22,7 @@ function BlurDirFilter(dirX, dirY) {
     }
     );
 
-  this.defaultFilter = new core.AbstractFilter();
+  this.defaultFilter = new AbstractFilter();
 
     /**
      * Sets the number of passes for blur. More passes means higher quaility bluring.
@@ -52,7 +51,7 @@ function BlurDirFilter(dirX, dirY) {
   this.strength = 4;
 }
 
-BlurDirFilter.prototype = Object.create(core.AbstractFilter.prototype);
+BlurDirFilter.prototype = Object.create(AbstractFilter.prototype);
 BlurDirFilter.prototype.constructor = BlurDirFilter;
 module.exports = BlurDirFilter;
 
@@ -87,7 +86,7 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * Sets the strength of both the blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.BlurDirFilter#
+     * @memberof filters.BlurDirFilter#
      * @default 2
      */
   blur: {
@@ -103,7 +102,7 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * Sets the X direction of the blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.BlurYFilter#
+     * @memberof filters.BlurYFilter#
      * @default 0
      */
   dirX: {
@@ -118,7 +117,7 @@ Object.defineProperties(BlurDirFilter.prototype, {
      * Sets the Y direction of the blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.BlurDirFilter#
+     * @memberof filters.BlurDirFilter#
      * @default 0
      */
   dirY: {

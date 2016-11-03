@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * The ConvolutionFilter class applies a matrix convolution filter effect.
@@ -9,14 +8,13 @@ var core = require('../../core');
  * See http://docs.gimp.org/en/plug-in-convmatrix.html for more info.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  * @param matrix {number[]} An array of values used for matrix transformation. Specified as a 9 point Array.
  * @param width {number} Width of the object you are transforming
  * @param height {number} Height of the object you are transforming
  */
 function ConvolutionFilter(matrix, width, height) {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -29,7 +27,7 @@ function ConvolutionFilter(matrix, width, height) {
     );
 }
 
-ConvolutionFilter.prototype = Object.create(core.AbstractFilter.prototype);
+ConvolutionFilter.prototype = Object.create(AbstractFilter.prototype);
 ConvolutionFilter.prototype.constructor = ConvolutionFilter;
 module.exports = ConvolutionFilter;
 
@@ -38,7 +36,7 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * An array of values used for matrix transformation. Specified as a 9 point Array.
      *
      * @member {number[]}
-     * @memberof PIXI.filters.ConvolutionFilter#
+     * @memberof filters.ConvolutionFilter#
      */
   matrix: {
     get: function() {
@@ -53,7 +51,7 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * Width of the object you are transforming
      *
      * @member {number}
-     * @memberof PIXI.filters.ConvolutionFilter#
+     * @memberof filters.ConvolutionFilter#
      */
   width: {
     get: function() {
@@ -68,7 +66,7 @@ Object.defineProperties(ConvolutionFilter.prototype, {
      * Height of the object you are transforming
      *
      * @member {number}
-     * @memberof PIXI.filters.ConvolutionFilter#
+     * @memberof filters.ConvolutionFilter#
      */
   height: {
     get: function() {

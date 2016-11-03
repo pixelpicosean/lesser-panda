@@ -1,15 +1,13 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * This greyscales the palette of your Display Objects.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function GrayFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -21,7 +19,7 @@ function GrayFilter() {
     );
 }
 
-GrayFilter.prototype = Object.create(core.AbstractFilter.prototype);
+GrayFilter.prototype = Object.create(AbstractFilter.prototype);
 GrayFilter.prototype.constructor = GrayFilter;
 module.exports = GrayFilter;
 
@@ -30,7 +28,7 @@ Object.defineProperties(GrayFilter.prototype, {
      * The strength of the gray. 1 will make the object black and white, 0 will make the object its normal color.
      *
      * @member {number}
-     * @memberof PIXI.filters.GrayFilter#
+     * @memberof filters.GrayFilter#
      */
   gray: {
     get: function() {

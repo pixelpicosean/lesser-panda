@@ -1,15 +1,13 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * This filter applies a twist effect making display objects appear twisted in the given direction.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function TwistFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -23,7 +21,7 @@ function TwistFilter() {
     );
 }
 
-TwistFilter.prototype = Object.create(core.AbstractFilter.prototype);
+TwistFilter.prototype = Object.create(AbstractFilter.prototype);
 TwistFilter.prototype.constructor = TwistFilter;
 module.exports = TwistFilter;
 
@@ -31,8 +29,8 @@ Object.defineProperties(TwistFilter.prototype, {
     /**
      * This point describes the the offset of the twist.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.TwistFilter#
+     * @member {Point}
+     * @memberof filters.TwistFilter#
      */
   offset: {
     get: function() {
@@ -47,7 +45,7 @@ Object.defineProperties(TwistFilter.prototype, {
      * This radius of the twist.
      *
      * @member {number}
-     * @memberof PIXI.filters.TwistFilter#
+     * @memberof filters.TwistFilter#
      */
   radius: {
     get: function() {
@@ -62,7 +60,7 @@ Object.defineProperties(TwistFilter.prototype, {
      * This angle of the twist.
      *
      * @member {number}
-     * @memberof PIXI.filters.TwistFilter#
+     * @memberof filters.TwistFilter#
      */
   angle: {
     get: function() {

@@ -1,5 +1,6 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
+const Vector = require('engine/Vector');
+const { Matrix } = require('../../core/math');
 
 /**
  * The DisplacementFilter class uses the pixel values from the specified texture (called the displacement map) to perform a displacement of an object.
@@ -7,15 +8,14 @@ var core = require('../../core');
  * Currently the r property of the texture is used to offset the x and the g property of the texture is used to offset the y.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
- * @param sprite {PIXI.Sprite} the sprite used for the displacement map. (make sure its added to the scene!)
+ * @extends AbstractFilter
+ * @param sprite {Sprite} the sprite used for the displacement map. (make sure its added to the scene!)
  */
 function DisplacementFilter(sprite, scale) {
-  var maskMatrix = new core.Matrix();
+  var maskMatrix = new Matrix();
   sprite.renderable = false;
 
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         require('./displacement.vert'),
         // fragment shader
@@ -35,10 +35,10 @@ function DisplacementFilter(sprite, scale) {
     scale = 20;
   }
 
-  this.scale = new core.Point(scale, scale);
+  this.scale = Vector.create(scale, scale);
 }
 
-DisplacementFilter.prototype = Object.create(core.AbstractFilter.prototype);
+DisplacementFilter.prototype = Object.create(AbstractFilter.prototype);
 DisplacementFilter.prototype.constructor = DisplacementFilter;
 module.exports = DisplacementFilter;
 
@@ -61,8 +61,8 @@ Object.defineProperties(DisplacementFilter.prototype, {
     /**
      * The texture used for the displacement map. Must be power of 2 sized texture.
      *
-     * @member {PIXI.Texture}
-     * @memberof PIXI.filters.DisplacementFilter#
+     * @member {Texture}
+     * @memberof filters.DisplacementFilter#
      */
   map: {
     get: function() {

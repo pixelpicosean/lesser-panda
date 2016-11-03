@@ -1,16 +1,13 @@
-var core = require('../../core');
-
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * The BlurYTintFilter applies a vertical Gaussian blur to an object.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function BlurYTintFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         require('./blurYTint.vert'),
         // fragment shader
@@ -29,7 +26,7 @@ function BlurYTintFilter() {
   this.strength = 4;
 }
 
-BlurYTintFilter.prototype = Object.create(core.AbstractFilter.prototype);
+BlurYTintFilter.prototype = Object.create(AbstractFilter.prototype);
 BlurYTintFilter.prototype.constructor = BlurYTintFilter;
 module.exports = BlurYTintFilter;
 
@@ -66,7 +63,7 @@ Object.defineProperties(BlurYTintFilter.prototype, {
      * Sets the strength of both the blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.BlurYTintFilter#
+     * @memberof filters.BlurYTintFilter#
      * @default 2
      */
   blur: {

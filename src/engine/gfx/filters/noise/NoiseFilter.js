@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * @author Vico @vicocotea
@@ -10,11 +9,10 @@ var core = require('../../core');
  * A Noise effect filter.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function NoiseFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -26,7 +24,7 @@ function NoiseFilter() {
     );
 }
 
-NoiseFilter.prototype = Object.create(core.AbstractFilter.prototype);
+NoiseFilter.prototype = Object.create(AbstractFilter.prototype);
 NoiseFilter.prototype.constructor = NoiseFilter;
 module.exports = NoiseFilter;
 
@@ -35,7 +33,7 @@ Object.defineProperties(NoiseFilter.prototype, {
      * The amount of noise to apply.
      *
      * @member {number}
-     * @memberof PIXI.filters.NoiseFilter#
+     * @memberof filters.NoiseFilter#
      * @default 0.5
      */
   noise: {

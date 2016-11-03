@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * @author Mat Groves http://matgroves.com/ @Doormat23
@@ -11,11 +10,10 @@ var core = require('../../core');
  * black and white halftone dots like an old printer.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function DotScreenFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -29,7 +27,7 @@ function DotScreenFilter() {
     );
 }
 
-DotScreenFilter.prototype = Object.create(core.AbstractFilter.prototype);
+DotScreenFilter.prototype = Object.create(AbstractFilter.prototype);
 DotScreenFilter.prototype.constructor = DotScreenFilter;
 module.exports = DotScreenFilter;
 
@@ -37,7 +35,7 @@ Object.defineProperties(DotScreenFilter.prototype, {
     /**
      * The scale of the effect.
      * @member {number}
-     * @memberof PIXI.filters.DotScreenFilter#
+     * @memberof filters.DotScreenFilter#
      */
   scale: {
     get: function() {
@@ -51,7 +49,7 @@ Object.defineProperties(DotScreenFilter.prototype, {
     /**
      * The radius of the effect.
      * @member {number}
-     * @memberof PIXI.filters.DotScreenFilter#
+     * @memberof filters.DotScreenFilter#
      */
   angle: {
     get: function() {

@@ -1,23 +1,22 @@
-var core = require('../../core'),
-  BlurXFilter = require('./BlurXFilter'),
-  BlurYFilter = require('./BlurYFilter');
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
+const BlurXFilter = require('./BlurXFilter');
+const BlurYFilter = require('./BlurYFilter');
 
 /**
  * The BlurFilter applies a Gaussian blur to an object.
  * The strength of the blur can be set for x- and y-axis separately.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function BlurFilter() {
-  core.AbstractFilter.call(this);
+  AbstractFilter.call(this);
 
   this.blurXFilter = new BlurXFilter();
   this.blurYFilter = new BlurYFilter();
 }
 
-BlurFilter.prototype = Object.create(core.AbstractFilter.prototype);
+BlurFilter.prototype = Object.create(AbstractFilter.prototype);
 BlurFilter.prototype.constructor = BlurFilter;
 module.exports = BlurFilter;
 
@@ -35,7 +34,7 @@ Object.defineProperties(BlurFilter.prototype, {
      * Sets the strength of both the blurX and blurY properties simultaneously
      *
      * @member {number}
-     * @memberOf PIXI.filters.BlurFilter#
+     * @memberOf filters.BlurFilter#
      * @default 2
      */
   blur: {
@@ -52,7 +51,7 @@ Object.defineProperties(BlurFilter.prototype, {
      * Sets the number of passes for blur. More passes means higher quaility bluring.
      *
      * @member {number}
-     * @memberof PIXI.filters.BlurYFilter#
+     * @memberof filters.BlurYFilter#
      * @default 1
      */
   passes: {
@@ -68,7 +67,7 @@ Object.defineProperties(BlurFilter.prototype, {
      * Sets the strength of the blurX property
      *
      * @member {number}
-     * @memberOf PIXI.filters.BlurFilter#
+     * @memberOf filters.BlurFilter#
      * @default 2
      */
   blurX: {
@@ -84,7 +83,7 @@ Object.defineProperties(BlurFilter.prototype, {
      * Sets the strength of the blurY property
      *
      * @member {number}
-     * @memberOf PIXI.filters.BlurFilter#
+     * @memberOf filters.BlurFilter#
      * @default 2
      */
   blurY: {

@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * The ColorMatrixFilter class lets you apply a 4x4 matrix transformation on the RGBA
@@ -7,11 +6,10 @@ var core = require('../../core');
  * with a new set of RGBA color and alpha values. It's pretty powerful!
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function ShockwaveFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -25,7 +23,7 @@ function ShockwaveFilter() {
     );
 }
 
-ShockwaveFilter.prototype = Object.create(core.AbstractFilter.prototype);
+ShockwaveFilter.prototype = Object.create(AbstractFilter.prototype);
 ShockwaveFilter.prototype.constructor = ShockwaveFilter;
 module.exports = ShockwaveFilter;
 
@@ -35,7 +33,7 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * (0,0) is the top-left and (1,1) is the bottom right.
      *
      * @member {object<string, number>}
-     * @memberof PIXI.filters.ShockwaveFilter#
+     * @memberof filters.ShockwaveFilter#
      */
   center: {
     get: function() {
@@ -50,7 +48,7 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * the shockwave as it ripples out.
      *
      * @member {object<string, number>}
-     * @memberof PIXI.filters.ShockwaveFilter#
+     * @memberof filters.ShockwaveFilter#
      */
   params: {
     get: function() {
@@ -65,7 +63,7 @@ Object.defineProperties(ShockwaveFilter.prototype, {
      * the shockwave ripples out.
      *
      * @member {number}
-     * @memberof PIXI.filters.ShockwaveFilter#
+     * @memberof filters.ShockwaveFilter#
      */
   time: {
     get: function() {

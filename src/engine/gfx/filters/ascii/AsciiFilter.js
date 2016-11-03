@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 // TODO (cengler) - The Y is flipped in this shader for some reason.
 
@@ -12,11 +11,10 @@ var core = require('../../core');
  * An ASCII filter.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function AsciiFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -29,7 +27,7 @@ function AsciiFilter() {
     );
 }
 
-AsciiFilter.prototype = Object.create(core.AbstractFilter.prototype);
+AsciiFilter.prototype = Object.create(AbstractFilter.prototype);
 AsciiFilter.prototype.constructor = AsciiFilter;
 module.exports = AsciiFilter;
 
@@ -38,7 +36,7 @@ Object.defineProperties(AsciiFilter.prototype, {
      * The pixel size used by the filter.
      *
      * @member {number}
-     * @memberof PIXI.filters.AsciiFilter#
+     * @memberof filters.AsciiFilter#
      */
   size: {
     get: function() {

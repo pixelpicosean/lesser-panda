@@ -1,15 +1,13 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * A Cross Hatch effect filter.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function CrossHatchFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -17,6 +15,6 @@ function CrossHatchFilter() {
     );
 }
 
-CrossHatchFilter.prototype = Object.create(core.AbstractFilter.prototype);
+CrossHatchFilter.prototype = Object.create(AbstractFilter.prototype);
 CrossHatchFilter.prototype.constructor = CrossHatchFilter;
 module.exports = CrossHatchFilter;

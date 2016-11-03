@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * The ColorMatrixFilter class lets you apply a 5x4 matrix transformation on the RGBA
@@ -7,17 +6,16 @@ var core = require('../../core');
  * with a new set of RGBA color and alpha values. It's pretty powerful!
  *
  * ```js
- *  var colorMatrix = new PIXI.ColorMatrixFilter();
+ *  var colorMatrix = new ColorMatrixFilter();
  *  container.filters = [colorMatrix];
  *  colorMatrix.contrast(2);
  * ```
  * @author Clément Chenebault <clement@goodboydigital.com>
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function ColorMatrixFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -36,7 +34,7 @@ function ColorMatrixFilter() {
     );
 }
 
-ColorMatrixFilter.prototype = Object.create(core.AbstractFilter.prototype);
+ColorMatrixFilter.prototype = Object.create(AbstractFilter.prototype);
 ColorMatrixFilter.prototype.constructor = ColorMatrixFilter;
 module.exports = ColorMatrixFilter;
 
@@ -493,7 +491,7 @@ Object.defineProperties(ColorMatrixFilter.prototype, {
      * Sets the matrix of the color matrix filter
      *
      * @member {number[]}
-     * @memberof PIXI.filters.ColorMatrixFilter#
+     * @memberof filters.ColorMatrixFilter#
      * @default [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
      */
   matrix: {

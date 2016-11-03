@@ -1,5 +1,4 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * @author Vico @vicocotea
@@ -10,11 +9,10 @@ var core = require('../../core');
  * A TiltShiftAxisFilter.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function TiltShiftAxisFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -33,7 +31,7 @@ function TiltShiftAxisFilter() {
   this.updateDelta();
 }
 
-TiltShiftAxisFilter.prototype = Object.create(core.AbstractFilter.prototype);
+TiltShiftAxisFilter.prototype = Object.create(AbstractFilter.prototype);
 TiltShiftAxisFilter.prototype.constructor = TiltShiftAxisFilter;
 module.exports = TiltShiftAxisFilter;
 
@@ -52,7 +50,7 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * The strength of the blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.TiltShiftAxisFilter#
+     * @memberof filters.TiltShiftAxisFilter#
      */
   blur: {
     get: function() {
@@ -67,7 +65,7 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
      * The strength of the gradient blur.
      *
      * @member {number}
-     * @memberof PIXI.filters.TiltShiftAxisFilter#
+     * @memberof filters.TiltShiftAxisFilter#
      */
   gradientBlur: {
     get: function() {
@@ -81,8 +79,8 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
     /**
      * The X value to start the effect at.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.TiltShiftAxisFilter#
+     * @member {Vector}
+     * @memberof filters.TiltShiftAxisFilter#
      */
   start: {
     get: function() {
@@ -97,8 +95,8 @@ Object.defineProperties(TiltShiftAxisFilter.prototype, {
     /**
      * The X value to end the effect at.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.TiltShiftAxisFilter#
+     * @member {Vector}
+     * @memberof filters.TiltShiftAxisFilter#
      */
   end: {
     get: function() {

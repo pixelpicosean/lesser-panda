@@ -1,15 +1,13 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * This inverts your Display Objects colors.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function InvertFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -21,7 +19,7 @@ function InvertFilter() {
     );
 }
 
-InvertFilter.prototype = Object.create(core.AbstractFilter.prototype);
+InvertFilter.prototype = Object.create(AbstractFilter.prototype);
 InvertFilter.prototype.constructor = InvertFilter;
 module.exports = InvertFilter;
 
@@ -31,7 +29,7 @@ Object.defineProperties(InvertFilter.prototype, {
      * `0` will make the object its normal color.
      *
      * @member {number}
-     * @memberof PIXI.filters.InvertFilter#
+     * @memberof filters.InvertFilter#
      */
   invert: {
     get: function() {

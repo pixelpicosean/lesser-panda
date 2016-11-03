@@ -1,15 +1,13 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * An RGB Split Filter.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function RGBSplitFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -24,7 +22,7 @@ function RGBSplitFilter() {
     );
 }
 
-RGBSplitFilter.prototype = Object.create(core.AbstractFilter.prototype);
+RGBSplitFilter.prototype = Object.create(AbstractFilter.prototype);
 RGBSplitFilter.prototype.constructor = RGBSplitFilter;
 module.exports = RGBSplitFilter;
 
@@ -32,8 +30,8 @@ Object.defineProperties(RGBSplitFilter.prototype, {
     /**
      * Red channel offset.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.RGBSplitFilter#
+     * @member {Vector}
+     * @memberof filters.RGBSplitFilter#
      */
   red: {
     get: function() {
@@ -47,8 +45,8 @@ Object.defineProperties(RGBSplitFilter.prototype, {
     /**
      * Green channel offset.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.RGBSplitFilter#
+     * @member {Vector}
+     * @memberof filters.RGBSplitFilter#
      */
   green: {
     get: function() {
@@ -62,8 +60,8 @@ Object.defineProperties(RGBSplitFilter.prototype, {
     /**
      * Blue offset.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.filters.RGBSplitFilter#
+     * @member {Vector}
+     * @memberof filters.RGBSplitFilter#
      */
   blue: {
     get: function() {

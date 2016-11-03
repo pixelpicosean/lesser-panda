@@ -1,15 +1,13 @@
-var core = require('../../core');
-
+const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
 
 /**
  * This applies a sepia effect to your Display Objects.
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI.filters
+ * @extends AbstractFilter
  */
 function SepiaFilter() {
-  core.AbstractFilter.call(this,
+  AbstractFilter.call(this,
         // vertex shader
         null,
         // fragment shader
@@ -21,7 +19,7 @@ function SepiaFilter() {
     );
 }
 
-SepiaFilter.prototype = Object.create(core.AbstractFilter.prototype);
+SepiaFilter.prototype = Object.create(AbstractFilter.prototype);
 SepiaFilter.prototype.constructor = SepiaFilter;
 module.exports = SepiaFilter;
 
@@ -31,7 +29,7 @@ Object.defineProperties(SepiaFilter.prototype, {
      * `0` will make the object its normal color.
      *
      * @member {number}
-     * @memberof PIXI.filters.SepiaFilter#
+     * @memberof filters.SepiaFilter#
      */
   sepia: {
     get: function() {
