@@ -1,16 +1,3 @@
-// - parse any spritesheet data into multiple textures
-// var bitmapFontParser = require('./loaders/bitmapFontParser');
-// loader.use(bitmapFontParser());
-// Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
-
-// Export classes
-// var core = require('./core');
-// core.extras         = require('./extras');
-// core.interaction    = require('./interaction');
-// core.filters        = require('./filters');
-// core.mesh           = require('./mesh');
-
-
 const core = require('engine/core');
 const System = require('engine/system');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
