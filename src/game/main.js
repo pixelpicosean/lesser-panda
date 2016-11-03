@@ -27,6 +27,8 @@ const BitmapText = require('engine/gfx/BitmapText');
 const Plane = require('engine/gfx/Plane');
 const Rope = require('engine/gfx/Rope');
 const { filmstrip } = require('engine/gfx/utils');
+require('engine/gfx/interaction');
+const DotScreenFilter = require('engine/gfx/filters/dot/DotScreenFilter');
 
 const Entity = require('engine/Entity');
 
@@ -287,6 +289,7 @@ class MyGame extends Game {
     }).addTo(this.sysGfx.layers['ui']);
     aSpr.position.set(200, 200);
     aSpr.play();
+    aSpr.filters = [new DotScreenFilter()];
 
     let p = Plane({ texture: 'font-sheet' })
       .addTo(this.sysGfx.layers['ui']);
