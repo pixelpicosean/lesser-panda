@@ -1,8 +1,11 @@
-var core = require('../core');
+const DisplayObject = require('../core/display/DisplayObject');
+const { removeItems } = require('engine/utils/array');
+const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
+const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
 
 // add some extra variables to the container..
 Object.assign(
-  core.DisplayObject.prototype,
+  DisplayObject.prototype,
   require('./accessibleTarget')
 );
 
@@ -192,7 +195,7 @@ AccessibilityManager.prototype.update = function() {
     if (child.renderId !== this.renderId) {
       child._accessibleActive = false;
 
-      core.utils.removeItems(this.children, i, 1);
+      removeItems(this.children, i, 1);
       this.div.removeChild(child._accessibleDiv);
       this.pool.push(child._accessibleDiv);
       child._accessibleDiv = null;
@@ -367,5 +370,5 @@ AccessibilityManager.prototype.destroy = function() {
   this.renderer = null;
 };
 
-core.WebGLRenderer.registerPlugin('accessibility', AccessibilityManager);
-core.CanvasRenderer.registerPlugin('accessibility', AccessibilityManager);
+WebGLRenderer.registerPlugin('accessibility', AccessibilityManager);
+CanvasRenderer.registerPlugin('accessibility', AccessibilityManager);

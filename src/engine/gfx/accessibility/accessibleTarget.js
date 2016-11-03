@@ -7,11 +7,11 @@
  *      function MyObject() {}
  *
  *      Object.assign(
- *          MyObject.prototype,
- *          PIXI.accessibility.accessibleTarget
+ *        MyObject.prototype,
+ *        accessibility.accessibleTarget
  *      );
  */
-var accessibleTarget = {
+const accessibleTarget = {
 
   /**
    * @todo Needs docs.
