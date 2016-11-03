@@ -1,10 +1,14 @@
-var core = require('../core'),
-  InteractionData = require('./InteractionData');
+const core = require('engine/core');
+const DisplayObject = require('../core/display/DisplayObject');
+const InteractionData = require('./InteractionData');
+const Vector = require('engine/Vector');
+const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
+const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
 
-// Mix interactiveTarget into core.DisplayObject.prototype
+// Mix interactiveTarget into DisplayObject.prototype
 Object.assign(
-    core.DisplayObject.prototype,
-    require('./interactiveTarget')
+  DisplayObject.prototype,
+  require('./interactiveTarget')
 );
 
 /**
@@ -13,19 +17,17 @@ Object.assign(
  * This manager also supports multitouch.
  *
  * @class
- * @memberof PIXI.interaction
- * @param renderer {PIXI.CanvasRenderer|PIXI.WebGLRenderer} A reference to the current renderer
+ * @memberof interaction
+ * @param renderer {CanvasRenderer|WebGLRenderer} A reference to the current renderer
  * @param [options] {object}
  * @param [options.autoPreventDefault=true] {boolean} Should the manager automatically prevent default browser actions.
  * @param [options.interactionFrequency=10] {number} Frequency increases the interaction events will be checked.
  */
-function InteractionManager(renderer, options) {
-  options = options || {};
-
+function InteractionManager(renderer, options = {}) {
     /**
      * The renderer this interaction manager works for.
      *
-     * @member {PIXI.SystemRenderer}
+     * @member {SystemRenderer}
      */
   this.renderer = renderer;
 
@@ -48,7 +50,7 @@ function InteractionManager(renderer, options) {
     /**
      * The mouse data
      *
-     * @member {PIXI.interaction.InteractionData}
+     * @member {interaction.InteractionData}
      */
   this.mouse = new InteractionData();
 
@@ -70,7 +72,7 @@ function InteractionManager(renderer, options) {
     /**
      * Tiny little interactiveData pool !
      *
-     * @member {PIXI.interaction.InteractionData[]}
+     * @member {interaction.InteractionData[]}
      */
   this.interactiveDataPool = [];
 
@@ -159,10 +161,10 @@ function InteractionManager(renderer, options) {
 
     /**
      * Internal cached var
-     * @member {PIXI.Point}
+     * @member {Vector}
      * @private
      */
-  this._tempPoint = new core.Point();
+  this._tempPoint = new Vector();
 
 
     /**
@@ -206,7 +208,7 @@ InteractionManager.prototype.addEvents = function() {
     return;
   }
 
-  core.ticker.shared.add(this.update, this);
+  core.on('tick', this.update, this);
 
   if (window.navigator.msPointerEnabled) {
     this.interactionDOMElement.style['-ms-content-zooming'] = 'none';
@@ -236,7 +238,7 @@ InteractionManager.prototype.removeEvents = function() {
     return;
   }
 
-  core.ticker.shared.remove(this.update);
+  core.off('tick', this.update, this);
 
   if (window.navigator.msPointerEnabled) {
     this.interactionDOMElement.style['-ms-content-zooming'] = '';
@@ -261,7 +263,7 @@ InteractionManager.prototype.removeEvents = function() {
 /**
  * Updates the state of interactive objects.
  * Invoked by a throttled ticker update from
- * {@link PIXI.ticker.shared}.
+ * {@link ticker.shared}.
  *
  * @param deltaTime {number}
  */
@@ -299,7 +301,7 @@ InteractionManager.prototype.update = function(deltaTime) {
 /**
  * Dispatches an event on the display object that was interacted with
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} the display object in question
+ * @param displayObject {Container|Sprite|extras.TilingSprite} the display object in question
  * @param eventString {string} the name of the event (e.g, mousedown)
  * @param eventData {object} the event data object
  * @private
@@ -321,7 +323,7 @@ InteractionManager.prototype.dispatchEvent = function(displayObject, eventString
  * Maps x and y coords from a DOM object and maps them correctly to the pixi view. The resulting value is stored in the point.
  * This takes into account the fact that the DOM element could be scaled and positioned anywhere on the screen.
  *
- * @param  {PIXI.Point} point the point that the result will be stored in
+ * @param  {Vector} point the point that the result will be stored in
  * @param  {number} x     the x coord of the position to map
  * @param  {number} y     the y coord of the position to map
  */
@@ -335,8 +337,8 @@ InteractionManager.prototype.mapPositionToPoint = function(point, x, y) {
  * This function is provides a neat way of crawling through the scene graph and running a specified function on all interactive objects it finds.
  * It will also take care of hit testing the interactive objects and passes the hit across in the function.
  *
- * @param  {PIXI.Point} point the point that is tested for collision
- * @param  {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} displayObject the displayObject that will be hit test (recurcsivly crawls its children)
+ * @param  {Vector} point the point that is tested for collision
+ * @param  {Container|Sprite|extras.TilingSprite} displayObject the displayObject that will be hit test (recurcsivly crawls its children)
  * @param  {Function} func the function that will be called on each interactive object. The displayObject and hit will be passed to the function
  * @param  {boolean} hitTest this indicates if the objects inside should be hit test against the point
  * @return {boolean} returns true if the displayObject hit the point
@@ -447,7 +449,7 @@ InteractionManager.prototype.onMouseDown = function(event) {
 /**
  * Processes the result of the mouse down check and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the dispay object
  * @private
  */
@@ -484,7 +486,7 @@ InteractionManager.prototype.onMouseUp = function(event) {
 /**
  * Processes the result of the mouse up check and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -541,7 +543,7 @@ InteractionManager.prototype.onMouseMove = function(event) {
 /**
  * Processes the result of the mouse move check and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -579,7 +581,7 @@ InteractionManager.prototype.onMouseOut = function(event) {
 /**
  * Processes the result of the mouse over/out check and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -636,7 +638,7 @@ InteractionManager.prototype.onTouchStart = function(event) {
 /**
  * Processes the result of a touch check and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -682,7 +684,7 @@ InteractionManager.prototype.onTouchEnd = function(event) {
 /**
  * Processes the result of the end of a touch and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -736,7 +738,7 @@ InteractionManager.prototype.onTouchMove = function(event) {
 /**
  * Processes the result of a touch move check and dispatches the event if need be
  *
- * @param displayObject {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} The display object that was tested
+ * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -777,7 +779,7 @@ InteractionManager.prototype.getTouchData = function(touchEvent) {
 /**
  * Returns an interaction data object to the internal pool
  *
- * @param touchData {PIXI.interaction.InteractionData} The touch data object we want to return to the pool
+ * @param touchData {interaction.InteractionData} The touch data object we want to return to the pool
  *
  * @private
  */
@@ -828,5 +830,5 @@ InteractionManager.prototype.destroy = function() {
   this._tempPoint = null;
 };
 
-core.WebGLRenderer.registerPlugin('interaction', InteractionManager);
-core.CanvasRenderer.registerPlugin('interaction', InteractionManager);
+WebGLRenderer.registerPlugin('interaction', InteractionManager);
+CanvasRenderer.registerPlugin('interaction', InteractionManager);

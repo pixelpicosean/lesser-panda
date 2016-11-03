@@ -350,6 +350,9 @@ function loop(timestamp) {
     if (core.game) {
       core.game.run(timestamp);
     }
+
+    // Tick
+    core.emit('tick');
   }
 }
 core.endLoop = function endLoop() {
