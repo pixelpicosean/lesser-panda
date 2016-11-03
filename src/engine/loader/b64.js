@@ -37,19 +37,19 @@ module.exports.encodeBinary = function(input) {
     const paddingBytes = inx - (input.length - 1);
 
     switch (paddingBytes) {
-    case 2:
+      case 2:
                 // Set last 2 characters to padding char
-      encodedCharIndexes[3] = 64;
-      encodedCharIndexes[2] = 64;
-      break;
+        encodedCharIndexes[3] = 64;
+        encodedCharIndexes[2] = 64;
+        break;
 
-    case 1:
+      case 1:
                 // Set last character to padding char
-      encodedCharIndexes[3] = 64;
-      break;
+        encodedCharIndexes[3] = 64;
+        break;
 
-    default:
-      break; // No padding - proceed
+      default:
+        break; // No padding - proceed
     }
 
         // Now we will grab each appropriate character out of our keystring

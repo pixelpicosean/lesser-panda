@@ -1,6 +1,7 @@
 const Vector = require('engine/Vector');
 const Sprite = require('./Sprite');
 const tempPoint = new Vector();
+const CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer');
 const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
 const TextureUvs = require('../textures/TextureUvs');
 const AbstractFilter = require('../renderers/webgl/filters/AbstractFilter');

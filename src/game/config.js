@@ -87,7 +87,7 @@ module.exports = {
   /**
    * Whether pause the game when page loses focus.
    */
-  pauseOnHide: true,
+  pauseOnHide: false,
 
   /**
    * Whether show a image or text to tell players to rotate device

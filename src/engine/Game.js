@@ -61,7 +61,6 @@ class Game extends EventEmitter {
       last: -1,
       realDelta: 0,
       deltaTime: 0,
-      desiredFPS: 30,
       lastCount: 0,
       step: 0,
       slowStep: 0,

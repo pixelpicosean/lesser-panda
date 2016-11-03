@@ -375,20 +375,20 @@ function boot() {
 
   // Pick a resize function
   switch (config.resizeMode) {
-  case 'letter-box':
-    resizeFunc = _letterBoxResize;
-    break;
-  case 'crop':
-    resizeFunc = _cropResize;
-    break;
-  case 'scale-inner':
-    resizeFunc = _scaleInnerResize;
-    break;
-  case 'scale-outer':
-    resizeFunc = _scaleOuterResize;
-    break;
-  default:
-    resizeFunc = _letterBoxResize;
+    case 'letter-box':
+      resizeFunc = _letterBoxResize;
+      break;
+    case 'crop':
+      resizeFunc = _cropResize;
+      break;
+    case 'scale-inner':
+      resizeFunc = _scaleInnerResize;
+      break;
+    case 'scale-outer':
+      resizeFunc = _scaleOuterResize;
+      break;
+    default:
+      resizeFunc = _letterBoxResize;
   }
   core.resizeFunc = resizeFunc;
 

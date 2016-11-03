@@ -428,31 +428,31 @@ class Resource {
     }
 
     switch (this.loadType) {
-    case Resource.LOAD_TYPE.IMAGE:
-      this.type = Resource.TYPE.IMAGE;
-      this._loadElement('image');
-      break;
+      case Resource.LOAD_TYPE.IMAGE:
+        this.type = Resource.TYPE.IMAGE;
+        this._loadElement('image');
+        break;
 
-    case Resource.LOAD_TYPE.AUDIO:
-      this.type = Resource.TYPE.AUDIO;
-      this._loadSourceElement('audio');
-      break;
+      case Resource.LOAD_TYPE.AUDIO:
+        this.type = Resource.TYPE.AUDIO;
+        this._loadSourceElement('audio');
+        break;
 
-    case Resource.LOAD_TYPE.VIDEO:
-      this.type = Resource.TYPE.VIDEO;
-      this._loadSourceElement('video');
-      break;
+      case Resource.LOAD_TYPE.VIDEO:
+        this.type = Resource.TYPE.VIDEO;
+        this._loadSourceElement('video');
+        break;
 
-    case Resource.LOAD_TYPE.XHR:
+      case Resource.LOAD_TYPE.XHR:
                 /* falls through */
-    default:
-      if (useXdr && this.crossOrigin) {
-        this._loadXdr();
-      }
-      else {
-        this._loadXhr();
-      }
-      break;
+      default:
+        if (useXdr && this.crossOrigin) {
+          this._loadXdr();
+        }
+        else {
+          this._loadXhr();
+        }
+        break;
     }
   }
 
@@ -867,23 +867,23 @@ class Resource {
      */
   _getMimeFromXhrType(type) {
     switch (type) {
-    case Resource.XHR_RESPONSE_TYPE.BUFFER:
-      return 'application/octet-binary';
+      case Resource.XHR_RESPONSE_TYPE.BUFFER:
+        return 'application/octet-binary';
 
-    case Resource.XHR_RESPONSE_TYPE.BLOB:
-      return 'application/blob';
+      case Resource.XHR_RESPONSE_TYPE.BLOB:
+        return 'application/blob';
 
-    case Resource.XHR_RESPONSE_TYPE.DOCUMENT:
-      return 'application/xml';
+      case Resource.XHR_RESPONSE_TYPE.DOCUMENT:
+        return 'application/xml';
 
-    case Resource.XHR_RESPONSE_TYPE.JSON:
-      return 'application/json';
+      case Resource.XHR_RESPONSE_TYPE.JSON:
+        return 'application/json';
 
-    case Resource.XHR_RESPONSE_TYPE.DEFAULT:
-    case Resource.XHR_RESPONSE_TYPE.TEXT:
+      case Resource.XHR_RESPONSE_TYPE.DEFAULT:
+      case Resource.XHR_RESPONSE_TYPE.TEXT:
                 /* falls through */
-    default:
-      return 'text/plain';
+      default:
+        return 'text/plain';
 
     }
   }

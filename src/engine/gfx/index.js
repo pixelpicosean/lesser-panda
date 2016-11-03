@@ -133,7 +133,9 @@ class SystemGfx extends System {
     }
   }
   onEntityRemove(ent) {
-    if (ent.gfx) {ent.gfx.remove();}
+    if (ent.gfx) {
+      ent.gfx.remove();
+    }
   }
 
   onPause() {}

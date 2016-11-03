@@ -75,12 +75,12 @@ class EventEmitter {
       if (listeners.once) {this.removeListener(event, listeners.fn, undefined, true);}
 
       switch (len) {
-      case 1: return listeners.fn.call(listeners.context), true;
-      case 2: return listeners.fn.call(listeners.context, a1), true;
-      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
-      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
-      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
-      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+        case 1: return listeners.fn.call(listeners.context), true;
+        case 2: return listeners.fn.call(listeners.context, a1), true;
+        case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+        case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+        case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+        case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
       }
 
       for (i = 1, args = new Array(len - 1); i < len; i++) {
@@ -96,16 +96,16 @@ class EventEmitter {
         if (listeners[i].once) {this.removeListener(event, listeners[i].fn, undefined, true);}
 
         switch (len) {
-        case 1: listeners[i].fn.call(listeners[i].context); break;
-        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
-        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
-        default:
-          if (!args) {
-            for (j = 1, args = new Array(len - 1); j < len; j++) {
-              args[j - 1] = arguments[j];
-            }}
+          case 1: listeners[i].fn.call(listeners[i].context); break;
+          case 2: listeners[i].fn.call(listeners[i].context, a1); break;
+          case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
+          default:
+            if (!args) {
+              for (j = 1, args = new Array(len - 1); j < len; j++) {
+                args[j - 1] = arguments[j];
+              }}
 
-          listeners[i].fn.apply(listeners[i].context, args);
+            listeners[i].fn.apply(listeners[i].context, args);
         }
       }
     }

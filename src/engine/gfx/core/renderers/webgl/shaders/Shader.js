@@ -218,225 +218,225 @@ Shader.prototype.syncUniform = function(uniform) {
     i, il;
 
   switch (uniform.type) {
-  case 'b':
-  case 'bool':
-  case 'boolean':
-    gl.uniform1i(location, value ? 1 : 0);
-    break;
+    case 'b':
+    case 'bool':
+    case 'boolean':
+      gl.uniform1i(location, value ? 1 : 0);
+      break;
 
   // single int value
-  case 'i':
-  case '1i':
-    gl.uniform1i(location, value);
-    break;
+    case 'i':
+    case '1i':
+      gl.uniform1i(location, value);
+      break;
 
   // single float value
-  case 'f':
-  case '1f':
-    gl.uniform1f(location, value);
-    break;
+    case 'f':
+    case '1f':
+      gl.uniform1f(location, value);
+      break;
 
   // Float32Array(2) or JS Arrray
-  case '2f':
-    gl.uniform2f(location, value[0], value[1]);
-    break;
+    case '2f':
+      gl.uniform2f(location, value[0], value[1]);
+      break;
 
   // Float32Array(3) or JS Arrray
-  case '3f':
-    gl.uniform3f(location, value[0], value[1], value[2]);
-    break;
+    case '3f':
+      gl.uniform3f(location, value[0], value[1], value[2]);
+      break;
 
   // Float32Array(4) or JS Arrray
-  case '4f':
-    gl.uniform4f(location, value[0], value[1], value[2], value[3]);
-    break;
+    case '4f':
+      gl.uniform4f(location, value[0], value[1], value[2], value[3]);
+      break;
 
   // a 2D Point object
-  case 'v2':
-    gl.uniform2f(location, value.x, value.y);
-    break;
+    case 'v2':
+      gl.uniform2f(location, value.x, value.y);
+      break;
 
   // a 3D Point object
-  case 'v3':
-    gl.uniform3f(location, value.x, value.y, value.z);
-    break;
+    case 'v3':
+      gl.uniform3f(location, value.x, value.y, value.z);
+      break;
 
   // a 4D Point object
-  case 'v4':
-    gl.uniform4f(location, value.x, value.y, value.z, value.w);
-    break;
+    case 'v4':
+      gl.uniform4f(location, value.x, value.y, value.z, value.w);
+      break;
 
   // Int32Array or JS Array
-  case '1iv':
-    gl.uniform1iv(location, value);
-    break;
+    case '1iv':
+      gl.uniform1iv(location, value);
+      break;
 
   // Int32Array or JS Array
-  case '2iv':
-    gl.uniform2iv(location, value);
-    break;
+    case '2iv':
+      gl.uniform2iv(location, value);
+      break;
 
   // Int32Array or JS Array
-  case '3iv':
-    gl.uniform3iv(location, value);
-    break;
+    case '3iv':
+      gl.uniform3iv(location, value);
+      break;
 
   // Int32Array or JS Array
-  case '4iv':
-    gl.uniform4iv(location, value);
-    break;
+    case '4iv':
+      gl.uniform4iv(location, value);
+      break;
 
   // Float32Array or JS Array
-  case '1fv':
-    gl.uniform1fv(location, value);
-    break;
+    case '1fv':
+      gl.uniform1fv(location, value);
+      break;
 
   // Float32Array or JS Array
-  case '2fv':
-    gl.uniform2fv(location, value);
-    break;
+    case '2fv':
+      gl.uniform2fv(location, value);
+      break;
 
   // Float32Array or JS Array
-  case '3fv':
-    gl.uniform3fv(location, value);
-    break;
+    case '3fv':
+      gl.uniform3fv(location, value);
+      break;
 
   // Float32Array or JS Array
-  case '4fv':
-    gl.uniform4fv(location, value);
-    break;
+    case '4fv':
+      gl.uniform4fv(location, value);
+      break;
 
   // Float32Array or JS Array
-  case 'm2':
-  case 'mat2':
-  case 'Matrix2fv':
-    gl.uniformMatrix2fv(location, uniform.transpose, value);
-    break;
+    case 'm2':
+    case 'mat2':
+    case 'Matrix2fv':
+      gl.uniformMatrix2fv(location, uniform.transpose, value);
+      break;
 
   // Float32Array or JS Array
-  case 'm3':
-  case 'mat3':
-  case 'Matrix3fv':
+    case 'm3':
+    case 'mat3':
+    case 'Matrix3fv':
 
-    gl.uniformMatrix3fv(location, uniform.transpose, value);
-    break;
+      gl.uniformMatrix3fv(location, uniform.transpose, value);
+      break;
 
   // Float32Array or JS Array
-  case 'm4':
-  case 'mat4':
-  case 'Matrix4fv':
-    gl.uniformMatrix4fv(location, uniform.transpose, value);
-    break;
+    case 'm4':
+    case 'mat4':
+    case 'Matrix4fv':
+      gl.uniformMatrix4fv(location, uniform.transpose, value);
+      break;
 
   // a Color Value
-  case 'c':
-    if (typeof value === 'number') {
-      value = utils.hex2rgb(value);
-    }
+    case 'c':
+      if (typeof value === 'number') {
+        value = utils.hex2rgb(value);
+      }
 
-    gl.uniform3f(location, value[0], value[1], value[2]);
-    break;
+      gl.uniform3f(location, value[0], value[1], value[2]);
+      break;
 
   // flat array of integers (JS or typed array)
-  case 'iv1':
-    gl.uniform1iv(location, value);
-    break;
+    case 'iv1':
+      gl.uniform1iv(location, value);
+      break;
 
   // flat array of integers with 3 x N size (JS or typed array)
-  case 'iv':
-    gl.uniform3iv(location, value);
-    break;
+    case 'iv':
+      gl.uniform3iv(location, value);
+      break;
 
   // flat array of floats (JS or typed array)
-  case 'fv1':
-    gl.uniform1fv(location, value);
-    break;
+    case 'fv1':
+      gl.uniform1fv(location, value);
+      break;
 
   // flat array of floats with 3 x N size (JS or typed array)
-  case 'fv':
-    gl.uniform3fv(location, value);
-    break;
+    case 'fv':
+      gl.uniform3fv(location, value);
+      break;
 
   // array of 2D Point objects
-  case 'v2v':
-    if (!uniform._array) {
-      uniform._array = new Float32Array(2 * value.length);
-    }
+    case 'v2v':
+      if (!uniform._array) {
+        uniform._array = new Float32Array(2 * value.length);
+      }
 
-    for (i = 0, il = value.length; i < il; ++i) {
-      uniform._array[i * 2] = value[i].x;
-      uniform._array[i * 2 + 1] = value[i].y;
-    }
+      for (i = 0, il = value.length; i < il; ++i) {
+        uniform._array[i * 2] = value[i].x;
+        uniform._array[i * 2 + 1] = value[i].y;
+      }
 
-    gl.uniform2fv(location, uniform._array);
-    break;
+      gl.uniform2fv(location, uniform._array);
+      break;
 
   // array of 3D Point objects
-  case 'v3v':
-    if (!uniform._array) {
-      uniform._array = new Float32Array(3 * value.length);
-    }
+    case 'v3v':
+      if (!uniform._array) {
+        uniform._array = new Float32Array(3 * value.length);
+      }
 
-    for (i = 0, il = value.length; i < il; ++i) {
-      uniform._array[i * 3] = value[i].x;
-      uniform._array[i * 3 + 1] = value[i].y;
-      uniform._array[i * 3 + 2] = value[i].z;
+      for (i = 0, il = value.length; i < il; ++i) {
+        uniform._array[i * 3] = value[i].x;
+        uniform._array[i * 3 + 1] = value[i].y;
+        uniform._array[i * 3 + 2] = value[i].z;
 
-    }
+      }
 
-    gl.uniform3fv(location, uniform._array);
-    break;
+      gl.uniform3fv(location, uniform._array);
+      break;
 
   // array of 4D Point objects
-  case 'v4v':
-    if (!uniform._array) {
-      uniform._array = new Float32Array(4 * value.length);
-    }
+    case 'v4v':
+      if (!uniform._array) {
+        uniform._array = new Float32Array(4 * value.length);
+      }
 
-    for (i = 0, il = value.length; i < il; ++i) {
-      uniform._array[i * 4] = value[i].x;
-      uniform._array[i * 4 + 1] = value[i].y;
-      uniform._array[i * 4 + 2] = value[i].z;
-      uniform._array[i * 4 + 3] = value[i].w;
+      for (i = 0, il = value.length; i < il; ++i) {
+        uniform._array[i * 4] = value[i].x;
+        uniform._array[i * 4 + 1] = value[i].y;
+        uniform._array[i * 4 + 2] = value[i].z;
+        uniform._array[i * 4 + 3] = value[i].w;
 
-    }
+      }
 
-    gl.uniform4fv(location, uniform._array);
-    break;
+      gl.uniform4fv(location, uniform._array);
+      break;
 
   // Texture
-  case 't':
-  case 'sampler2D':
+    case 't':
+    case 'sampler2D':
 
-    if (!uniform.value || !uniform.value.baseTexture.hasLoaded) {
-      break;
-    }
+      if (!uniform.value || !uniform.value.baseTexture.hasLoaded) {
+        break;
+      }
 
     // activate this texture
-    gl.activeTexture(gl['TEXTURE' + this.textureCount]);
+      gl.activeTexture(gl['TEXTURE' + this.textureCount]);
 
-    var texture = uniform.value.baseTexture._glTextures[gl.id];
+      var texture = uniform.value.baseTexture._glTextures[gl.id];
 
-    if (!texture) {
-      this.initSampler2D(uniform);
+      if (!texture) {
+        this.initSampler2D(uniform);
 
       // set the textur to the newly created one..
-      texture = uniform.value.baseTexture._glTextures[gl.id];
-    }
+        texture = uniform.value.baseTexture._glTextures[gl.id];
+      }
 
     // bind the texture
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
 
     // set uniform to texture index
-    gl.uniform1i(uniform._location, this.textureCount);
+      gl.uniform1i(uniform._location, this.textureCount);
 
     // increment next texture id
-    this.textureCount++;
+      this.textureCount++;
 
-    break;
+      break;
 
-  default:
-    console.warn('Pixi.js Shader Warning: Unknown uniform type: ' + uniform.type);
+    default:
+      console.warn('Pixi.js Shader Warning: Unknown uniform type: ' + uniform.type);
   }
 };
 

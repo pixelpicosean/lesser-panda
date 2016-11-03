@@ -15,6 +15,7 @@ module.exports = {
       {
         "MemberExpression": 1,
         "outerIIFEBody": 0,
+        "SwitchCase": 1,
       },
     ],
     "linebreak-style": ["error", "unix"],

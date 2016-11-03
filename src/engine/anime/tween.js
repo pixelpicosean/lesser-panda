@@ -316,12 +316,12 @@ class Tween extends EventEmitter {
     }
 
     switch (this.currentAction) {
-    case ACTION_TYPES.ANIMATE:
-      this._doAnimate();
-      break;
-    case ACTION_TYPES.WAIT:
-      this._doWait();
-      break;
+      case ACTION_TYPES.ANIMATE:
+        this._doAnimate();
+        break;
+      case ACTION_TYPES.WAIT:
+        this._doWait();
+        break;
     }
   }
 
@@ -334,17 +334,17 @@ class Tween extends EventEmitter {
       key = this.propKey[i];
       switch (this.types[i]) {
         // Number tweening
-      case 0:
-        this.propCtx[i][key] = this.before[i] + this.change[i] * mod;
-        break;
+        case 0:
+          this.propCtx[i][key] = this.before[i] + this.change[i] * mod;
+          break;
         // Tweening text content
-      case 1:
-        this.propCtx[i][key] = this.change[i].slice(0, Math.floor(this.change[i].length * mod));
-        break;
+        case 1:
+          this.propCtx[i][key] = this.change[i].slice(0, Math.floor(this.change[i].length * mod));
+          break;
         // Instantly value changing for boolean and objects
-      case 2:
-        if (this.progress >= 1) {this.propCtx[i][key] = this.change[i];}
-        break;
+        case 2:
+          if (this.progress >= 1) {this.propCtx[i][key] = this.change[i];}
+          break;
       }
     }
 
