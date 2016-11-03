@@ -23,6 +23,7 @@ const AnimatedSprite = require('engine/gfx/AnimatedSprite');
 const TilingSprite = require('engine/gfx/TilingSprite');
 const Graphics = require('engine/gfx/Graphics');
 const Text = require('engine/gfx/Text');
+const BitmapText = require('engine/gfx/BitmapText');
 const Plane = require('engine/gfx/Plane');
 const Rope = require('engine/gfx/Rope');
 const { filmstrip } = require('engine/gfx/utils');
@@ -114,6 +115,11 @@ class EntityBox extends Entity {
       color: 0xffffff,
       width: 40, height: 40,
     });
+    let t = BitmapText({
+      text: 'Box',
+      font: '20px KenPixel',
+    }).addTo(this.gfx);
+    t.position.subtract(t.width / 2, t.height / 2);
 
     this.coll = Collider({
       mass: 1,
