@@ -1,9 +1,7 @@
-'use strict';
+const storage = require('./storage');
 
-var storage = require('./storage');
-
-var Data = require('./data');
-var PersistentData = require('./persistent-data');
+const Data = require('./Data');
+const PersistentData = require('./PersistentData');
 
 /**
  * Data class.

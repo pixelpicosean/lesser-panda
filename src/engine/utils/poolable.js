@@ -1,6 +1,4 @@
-'use strict';
-
-var loader = require('engine/loader');
+const core = require('engine/core');
 
 /**
  * Add ability of object pooling to a class(function).
@@ -8,23 +6,21 @@ var loader = require('engine/loader');
  * @param  {number} preAllocSize  How many instances to alloc at the beginning.
  * @return {function}             Class itself for chaining.
  */
-module.exports = function(ctor, preAllocSize_) {
-  var preAllocSize = preAllocSize_ || 20;
-
+module.exports = function(ctor, preAllocSize = 20) {
   // Mark as poolabled
   ctor.canBePooled = true;
 
   // Pre-allocate instances when resources are loaded
-  loader.once('complete', function() {
+  core.once('ready', function() {
     ctor.pool = Array(preAllocSize);
-    for (var i = 0; i < preAllocSize; i++) {
+    for (let i = 0; i < preAllocSize; i++) {
       ctor.pool[i] = new ctor();
     }
   });
 
   // Get an initialized instance
   ctor.create = function(s) {
-    var a = this.pool.pop();
+    let a = this.pool.pop();
     if (!a) {
       a = new this();
     }

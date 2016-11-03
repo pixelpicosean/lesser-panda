@@ -13,56 +13,56 @@
 
 // Date.now
 if (!(Date.now && Date.prototype.getTime)) {
-    Date.now = function() {
-        return new Date().getTime();
-    };
+  Date.now = function() {
+    return new Date().getTime();
+  };
 }
 
 // performance.now
 if (!(global.performance && global.performance.now)) {
-    var startTime = Date.now();
-    if (!global.performance) {
-        global.performance = {};
-    }
-    global.performance.now = function () {
-        return Date.now() - startTime;
-    };
+  var startTime = Date.now();
+  if (!global.performance) {
+    global.performance = {};
+  }
+  global.performance.now = function() {
+    return Date.now() - startTime;
+  };
 }
 
 // requestAnimationFrame
 var lastTime = Date.now();
 var vendors = ['ms', 'moz', 'webkit', 'o'];
 
-for(var x = 0; x < vendors.length && !global.requestAnimationFrame; ++x) {
-    global.requestAnimationFrame = global[vendors[x] + 'RequestAnimationFrame'];
-    global.cancelAnimationFrame = global[vendors[x] + 'CancelAnimationFrame'] ||
+for (var x = 0; x < vendors.length && !global.requestAnimationFrame; ++x) {
+  global.requestAnimationFrame = global[vendors[x] + 'RequestAnimationFrame'];
+  global.cancelAnimationFrame = global[vendors[x] + 'CancelAnimationFrame'] ||
         global[vendors[x] + 'CancelRequestAnimationFrame'];
 }
 
 if (!global.requestAnimationFrame) {
-    global.requestAnimationFrame = function (callback) {
-        if (typeof callback !== 'function') {
-            throw new TypeError(callback + 'is not a function');
-        }
+  global.requestAnimationFrame = function(callback) {
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + 'is not a function');
+    }
 
-        var currentTime = Date.now(),
-            delay = 16 + lastTime - currentTime;
+    var currentTime = Date.now(),
+      delay = 16 + lastTime - currentTime;
 
-        if (delay < 0) {
-            delay = 0;
-        }
+    if (delay < 0) {
+      delay = 0;
+    }
 
-        lastTime = currentTime;
+    lastTime = currentTime;
 
-        return setTimeout(function () {
-            lastTime = Date.now();
-            callback(performance.now());
-        }, delay);
-    };
+    return setTimeout(function() {
+      lastTime = Date.now();
+      callback(performance.now());
+    }, delay);
+  };
 }
 
 if (!global.cancelAnimationFrame) {
-    global.cancelAnimationFrame = function(id) {
-        clearTimeout(id);
-    };
+  global.cancelAnimationFrame = function(id) {
+    clearTimeout(id);
+  };
 }
