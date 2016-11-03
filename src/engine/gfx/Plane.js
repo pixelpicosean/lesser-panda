@@ -5,12 +5,17 @@ const textureFromData = require('./utils').textureFromData;
 require('./mesh/webgl/MeshRenderer');
 require('./mesh/webgl/MeshShader');
 
+/**
+ * Factory function for `Plane`.
+ *
+ * @param {object} data
+ * @return {Plane}
+ */
 module.exports = function(data) {
-  var tex = textureFromData(data.texture);
-  var inst = new Plane(tex, data.segmentsX, data.segmentsY);
+  const tex = textureFromData(data.texture);
+  const inst = new Plane(tex, data.segmentsX, data.segmentsY);
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
     // Directly set
     // - Container

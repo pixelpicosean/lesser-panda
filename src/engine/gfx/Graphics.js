@@ -3,38 +3,43 @@ var Vector = require('engine/Vector');
 var CONST = require('./const');
 require('./core/graphics/webgl/GraphicsRenderer');
 
-var DEFAULT_POLYGON_VERTICES = [
+const DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),
   Vector.create(+4, -4),
   Vector.create(+4, +4),
   Vector.create(-4, +4),
 ];
 
-// TODO: add fill/stroke support
+/**
+ * Factory function for `Graphics`.
+ *
+ * @param {object} data
+ * @return {Graphics}
+ */
 module.exports = function(data) {
-  var inst = new Graphics();
+  let inst = new Graphics();
 
+  // TODO: add fill/stroke support
   inst.beginFill(data.color || 0x000000);
-  var shape = data.shape || 'Box';
+  let shape = data.shape || 'Box';
   if (shape === 'Circle') {
     inst.drawCircle(0, 0, data.radius || 8);
   }
   else if (shape === 'Box') {
-    var w = data.width || 8;
-    var h = data.height || 8;
+    let w = data.width || 8;
+    let h = data.height || 8;
     inst.drawRect(-w / 2, -h / 2, w, h);
   }
   else if (shape === 'Polygon') {
-    var points = data.points || DEFAULT_POLYGON_VERTICES;
+    let points = data.points || DEFAULT_POLYGON_VERTICES;
     inst.moveTo(points[0].x, points[0].y);
-    for (var i = 1; i < points.length; i++) {
+    for (let i = 1; i < points.length; i++) {
       inst.lineTo(points[i].x, points[i].y);
     }
   }
   inst.endFill();
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
       // Directly set
       // - Container

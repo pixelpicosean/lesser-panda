@@ -1,7 +1,7 @@
 /**
  * Constant values.
  */
-var CONST = {
+const CONST = {
   /**
    * String of the current PIXI version
    *

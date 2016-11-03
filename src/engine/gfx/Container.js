@@ -1,11 +1,16 @@
-var Container = require('./core/display/Container');
-var CONST = require('./const');
+const Container = require('./core/display/Container');
+const CONST = require('./const');
 
+/**
+ * Factory function for `Container`.
+ *
+ * @param {object} data
+ * @return {Container}
+ */
 module.exports = function(data) {
-  var inst = new Container();
+  const inst = new Container();
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
       // Directly set
       // - Container

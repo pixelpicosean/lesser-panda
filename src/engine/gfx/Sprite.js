@@ -1,14 +1,19 @@
-var Sprite = require('./core/sprites/Sprite');
-var textureFromData = require('./utils').textureFromData;
-var CONST = require('./const');
+const Sprite = require('./core/sprites/Sprite');
+const textureFromData = require('./utils').textureFromData;
+const CONST = require('./const');
 require('./core/sprites/webgl/SpriteRenderer');
 
+/**
+ * Factory function for `Sprite`.
+ *
+ * @param {object} data
+ * @return {Sprite}
+ */
 module.exports = function(data) {
-  var tex = textureFromData(data.texture);
-  var inst = new Sprite(tex);
+  const tex = textureFromData(data.texture);
+  const inst = new Sprite(tex);
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
       // Directly set
       // - Container

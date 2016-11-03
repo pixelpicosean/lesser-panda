@@ -1,13 +1,12 @@
-var TilingSprite = require('./core/sprites/TilingSprite');
-var textureFromData = require('./utils').textureFromData;
-var CONST = require('./const');
+const TilingSprite = require('./core/sprites/TilingSprite');
+const textureFromData = require('./utils').textureFromData;
+const CONST = require('./const');
 
 module.exports = function(data) {
-  var tex = textureFromData(data.texture);
-  var inst = new TilingSprite(tex, data.width || tex.width, data.height || tex.height);
+  const tex = textureFromData(data.texture);
+  const inst = new TilingSprite(tex, data.width || tex.width, data.height || tex.height);
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
       // Directly set
       // - Container

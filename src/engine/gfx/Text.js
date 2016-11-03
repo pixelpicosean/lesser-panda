@@ -1,11 +1,16 @@
-var Text = require('./core/text/Text');
-var CONST = require('./const');
+const Text = require('./core/text/Text');
+const CONST = require('./const');
 
+/**
+ * Factory function for `Text`.
+ *
+ * @param {object} data
+ * @return {Text}
+ */
 module.exports = function(data) {
-  var inst = new Text(data.text, data, data.resolution || 1);
+  const inst = new Text(data.text, data, data.resolution || 1);
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
       // Directly set
       // - Container

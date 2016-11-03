@@ -1,19 +1,24 @@
-var AnimatedSprite = require('./core/sprites/AnimatedSprite');
-var CONST = require('./const');
+const AnimatedSprite = require('./core/sprites/AnimatedSprite');
+const CONST = require('./const');
 require('./core/sprites/webgl/SpriteRenderer');
 
+/**
+ * Factory function for `AnimatedSprite`.
+ *
+ * @param {object} data
+ * @return {AnimatedSprite}
+ */
 module.exports = function(data) {
-  var inst = new AnimatedSprite(data.textures);
+  const inst = new AnimatedSprite(data.textures);
 
-  var anims = data.anims;
+  const anims = data.anims;
   if (Array.isArray(anims)) {
-    for (var i = 0; i < anims.length; i++) {
+    for (let i = 0; i < anims.length; i++) {
       inst.addAnim(anims[i].name, anims[i].frames, anims[i].settings);
     }
   }
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
       // Directly set
       // - Container

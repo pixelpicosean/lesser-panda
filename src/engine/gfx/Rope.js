@@ -5,12 +5,17 @@ const textureFromData = require('./utils').textureFromData;
 require('./mesh/webgl/MeshRenderer');
 require('./mesh/webgl/MeshShader');
 
+/**
+ * Factory function for `Rope`.
+ *
+ * @param {object} data
+ * @return {Rope}
+ */
 module.exports = function(data) {
-  var tex = textureFromData(data.texture);
-  var inst = new Rope(tex, data.points);
+  const tex = textureFromData(data.texture);
+  const inst = new Rope(tex, data.points);
 
-  var k;
-  for (k in data) {
+  for (let k in data) {
     switch (k) {
     // Directly set
     // - Container
