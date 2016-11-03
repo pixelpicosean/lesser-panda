@@ -1,11 +1,14 @@
 const Texture = require('../core/textures/Texture');
 const { Rectangle } = require('../core/math');
 const loader = require('engine/loader');
+const { Resource } = loader;
 
 // General asset middlewares (including texture support)
 const blobMiddlewareFactory = require('engine/loader/middlewares/parsing/blob').blobMiddlewareFactory;
 const textureParser = require('../loaders/textureParser');
 const spritesheetParser = require('../loaders/spritesheetParser');
+const bitmapFontParser = require('../loaders/bitmapFontParser');
+Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
 // - parse any blob into more usable objects (e.g. Image)
 loader.use(blobMiddlewareFactory());
@@ -13,6 +16,8 @@ loader.use(blobMiddlewareFactory());
 loader.use(textureParser());
 // - parse any spritesheet data into multiple textures
 loader.use(spritesheetParser());
+// - parse any spritesheet data into multiple textures
+loader.use(bitmapFontParser());
 
 /**
  * Get texture instance from data.
