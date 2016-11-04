@@ -19,10 +19,12 @@ const ACTION_TYPES = {
 /**
  * @class Tween
  * @extends {EventEmitter}
- * @constructor
- * @param {object} context
  */
 class Tween extends EventEmitter {
+  /**
+   * @constructor
+   * @param {object} context Object to apply this tween to.
+   */
   constructor(context) {
     super();
 
@@ -94,6 +96,10 @@ class Tween extends EventEmitter {
     this.types = [];    // Property type list
   }
 
+  /**
+   * Initialize this tween
+   * @param  {object} context Target object.
+   */
   init(context) {
     this.removeAllListeners();
 
@@ -124,13 +130,14 @@ class Tween extends EventEmitter {
   }
 
   /**
-   * Add a new action to the tween
+   * Push a new action to the tween.
    * @memberof Tween#
    * @method to
    * @param  {Object} properties              Target properties
    * @param  {Number} duration                Duration of the action in ms
    * @param  {String|Function} easing         Easing function
    * @param  {String|Function} interpolation  Interpolation function
+   * @return {Tween} Tween itself for chaining.
    */
   to(properties, duration, easing = Easing.Linear.None, interpolation = Interpolation.Linear) {
     let easingFn = easing, interpolationFn = interpolation;
@@ -161,9 +168,11 @@ class Tween extends EventEmitter {
   }
 
   /**
-   * Repeat the tween for times
+   * Repeat the tween for times.
    * @memberof Tween#
-   * @param  {number} times How many times to repeat
+   * @method repeat
+   * @param  {number} times How many times to repeat.
+   * @return {Tween}  Tween itself.
    */
   repeat(times) {
     this.actions.push([ACTION_TYPES.REPEAT, times]);
@@ -171,10 +180,11 @@ class Tween extends EventEmitter {
   }
 
   /**
-   * Wait a short time before next action
+   * Wait a short time before next action.
    * @memberof Tween#
    * @method wait
-   * @param  {number} time Time to wait in ms
+   * @param  {number} time Time to wait in ms.
+   * @return {Tween}  Tween itself for chaining.
    */
   wait(time) {
     this.actions.push([ACTION_TYPES.WAIT, time]);
@@ -182,9 +192,10 @@ class Tween extends EventEmitter {
   }
 
   /**
-   * Stop this tween
+   * Stop this tween.
    * @memberof Tween#
    * @method stop
+   * @return {Tween}  Tween itself for chaining.
    */
   stop() {
     this.isRemoved = true;
@@ -193,9 +204,10 @@ class Tween extends EventEmitter {
   }
 
   /**
-   * Pause this tween
+   * Pause this tween.
    * @memberof Tween#
    * @method pause
+   * @return {Tween}  Tween itself for chaining.
    */
   pause() {
     this.isPaused = true;
@@ -203,15 +215,20 @@ class Tween extends EventEmitter {
   }
 
   /**
-   * Resume this tween from pausing
+   * Resume this tween from pausing.
    * @memberof Tween#
    * @method resume
+   * @return {Tween}  Tween itself for chaining.
    */
   resume() {
     this.isPaused = false;
     return this;
   }
 
+  /**
+   * Do next action.
+   * @private
+   */
   _next() {
     this.delta = 0;
 
@@ -306,6 +323,11 @@ class Tween extends EventEmitter {
     }
   }
 
+  /**
+   * Update.
+   * @param  {number} delta Delta time
+   * @protected
+   */
   _step(delta) {
     if (this.isRemoved || this.isPaused) {return;}
 
@@ -325,6 +347,10 @@ class Tween extends EventEmitter {
     }
   }
 
+  /**
+   * Do current action.
+   * @private
+   */
   _doAnimate() {
     this.progress = Math.min(1, this.delta / this.duration);
     let mod = this.easing(this.progress);
@@ -353,12 +379,19 @@ class Tween extends EventEmitter {
     }
   }
 
+  /**
+   * Do wait action.
+   * @private
+   */
   _doWait() {
     if (this.delta >= this.duration) {
       this._next();
     }
   }
 
+  /**
+   * Recycle this tween for later use.
+   */
   recycle() {
     pool.push(this);
   }
@@ -372,8 +405,9 @@ for (let i = 0; i < 20; i++) {
 
 /**
  * Tween factory method.
- * @param  {object} context
- * @return {module:engine/animation/tween~Tween}
+ * @memberOf Tween
+ * @param  {object} context Target object.
+ * @return {module:engine/animation/tween~Tween} Tween instance.
  */
 Tween.create = function(context) {
   let t = pool.pop();

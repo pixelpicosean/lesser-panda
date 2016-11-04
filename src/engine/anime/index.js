@@ -17,20 +17,51 @@ const { removeItems } = require('engine/utils/array');
 const Tween = require('./tween');
 const { ActionPlayer } = require('./action');
 
+/**
+ * Anime sub-system.
+ * @class
+ * @extends {System}
+ */
 class SystemAnime extends System {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
+    /**
+     * Name of this system.
+     * @type {String}
+     */
     this.name = 'Anime';
 
+    /**
+     * Animation item collection
+     * @type {Object}
+     */
     this.anims = {
       '0': [],
     };
 
+    /**
+     * Activated tags
+     * @type {Array}
+     */
     this.activeTags = ['0'];
+    /**
+     * Deactivated tags
+     * @type {Array}
+     */
     this.deactiveTags = [];
   }
 
+  /**
+   * Overrided update.
+   * @memberof SystemAnime#
+   * @method update
+   * @protected
+   * @param  {number} dt Delta time
+   */
   update(dt) {
     let i, key, anims, t;
     for (key in this.anims) {
@@ -53,12 +84,13 @@ class SystemAnime extends System {
   }
 
   /**
-   * Pause timers with a specific tag.
-   * @memberof Timer
-   * @method pauseTimersTagged
-   * @param  {string} tag
+   * Pause animations with a specific tag.
+   * @memberof SystemAnime#
+   * @method pauseAnimesTagged
+   * @param  {string} tag   Tag of the animations to pause.
+   * @return {SystemAnime}  System itself.
    */
-  pauseTimersTagged(tag) {
+  pauseAnimesTagged(tag) {
     if (this.timers[tag]) {
       removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
       this.deactiveTags.push(tag);
@@ -68,12 +100,13 @@ class SystemAnime extends System {
   }
 
   /**
-   * Resume timers with a specific tag.
-   * @memberof Timer
-   * @method resumeTimersTagged
-   * @param  {string} tag
+   * Resume animations with a specific tag.
+   * @memberof SystemAnime#
+   * @method resumeAnimesTagged
+   * @param  {string} tag     Tag of the animations to resume.
+   * @return {SySystemAnime}  System itself.
    */
-  resumeTimersTagged(tag) {
+  resumeAnimesTagged(tag) {
     if (this.timers[tag]) {
       removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);
       this.activeTags.push(tag);
@@ -83,12 +116,12 @@ class SystemAnime extends System {
   }
 
   /**
-   * Create and add a new tween to the scene.
+   * Create a tween for an object.
    * @method tween
-   * @memberOf Scene#
-   * @param {Oblject}     context Context of this tween
-   * @param {string}     tag     Tag of this tween (default is '0')
-   * @return {module:engine/anime/tween~Tween}
+   * @memberOf SystemAnime#
+   * @param {Oblject} context Context of this tween.
+   * @param {string}  [tag]   Tag of this tween (default is '0').
+   * @return {module:engine/anime/tween~Tween} Tween instance.
    */
   tween(context, tag = '0') {
     if (!this.anims[tag]) {
@@ -107,11 +140,11 @@ class SystemAnime extends System {
 
   /**
    * Run an action on a target object
-   * @memberof Scene#
+   * @memberof SystemAnime#
    * @method runAction
    * @param {module:engine/animation/action~Action}  action Action to run
    * @param {object}  target Target object
-   * @param {string}  tag    Tag of this action player (default is '0')
+   * @param {string}  [tag]  Tag of this action player (default is '0')
    * @return {module:engine/anime/action~ActionPlayer}  An ActionPlayer instance that runs the specific Action
    */
   runAction(action, target, tag = '0') {
