@@ -7,18 +7,13 @@ A module based HTML5 game engine designed to be flexible and powerful.
 LesserPanda has a lot of features, and the list is still growing:
 
 - Super fast Canvas and WebGL rendering powered by PIXI.js.
-- Tilemap rendering.
-- Import tile collider shape from Tiled map.
-- Fixed game loop with customizable `FPS` and `frame skips`.
+- Idle and fixed game loop with customizable `FPS`.
 - Fast and powerful physics solution.
-- Multiple collision detection solution: a fast AABB based engine and a powerful SAT engine that support polygon and detailed overlapping information.
-- Multiply broad phase solution: "Simple" for collision less games and "SpatialHash" for collision heavy ones.
-- Tilemap collision support by compiling collision map into convex polygons in the air.
-- ECS(Entity Component System) like sub-systems.
-- `Behaviors` bring objects to life with one-line setup.
-- High level `Actor` classes with both virsuals and physics built-in.
+- Super fast AABB collision detection solution.
+- ECS(Entity Component System) like systems for `Timer`, `Gfx`, `Physics` and `Anime`.
+- High level `Entity` class.
 - Automatically choose the best resolution based on configs.
-- Tag is supported by sub-systems.
+- Tag is supported by systems.
 - Mobile friendly.
 - Rotate prompt for mobile devices with just a few configs.
 - ES6 based scripting environment.
@@ -30,51 +25,38 @@ LesserPanda has a lot of features, and the list is still growing:
 Samples are moved to its own [repo here](https://github.com/pixelpicosean/lesser-panda-samples).
 Currently the samples are located inside `src/game/samples` folder, and each is just a simple `Scene` focusing on one or more particular feature.
 
+**Note: Samples have not been converted to latest v1.0.0 yet.**
+
 ## Document
 
 - [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
 - [API document](https://pixelpicosean.github.io/lesser-panda/)
 
-A **weekly devlog** shows what happened to LesserPanda, read them at [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), it will be updated on each Wednesday.
+**Devlog** posts what happened to LesserPanda, read them at [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), it will be updated on each Wednesday.
 
 ## Brief introduction of modules
 
-- `animation` provides both common tween animation and Blender like `action`.
+- `anime` provides both common tween animation and Blender like `action`.
 - `audio` provides sound playback functions, the basic usage is included in the `game/main`.
-- `pixi` contains whole PIXI.js sources. Filters and mesh is disabled by default, you can enable them by uncomment related lines in `engine/pixi/index.js`.
+- `gfx` contains whole PIXI.js sources. Filters and mesh is disabled by default, you can enable them by uncomment related lines in `engine/pixi/index.js`.
 - `polyfill` contains some ES6 polyfills (`Object.assign`, `rAF` and `Math.sign`).
-- `resource-loader` brings resource loading functionality which is used by PIXI.js and you probably don't need to use it directly.
+- `loader` brings resource loading functionality which is used by PIXI.js and you probably don't need to use it directly.
 - `storage` provides session and persistent data storage. `session` and `persistent` from this module is quite useful but you can also use low level `storage`.
 - `analytics` provides some helper functions to work with Google Analytics.
-- `camera` 2D camera that can follow targets, zoom, rotate and shake.
+- `Camera` 2D camera that can follow targets, zoom, rotate and shake.
 - `core` is the core of lesser-panda, which provides the base functionalities such as "loop" and "resize".
 - `device` tells what device the game is currently running.
-- `eventemitter3` is a fast EventEmitter implementation.
+- `EventEmitter` is a fast EventEmitter implementation.
 - `keyboard` emits keyboard events, you need to subscribe to get noticed.
-- `level` makes Scene able to load level from data and import Tiled generated maps.
 - `loader` provides assets loading functon `addAsset(path, key, settings)`
 - `physics` provides AABB based collision detection and response.
-- `reactive` is a wrapper of Kefir.js, which is used for Reactive Programming.
 - `renderer` is just the base object of renderer, if you import PIXI or canvasquery related renderer instance will be added to this object.
 - `resize` provides some resize helper functions.
 - `rnd` is a random number generator.
-- `scene` exports the Scene class. Scenes should all be sub-classes of it.
-- `timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
-- `tilemap` provides `BackgroundMap` and `CollisionMap` to support **square tile map** rendering and collision.
-- `utils` provides some math functions and helpers.
-- `vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
-
-### Behaviors
-
-- `HorizontalMove` move objects left/right
-- `VerticalMove` move objects up/down
-- `FourWayMove` move objects left/right/up/down
-- `AsteroidsMove` move like ships of classic Asteroids game
-- `Health` health, receiveDamage and heal
-- `FireBullet` let Actors be able to fire bullets
-- `AnchorToScreen` anchor object to left/right/top/right
-
-More behaviors are coming soon.
+- `Game` is the main hub for your game.
+- `Timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
+- `utils` provides utility functions and constants for array, color, math, object.
+- `Vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
 
 ## Progress
 
@@ -82,6 +64,13 @@ There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which 
 Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
+
+### 1.0.0
+
+- Completely re-design.
+- `Scene` -> `Game`.
+- `Actor` -> `Entity`.
+- Huge refactor `gfx` and `physics` modules.
 
 ### 0.4.2
 
