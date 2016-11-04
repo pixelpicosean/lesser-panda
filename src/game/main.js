@@ -311,7 +311,7 @@ class MyGame extends Game {
     let map = BackgroundMap({
       tilesize: 64,
       data: [
-        [0, 0, 0, 0],
+        [4, 4, 4, 4],
         [1, 1, 1, 1],
         [2, 2, 2, 2],
         [3, 3, 3, 3],
@@ -319,7 +319,7 @@ class MyGame extends Game {
       tileset: 'explo',
     }).addTo(this.sysGfx.layers['background']);
     map.position.set(40, 40);
-    map.setTile(0, 0, 4);
+    map.setTile(0, 2, 0);
 
     // Entity
     let ent = this.spawnEntity(EntityGfx, core.width / 2, core.height / 2);
