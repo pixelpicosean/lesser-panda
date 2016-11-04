@@ -26,6 +26,7 @@ const Text = require('engine/gfx/Text');
 const BitmapText = require('engine/gfx/BitmapText');
 const Plane = require('engine/gfx/Plane');
 const Rope = require('engine/gfx/Rope');
+const BackgroundMap = require('engine/gfx/BackgroundMap');
 const { filmstrip } = require('engine/gfx/utils');
 require('engine/gfx/interaction');
 const DotScreenFilter = require('engine/gfx/filters/dot/DotScreenFilter');
@@ -306,6 +307,19 @@ class MyGame extends Game {
       ],
     }).addTo(this.sysGfx.layers['ui']);
     r.position.set(100, 300);
+
+    let map = BackgroundMap({
+      tilesize: 64,
+      data: [
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+        [2, 2, 2, 2],
+        [3, 3, 3, 3],
+      ],
+      tileset: 'explo',
+    }).addTo(this.sysGfx.layers['background']);
+    map.position.set(40, 40);
+    map.setTile(0, 0, 4);
 
     // Entity
     let ent = this.spawnEntity(EntityGfx, core.width / 2, core.height / 2);
