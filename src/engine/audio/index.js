@@ -27,17 +27,21 @@ const audio = Object.assign(new EventEmitter(), {
   /**
    * Mute.
    * @memberof module:engine/audio
+   * @method mute
    */
   mute: function() { Howler.mute(true); audio.muted = true; audio.emit('mute', true); },
   /**
    * Unmute.
    * @memberof module:engine/audio
+   * @method unmute
    */
   unmute: function() { Howler.mute(false); audio.muted = false; audio.emit('mute', false); },
 
   /**
    * Get/set global audio volume.
    * @memberof module:engine/audio
+   * @method volume
+   * @param {number} v Volume to set.
    */
   volume: function(v) { Howler.volume(v); },
 });
@@ -57,14 +61,30 @@ core.on('resume', function() {
 
 // Utils
 const AudioUse = (config.audio && Array.isArray(config.audio.use)) ? config.audio.use : ['webm', 'mp3'];
+/**
+ * Get file extension from a path
+ * @private
+ * @param {String} path  Full path.
+ * @return {String} Extension
+ */
 function getFileExt(path) {
   return (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
 }
+/**
+ * Split "|" separated extensions.
+ * @private
+ * @param {String} ext Full extension string.
+ * @return {Array} List of extensions.
+ */
 function splitExts(ext) {
   return (/[|]/.exec(ext)) ? ext.split('|') : ext;
 }
 
-// Overrided functions
+/**
+ * Overrided `load` function.
+ * @private
+ * @param  {Function} cb Callback when loading completed.
+ */
 function load(cb) {
   if (this.isLoading) {return;}
 
@@ -90,6 +110,10 @@ function load(cb) {
   // Save to sound hash
   audio.sounds[this.name] = this.data;
 }
+/**
+ * Overrided `complete` function.
+ * @private
+ */
 function complete() {
   if (this.data) {
     this.data.off('loaderror', this._boundOnError, false);
@@ -170,5 +194,6 @@ loader.pre((res, next) => {
  * @requires engine/core
  * @requires engine/loader
  * @requires engine/audio/howler.core
+ * @requires game/config
  */
 module.exports = audio;
