@@ -3,6 +3,7 @@ const System = require('engine/system');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
 const { isWebGLSupported } = require('./core/utils');
+const CONST = require('./const');
 const container = require('./container');
 const config = require('game/config');
 
@@ -35,6 +36,9 @@ class SystemGfx extends System {
       else {
         sharedRenderer = new CanvasRenderer(config.width || 320, config.height || 200, options);
       }
+
+      // Setup default scale mode
+      CONST.SCALE_MODES.DEFAULT = CONST.SCALE_MODES[config.gfx.scaleMode.toUpperCase()];
     }
 
     /**

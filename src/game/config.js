@@ -2,8 +2,8 @@ module.exports = {
   /**
    * Logic size of the game
    */
-  width: 400,
-  height: 400,
+  width: 320,
+  height: 200,
 
   gfx: {
     /**
@@ -31,6 +31,11 @@ module.exports = {
       retina: true,
       values: [1, 2],
     },
+    /**
+     * Default scale mode (linear or nearest)
+     * @type {String}
+     */
+    scaleMode: 'nearest',
     /**
      * If the render view is transparent.
      * @type {Boolean}
