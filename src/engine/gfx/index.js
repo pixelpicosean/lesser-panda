@@ -26,6 +26,7 @@ class SystemGfx extends System {
         antialias: config.gfx.antialias,
         preserveDrawingBuffer: config.gfx.preserveDrawingBuffer,
         resolution: core.resolution,
+        roundPixels: true,
       };
 
       if (config.gfx.webgl && isWebGLSupported()) {
