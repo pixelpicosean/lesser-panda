@@ -154,6 +154,8 @@ class DisplayObject extends EventEmitter {
      * @private
      */
     this._mask = null;
+
+    this.system = null;
   }
 
   /**
@@ -282,7 +284,9 @@ Object.defineProperties(DisplayObject.prototype, {
 });
 
 DisplayObject.prototype.remove = function() {
-  if (this.parent) {this.parent.removeChild(this);}
+  if (this.parent) {
+    this.parent.removeChild(this);
+  }
 };
 
 DisplayObject.prototype.addTo = function(container) {

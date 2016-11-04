@@ -1,5 +1,5 @@
 const math = require('../math');
-const utils = require('../utils');
+const { removeItems } = require('../utils');
 const DisplayObject = require('./DisplayObject');
 const RenderTexture = require('../textures/RenderTexture');
 const _tempMatrix = new math.Matrix();
@@ -60,6 +60,7 @@ class Container extends DisplayObject {
       }
 
       child.parent = this;
+      child.system = this.system;
 
       this.children.push(child);
 
@@ -151,7 +152,7 @@ class Container extends DisplayObject {
 
     var currentIndex = this.getChildIndex(child);
 
-    utils.removeItems(this.children, currentIndex, 1); // remove from old position
+    removeItems(this.children, currentIndex, 1); // remove from old position
     this.children.splice(index, 0, child); // add at new position
     this.onChildrenChange(index);
   }
@@ -195,7 +196,8 @@ class Container extends DisplayObject {
       }
 
       child.parent = null;
-      utils.removeItems(this.children, index, 1);
+      child.system = null;
+      removeItems(this.children, index, 1);
 
           // TODO - lets either do all callbacks or all events.. not both!
       this.onChildrenChange(index);
@@ -215,7 +217,7 @@ class Container extends DisplayObject {
     var child = this.getChildAt(index);
 
     child.parent = null;
-    utils.removeItems(this.children, index, 1);
+    removeItems(this.children, index, 1);
 
       // TODO - lets either do all callbacks or all events.. not both!
     this.onChildrenChange(index);

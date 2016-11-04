@@ -99,20 +99,6 @@ Object.assign(core, {
    * @default 1
    */
   speed: 1,
-  /**
-   * Delta time since last **update** (in milliseconds).
-   * This can be useful for time based updating.
-   * @memberof module:engine/core
-   * @type {number}
-   */
-  delta: 0,
-  /**
-   * Delta time since last **update** (in seconds).
-   * This can be useful for time based updating.
-   * @memberof module:engine/core
-   * @type {number}
-   */
-  deltaSec: 0,
 
   /**
    * Rotate prompt element for mobile devices.
@@ -304,16 +290,10 @@ if (config.gfx && config.gfx.resolution) {
 let nextGame = null;
 let loopId = 0;
 let resizeFunc = _letterBoxResize;
-let lastTimestamp = 0;
 function startLoop() {
-  lastTimestamp = performance.now();
   loopId = requestAnimationFrame(loop);
 }
 function loop(timestamp) {
-  core.delta = timestamp - lastTimestamp;
-  core.deltaSec = core.delta * 0.001;
-  lastTimestamp = timestamp;
-
   loopId = requestAnimationFrame(loop);
 
   // Do not update anything when paused

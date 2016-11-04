@@ -49,6 +49,7 @@ class SystemGfx extends System {
      * @type {Container}
      */
     this.root = container();
+    this.root.system = this;
 
     /**
      * Map of layer containers.
@@ -63,6 +64,9 @@ class SystemGfx extends System {
      * @private
      */
     this._backgroundColor = 0x000000;
+
+    this.delta = 0;
+    this.deltaSec = 0;
   }
 
   set backgroundColor(c) {
@@ -75,11 +79,13 @@ class SystemGfx extends System {
   awake() {
     this.renderer.backgroundColor = this._backgroundColor;
   }
-  update() {
+  update(delta, deltaSec) { /* eslint no-unused-vars:0 */
     this.renderer.render(this.root);
   }
-  fixedUpdate() {}
-  freeze() {}
+  fixedUpdate(delta, deltaSec) {
+    this.delta = delta;
+    this.deltaSec = deltaSec;
+  }
 
   createLayer(name, parent) {
     if (this.layers[name]) {

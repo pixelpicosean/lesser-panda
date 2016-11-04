@@ -152,7 +152,8 @@ class AnimatedSprite extends Sprite {
   }
 
   /**
-   * @method updateAnimation
+   * @memberof AnimatedSprite#
+   * @method update
    */
   updateTransform() {
     super.updateTransform();
@@ -168,11 +169,11 @@ class AnimatedSprite extends Sprite {
       return;
     }
     else if (this.isPlaying) {
-      this._frameTime += anim.speed * core.deltaSec;
+      this._frameTime += anim.speed * this.system.delta;
     }
 
-    if (this._frameTime > 1) {
-      this._frameTime -= 1;
+    if (this._frameTime > 1000) {
+      this._frameTime -= 1000;
 
       if (anim.random && anim.frames.length > 1) {
         nextFrame = this.currentFrame;
