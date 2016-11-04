@@ -6,6 +6,8 @@ const utils = require('../core/utils');
 const BitmapText = require('../core/text/BitmapText');
 
 function parse(resource, texture) {
+  let i;
+
   const data = {};
   const info = resource.data.getElementsByTagName('info')[0];
   const common = resource.data.getElementsByTagName('common')[0];
@@ -18,7 +20,7 @@ function parse(resource, texture) {
   // parse letters
   const letters = resource.data.getElementsByTagName('char');
 
-  for (let i = 0; i < letters.length; i++) {
+  for (i = 0; i < letters.length; i++) {
     const charCode = parseInt(letters[i].getAttribute('id'), 10);
 
     const textureRect = new Rectangle(
