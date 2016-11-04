@@ -26,12 +26,14 @@ const CHANNEL_TYPE = {
 /**
  * A single key of an action.
  * @class Key
- * @constructor
- * @param {number} time     At which time.
- * @param {*} value         Value for this key.
- * @param {function} easing Easing function.
  */
 class Key {
+  /**
+   * @constructor
+   * @param {number} time     At which time.
+   * @param {*} value         Value for this key.
+   * @param {function} easing Easing function.
+   */
   constructor(time, value, easing = Easing.Linear.None) {
     /**
      * Time of this key
@@ -64,12 +66,14 @@ class Key {
  * action that modifies `position` and two channels will be created
  * for that as `position.x` and `position.y`.
  * @class Channel
- * @constructor
- * @param {string} path       Path of the target variable.
- * @param {Action} owner      Which action this channel is in.
- * @param {CHANNEL_TYPE} type Type of this channel.
  */
 class Channel {
+  /**
+   * @constructor
+   * @param {string} path       Path of the target variable.
+   * @param {Action} owner      Which action this channel is in.
+   * @param {CHANNEL_TYPE} type Type of this channel.
+   */
   constructor(path, owner, type = CHANNEL_TYPE.VALUE) {
     /**
      * Which action is this channel belongs to
@@ -173,16 +177,17 @@ class Channel {
  * `Action.create()` is prefered to create a new Action.
  *
  * @class Action
- * @constructor
- * @param {number} id
  */
 class Action {
-  constructor(id) {
+  /**
+   * @constructor
+   */
+  constructor() {
     /**
      * ID of this action
      * @type {number}
      */
-    this.id = id;
+    this.id = Action.nextId++;
     /**
      * Duration of this action (time between first and last key).
      * @type {number}
@@ -244,8 +249,8 @@ class Action {
    * Find a channel by path.
    * @memberof Action#
    * @method findChannel
-   * @param  {string} path
-   * @return {module:engine/anime/action~Channel}
+   * @param  {string} path Path to a specific channel.
+   * @return {module:engine/anime/action~Channel} Channel with the path.
    */
   findChannel(path) {
     return this.channelMap[path];
@@ -255,10 +260,10 @@ class Action {
 Action.nextId = 0;
 /**
  * Create a new action.
- * @return {module:engine/anime/action~Action}
+ * @return {module:engine/anime/action~Action} Action instance.
  */
 Action.create = function create() {
-  return new Action(Action.nextId++);
+  return new Action();
 };
 
 /**
@@ -267,11 +272,13 @@ Action.create = function create() {
  * Usually you only need to run an action using {@link Scene#runAction}.
  *
  * @class ActionPlayer
- * @constructor
- * @param {module:engine/anime/action~Action} action Action to play.
- * @param {object} target Target object this action is apply to.
  */
 class ActionPlayer extends EventEmitter {
+  /**
+   * @constructor
+   * @param {module:engine/anime/action~Action} action Action to play.
+   * @param {object} target Target object this action is apply to.
+   */
   constructor(action, target) {
     super();
 
@@ -318,6 +325,13 @@ class ActionPlayer extends EventEmitter {
     }
   }
 
+  /**
+   * Update.
+   * @memberof ActionPlayer
+   * @private
+   * @method _step
+   * @param  {number} delta Delta time.
+   */
   _step(delta) {
     let c, channel;
     let keys, keyIdx, key, nextKey;
@@ -437,16 +451,16 @@ class ActionPlayer extends EventEmitter {
    * Go to a specific time
    * @memberof ActionPlayer#
    * @method goto
-   * @param  {number} time
+   * @param  {number} time The moment to go to.
    */
   goto(/* time*/) {}
 }
 
 /**
  * Create a player for actor
- * @param  {module:engine/anime/action~Action} action
- * @param  {object} target
- * @return {module:engine/anime/action~ActionPlayer}
+ * @param  {module:engine/anime/action~Action} action Action to play.
+ * @param  {object} target Object this action will target.
+ * @return {module:engine/anime/action~ActionPlayer} ActionPlayer instance.
  */
 ActionPlayer.create = function(action, target) {
   return new ActionPlayer(action, target);
