@@ -1,20 +1,17 @@
-'use strict';
-
 require('engine/polyfill');
 
-var EventEmitter = require('engine/eventemitter3');
-var Renderer = require('engine/renderer');
-var Timer = require('engine/timer');
-var Vector = require('engine/vector');
-var resize = require('engine/resize');
-var device = require('engine/device');
-var config = require('game/config').default;
+const EventEmitter = require('engine/EventEmitter');
+const Vector = require('engine/Vector');
+const resize = require('engine/resize');
+const device = require('engine/device');
+const config = require('game/config');
 
 /**
  * @type {EventEmitter}
  * @private
  */
-var core = new EventEmitter();
+const core = new EventEmitter();
+let nextGameIdx = 1;
 
 // Public properties and methods
 Object.assign(core, {
@@ -23,7 +20,13 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v0.4.2',
+  version: 'v1.0.0-dev',
+
+  /**
+   * Set to `false` to disable version info console output.
+   * @type {Boolean}
+   */
+  sayHello: true,
 
   /**
    * Main Canvas element.
@@ -38,6 +41,13 @@ Object.assign(core, {
    * @type {HTMLCanvasElement}
    */
   containerView: null,
+
+  /**
+   * Canvas resolution properly choosed based on configs.
+   * @memberof module:engine/core
+   * @type {Number}
+   */
+  resolution: 1,
 
   /**
    * Size of game content.
@@ -60,19 +70,19 @@ Object.assign(core, {
   resizeFunc: null,
 
   /**
-   * Map of registered scenes.
+   * Map of registered games.
    * @memberof module:engine/core
    * @type {object}
    */
-  scenes: {},
+  games: {},
   /**
-   * Current activated scene.
+   * Current activated game.
    * Note: this may be undefined during switching.
    * Will be deprecated in future versions.
    * @memberof module:engine/core
-   * @type {Scene}
+   * @type {Game}
    */
-  scene: null,
+  game: null,
 
   /**
    * Map that contains pause state of all kinds of reasons.
@@ -89,13 +99,6 @@ Object.assign(core, {
    * @default 1
    */
   speed: 1,
-  /**
-   * Delta time since last **update** (in milliseconds).
-   * This can be useful for time based updating.
-   * @memberof module:engine/core
-   * @type {number}
-   */
-  delta: 0,
 
   /**
    * Rotate prompt element for mobile devices.
@@ -111,76 +114,40 @@ Object.assign(core, {
   rotatePromptVisible: false,
 
   /**
-   * Register a new scene class.
+   * Switch to a game.
    * @memberof module:engine/core
-   *
-   * @example
-   * import core from 'engine/core';
-   * class MyScene extends Scene {}
-   * core.addScene('MyScene', MyScene);
-   *
-   * @param {string}    name  Name of this scene.
-   * @param {function}  ctor  Constructor of the scene.
+   * @param {Game} gameCtor       Game class to be set
+   * @param {boolean} newInstance Whether create new instance for this game.
    */
-  addScene: function(name, ctor) {
-    if (core.scenes[name]) {
-      console.log('Scene [' + name + '] is already defined!');
-      return;
+  setGame: function(gameCtor, newInstance = false, param = {}) {
+    if (!gameCtor.id) {
+      gameCtor.id = nextGameIdx++;
     }
 
-    var pair = { ctor: ctor, inst: null };
-    core.scenes[name] = pair;
-  },
-  /**
-   * Switch to a scene.
-   * @memberof module:engine/core
-   * @param {string} name Name of the target scene.
-   * @param {boolean} newInstance Whether create new instance for this scene.
-   */
-  setScene: function(name, newInstance) {
-    var pair = core.scenes[name];
+    let pair = core.games[gameCtor.id];
 
     if (!pair) {
-      console.log('Scene [' + name + '] is not defined!');
-      return;
+      pair = { ctor: gameCtor, inst: null, param: param };
     }
+    pair.param = param;
 
-    if (!!newInstance) {
+    if (newInstance) {
       pair.inst = null;
     }
 
-    nextScene = pair;
+    nextGame = pair;
   },
   /**
-   * Entrance of the game, set the first scene to boot with.
-   * Note: it's recommend to set the first scene to `Loading` or
-   * your customized loading scene, otherwise the assets won't get load.
-   *
-   * Simply use `core.start` instead if you don't want to start
-   * from a custom loading scene.
-   *
-   * @example
-   * // In the `game/main` module
-   * import core from 'engine/core';
-   * core.startWithScene('MyCustomLoading');
-   * // or simply use the default loading scene
-   * core.start();
-   *
+   * Main entry.
    * @memberof module:engine/core
-   * @param  {string} sceneName Name of the start scene
+   * @param {Game} gameCtor   First game class
+   * @param {Game} loaderCtor Asset loader class
    */
-  startWithScene: function(sceneName) {
-    core.setScene(sceneName);
+  main: function(gameCtor, loaderCtor) {
+    core.setGame(loaderCtor, true, { gameClass: gameCtor });
 
     window.addEventListener('load', boot, false);
     document.addEventListener('DOMContentLoaded', boot, false);
-  },
-  /**
-   * Start with `Loading` scene.
-   * @memberof module:engine/core
-   */
-  start: function() {
-    core.startWithScene('Loading');
   },
 
   /**
@@ -198,13 +165,11 @@ Object.assign(core, {
    *                         the same reason when resume from this
    *                         pause.
    */
-  pause: function(reasonP) {
-    var i,
-      reason = reasonP || 'untitled',
-      alreadyPaused = false;
+  pause: function(reason = 'untitled') {
+    let i, alreadyPaused = false;
 
     for (i in core.pauses) {
-      if (!core.pauses.hasOwnProperty(i)) continue;
+      if (!core.pauses.hasOwnProperty(i)) {continue;}
       // Do not pause again if game is paused by other reasons
       if (core.pauses[i]) {
         alreadyPaused = true;
@@ -224,13 +189,13 @@ Object.assign(core, {
    * @param {string} reasonP Resume from pause tagged with this reason
    * @param {boolean} force Whether force to resume
    */
-  resume: function(reasonP, force) {
-    var i, reason = reasonP || 'untitled';
+  resume: function(reason = 'untitled', force = false) {
+    let i;
 
     if (force) {
       // Resume everything
       for (i in core.pauses) {
-        if (!core.pauses.hasOwnProperty(i)) continue;
+        if (!core.pauses.hasOwnProperty(i)) {continue;}
         core.pauses[i] = false;
       }
       core.emit('resume');
@@ -238,7 +203,7 @@ Object.assign(core, {
     else if (typeof(core.pauses[reason]) === 'boolean') {
       core.pauses[reason] = false;
       for (i in core.pauses) {
-        if (!core.pauses.hasOwnProperty(i)) continue;
+        if (!core.pauses.hasOwnProperty(i)) {continue;}
         // Do not resume if game is still paused by other reasons
         if (core.pauses[i]) {
           return;
@@ -317,17 +282,14 @@ Object.defineProperty(core, 'paused', {
 });
 
 // Fetch device info and setup
-if (config.renderer && config.renderer.resolution) {
-  core.resolution = chooseProperResolution(config.renderer.resolution);
-}
-else {
-  core.resolution = 1;
+if (config.gfx && config.gfx.resolution) {
+  core.resolution = chooseProperResolution(config.gfx.resolution);
 }
 
 // - Private properties and methods
-var nextScene = null;
-var loopId = 0;
-var resizeFunc = _letterBoxResize;
+let nextGame = null;
+let loopId = 0;
+let resizeFunc = _letterBoxResize;
 function startLoop() {
   loopId = requestAnimationFrame(loop);
 }
@@ -336,12 +298,46 @@ function loop(timestamp) {
 
   // Do not update anything when paused
   if (!core.paused) {
-    tickAndRender(core.scene, timestamp);
+    // Switch to new game
+    if (nextGame) {
+      let pair = nextGame;
+      nextGame = null;
+
+      // Freeze current game before switching
+      if (core.game) {
+        core.off('pause', core.game.pause, core.game);
+        core.off('resume', core.game.resume, core.game);
+        core.off('resize', core.game.resize, core.game);
+        core.game.freeze();
+      }
+      core.game = null;
+
+      // Create instance of game if not exist
+      if (!pair.inst) {pair.inst = new pair.ctor();}
+
+      // Awake the game
+      core.game = pair.inst;
+      core.on('pause', core.game.pause, core.game);
+      core.on('resume', core.game.resume, core.game);
+      core.on('resize', core.game.resize, core.game);
+      core.game.awake(pair.param);
+
+      // Resize container of the game
+      resizeFunc();
+    }
+
+    // Update current game
+    if (core.game) {
+      core.game.run(timestamp);
+    }
+
+    // Tick
+    core.emit('tick');
   }
 }
-function endLoop() {
+core.endLoop = function endLoop() {
   cancelAnimationFrame(loopId);
-}
+};
 function boot() {
   window.removeEventListener('load', boot);
   document.removeEventListener('DOMContentLoaded', boot);
@@ -349,22 +345,15 @@ function boot() {
   // Disable scroll
   _noPageScroll();
 
-  var rendererConfig = Object.assign({
-    canvasId: 'game',
-  }, config.renderer);
-
-  core.view = document.getElementById(rendererConfig.canvasId);
+  core.view = document.getElementById(config.canvas || 'game');
   core.containerView = document.getElementById('container');
 
   // Keep focus when mouse/touch event occurs on the canvas
-  function focus() { window.focus() }
+  function focus() { window.focus(); }
   core.view.addEventListener('mousedown', focus);
   core.view.addEventListener('touchstart', focus);
 
-  // Config and create renderer
-  Renderer.resolution = rendererConfig.resolution = core.resolution;
-
-  Renderer.init(core.width, core.height, rendererConfig);
+  // Start game loop
   startLoop();
 
   // Pick a resize function
@@ -394,21 +383,21 @@ function boot() {
   resizeFunc(true);
 
   // Setup visibility change API
-  var visibleResume = function() {
-    if (config.pauseOnHide) core.resume('visibility');
+  const visibleResume = function() {
+    if (config.pauseOnHide) {core.resume('visibility');}
   };
-  var visiblePause = function() {
-    if (config.pauseOnHide) core.pause('visibility');
+  const visiblePause = function() {
+    if (config.pauseOnHide) {core.pause('visibility');}
   };
 
   // Main visibility API function
-  var vis = (function() {
-    var stateKey, eventKey;
-    var keys = {
-      hidden: "visibilitychange",
-      mozHidden: "mozvisibilitychange",
-      webkitHidden: "webkitvisibilitychange",
-      msHidden: "msvisibilitychange"
+  const vis = (function() {
+    let stateKey, eventKey;
+    const keys = {
+      hidden: 'visibilitychange',
+      mozHidden: 'mozvisibilitychange',
+      webkitHidden: 'webkitvisibilitychange',
+      msHidden: 'msvisibilitychange',
     };
     for (stateKey in keys) {
       if (stateKey in document) {
@@ -417,9 +406,9 @@ function boot() {
       }
     }
     return function(c) {
-      if (c) document.addEventListener(eventKey, c, false);
+      if (c) {document.addEventListener(eventKey, c, false);}
       return !document[stateKey];
-    }
+    };
   })();
 
   // Check if current tab is active or not
@@ -442,7 +431,7 @@ function boot() {
     window.addEventListener('blur', visiblePause, false);
   }
   else {
-    window.attachEvent("focus", function() {
+    window.attachEvent('focus', function() {
       setTimeout(visibleResume, 300);
     });
     window.attachEvent('blur', visiblePause);
@@ -450,7 +439,7 @@ function boot() {
 
   // Create rotate prompt if required
   if (device.mobile && config.showRotatePrompt) {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     div.innerHTML = config.rotatePromptImg ? '' : config.rotatePromptMsg;
     div.style.position = 'absolute';
     div.style.height = '12px';
@@ -466,7 +455,7 @@ function boot() {
     document.body.appendChild(div);
 
     if (config.rotatePromptImg) {
-      var img = new Image();
+      const img = new Image();
       img.onload = function() {
         div.image = img;
         div.appendChild(img);
@@ -478,7 +467,7 @@ function boot() {
     }
 
     // Check orientation and display the rotate prompt if required
-    var isLandscape = (core.width / core.height >= 1);
+    const isLandscape = (core.width / core.height >= 1);
     core.on('resize', function() {
       if (window.innerWidth < window.innerHeight && isLandscape) {
         core.rotatePromptVisible = true;
@@ -513,27 +502,23 @@ function boot() {
   core.emit('boot');
   core.emit('booted');
 }
-function getVendorAttribute(el, attr) {
-  var uc = attr.ucfirst();
-  return el[attr] || el['ms' + uc] || el['moz' + uc] || el['webkit' + uc] || el['o' + uc];
-}
 function chooseProperResolution(res) {
   // Default value
   if (!res) {
     return 1;
   }
   // Numerical value
-  else if (typeof(res) === 'number') {
+  else if (Number.isFinite(res)) {
     return res;
   }
   // Calculate based on window size and device pixel ratio
   else {
-    res.values.sort(function(a, b) { return a - b });
-    var gameRatio = core.width / core.height;
-    var windowRatio = window.innerWidth / window.innerHeight;
-    var scale = res.retina ? window.devicePixelRatio : 1;
-    var result = res.values[0];
-    for (var i = 0; i < res.values.length; i++) {
+    res.values.sort(function(a, b) { return a - b; });
+    const gameRatio = core.width / core.height;
+    const windowRatio = window.innerWidth / window.innerHeight;
+    const scale = res.retina ? window.devicePixelRatio : 1;
+    let result = res.values[0];
+    for (let i = 0; i < res.values.length; i++) {
       result = res.values[i];
 
       if ((gameRatio >= windowRatio && window.innerWidth * scale <= core.width * result) ||
@@ -546,13 +531,13 @@ function chooseProperResolution(res) {
   }
 }
 function resizeRotatePrompt() {
-  core.rotatePromptElm.style.width = window.innerWidth + 'px';
-  core.rotatePromptElm.style.height = window.innerHeight + 'px';
+  core.rotatePromptElm.style.width = `${window.innerWidth}px`;
+  core.rotatePromptElm.style.height = `${window.innerHeight}px`;
   _alignToWindowCenter(core.rotatePromptElm, window.innerWidth, window.innerHeight);
 
-  var imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
-  var windowRatio = window.innerWidth / window.innerHeight;
-  var w, h;
+  const imgRatio = core.rotatePromptImg.width / core.rotatePromptImg.height;
+  const windowRatio = window.innerWidth / window.innerHeight;
+  let w, h;
   if (imgRatio < windowRatio) {
     w = Math.floor(window.innerHeight * 0.8);
     h = Math.floor(w / imgRatio);
@@ -561,126 +546,15 @@ function resizeRotatePrompt() {
     h = Math.floor(window.innerWidth * 0.8);
     w = Math.floor(h * imgRatio);
   }
-  core.rotatePromptImg.style.height = w + 'px';
-  core.rotatePromptImg.style.width = h + 'px';
-}
-
-// Update (fixed update implementation from Phaser by @photonstorm)
-var spiraling = 0;
-var last = -1;
-var realDelta = 0;
-var deltaTime = 0;
-var desiredFPS = 30;
-var currentUpdateID = 0;
-var lastCount = 0;
-var step = 0;
-var slowStep = 0;
-var count = 0;
-/**
- * Update and render a scene
- * @private
- * @param  {Scene} scene      Scene to be updated
- * @param  {Number} timestamp Current time stamp
- */
-function tickAndRender(scene, timestamp) {
-  if (last > 0) {
-    realDelta = timestamp - last;
-  }
-  last = timestamp;
-
-  // If the logic time is spiraling upwards, skip a frame entirely
-  if (spiraling > 1) {
-    // Reset the deltaTime accumulator which will cause all pending dropped frames to be permanently skipped
-    deltaTime = 0;
-    spiraling = 0;
-
-    renderScene(scene);
-  }
-  else {
-    desiredFPS = scene ? scene.desiredFPS : 30;
-
-    // Step size
-    step = 1000.0 / desiredFPS;
-    slowStep = step * core.speed;
-
-    // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
-    deltaTime += Math.max(Math.min(step * 3, realDelta), 0);
-
-    // Call the game update logic multiple times if necessary to "catch up" with dropped frames
-    // unless forceSingleUpdate is true
-    count = 0;
-
-    while (deltaTime >= step) {
-      deltaTime -= step;
-      currentUpdateID = count;
-
-      // Fixed update with the timestep
-      core.delta = step;
-      Timer.update(slowStep);
-      updateScene(scene);
-
-      count += 1;
-    }
-
-    // Detect spiraling (if the catch-up loop isn't fast enough, the number of iterations will increase constantly)
-    if (count > lastCount) {
-      spiraling += 1;
-    }
-    else if (count < lastCount) {
-      // Looks like it caught up successfully, reset the spiral alert counter
-      spiraling = 0;
-    }
-
-    lastCount = count;
-
-    renderScene(scene);
-  }
-}
-function updateScene(scene) {
-  // Switch to new scene
-  if (nextScene) {
-    var pair = nextScene;
-    nextScene = null;
-
-    // Freeze current scene before switching
-    core.scene && core.scene._freeze();
-    core.scene = null;
-
-    // Create instance of scene if not exist
-    if (!pair.inst) {
-      pair.inst = new pair.ctor();
-    }
-
-    // Awake the scene
-    core.scene = pair.inst;
-    core.scene._awake();
-
-    // Resize container of the scene
-    resizeFunc();
-  }
-
-  // Update current scene
-  if (scene) {
-    scene._update(slowStep, slowStep * 0.001);
-  }
-}
-var skipFrameCounter = 0;
-function renderScene(scene) {
-  skipFrameCounter -= 1;
-  if (skipFrameCounter < 0) {
-    skipFrameCounter = (config.skipFrame || 0);
-
-    if (scene) {
-      Renderer.render(scene);
-    }
-  }
+  core.rotatePromptImg.style.height = `${w}px`;
+  core.rotatePromptImg.style.width = `${h}px`;
 }
 
 // Resize functions
-var windowSize = { x: 1, y: 1 };
-var scaledWidth, scaledHeight;
-var result, container;
-function _letterBoxResize(first) {
+let windowSize = { x: 1, y: 1 };
+let scaledWidth, scaledHeight;
+let result, container;
+function _letterBoxResize() {
   // Update sizes
   windowSize.x = window.innerWidth;
   windowSize.y = window.innerHeight;
@@ -688,21 +562,18 @@ function _letterBoxResize(first) {
   // Use inner box scaling function to calculate correct size
   result = resize.outerBoxResize(windowSize, core.viewSize);
 
-  // Resize the renderer once
-  if (first) Renderer.resize(core.viewSize.x, core.viewSize.y);
-
   scaledWidth = Math.floor(core.viewSize.x * result.scale);
   scaledHeight = Math.floor(core.viewSize.y * result.scale);
 
   // Resize the view
-  core.view.style.width = scaledWidth + 'px';
-  core.view.style.height = scaledHeight + 'px';
+  core.view.style.width = `${scaledWidth}px`;
+  core.view.style.height = `${scaledHeight}px`;
 
   // Resize the container
-  core.containerView.style.width = scaledWidth + 'px';
-  core.containerView.style.height = scaledHeight + 'px';
-  core.containerView.style.marginTop = Math.floor(result.top) + 'px';
-  core.containerView.style.marginLeft = Math.floor(result.left) + 'px';
+  core.containerView.style.width = `${scaledWidth}px`;
+  core.containerView.style.height = `${scaledHeight}px`;
+  core.containerView.style.marginTop = `${Math.floor(result.top)}px`;
+  core.containerView.style.marginLeft = `${Math.floor(result.left)}px`;
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
@@ -715,11 +586,8 @@ function _letterBoxResize(first) {
 function _cropResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
-  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
-  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
-
-  // Resize the renderer
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
+  core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
+  core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
   // Broadcast resize events
   core.emit('resize', core.viewSize.x, core.viewSize.y);
@@ -732,15 +600,12 @@ function _cropResize() {
 function _scaleInnerResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
-  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
-  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
+  core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
+  core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
-  // Resize the renderer
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
-
-  // Resize container of current scene
-  if (core.scene) {
-    container = core.scene.stage;
+  // Resize container of current game
+  if (core.game) {
+    container = core.game.stage;
     result = resize.innerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
@@ -757,15 +622,12 @@ function _scaleInnerResize() {
 function _scaleOuterResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
-  core.view.style.width = core.containerView.style.width = window.innerWidth + 'px';
-  core.view.style.height = core.containerView.style.height = window.innerHeight + 'px';
+  core.view.style.width = core.containerView.style.width = `${window.innerWidth}px`;
+  core.view.style.height = core.containerView.style.height = `${window.innerHeight}px`;
 
-  // Resize the renderer
-  Renderer.resize(core.viewSize.x, core.viewSize.y);
-
-  // Resize container of current scene
-  if (core.scene) {
-    container = core.scene.stage;
+  // Resize container of current game
+  if (core.game) {
+    container = core.game.stage;
     result = resize.outerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
@@ -782,13 +644,13 @@ function _scaleOuterResize() {
 
 // CSS helpers
 function _alignToWindowCenter(el, w, h) {
-  el.style.marginLeft = Math.floor((window.innerWidth - w) / 2) + 'px';
-  el.style.marginTop = Math.floor((window.innerHeight - h) / 2) + 'px';
+  el.style.marginLeft = `${Math.floor((window.innerWidth - w) / 2)}px`;
+  el.style.marginTop = `${Math.floor((window.innerHeight - h) / 2)}px`;
 }
 function _noPageScroll() {
   document.ontouchmove = function(event) {
     event.preventDefault();
-  }
+  };
 }
 
 /**
@@ -796,10 +658,8 @@ function _noPageScroll() {
  * @exports engine/core
  *
  * @requires module:engine/polyfill
- * @requires module:engine/eventemitter3
- * @requires module:engine/renderer
- * @requires module:engine/timer
- * @requires module:engine/vector
+ * @requires module:engine/EventEmitter
+ * @requires module:engine/Vector
  * @requires module:engine/resize
  * @requires module:engine/device
  */

@@ -27,6 +27,9 @@ TODO:
 
 TODO:
 
+Make sure code style matches, check `.eslintrc` for more information.
+Run `eslint --fix --quiet src/engine/**/*.js` to test.
+
 - How to create PR
 
 ## Communication

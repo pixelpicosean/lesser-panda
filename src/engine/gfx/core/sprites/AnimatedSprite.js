@@ -1,0 +1,221 @@
+const core = require('engine/core');
+const Sprite = require('./Sprite');
+const { merge } = require('engine/utils/object');
+
+/**
+ * @class AnimationData
+ * @constructor
+ * @param {Array} frames
+ * @param {Object} [props]
+ */
+class AnimationData {
+  constructor(frames, props) {
+    /**
+     * Is animation looping.
+     * @property {Boolean} loop
+     * @default true
+    **/
+    this.loop = true;
+    /**
+     * Play animation in random order.
+     * @property {Boolean} random
+     * @default false
+     */
+    this.random = false;
+    /**
+     * Play animation in reverse.
+     * @property {Boolean} reverse
+     * @default false
+     */
+    this.reverse = false;
+    /**
+     * Speed of animation (frames per second).
+     * @property {Number} speed
+     * @default 10
+     */
+    this.speed = 10;
+    /**
+     * Animation frame order.
+     * @property {Array} frames
+     */
+    this.frames = frames;
+
+    merge(this, props);
+  }
+}
+
+/**
+ * @class AnimatedSprite
+ * @extends Sprite
+ * @constructor
+ * @param {Array} textures Textures this animation made up of
+ */
+class AnimatedSprite extends Sprite {
+  constructor(textures) {
+    super(textures[0]);
+
+    this.anims = {};
+    this.currentAnim = 'default';
+    this.currentFrame = 0;
+    this.isPlaying = false;
+    this.isFinished = false;
+
+    this._finishEvtEmit = false;
+    this._frameTime = 0;
+
+    this.textures = textures;
+
+    this.addAnim('default');
+  }
+
+  remove() {
+    this.off('finish');
+    super.remove();
+  }
+
+  /**
+   * Add new animation.
+   * @method addAnim
+   * @param {String} name
+   * @param {Array} [frames]
+   * @param {Object} [props]
+   */
+  addAnim(name, frames, props) {
+    if (!name) {
+      return;
+    }
+    if (!frames) {
+      frames = [];
+      for (var i = 0; i < this.textures.length; i++) {
+        frames.push(i);
+      }
+    }
+
+    var anim = new AnimationData(frames, props);
+    this.anims[name] = anim;
+    return this;
+  }
+
+  /**
+   * Play animation.
+   * @method play
+   * @param {String} name Name of animation
+   * @param {Number} [frame] Frame index
+   */
+  play(name, frame = 0) {
+    name = name || this.currentAnim;
+    var anim = this.anims[name];
+    if (!anim) {
+      return;
+    }
+    this.isPlaying = true;
+    this._finishEvtEmit = false;
+    this.isFinished = false;
+    this.currentAnim = name;
+    if (!Number.isFinite(frame) && anim.reverse) {
+      frame = anim.frames.length - 1;
+    }
+
+    this.gotoFrame(frame);
+
+    return this;
+  }
+
+  /**
+   * Stop animation.
+   * @method stop
+   * @param {Number} [frame] Frame index
+   */
+  stop(frame) {
+    this.isPlaying = false;
+    if (Number.isFinite(frame)) {
+      this.gotoFrame(frame);
+    }
+
+    return this;
+  }
+
+  /**
+   * Jump to specific frame.
+   * @method gotoFrame
+   * @param {Number} frame
+   */
+  gotoFrame(frame) {
+    var anim = this.anims[this.currentAnim];
+    if (!anim) {
+      return;
+    }
+    this.currentFrame = frame;
+    this._frameTime = 0;
+    this.texture = this.textures[anim.frames[frame]];
+    return this;
+  }
+
+  /**
+   * @memberof AnimatedSprite#
+   * @method update
+   */
+  updateTransform() {
+    super.updateTransform();
+
+    var nextFrame;
+    var anim = this.anims[this.currentAnim];
+
+    if (this.isFinished) {
+      if (!this._finishEvtEmit) {
+        this.emit('finish', this.currentAnim);
+      }
+
+      return;
+    }
+    else if (this.isPlaying) {
+      this._frameTime += anim.speed * this.system.delta;
+    }
+
+    if (this._frameTime > 1000) {
+      this._frameTime -= 1000;
+
+      if (anim.random && anim.frames.length > 1) {
+        nextFrame = this.currentFrame;
+        while (nextFrame === this.currentFrame) {
+          nextFrame = Math.round(Math.random(0, anim.frames.length - 1));
+        }
+
+        this.currentFrame = nextFrame;
+        this.texture = this.textures[anim.frames[nextFrame]];
+        return;
+      }
+
+      nextFrame = this.currentFrame + (anim.reverse ? -1 : 1);
+
+      if (nextFrame >= anim.frames.length) {
+        if (anim.loop) {
+          this.currentFrame = 0;
+          this.texture = this.textures[anim.frames[0]];
+        }
+        else {
+          this.isPlaying = false;
+          this.isFinished = true;
+          this._finishEvtEmit = false;
+        }
+      }
+      else if (nextFrame < 0) {
+        if (anim.loop) {
+          this.currentFrame = anim.frames.length - 1;
+          this.texture = this.textures[anim.frames.last()];
+        }
+        else {
+          this.isPlaying = false;
+          this.isFinished = true;
+          this._finishEvtEmit = false;
+        }
+      }
+      else {
+        this.currentFrame = nextFrame;
+        this.texture = this.textures[anim.frames[nextFrame]];
+      }
+    }
+  }
+}
+
+module.exports = AnimatedSprite;

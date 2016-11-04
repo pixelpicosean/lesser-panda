@@ -1,6 +1,4 @@
-'use strict';
-
-var EventEmitter = require('engine/eventemitter3');
+const EventEmitter = require('engine/EventEmitter');
 
 /**
  * @class Keyboard
@@ -10,72 +8,72 @@ var EventEmitter = require('engine/eventemitter3');
  * @emits keydown
  * @emits keyup
  */
-function Keyboard() {
-  EventEmitter.call(this);
+class Keyboard extends EventEmitter {
+  constructor() {
+    super();
+
+    /**
+     * @type {array}
+     * @private
+     */
+    this._keysDown = [];
+
+    window.addEventListener('keydown', this._keydown.bind(this));
+    window.addEventListener('keyup', this._keyup.bind(this));
+    window.addEventListener('blur', this._resetKeys.bind(this));
+  }
 
   /**
-   * @type {array}
+   * Check if key is pressed down.
+   * @method down
+   * @memberof Keyboard#
+   * @param {string} key
+   * @return {boolean}
+   */
+  down(key) {
+    return !!this._keysDown[key];
+  }
+
+  /**
+   * @method _keydown
+   * @memberof Keyboard#
+   * @param {KeyboardEvent} event
    * @private
    */
-  this._keysDown = [];
+  _keydown(event) {
+    if (!Keyboard.keys[event.keyCode]) {
+      // Unknown key
+      Keyboard.keys[event.keyCode] = event.keyCode;
+    }
 
-  window.addEventListener('keydown', this._keydown.bind(this));
-  window.addEventListener('keyup', this._keyup.bind(this));
-  window.addEventListener('blur', this._resetKeys.bind(this));
+    if (this._keysDown[Keyboard.keys[event.keyCode]]) {return;}
+
+    this._keysDown[Keyboard.keys[event.keyCode]] = true;
+    this.emit('keydown', Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
+  }
+
+  /**
+   * @method _keyup
+   * @memberof Keyboard#
+   * @param {KeyboardEvent} event
+   * @private
+   */
+  _keyup(event) {
+    this._keysDown[Keyboard.keys[event.keyCode]] = false;
+    this.emit('keyup', Keyboard.keys[event.keyCode]);
+  }
+
+  /**
+   * @method _resetKeys
+   * @memberof Keyboard#
+   * @private
+   */
+  _resetKeys() {
+    for (var key in this._keysDown) {
+      this._keysDown[key] = false;
+    }
+  }
 }
-Keyboard.prototype = Object.create(EventEmitter.prototype);
-Keyboard.prototype.constructor = Keyboard;
-
-/**
- * Check if key is pressed down.
- * @method down
- * @memberof Keyboard#
- * @param {string} key
- * @return {boolean}
- */
-Keyboard.prototype.down = function(key) {
-  return !!this._keysDown[key];
-},
-
-/**
- * @method _keydown
- * @memberof Keyboard#
- * @param {KeyboardEvent} event
- * @private
- */
-Keyboard.prototype._keydown = function(event) {
-  if (!Keyboard.keys[event.keyCode]) {
-    // Unknown key
-    Keyboard.keys[event.keyCode] = event.keyCode;
-  }
-
-  if (this._keysDown[Keyboard.keys[event.keyCode]]) return;
-
-  this._keysDown[Keyboard.keys[event.keyCode]] = true;
-  this.emit('keydown', Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
-};
-
-/**
- * @method _keyup
- * @memberof Keyboard#
- * @param {KeyboardEvent} event
- * @private
- */
-Keyboard.prototype._keyup = function(event) {
-  this._keysDown[Keyboard.keys[event.keyCode]] = false;
-  this.emit('keyup', Keyboard.keys[event.keyCode]);
-};
-
-/**
- * @method _resetKeys
- * @memberof Keyboard#
- * @private
- */
-Keyboard.prototype._resetKeys = function() {
-  for (var key in this._keysDown) {
-    this._keysDown[key] = false;
-  }
-};
 
 Object.assign(Keyboard, {
   /**
@@ -193,3 +191,4 @@ Object.assign(Keyboard, {
  * });
  */
 module.exports = new Keyboard();
+module.exports.Keyboard = Keyboard;

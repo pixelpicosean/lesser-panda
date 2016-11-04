@@ -1,55 +1,16 @@
-export default {
+module.exports = {
   /**
    * Logic size of the game
    */
   width: 320,
   height: 200,
 
-  /**
-   * Logic update FPS
-   * @type {Number}
-   * @default 30
-   */
-  desiredFPS: 60,
-  /**
-   * How many RAFs to skip before each rendering?
-   *
-   * Note: This setting does not affect update frequency!
-   *
-   * @type {Number}
-   * @default 0
-   */
-  skipFrame: 0,
-
-  /**
-   * How does the game resize?
-   * available values:
-   *  + letter-box    Scale with CSS and align to the center
-   *  + crop          Resize the canvas to size of window
-   *  + scale-inner   Resize the canvas and scale `container` of scene to show more
-   *  + scale-outer   Resize the canvas and scale `container` of scene to show less
-   */
-  resizeMode: 'letter-box',
-
-  /**
-   * Whether pause the game (timer and scene)
-   * when page is hidden
-   */
-  pauseOnHide: false,
-
-  /**
-   * Whether show a image or text to tell players to rotate device
-   * Only available on "mobile device".
-   * @type {Boolean}
-   */
-  showRotatePrompt: true,
-  rotatePromptBGColor: 'black',
-  rotatePromptFontColor: 'white',
-  rotatePromptImg: 'media/rotate.png',
-  rotatePromptMsg: 'Please Rotate Your Device!',
-
-  renderer: {
-    webGL: true,
+  gfx: {
+    /**
+     * Using WebGL when available or not?
+     * @type {Boolean}
+     */
+    webgl: true,
     /**
      * The resolution of the renderer, used for hi-resolution
      * textures and better text rendering.
@@ -68,41 +29,83 @@ export default {
      */
     resolution: {
       retina: true,
-      values: [1],
+      values: [1, 2],
     },
+    /**
+     * Default scale mode (linear or nearest)
+     * @type {String}
+     */
+    scaleMode: 'nearest',
+    /**
+     * If the render view is transparent.
+     * @type {Boolean}
+     */
+    transparent: false,
+    /**
+     * Sets antialias (only applicable in chrome at the moment).
+     * @type {Boolean}
+     */
+    antialias: false,
+    /**
+     * Enables drawing buffer preservation, enable this if you
+     * need to call toDataUrl on the webgl context.
+     * @type {Boolean}
+     */
+    preserveDrawingBuffer: false,
   },
+
+  /**
+   * Default canvas view ID.
+   * @type {String}
+   */
+  canvas: 'game',
+
+  /**
+   * Base URL of assets.
+   * @type {String}
+   */
+  baseUrl: 'media',
+
+  /**
+   * Audio specific settings.
+   * @type {Object}
+   */
+  audio: {
+    /**
+     * Supported audio file format.
+     * Only files with these extensions will be load.
+     * @type {Array}
+     */
+    use: ['webm', 'mp3'],
+  },
+
+  /**
+   * How does the game resize?
+   * available values:
+   *  + letter-box    Scale with CSS and align to the center
+   *  + crop          Resize the canvas to size of window
+   *  + scale-inner   Resize the canvas and scale `container` of scene to show more
+   *  + scale-outer   Resize the canvas and scale `container` of scene to show less
+   */
+  resizeMode: 'letter-box',
+
+  /**
+   * Whether pause the game when page loses focus.
+   */
+  pauseOnHide: false,
+
+  /**
+   * Whether show a image or text to tell players to rotate device
+   * Only available on "mobile device".
+   * @type {Boolean}
+   */
+  showRotatePrompt: true,
+  rotatePromptBGColor: 'black',
+  rotatePromptFontColor: 'white',
+  rotatePromptImg: 'media/rotate.png',
+  rotatePromptMsg: 'Please Rotate Your Device!',
 
   storage: {
     id: 'lpanda',
   },
-
-  physics: {
-    /**
-     * Collision solver, available settings:
-     * - AABB: Fast but only Box(not rotated) and Circle shapes are supported
-     * - SAT:  Powerful SAT based, have convex Polygon and rotation support
-     * @default AABB
-     */
-    solver: 'AABB',
-    /**
-     * Broad phase algorithm to use for collision detection
-     * - Simple: Check collision between every possible pairs, for small amount of bodies
-     * - SpatialHash: Advanced solution that performs best if the objects are sparsely distributed
-     * @default SpatialHash
-     */
-    broadPhase: 'SpatialHash',
-    /**
-     * This only works while using "SpatialHash" broad phase.
-     * Feel free to tweak this number for best performance.
-     * @type {Number}
-     * @default 5
-     */
-    spatialFactor: 8,
-  },
-
-  /**
-   * First scene to launch after loading.
-   * You can change this behavior from `game/loading.js`
-   */
-  firstScene: 'Main',
 };

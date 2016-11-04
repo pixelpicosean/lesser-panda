@@ -1,32 +1,29 @@
-import core from 'engine/core';
-import Scene from 'engine/scene';
-import PIXI from 'engine/pixi';
-import loader from 'engine/loader';
+const core = require('engine/core');
+const loader = require('engine/loader');
+const Game = require('engine/Game');
+const SystemGfx = require('engine/gfx');
+const BitmapText = require('engine/gfx/BitmapText');
 
-import 'game/loading';
+const Loading = require('game/Loading');
 
-loader.addAsset('KenPixel.fnt');
+// Resource loading
+loader.add('KenPixel.fnt');
 
-PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
-
-class Main extends Scene {
+class MyGame extends Game {
   constructor() {
     super();
 
-    this
-      .createLayer('worldLayer')
-        .createLayer('actLayer', 'worldLayer')
-        .createLayer('fxLayer', 'worldLayer')
-      .createLayer('uiLayer');
+    this.addSystem(new SystemGfx({ scaleMode: 'nearest' }));
 
-    const text = new PIXI.extras.BitmapText('It Works!', {
+    this.sysGfx.createLayer('background');
+
+    let t = BitmapText({
+      text: 'It Works!',
       font: '16px KenPixel',
-    }).addTo(this.uiLayer);
-    text.position
-      .set(core.width * 0.5, core.height * 0.5)
-      .subtract(text.width * 0.5, text.height * 0.5);
+      position: { x: core.width / 2, y: core.height / 2 },
+    }).addTo(this.sysGfx.layers['background']);
+    t.pivot.set(t.width / 2, t.height / 2);
   }
-};
-core.addScene('Main', Main);
+}
 
-core.start();
+core.main(MyGame, Loading);
