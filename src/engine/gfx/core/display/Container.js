@@ -535,9 +535,6 @@ Object.defineProperties(Container.prototype, {
       else {
         this.scale.x = 1;
       }
-
-
-      this._width = value;
     },
   },
 
@@ -561,8 +558,6 @@ Object.defineProperties(Container.prototype, {
       else {
         this.scale.y = 1;
       }
-
-      this._height = value;
     },
   },
 });
