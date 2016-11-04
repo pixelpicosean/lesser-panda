@@ -44,14 +44,30 @@ class BackgroundMap extends Container {
     return this._height;
   }
 
-  getTile(x, y) {
+  getTile(r, q) {
+    return (q >= 0 && q < this._width && r >= 0 && r < this._height) ? this.data[r][q] : 0;
+  }
+  getTileAt(x, y) {
     const q = Math.floor(x / this.tilesize);
     const r = Math.floor(y / this.tilesize);
 
     return (q >= 0 && q < this._width && r >= 0 && r < this._height) ? this.data[r][q] : 0;
   }
 
-  setTile(x, y, tile) {
+  setTile(r, q, tile) {
+    if (q >= 0 && q < this._width && r >= 0 && r < this._height) {
+      this.data[r][q] = tile;
+
+      if (tile > 0) {
+        this.tileSprites[r][q].visible = true;
+        this.tileSprites[r][q].texture = this.tilesetTextures[tile - 1];
+      }
+      else {
+        this.tileSprites[r][q].visible = false;
+      }
+    }
+  }
+  setTileAt(x, y, tile) {
     const q = Math.floor(x / this.tilesize);
     const r = Math.floor(y / this.tilesize);
     if (q >= 0 && q < this._width && r >= 0 && r < this._height) {
@@ -116,15 +132,18 @@ class BackgroundMap extends Container {
     let q, r, tile, row;
     for (r = 0; r < this._height; r++) {
       row = new Array(this._width);
+
       for (q = 0; q < this._width; q++) {
         tile = POOL.pop();
         if (!tile) {
           tile = new Sprite();
         }
-        row[q] = tile;
         tile.position.set(q * this.tilesize, r * this.tilesize);
         this.addChild(tile);
+
+        row[q] = tile;
       }
+
       this.tileSprites[r] = row;
     }
   }
