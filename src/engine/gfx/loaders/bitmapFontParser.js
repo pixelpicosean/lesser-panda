@@ -54,7 +54,6 @@ function parse(resource, texture) {
   // I'm leaving this as a temporary fix so we can test the bitmap fonts in v3
   // but it's very likely to change
   BitmapText.fonts[data.font] = data;
-  console.log(`----- loaded font ${data.font}`);
 }
 
 
