@@ -157,10 +157,14 @@ class Game extends EventEmitter {
     // Update entities
     for (i = 0; i < this.entities.length; i++) {
       ent = this.entities[i];
-      if (!ent.isRemoved && ent.canEverTick) {ent.update(delta, deltaSec);}
+      if (!ent.isRemoved && ent.canEverTick) {
+        ent.update(delta, deltaSec);
+      }
 
       if (ent.isRemoved) {
-        if (ent.CTOR.canBePooled) {ent.CTOR.recycle(ent);}
+        if (ent.CTOR.canBePooled) {
+          ent.CTOR.recycle(ent);
+        }
         removeItems(this.entities, i--, 1);
       }
     }
@@ -185,10 +189,14 @@ class Game extends EventEmitter {
     // Update entities
     for (i = 0; i < this.entities.length; i++) {
       ent = this.entities[i];
-      if (!ent.isRemoved && ent.canFixedTick) {ent.fixedUpdate(delta, deltaSec);}
+      if (!ent.isRemoved && ent.canFixedTick) {
+        ent.fixedUpdate(delta, deltaSec);
+      }
 
       if (ent.isRemoved) {
-        if (ent.CTOR.canBePooled) {ent.CTOR.recycle(ent);}
+        if (ent.CTOR.canBePooled) {
+          ent.CTOR.recycle(ent);
+        }
         removeItems(this.entities, i--, 1);
       }
     }
