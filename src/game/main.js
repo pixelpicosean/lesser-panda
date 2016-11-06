@@ -13,7 +13,7 @@ class MyGame extends Game {
   constructor() {
     super();
 
-    this.addSystem(new SystemGfx({ scaleMode: 'nearest' }));
+    this.addSystem(new SystemGfx());
 
     this.sysGfx.createLayer('background');
 
