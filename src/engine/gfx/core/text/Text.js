@@ -288,7 +288,7 @@ class Text extends Sprite {
       this.updateText();
     }
 
-    Sprite.prototype.renderWebGL.call(this, renderer);
+    super.renderWebGL(renderer);
   }
 
   /**
@@ -304,7 +304,7 @@ class Text extends Sprite {
       this.updateText();
     }
 
-    Sprite.prototype._renderCanvas.call(this, renderer);
+    super._renderCanvas(renderer);
   }
 
   /**
@@ -469,7 +469,7 @@ class Text extends Sprite {
       this.updateText();
     }
 
-    return Sprite.prototype.getBounds.call(this, matrix);
+    return super.getBounds(matrix);
   }
 
   /**

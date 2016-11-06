@@ -1,5 +1,6 @@
 const Text = require('./core/text/Text');
 const CONST = require('./const');
+require('./core/sprites/webgl/SpriteRenderer');
 
 /**
  * Factory function for `Text`.
