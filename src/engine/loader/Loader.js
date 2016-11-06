@@ -389,38 +389,44 @@ class Loader {
     return this;
   }
 
-    /**
-     * Starts loading the queued resources.
-     *
-     * @param {function} [cb] - Optional callback that will be bound to the `complete` event.
-     * @return {Loader} Returns itself.
-     */
+  /**
+   * Starts loading the queued resources.
+   *
+   * @param {function} [cb] - Optional callback that will be bound to the `complete` event.
+   * @return {Loader} Returns itself.
+   */
   load(cb) {
-        // register complete callback if they pass one
+    // register complete callback if they pass one
     if (typeof cb === 'function') {
       this.onComplete.once(cb);
     }
 
-        // if the queue has already started we are done here
+    // if the queue has already started we are done here
     if (this.loading) {
       return this;
     }
 
-        // distribute progress chunks
+    // distribute progress chunks
     const chunk = 100 / this._queue._tasks.length;
 
     for (let i = 0; i < this._queue._tasks.length; ++i) {
       this._queue._tasks[i].data.progressChunk = chunk;
     }
 
-        // update loading state
+    // update loading state
     this.loading = true;
 
-        // notify of start
+    // notify of start
     this.onStart.dispatch(this);
 
-        // start loading
+    // start loading
     this._queue.resume();
+
+    // complete if no tasks exist
+    if (this._queue.idle()) {
+      this.progress = MAX_PROGRESS;
+      this._onComplete();
+    }
 
     return this;
   }
