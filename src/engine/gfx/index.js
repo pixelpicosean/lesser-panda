@@ -4,7 +4,7 @@ const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
 const { isWebGLSupported } = require('./core/utils');
 const CONST = require('./const');
-const container = require('./container');
+const Container = require('./Container');
 const config = require('game/config');
 
 let sharedRenderer = null;
@@ -53,7 +53,7 @@ class SystemGfx extends System {
      * @memberof SystemGfx#
      * @type {Container}
      */
-    this.root = container();
+    this.root = Container();
     this.root.system = this;
 
     /**
@@ -110,7 +110,7 @@ class SystemGfx extends System {
       return this;
     }
 
-    this.layers[name] = container().addTo(c);
+    this.layers[name] = Container().addTo(c);
 
     return this;
   }
