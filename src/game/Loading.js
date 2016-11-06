@@ -48,13 +48,14 @@ class Loading extends Game {
     };
 
     let h = loader.onProgress.add(redraw);
-    loader.onComplete.once(function() {
+    const ready = () {
       h.detach();
       core.setGame(gameClass, true);
 
       core.emit('ready');
-    });
+    };
 
+    loader.onComplete.once(ready);
     loader.load();
   }
 }
