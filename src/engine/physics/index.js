@@ -203,8 +203,8 @@ class SystemPhysics extends System {
               continue;
             }
 
-            a2b = !!(coll.collideAgainst & coll2.collisionGroup);
-            b2a = !!(coll2.collideAgainst & coll.collisionGroup);
+            a2b = !!(coll.collideAgainst & coll2.collisionGroup) && !(coll.isStatic);
+            b2a = !!(coll2.collideAgainst & coll.collisionGroup) && !(coll2.isStatic);
 
             // Pass: never collide with each other
             if (!a2b && !b2a) {
