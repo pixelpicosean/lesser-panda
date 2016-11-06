@@ -218,10 +218,10 @@ class AABBSolver {
     }
 
     // Apply response to colliders
-    a.position.x = Math.floor(a.position.x + resA.x);
-    a.position.y = Math.floor(a.position.y + resA.y);
-    b.position.x = Math.floor(b.position.x + resB.x);
-    b.position.y = Math.floor(b.position.y + resB.y);
+    a.position.x = a.position.x + resA.x;
+    a.position.y = a.position.y + resA.y;
+    b.position.x = b.position.x + resB.x;
+    b.position.y = b.position.y + resB.y;
   }
 }
 

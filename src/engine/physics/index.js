@@ -114,6 +114,9 @@ class SystemPhysics extends System {
     for (i = 0; i < this.colliders.length; i++) {
       coll = this.colliders[i];
 
+      // Save position of last frame
+      coll.last.copy(coll.position);
+
       // Collider is already removed, just remove it
       if (coll.isRemoved) {
         removeItems(this.colliders, i--, 1);
@@ -130,30 +133,35 @@ class SystemPhysics extends System {
         }
 
         coll.velocity.add(coll.force.x * delta, coll.force.y * delta);
-        if (coll.damping > 0 && coll.damping < 1) {coll.velocity.multiply(Math.pow(1 - coll.damping, delta));}
+        if (coll.damping > 0 && coll.damping < 1) {
+          coll.velocity.multiply(Math.pow(1 - coll.damping, delta));
+        }
 
-        if (coll.velocityLimit.x > 0) {coll.velocity.x = clamp(coll.velocity.x, -coll.velocityLimit.x, coll.velocityLimit.x);}
-        if (coll.velocityLimit.y > 0) {coll.velocity.y = clamp(coll.velocity.y, -coll.velocityLimit.y, coll.velocityLimit.y);}
+        if (coll.velocityLimit.x > 0) {
+          coll.velocity.x = clamp(coll.velocity.x, -coll.velocityLimit.x, coll.velocityLimit.x);
+        }
+        if (coll.velocityLimit.y > 0) {
+          coll.velocity.y = clamp(coll.velocity.y, -coll.velocityLimit.y, coll.velocityLimit.y);
+        }
 
         // Update position
-        coll.last.copy(coll.position);
         coll.position.add(coll.velocity.x * delta, coll.velocity.y * delta);
       }
 
       // Update bounds
       if (coll.shape) {
-        halfWidth = coll.shape.width / 2;
-        halfHeight = coll.shape.height / 2;
+        halfWidth = coll.shape.width * 0.5;
+        halfHeight = coll.shape.height * 0.5;
 
         coll.lastLeft = Math.floor(coll.last.x - halfWidth);
-        coll.lastRight = Math.floor(coll.lastLeft + coll.shape.width);
+        coll.lastRight = Math.floor(coll.last.x + halfWidth);
         coll.lastTop = Math.floor(coll.last.y - halfHeight);
-        coll.lastBottom = Math.floor(coll.lastTop + coll.shape.height);
+        coll.lastBottom = Math.floor(coll.last.y + halfHeight);
 
         coll.left = Math.floor(coll.position.x - halfWidth);
-        coll.right = Math.floor(coll.left + coll.shape.width);
+        coll.right = Math.floor(coll.position.x + halfWidth);
         coll.top = Math.floor(coll.position.y - halfHeight);
-        coll.bottom = Math.floor(coll.top + coll.shape.height);
+        coll.bottom = Math.floor(coll.position.y + halfHeight);
       }
 
       // Insert the hash and test collisions
