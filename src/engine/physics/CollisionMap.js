@@ -1,4 +1,15 @@
+/**
+ * Collision map is a 2D tilemap specifically designed for collision.
+ * All the `Entity` instances will trace against this map during update.
+ *
+ * @class
+ */
 class CollisionMap {
+  /**
+   * @constructor
+   * @param  {Number} tilesize Tile size in pixel
+   * @param  {Array} data      A 2D array representing the map.
+   */
   constructor(tilesize, data) {
     if (!Number.isFinite(tilesize) || tilesize <= 0) {
       console.log('Invalid tilesize!');
@@ -9,16 +20,32 @@ class CollisionMap {
       return;
     }
 
+    /**
+     * Size of tiles in pixel
+     * @type {Number}
+     */
     this.tilesize = tilesize;
+    /**
+     * Map data as a 2D array
+     * @type {Array}
+     */
     this.data = data;
 
     this._width = data[0].length;
     this._height = data.length;
   }
 
+  /**
+   * Width of this map, in tile
+   * @readonly
+   */
   get width() {
     return this._width;
   }
+  /**
+   * Height of this map, in tile
+   * @readonly
+   */
   get height() {
     return this._height;
   }
@@ -46,29 +73,38 @@ class CollisionMap {
     }
   }
 
+  /**
+   * Trace a collider against this map.
+   * @param  {Collider} coll  Collider object.
+   * @param  {Number} sx      Movement on x-axis.
+   * @param  {Number} sy      Movement on y-axis.
+   * @param  {Object} res     Resolved movement result.
+   */
   trace(coll, sx, sy, res) {
+    // TODO: fast movement
     if (sx === 0 && sy === 0) {
       return;
     }
 
+    // Set result as full movement
     res.x = sx;
     res.y = sy;
 
-    let posi, leading, dir, start, end, tilespace, tilespace_end, done;
-    let edge_vector, edge, tile;
+    let posi, leading, dir, start, end, tilespace, tilespaceEnd, done;
+    let edgeVector, edge, tile;
     let i, j;
 
+    // Check x-axis
     posi = sx > 0;
-    leading = coll[posi ? 'right' : 'left'];
+    leading = posi ? coll.right : coll.left;
     dir = posi ? 1 : -1;
     start = Math.floor(coll.top / this.tilesize);
     end = Math.ceil(coll.bottom / this.tilesize);
     tilespace = Math.floor(leading / this.tilesize);
-    tilespace_end = Math.floor((leading + sx) / this.tilesize) + dir;
+    tilespaceEnd = Math.floor((leading + sx) / this.tilesize) + dir;
     done = false;
 
-    // Check x-axis
-    for (i = tilespace; !done && i !== tilespace_end; i += dir) {
+    for (i = tilespace; !done && i !== tilespaceEnd; i += dir) {
       // Out of map area
       if (i < 0 || i >= this._width) {
         continue;
@@ -88,11 +124,11 @@ class CollisionMap {
         }
 
         edge = ((dir > 0) ? i : (i + 1)) * this.tilesize;
-        edge_vector = edge - leading;
+        edgeVector = edge - leading;
 
-        // if (oncollision(axis, tile, coords, dir, edge_vector)) {
+        // if (oncollision(axis, tile, coords, dir, edgeVector)) {
         if (tile === 1) {
-          res.x = edge_vector;
+          res.x = edgeVector;
           done = true;
           break;
         }
@@ -101,15 +137,15 @@ class CollisionMap {
 
     // Check y-axis
     posi = sy > 0;
-    leading = coll[posi ? 'bottom' : 'top'];
+    leading = posi ? coll.bottom : coll.top;
     dir = posi ? 1 : -1;
     start = Math.floor(coll.left / this.tilesize);
     end = Math.ceil(coll.right / this.tilesize);
     tilespace = Math.floor(leading / this.tilesize);
-    tilespace_end = Math.floor((leading + sy) / this.tilesize) + dir;
+    tilespaceEnd = Math.floor((leading + sy) / this.tilesize) + dir;
     done = false;
 
-    for (i = tilespace; !done && i !== tilespace_end; i += dir) {
+    for (i = tilespace; !done && i !== tilespaceEnd; i += dir) {
       // Out of map area
       if (i < 0 || i >= this._height) {
         continue;
@@ -129,11 +165,11 @@ class CollisionMap {
         }
 
         edge = ((dir > 0) ? i : (i + 1)) * this.tilesize;
-        edge_vector = edge - leading;
+        edgeVector = edge - leading;
 
-        // if (oncollision(axis, tile, coords, dir, edge_vector)) {
+        // if (oncollision(axis, tile, coords, dir, edgeVector)) {
         if (tile === 1) {
-          res.y = edge_vector;
+          res.y = edgeVector;
           done = true;
           break;
         }
@@ -142,6 +178,12 @@ class CollisionMap {
   }
 }
 
+/**
+ * CollisionMap factory
+ * @param  {Number} tilesize Tile size in pixel.
+ * @param  {Array}  data     Map data as a 2D array.
+ * @return {CollisionMap}    CollisionMap instance.
+ */
 module.exports = function(tilesize = 16, data = [[]]) {
   return new CollisionMap(tilesize, data);
 };
