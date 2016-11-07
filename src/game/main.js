@@ -1,9 +1,12 @@
 const core = require('engine/core');
 const loader = require('engine/loader');
 const Game = require('engine/Game');
+
+// Systems
 const SystemGfx = require('engine/gfx');
 const BitmapText = require('engine/gfx/BitmapText');
 
+// Loading screen
 const Loading = require('game/Loading');
 
 // Resource loading
@@ -20,9 +23,8 @@ class MyGame extends Game {
     let t = BitmapText({
       text: 'It Works!',
       font: '16px KenPixel',
-      position: { x: core.width / 2, y: core.height / 2 },
     }).addTo(this.sysGfx.layers['background']);
-    t.pivot.set(t.width / 2, t.height / 2);
+    t.position.set(core.width / 2 - t.width / 2, core.height / 2 - t.height / 2);
   }
 }
 

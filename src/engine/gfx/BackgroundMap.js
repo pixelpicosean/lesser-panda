@@ -149,6 +149,6 @@ class BackgroundMap extends Container {
   }
 }
 
-module.exports = function({ tilesize = 8, data = [[]], tileset = null } = {}) {
+module.exports = function(tilesize = 8, data = [[]], tileset = null) {
   return new BackgroundMap(tilesize, data, textureFromData(tileset));
 };

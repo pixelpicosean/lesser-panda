@@ -371,9 +371,10 @@ class Loader {
     this._queue.kill();
     this._queue.pause();
 
-        // abort all resource loads
-    for (const k in this.resources) {
-      const res = this.resources[k];
+    // abort all resource loads
+    let k, res;
+    for (k in this.resources) {
+      res = this.resources[k];
 
       if (res._onLoadBinding) {
         res._onLoadBinding.detach();
@@ -440,7 +441,7 @@ class Loader {
      */
   _prepareUrl(url) {
     const parsedUrl = parseUri(url, { strictMode: true });
-    let result;
+    let result, hash;
 
         // absolute url, just use it as is.
     if (parsedUrl.protocol || !parsedUrl.path || url.indexOf('//') === 0) {
@@ -459,7 +460,7 @@ class Loader {
 
         // if we need to add a default querystring, there is a bit more work
     if (this.defaultQueryString) {
-      const hash = rgxExtractUrlHash.exec(result)[0];
+      hash = rgxExtractUrlHash.exec(result)[0];
 
       result = result.substr(0, result.length - hash.length);
 

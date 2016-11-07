@@ -212,6 +212,12 @@ class Collider {
   afterCollide() {}
 
   /**
+   * Handle collision map tracing result.
+   * @param {Object} res  Tracing result to handle.
+   */
+  handleMovementTrace(res) {} /* eslint no-unused-vars:0 */
+
+  /**
    * Setup this collider with settings.
    * @memberof Collider#
    * @method setup
@@ -220,7 +226,7 @@ class Collider {
   setup(settings) {
     for (let k in settings) {
       switch (k) {
-      // Set value
+        // Set value
         case 'mass':
         case 'damping':
         case 'collisionGroup':
@@ -229,10 +235,11 @@ class Collider {
         case 'beforeCollide':
         case 'collide':
         case 'afterCollide':
+        case 'handleMovementTrace':
           this[k] = settings[k];
           break;
 
-      // Set vector
+        // Set vector
         case 'position':
         case 'velocity':
         case 'force':
@@ -241,7 +248,7 @@ class Collider {
           this[k].y = settings[k].y || 0;
           break;
 
-      // Set shape
+        // Set shape
         case 'shape':
           if (typeof(settings.shape) === 'string') {
             if (settings.shape === 'Box') {
