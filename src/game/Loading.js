@@ -48,7 +48,7 @@ class Loading extends Game {
     };
 
     let h = loader.onProgress.add(redraw);
-    const ready = () {
+    const ready = () => {
       h.detach();
       core.setGame(gameClass, true);
 
