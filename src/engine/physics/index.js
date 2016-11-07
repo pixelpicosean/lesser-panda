@@ -145,7 +145,13 @@ class SystemPhysics extends System {
         }
 
         // Update position
-        coll.position.add(coll.velocity.x * delta, coll.velocity.y * delta);
+        // coll.position.add(coll.velocity.x * delta, coll.velocity.y * delta);
+        let sx = coll.velocity.x * delta;
+        let sy = coll.velocity.y * delta;
+        let res = { x: 0, y: 0 };
+        this.collisionMap.trace(coll, sx, sy, res);
+        coll.position.x += res.x;
+        coll.position.y += res.y;
       }
 
       // Update bounds
