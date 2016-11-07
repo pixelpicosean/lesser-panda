@@ -60,7 +60,12 @@ class SystemPhysics extends System {
      * @type {Object}
      * @private
      */
-    this.res = { x: 0, y: 0 };
+    this.res = {
+      x: 0,
+      y: 0,
+      hitX: false,
+      hitY: false,
+    };
 
     this.setup(settings);
   }
@@ -165,10 +170,12 @@ class SystemPhysics extends System {
         // Trace against the map there is one
         // TODO: add a flag to pass this step
         if (this.collisionMap) {
-          this.collisionMap.trace(coll, sx, sy, this.res);
+          this.collisionMap.trace(coll, this.res.x, this.res.y, this.res);
+          // Manually handle trace result
+          coll.handleMovementTrace(this.res);
         }
 
-        // Apply the movement.
+        // Apply trace result
         coll.position.x += this.res.x;
         coll.position.y += this.res.y;
       }

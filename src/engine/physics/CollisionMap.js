@@ -89,6 +89,7 @@ class CollisionMap {
     // Set result as full movement
     res.x = sx;
     res.y = sy;
+    res.hitX = res.hitY = false;
 
     let posi, leading, dir, start, end, tilespace, tilespaceEnd, done;
     let edgeVector, edge, tile;
@@ -129,6 +130,7 @@ class CollisionMap {
         // if (oncollision(axis, tile, coords, dir, edgeVector)) {
         if (tile === 1) {
           res.x = edgeVector;
+          res.hitX = true;
           done = true;
           break;
         }
@@ -170,6 +172,7 @@ class CollisionMap {
         // if (oncollision(axis, tile, coords, dir, edgeVector)) {
         if (tile === 1) {
           res.y = edgeVector;
+          res.hitY = true;
           done = true;
           break;
         }
