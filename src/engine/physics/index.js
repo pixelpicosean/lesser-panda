@@ -36,6 +36,11 @@ class SystemPhysics extends System {
      * @type {array}
      */
     this.colliders = [];
+    /**
+     * Collision map to trace colliders against.
+     * @type {CollisionMap}
+     */
+    this.collisionMap = null;
 
     /**
      * Save whether collision of a pair of objects are checked
@@ -50,6 +55,13 @@ class SystemPhysics extends System {
      */
     this.collisionChecks = 0;
 
+    /**
+     * Collision map trace result
+     * @type {Object}
+     * @private
+     */
+    this.res = { x: 0, y: 0 };
+
     this.setup(settings);
   }
 
@@ -60,6 +72,7 @@ class SystemPhysics extends System {
         case 'name':
         case 'spatialShift':
         case 'solver':
+        case 'collisionMap':
           this[k] = settings[k];
           break;
 
@@ -137,6 +150,7 @@ class SystemPhysics extends System {
           coll.velocity.multiply(Math.pow(1 - coll.damping, delta));
         }
 
+        // Clamp the velocity
         if (coll.velocityLimit.x > 0) {
           coll.velocity.x = clamp(coll.velocity.x, -coll.velocityLimit.x, coll.velocityLimit.x);
         }
@@ -144,14 +158,19 @@ class SystemPhysics extends System {
           coll.velocity.y = clamp(coll.velocity.y, -coll.velocityLimit.y, coll.velocityLimit.y);
         }
 
-        // Update position
-        // coll.position.add(coll.velocity.x * delta, coll.velocity.y * delta);
-        let sx = coll.velocity.x * delta;
-        let sy = coll.velocity.y * delta;
-        let res = { x: 0, y: 0 };
-        this.collisionMap.trace(coll, sx, sy, res);
-        coll.position.x += res.x;
-        coll.position.y += res.y;
+        // Calculate delta movement during this frame
+        this.res.x = coll.velocity.x * delta;
+        this.res.y = coll.velocity.y * delta;
+
+        // Trace against the map there is one
+        // TODO: add a flag to pass this step
+        if (this.collisionMap) {
+          this.collisionMap.trace(coll, sx, sy, this.res);
+        }
+
+        // Apply the movement.
+        coll.position.x += this.res.x;
+        coll.position.y += this.res.y;
       }
 
       // Update bounds

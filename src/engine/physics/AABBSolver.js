@@ -225,4 +225,10 @@ class AABBSolver {
   }
 }
 
-module.exports = AABBSolver;
+/**
+ * AABBSolver factory
+ * @return {AABBSolver} solver instance.
+ */
+module.exports = function() {
+  return new AABBSolver();
+};
