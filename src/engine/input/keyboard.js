@@ -46,7 +46,9 @@ class Keyboard extends EventEmitter {
       Keyboard.keys[event.keyCode] = event.keyCode;
     }
 
-    if (this._keysDown[Keyboard.keys[event.keyCode]]) {return;}
+    if (this._keysDown[Keyboard.keys[event.keyCode]]) {
+      return;
+    }
 
     this._keysDown[Keyboard.keys[event.keyCode]] = true;
     this.emit('keydown', Keyboard.keys[event.keyCode], this.down('SHIFT'), this.down('CTRL'), this.down('ALT'));
@@ -139,16 +141,16 @@ Object.assign(Keyboard, {
     88: 'X',
     89: 'Y',
     90: 'Z',
-    96: 'NUM_ZERO',
-    97: 'NUM_ONE',
-    98: 'NUM_TWO',
-    99: 'NUM_THREE',
-    100: 'NUM_FOUR',
-    101: 'NUM_FIVE',
-    102: 'NUM_SIX',
-    103: 'NUM_SEVEN',
-    104: 'NUM_EIGHT',
-    105: 'NUM_NINE',
+    96: 'NUM_0',
+    97: 'NUM_1',
+    98: 'NUM_2',
+    99: 'NUM_3',
+    100: 'NUM_4',
+    101: 'NUM_5',
+    102: 'NUM_6',
+    103: 'NUM_7',
+    104: 'NUM_8',
+    105: 'NUM_9',
     106: 'NUM_MULTIPLY',
     107: 'NUM_PLUS',
     109: 'NUM_MINUS',
@@ -177,15 +179,15 @@ Object.assign(Keyboard, {
 /**
  * Keyboard events and states support.
  * An instance of `Keyboard` is exported as the default value of
- * `engine/keyboard` module.
+ * `engine/input/keyboard` module.
  *
  * @see Keyboard
  *
- * @exports engine/keyboard
- * @requires module:engine/eventemitter3
+ * @exports engine/input/keyboard
+ * @requires module:engine/EventEmitter
  *
  * @example
- * import keyboard from 'engine/keyboard';
+ * const keyboard = require('engine/input/keyboard');
  * keyboard.on('keydown', (key) => {
  *   console.log(`key "${key}" is pressed`);
  * });
