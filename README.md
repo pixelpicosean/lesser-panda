@@ -47,10 +47,9 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 - `core` is the core of lesser-panda, which provides the base functionalities such as "loop" and "resize".
 - `device` tells what device the game is currently running.
 - `EventEmitter` is a fast EventEmitter implementation.
-- `keyboard` emits keyboard events, you need to subscribe to get noticed.
+- `input` provides keyboard events and key-maps.
 - `loader` provides assets loading functon `addAsset(path, key, settings)`
 - `physics` provides AABB based collision detection and response.
-- `renderer` is just the base object of renderer, if you import PIXI or canvasquery related renderer instance will be added to this object.
 - `resize` provides some resize helper functions.
 - `rnd` is a random number generator.
 - `Game` is the main hub for your game.
@@ -64,6 +63,11 @@ There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which 
 Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
+
+### 1.1.0
+
+- New `input` system support key-maps bindings, on top of `keyboard`.
+- Basic `CollisionMap` implementation supports AABB vs rect tile collision.
 
 ### 1.0.0
 
