@@ -219,3 +219,4 @@ as [Panda.js engine](http://www.pandajs.net).
 ### Special Thanks
 
 [@ekelokorpi](https://github.com/ekelokorpi) for creating the awesome panda.js-engine
+[@Pixel-boy](https://twitter.com/2pblog1) for the lovely bat(`bat.png` in media folder)
