@@ -1,5 +1,6 @@
 const core = require('engine/core');
 const System = require('engine/system');
+const { removeItems } = require('engine/utils/array');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
 const { isWebGLSupported } = require('./core/utils');
@@ -70,8 +71,10 @@ class SystemGfx extends System {
      */
     this._backgroundColor = 0x000000;
 
+    this.timestamp = 0;
     this.delta = 0;
-    this.deltaSec = 0;
+
+    this.animList = [];
   }
 
   set backgroundColor(c) {
@@ -81,15 +84,32 @@ class SystemGfx extends System {
     return this._backgroundColor;
   }
 
+  requestAnimate(item) {
+    let idx = this.animList.indexOf(item);
+    if (idx < 0) {
+      this.animList.push(item);
+    }
+  }
+  cancelAnimate(item) {
+    let idx = this.animList.indexOf(item);
+    if (idx >= 0) {
+      removeItems(this.animList, idx, 1);
+    }
+  }
+
   awake() {
     this.renderer.backgroundColor = this._backgroundColor;
+    this.timestamp = performance.now();
   }
-  update(delta, deltaSec) { /* eslint no-unused-vars:0 */
+  update() {
     this.renderer.render(this.root);
   }
-  fixedUpdate(delta, deltaSec) {
+  fixedUpdate(delta) {
     this.delta = delta;
-    this.deltaSec = deltaSec;
+
+    for (let i = this.animList.length - 1; i >= 0; i--) {
+      this.animList[i].update(this.delta);
+    }
   }
 
   createLayer(name, parent) {

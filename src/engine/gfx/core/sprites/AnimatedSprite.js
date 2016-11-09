@@ -70,6 +70,7 @@ class AnimatedSprite extends Sprite {
 
   remove() {
     this.off('finish');
+    this.system.cancelAnimate(this);
     super.remove();
   }
 
@@ -118,6 +119,8 @@ class AnimatedSprite extends Sprite {
 
     this.gotoFrame(frame);
 
+    this.system.requestAnimate(this);
+
     return this;
   }
 
@@ -131,6 +134,8 @@ class AnimatedSprite extends Sprite {
     if (Number.isFinite(frame)) {
       this.gotoFrame(frame);
     }
+
+    this.system.cancelAnimate(this);
 
     return this;
   }
@@ -154,10 +159,10 @@ class AnimatedSprite extends Sprite {
   /**
    * @memberof AnimatedSprite#
    * @method update
+   * @private
+   * @param {Number} delta Delta time since last frame.
    */
-  updateTransform() {
-    super.updateTransform();
-
+  update(delta) {
     var nextFrame;
     var anim = this.anims[this.currentAnim];
 
@@ -169,7 +174,7 @@ class AnimatedSprite extends Sprite {
       return;
     }
     else if (this.isPlaying) {
-      this._frameTime += anim.speed * this.system.delta;
+      this._frameTime += anim.speed * delta;
     }
 
     if (this._frameTime > 1000) {
@@ -208,6 +213,8 @@ class AnimatedSprite extends Sprite {
           this.isPlaying = false;
           this.isFinished = true;
           this._finishEvtEmit = false;
+
+          this.system.cancelAnimate(this);
         }
       }
       else {
