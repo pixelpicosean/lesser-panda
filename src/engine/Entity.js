@@ -8,14 +8,16 @@ const { merge } = require('engine/utils/object');
  * The `gfx` and `coll` share the same postion.
  *
  * @class Entity
- *
- * @constructor
- * @param {number} x          X coordinate
- * @param {number} y          Y coordinate
- * @param {object} settings   Setting object to be merged in
  */
 class Entity {
-  constructor(x, y, settings) {
+  /**
+   * @constructor
+   * @param {Number} x          X coordinate
+   * @param {Number} y          Y coordinate
+   * @param {String} layer      Layer name to add this entity to
+   * @param {Object} settings   Setting object to be merged in
+   */
+  constructor(x, y, layer, settings) {
     /**
      * Each entity has a unique ID.
      * @memberof Entity#
@@ -66,7 +68,7 @@ class Entity {
      * @memberof Entity#
      * @type {String}
      */
-    this.layerName = null;
+    this.layer = layer;
 
     /**
      * Collider component.
