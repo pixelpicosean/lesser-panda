@@ -276,13 +276,14 @@ class Game extends EventEmitter {
    * Spawn an `Entity` into game world.
    * @method spawnEntity
    * @memberof Game#
-   * @param  {[type]} type     [description]
-   * @param  {[type]} x        [description]
-   * @param  {[type]} y        [description]
-   * @param  {[type]} settings [description]
-   * @return {[type]}          [description]
+   * @param  {Class} type       Entity class
+   * @param  {Number} x         X coordinate
+   * @param  {Number} y         Y coordinate
+   * @param  {String} layer     Name of the layer to added to
+   * @param  {Object} settings  Instance settings
+   * @return {Entity}           Entity instance
    */
-  spawnEntity(type, x, y, settings) {
+  spawnEntity(type, x, y, layer, settings) {
     let ctor = type;
     if (typeof(type) === 'string') {
       ctor = Entity.types[type];
@@ -295,10 +296,10 @@ class Game extends EventEmitter {
     // Create entity instance
     let ent;
     if (ctor.canBePooled) {
-      ent = ctor.create(x, y, settings);
+      ent = ctor.create(x, y, layer, settings);
     }
     else {
-      ent = new ctor(x, y, settings);
+      ent = new ctor(x, y, layer, settings);
       ent.CTOR = ctor;
     }
     ent.game = this;
