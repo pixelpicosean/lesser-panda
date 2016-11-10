@@ -136,7 +136,7 @@ class SystemGfx extends System {
   }
 
   onEntitySpawn(ent) {
-    let name = ent.layerName;
+    let name = ent.layer;
     if (ent.gfx) {
       // Default layer is the root
       if (!name) {
