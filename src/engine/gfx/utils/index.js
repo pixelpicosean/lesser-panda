@@ -21,18 +21,20 @@ loader.use(bitmapFontParser());
 
 /**
  * Get texture instance from data.
+ * @param {String|Array|Texture} data   Key of the texture.
  */
 module.exports.textureFromData = function(data) {
   if (!data) {
     return undefined;
   }
+  else if (typeof(data) === 'string') {
+    return loader.resources[data].texture;
+  }
+  else if (Array.isArray(data)) {
+    return loader.resources[data[0]].textures[data[1]];
+  }
   else if (data instanceof Texture) {
     return data;
-  }
-  else {
-    if (typeof(data) === 'string' || Array.isArray(data)) {
-      return loader.getTexture(data);
-    }
   }
 };
 

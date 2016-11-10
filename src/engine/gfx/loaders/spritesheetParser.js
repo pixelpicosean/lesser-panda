@@ -8,20 +8,6 @@ const Loader = require('engine/loader').Loader;
 
 const BATCH_SIZE = 1000;
 
-/**
- * Get texture by key, works for both image and atlas.
- * @param  {array<string>|string} key Key is the either an array like [atlas_key, sprite_key] for sprites in an atlas or a simple string refer to a independent texture.
- * @return {Texture}
- */
-Loader.prototype.getTexture = function(key) {
-  if (Array.isArray(key)) {
-    return this.resources[key[0]].textures[key[1]];
-  }
-  else if (typeof(key) === 'string') {
-    return this.resources[key].texture;
-  }
-};
-
 module.exports = function() {
   return function(resource, next) {
     var imageResourceName = resource.name + '_image';
