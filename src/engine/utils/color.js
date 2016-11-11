@@ -7,8 +7,8 @@
 /**
  * Converts a hex color number to an [R, G, B] array
  *
- * @param hex {number}
- * @param  {number[]} [out=[]]
+ * @param {number} hex        Color hex number
+ * @param {number[]} [out=[]] Output
  * @return {number[]} An array representing the [R, G, B] of the color.
  */
 module.exports.hex2rgb = function(hex, out) {
@@ -24,8 +24,8 @@ module.exports.hex2rgb = function(hex, out) {
 /**
  * Converts a hex color number to a string.
  *
- * @param hex {number}
- * @return {string} The string color.
+ * @param {number} hex  Color hex number
+ * @return {string} The color string.
  */
 module.exports.hex2string = function(hex) {
   hex = hex.toString(16);
@@ -37,8 +37,8 @@ module.exports.hex2string = function(hex) {
 /**
  * Converts a color as an [R, G, B] array to a hex number
  *
- * @param rgb {number[]}
- * @return {number} The color number
+ * @param {number[]} rgb List of numbers representing a color.
+ * @return {number} The color number in hex.
  */
 module.exports.rgb2hex = function(rgb) {
   return ((rgb[0] * 255 << 16) + (rgb[1] * 255 << 8) + rgb[2] * 255);

@@ -11,6 +11,7 @@
  * If same key appears multiple times the final value
  * will come from last argument that contains it.
  *
+ * @param {Object} a Objects to merge
  * @return {object} first argument
  *
  * @example
@@ -44,7 +45,9 @@ module.exports.mergeMultiple = function mergeMultiple(a) {
 /**
  * Deeply merge an object into the another.
  *
- * @return {object}
+ * @param {Object} original Target object to merge to
+ * @param {Object} extended Object to merge to the first one
+ * @return {Object} First object
  *
  * @example
  * merge({ a: { var_1: 1 } }, { a: { var_1: 2 } });
