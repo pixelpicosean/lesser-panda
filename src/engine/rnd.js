@@ -2,10 +2,12 @@
  * An instance of `RandomDataGenerator` is exported as `engine/rnd`.
  *
  * @class RandomDataGenerator
- * @constructor
- * @param {any[]|string} [seeds] - An array of values to use as the seed, or a generator state (from {#state}).
  */
 class RandomDataGenerator {
+  /**
+   * @constructor
+   * @param {Array|String} [seeds=[]] - An array of values to use as the seed, or a generator state (from {#state}).
+   */
   constructor(seeds = []) {
     /**
      * @type {number}
@@ -44,7 +46,7 @@ class RandomDataGenerator {
    *
    * @method RandomDataGenerator#rnd
    * @private
-   * @return {number}
+   * @return {number} Random number
    */
   rnd() {
     let t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
@@ -95,7 +97,7 @@ class RandomDataGenerator {
    *
    * @method RandomDataGenerator#hash
    * @private
-   * @param {any} data
+   * @param {any} data  Data to create hash from
    * @return {number} hashed value.
    */
   hash(data) {

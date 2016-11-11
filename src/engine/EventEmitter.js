@@ -23,6 +23,9 @@ class EE {
  * @class EventEmitter
  */
 class EventEmitter {
+  /**
+   * @constructor
+   */
   constructor() {
     /**
      * Holds the assigned EventEmitters by name.
@@ -40,7 +43,7 @@ class EventEmitter {
    * @method listeners
    * @param {string} event The events that should be listed.
    * @param {boolean} exists We only need to know if there are listeners.
-   * @returns {array|boolean}
+   * @returns {array|boolean} Listener list
    */
   listeners(event, exists) {
     let available = this._events && this._events[event];
@@ -121,6 +124,7 @@ class EventEmitter {
    * @param {string} event Name of the event.
    * @param {functon} fn Callback function.
    * @param {Mixed} context The context of the function.
+   * @return {EventEmitter} Self for chaining
    */
   on(event, fn, context) {
     var listener = new EE(fn, context || this);
@@ -146,6 +150,7 @@ class EventEmitter {
    * @param {string} event Name of the event.
    * @param {function} fn Callback function.
    * @param {Mixed} context The context of the function.
+   * @return {EventEmitter} Self for chaining
    */
   once(event, fn, context) {
     let listener = new EE(fn, context || this, true);
@@ -172,6 +177,7 @@ class EventEmitter {
    * @param {function} fn The listener that we need to find.
    * @param {Mixed} context Only remove listeners matching this context.
    * @param {boolean} once Only remove once listeners.
+   * @return {EventEmitter} Self for chaining
    */
   removeListener(event, fn, context, once) {
     if (!this._events || !this._events[event]) {return this;}
@@ -220,6 +226,7 @@ class EventEmitter {
    * @memberof EventEmitter#
    * @method removeAllListeners
    * @param {string} event The event want to remove all listeners for.
+   * @return {EventEmitter} Self for chaining
    */
   removeAllListeners(event) {
     if (!this._events) {return this;}
@@ -227,13 +234,6 @@ class EventEmitter {
     if (event) {delete this._events[event];}
     else {this._events = Object.create(null);}
 
-    return this;
-  }
-
-  /**
-   * This function doesn't apply anymore.
-   */
-  setMaxListeners() {
     return this;
   }
 }
@@ -255,7 +255,7 @@ EventEmitter.prototype.addListener = EventEmitter.prototype.on;
  * Minimal EventEmitter interface that is molded against the Node.js
  * EventEmitter interface.
  *
- * @exports engine/eventemitter3
+ * @exports engine/EventEmitter
  * @see EventEmitter
  */
 module.exports = EventEmitter;

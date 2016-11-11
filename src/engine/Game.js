@@ -8,10 +8,12 @@ const Entity = require('engine/Entity');
  * is a combination of different `Games`(menu, shop, game, game-over .etc).
  *
  * @class Game
- * @constructor
  * @extends {EvenetEmitter}
  */
 class Game extends EventEmitter {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
@@ -71,6 +73,7 @@ class Game extends EventEmitter {
   /**
    * Called each single frame by engine core, support both idle and fixed update.
    * Using a modified fixed update implementation from Phaser by @photonstorm
+   * @param {Number} timestamp Timestamp at this invoking
    * @protected
    */
   run(timestamp) {
@@ -144,6 +147,8 @@ class Game extends EventEmitter {
    * Update is called every single frame.
    * @method update
    * @memberof Game#
+   * @param {Number} delta    Delta time in millisecond
+   * @param {Number} deltaSec Delta time in second
    */
   update(delta, deltaSec) {
     let i, sys, ent;
@@ -176,6 +181,8 @@ class Game extends EventEmitter {
    * Fixed update is called in a constant frenquence decided by `desiredFPS`.
    * @method fixedUpdate
    * @memberof Game#
+   * @param {Number} delta    Delta time in millisecond
+   * @param {Number} deltaSec Delta time in second
    */
   fixedUpdate(delta, deltaSec) {
     let i, sys, ent;
@@ -223,6 +230,8 @@ class Game extends EventEmitter {
    * Add a system instance to this game.
    * @method addSystem
    * @memberof Game#
+   * @param {System} sys System instance to add
+   * @return {Game} Self for chaining
    */
   addSystem(sys) {
     if (sys.name.length === 0) {
@@ -332,6 +341,11 @@ class Game extends EventEmitter {
 
     return ent;
   }
+  /**
+   * Remove an entity instance from this game
+   * @memberof Game#
+   * @param  {Entity} ent Entity instance
+   */
   removeEntity(ent) {
     // Mark as removed
     ent.isRemoved = true;
@@ -357,6 +371,12 @@ class Game extends EventEmitter {
       this.systems[sys] && this.systems[sys].onEntityRemove(ent);
     }
   }
+  /**
+   * Change tag of an entity instance
+   * @memberof Game#
+   * @param  {Entity} ent Entity instance
+   * @param {String} tag  Tag to change to
+   */
   changeEntityTag(ent, tag) {
     // Remove from tag list
     if (ent._tag && this.taggedEntities.hasOwnProperty(tag)) {
@@ -387,7 +407,7 @@ class Game extends EventEmitter {
    * Find an entity with specific name.
    * @memberof Game#
    * @param  {string} name Name of the entity
-   * @return {Entity}
+   * @return {Entity} Entity with the name
    */
   getEntityByName(name) {
     return this.namedEntities[name];
@@ -396,7 +416,7 @@ class Game extends EventEmitter {
    * Find entities with a specific tag.
    * @memberof Game#
    * @param  {string} tag Tag of the entities
-   * @return {Array<Entity>|null}
+   * @return {Array<Entity>|null} Entities with the tag
    */
   getEntitiesByTag(tag) {
     if (this.taggedEntities.hasOwnProperty(tag)) {
@@ -409,8 +429,10 @@ class Game extends EventEmitter {
    * Resize callback.
    * @method resize
    * @memberof Game#
+   * @param {Number} w New window width
+   * @param {Number} h New window height
    */
-  resize(/* w, h*/) {}
+  resize(w, h) {} /* eslint no-unused-vars:0 */
 }
 
 /**

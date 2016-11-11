@@ -15,8 +15,8 @@ Object.assign(
  * Much like interaction any DisplayObject can be made accessible. This manager will map the events as if the mouse was being used, minimizing the efferot required to implement.
  *
  * @class
- * @memberof PIXI
- * @param renderer {PIXI.CanvasRenderer|PIXI.WebGLRenderer} A reference to the current renderer
+ * @constructor
+ * @param {CanvasRenderer|WebGLRenderer} renderer   A reference to the current renderer
  */
 function AccessibilityManager(renderer) {
   // first we create a div that will sit over the pixi element. This is where the div overlays will go.
@@ -64,7 +64,7 @@ function AccessibilityManager(renderer) {
     /**
      * The renderer this accessibility manager works for.
      *
-     * @member {PIXI.SystemRenderer}
+     * @member {SystemRenderer}
      */
   this.renderer = renderer;
 
@@ -101,6 +101,7 @@ module.exports = AccessibilityManager;
 
 /**
  * Activating will cause the Accessibility layer to be shown. This is called when a user preses the tab key
+ * @memberof AccessibilityManager#
  * @private
  */
 AccessibilityManager.prototype.activate = function() {
@@ -120,6 +121,7 @@ AccessibilityManager.prototype.activate = function() {
 
 /**
  * Deactivating will cause the Accessibility layer to be hidden. This is called when a user moves the mouse
+ * @memberof AccessibilityManager#
  * @private
  */
 AccessibilityManager.prototype.deactivate = function() {
@@ -140,7 +142,8 @@ AccessibilityManager.prototype.deactivate = function() {
 
 /**
  * This recursive function will run throught he scene graph and add any new accessible objects to the DOM layer.
- * @param element {PIXI.Container|PIXI.Sprite|PIXI.extras.TilingSprite} the DisplayObject to check.
+ * @memberof AccessibilityManager#
+ * @param {Container} displayObject   The DisplayObject to check.
  * @private
  */
 AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject) {
@@ -171,6 +174,7 @@ AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject)
 
 /**
  * Before each render this function will ensure that all divs are mapped correctly to their DisplayObjects
+ * @memberof AccessibilityManager#
  * @private
  */
 AccessibilityManager.prototype.update = function() {
@@ -260,7 +264,9 @@ AccessibilityManager.prototype.capHitArea = function(hitArea) {
 
 
 /**
- * Adds a DisplayObject to the accessibility manager
+ * Adds a DisplayObject to the accessibility manager.
+ * @memberof AccessibilityManager#
+ * @param {Container} displayObject Object to add
  * @private
  */
 AccessibilityManager.prototype.addChild = function(displayObject) {
@@ -302,6 +308,8 @@ AccessibilityManager.prototype.addChild = function(displayObject) {
 
 /**
  * Maps the div button press to pixi's InteractionManager (click)
+ * @memberof AccessibilityManager#
+ * @param {Event} e Mouse event
  * @private
  */
 AccessibilityManager.prototype._onClick = function(e) {
@@ -311,6 +319,8 @@ AccessibilityManager.prototype._onClick = function(e) {
 
 /**
  * Maps the div focus events to pixis InteractionManager (mouseover)
+ * @memberof AccessibilityManager#
+ * @param {Event} e Mouse event
  * @private
  */
 AccessibilityManager.prototype._onFocus = function(e) {
@@ -320,6 +330,8 @@ AccessibilityManager.prototype._onFocus = function(e) {
 
 /**
  * Maps the div focus events to pixis InteractionManager (mouseout)
+ * @memberof AccessibilityManager#
+ * @param {Event} e Mouse event
  * @private
  */
 AccessibilityManager.prototype._onFocusOut = function(e) {
@@ -329,7 +341,8 @@ AccessibilityManager.prototype._onFocusOut = function(e) {
 
 /**
  * Is called when a key is pressed
- *
+ * @memberof AccessibilityManager#
+ * @param {Event} e Key down event
  * @private
  */
 AccessibilityManager.prototype._onKeyDown = function(e) {
@@ -342,7 +355,7 @@ AccessibilityManager.prototype._onKeyDown = function(e) {
 
 /**
  * Is called when the mouse moves across the renderer element
- *
+ * @memberof AccessibilityManager#
  * @private
  */
 AccessibilityManager.prototype._onMouseMove = function() {
@@ -352,7 +365,7 @@ AccessibilityManager.prototype._onMouseMove = function() {
 
 /**
  * Destroys the accessibility manager
- *
+ * @memberof AccessibilityManager#
  */
 AccessibilityManager.prototype.destroy = function() {
   this.div = null;

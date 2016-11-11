@@ -6,7 +6,7 @@ let pRatio = 1.0, cRatio = 1.0;
 /**
  * Calculate how to scale a content to fill its container in `outer-box` mode.
  * @param  {Vector} containerSize Size of container.
- * @param  {Vector} contentSize
+ * @param  {Vector} contentSize   Size of the content.
  * @return {object} { left , top , scale }
  */
 module.exports.outerBoxResize = function(containerSize, contentSize) {
@@ -29,7 +29,7 @@ module.exports.outerBoxResize = function(containerSize, contentSize) {
 /**
  * Calculate how to scale a content to fill its container in `inner-box` mode.
  * @param  {Vector} containerSize Size of container.
- * @param  {Vector} contentSize
+ * @param  {Vector} contentSize   Size of the content.
  * @return {object} { left , top , scale }
  */
 module.exports.innerBoxResize = function(containerSize, contentSize) {

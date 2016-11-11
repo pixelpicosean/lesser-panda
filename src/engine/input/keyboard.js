@@ -2,13 +2,15 @@ const EventEmitter = require('engine/EventEmitter');
 
 /**
  * @class Keyboard
- * @constructor
  * @extends {EventEmitter}
  *
  * @emits keydown
  * @emits keyup
  */
 class Keyboard extends EventEmitter {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
@@ -27,8 +29,8 @@ class Keyboard extends EventEmitter {
    * Check if key is pressed down.
    * @method down
    * @memberof Keyboard#
-   * @param {string} key
-   * @return {boolean}
+   * @param {string} key  Name of the key to check
+   * @return {Boolean}  Whether this key is pressed down
    */
   down(key) {
     return !!this._keysDown[key];
@@ -37,7 +39,7 @@ class Keyboard extends EventEmitter {
   /**
    * @method _keydown
    * @memberof Keyboard#
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event   Keydown event
    * @private
    */
   _keydown(event) {
@@ -57,7 +59,7 @@ class Keyboard extends EventEmitter {
   /**
    * @method _keyup
    * @memberof Keyboard#
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event   Key up event
    * @private
    */
   _keyup(event) {

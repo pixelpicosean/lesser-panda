@@ -7,10 +7,11 @@ const { clamp } = require('engine/utils/math');
  * Camera with ability to follow, scale and shake.
  *
  * @class Camera
- *
- * @constructor
  */
 class Camera {
+  /**
+   * @constructor
+   */
   constructor() {
     /**
      * Camera acceleration speed.
@@ -19,14 +20,14 @@ class Camera {
      */
     this.acceleration = Vector.create(3, 3);
     /**
-     * Anchor of the camera, the same as `PIXI.Sprite``
+     * Anchor of the camera
      * @type {Vector}
      * @default (0.5, 0.5)
      */
     this.anchor = Vector.create(0.5, 0.5);
     /**
      * Container that the camera is added to.
-     * @type {PIXI.Container}
+     * @type {Container}
      */
     this.container = null;
     /**
@@ -99,8 +100,8 @@ class Camera {
      */
     this.delta = 0;
     /**
-     * Sprite, that camera follows.
-     * @type {PIXI.Sprite}
+     * The Sprite this camera follows.
+     * @type {Sprite}
      */
     this.target = null;
     /**
@@ -109,7 +110,7 @@ class Camera {
     this.threshold = 1;
     /**
      * Sensor box
-     * @type {object}
+     * @type {Object}
      */
     this.sensor = {
       x: 0,
@@ -150,8 +151,9 @@ class Camera {
    * Add camera to container.
    * @memberof Camera#
    * @method addTo
-   * @param {Scene}           game
-   * @param {PIXI.Container}  container
+   * @param {Game} game           Which game to add to
+   * @param {Container} container Which container to add to
+   * @return {Camera} This for chaining
    */
   addTo(game, container) {
     this.game = game;
@@ -172,7 +174,7 @@ class Camera {
    * @memberof Camera#
    * @method setTarget
    * @param {DisplayObject} target  The object to follow
-   * @param {Boolean}            lerp    Whether lerp to target instead of reseting camera position
+   * @param {Boolean} lerp          Whether lerp to target instead of reseting camera position
    */
   setTarget(target, lerp) {
     this.target = target;
@@ -192,6 +194,8 @@ class Camera {
    * Set position of the camera
    * @memberof Camera#
    * @method setPosition
+   * @param {Number} x X coordinate
+   * @param {Number} y Y coordinate
    */
   setPosition(x, y) {
     this._setPosition(x, y);
@@ -202,6 +206,12 @@ class Camera {
     }
   }
 
+  /**
+   * Directly move this camera to a position.
+   * @param {Number} x X coordinate
+   * @param {Number} y Y coordinate
+   * @private
+   */
   _setPosition(x, y) {
     this.position.set(x, y);
 
@@ -342,6 +352,7 @@ class Camera {
   /**
    * @memberof Camera#
    * @method moveCamera
+   * @param {Number} dt Delta time since last frame(in second)
    * @private
    */
   moveCamera(dt) {
@@ -384,9 +395,11 @@ class Camera {
    * Update method
    * @memberof Camera#
    * @method update
+   * @param {Number} dt     Delta time in millisecond
+   * @param {Number} delta  Delta time in second
    * @protected
    */
-  update(_, delta) {
+  update(dt, delta) {
     this.delta = delta;
 
     if (this.target) {
@@ -404,7 +417,7 @@ class Camera {
 /**
  * Camera bounds left
  * @memberof Camera#
- * @type {number}
+ * @type {Number}
  * @readonly
  */
 Object.defineProperty(Camera.prototype, 'left', {

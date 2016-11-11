@@ -18,52 +18,54 @@ const _tempDisplayObjectParent = {
  *
  * @class
  * @extends EventEmitter
- * @memberof PIXI
  */
 class DisplayObject extends EventEmitter {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
     /**
      * The coordinate of the object relative to the local coordinates of the parent.
      *
-     * @member {PIXI.Point}
+     * @type {Vector}
      */
-    this.position = new math.Point();
+    this.position = new Vector();
 
     /**
      * The scale factor of the object.
      *
-     * @member {PIXI.Point}
+     * @type {Vector}
      */
-    this.scale = new math.Point(1, 1);
+    this.scale = new Vector(1, 1);
 
     /**
      * The pivot point of the displayObject that it rotates around
      *
-     * @member {PIXI.Point}
+     * @type {Vector}
      */
-    this.pivot = new math.Point(0, 0);
+    this.pivot = new Vector(0, 0);
 
 
     /**
      * The skew factor for the object in radians.
      *
-     * @member {PIXI.Point}
+     * @type {Vector}
      */
-    this.skew = new math.Point(0, 0);
+    this.skew = new Vector(0, 0);
 
     /**
      * The rotation of the object in radians.
      *
-     * @member {number}
+     * @type {Number}
      */
     this.rotation = 0;
 
     /**
      * The opacity of the object.
      *
-     * @member {number}
+     * @type {Number}
      */
     this.alpha = 1;
 
@@ -71,7 +73,7 @@ class DisplayObject extends EventEmitter {
      * The visibility of the object. If false the object will not be drawn, and
      * the updateTransform function will not be called.
      *
-     * @member {boolean}
+     * @type {Boolean}
      */
     this.visible = true;
 
@@ -79,31 +81,31 @@ class DisplayObject extends EventEmitter {
      * Can this object be rendered, if false the object will not be drawn but the updateTransform
      * methods will still be called.
      *
-     * @member {boolean}
+     * @type {Boolean}
      */
     this.renderable = true;
 
     /**
      * The display object container that contains this display object.
      *
-     * @member {PIXI.Container}
-     * @readOnly
+     * @type {Container}
+     * @readonly
      */
     this.parent = null;
 
     /**
      * The multiplied alpha of the displayObject
      *
-     * @member {number}
-     * @readOnly
+     * @type {Number}
+     * @readonly
      */
     this.worldAlpha = 1;
 
     /**
      * Current transform of the object based on world (parent) factors
      *
-     * @member {PIXI.Matrix}
-     * @readOnly
+     * @type {Matrix}
+     * @readonly
      */
     this.worldTransform = new math.Matrix();
 
@@ -111,14 +113,14 @@ class DisplayObject extends EventEmitter {
      * The area the filter is applied to. This is used as more of an optimisation
      * rather than figuring out the dimensions of the displayObject each frame you can set this rectangle
      *
-     * @member {PIXI.Rectangle}
+     * @type {Rectangle}
      */
     this.filterArea = null;
 
     /**
      * cached sin rotation
      *
-     * @member {number}
+     * @type {Number}
      * @private
      */
     this._sr = 0;
@@ -126,7 +128,7 @@ class DisplayObject extends EventEmitter {
     /**
      * cached cos rotation
      *
-     * @member {number}
+     * @type {Number}
      * @private
      */
     this._cr = 1;
@@ -134,7 +136,7 @@ class DisplayObject extends EventEmitter {
     /**
      * The original, cached bounds of the object
      *
-     * @member {PIXI.Rectangle}
+     * @type {Rectangle}
      * @private
      */
     this._bounds = new math.Rectangle(0, 0, 1, 1);
@@ -142,7 +144,7 @@ class DisplayObject extends EventEmitter {
     /**
      * The most up-to-date bounds of the object
      *
-     * @member {PIXI.Rectangle}
+     * @type {Rectangle}
      * @private
      */
     this._currentBounds = null;
@@ -150,7 +152,7 @@ class DisplayObject extends EventEmitter {
     /**
      * The original, cached mask of the object
      *
-     * @member {PIXI.Rectangle}
+     * @type {Rectangle}
      * @private
      */
     this._mask = null;
@@ -162,8 +164,8 @@ class DisplayObject extends EventEmitter {
    * Returns the global position of the displayObject.
    *
    * @memberof DisplayObject#
-   * @param point {Vector} the point to write the global value to. If null a new point will be returned
-   * @return {Vector}
+   * @param {Vector} point the point to write the global value to. If null a new point will be returned
+   * @return {Vector} Global position vector
    */
   getGlobalPosition(point) {
     point = point || Vector.create();
@@ -184,12 +186,12 @@ class DisplayObject extends EventEmitter {
 }
 
 Object.defineProperties(DisplayObject.prototype, {
-    /**
-     * The position of the displayObject on the x axis relative to the local coordinates of the parent.
-     *
-     * @member {number}
-     * @memberof PIXI.DisplayObject#
-     */
+  /**
+   * The position of the displayObject on the x axis relative to the local coordinates of the parent.
+   *
+   * @member {Number}
+   * @memberof DisplayObject#
+   */
   x: {
     get: function() {
       return this.position.x;
@@ -199,12 +201,12 @@ Object.defineProperties(DisplayObject.prototype, {
     },
   },
 
-    /**
-     * The position of the displayObject on the y axis relative to the local coordinates of the parent.
-     *
-     * @member {number}
-     * @memberof PIXI.DisplayObject#
-     */
+  /**
+   * The position of the displayObject on the y axis relative to the local coordinates of the parent.
+   *
+   * @member {Number}
+   * @memberof DisplayObject#
+   */
   y: {
     get: function() {
       return this.position.y;
@@ -214,13 +216,13 @@ Object.defineProperties(DisplayObject.prototype, {
     },
   },
 
-    /**
-     * Indicates if the sprite is globally visible.
-     *
-     * @member {boolean}
-     * @memberof PIXI.DisplayObject#
-     * @readonly
-     */
+  /**
+   * Indicates if the sprite is globally visible.
+   *
+   * @member {boolean}
+   * @memberof DisplayObject#
+   * @readonly
+   */
   worldVisible: {
     get: function() {
       var item = this;
@@ -237,16 +239,16 @@ Object.defineProperties(DisplayObject.prototype, {
     },
   },
 
-    /**
-     * Sets a mask for the displayObject. A mask is an object that limits the visibility of an object to the shape of the mask applied to it.
-     * In PIXI a regular mask must be a PIXI.Graphics or a PIXI.Sprite object. This allows for much faster masking in canvas as it utilises shape clipping.
-     * To remove a mask, set this property to null.
-     *
-     * @todo For the moment, PIXI.CanvasRenderer doesn't support PIXI.Sprite as mask.
-     *
-     * @member {PIXI.Graphics|PIXI.Sprite}
-     * @memberof PIXI.DisplayObject#
-     */
+  /**
+   * Sets a mask for the displayObject. A mask is an object that limits the visibility of an object to the shape of the mask applied to it.
+   * A regular mask must be a Graphics or a Sprite object. This allows for much faster masking in canvas as it utilises shape clipping.
+   * To remove a mask, set this property to null.
+   *
+   * @todo For the moment, CanvasRenderer doesn't support Sprite as mask.
+   *
+   * @member {Graphics|Sprite}
+   * @memberof DisplayObject#
+   */
   mask: {
     get: function() {
       return this._mask;
@@ -264,14 +266,14 @@ Object.defineProperties(DisplayObject.prototype, {
     },
   },
 
-    /**
-     * Sets the filters for the displayObject.
-     * * IMPORTANT: This is a webGL only feature and will be ignored by the canvas renderer.
-     * To remove filters simply set this property to 'null'
-     *
-     * @member {PIXI.AbstractFilter[]}
-     * @memberof PIXI.DisplayObject#
-     */
+  /**
+   * Sets the filters for the displayObject.
+   * * IMPORTANT: This is a WebGL only feature and will be ignored by the canvas renderer.
+   * To remove filters simply set this property to 'null'
+   *
+   * @member {AbstractFilter[]}
+   * @memberof DisplayObject#
+   */
   filters: {
     get: function() {
       return this._filters && this._filters.slice();
@@ -300,17 +302,17 @@ DisplayObject.prototype.addTo = function(container) {
  * TODO - Optimization pass!
  */
 DisplayObject.prototype.updateTransform = function() {
-    // create some matrix refs for easy access
+  // create some matrix refs for easy access
   var pt = this.parent.worldTransform;
   var wt = this.worldTransform;
 
-    // temporary matrix variables
+  // temporary matrix variables
   var a, b, c, d, tx, ty;
 
-    // looks like we are skewing
+  // looks like we are skewing
   if (this.skew.x || this.skew.y) {
-        // I'm assuming that skewing is not going to be very common
-        // With that in mind, we can do a full setTransform using the temp matrix
+    // I'm assuming that skewing is not going to be very common
+    // With that in mind, we can do a full setTransform using the temp matrix
     _tempMatrix.setTransform(
             this.position.x,
             this.position.y,
@@ -323,7 +325,7 @@ DisplayObject.prototype.updateTransform = function() {
             this.skew.y
         );
 
-        // now concat the matrix (inlined so that we can avoid using copy)
+    // now concat the matrix (inlined so that we can avoid using copy)
     wt.a = _tempMatrix.a * pt.a + _tempMatrix.b * pt.c;
     wt.b = _tempMatrix.a * pt.b + _tempMatrix.b * pt.d;
     wt.c = _tempMatrix.c * pt.a + _tempMatrix.d * pt.c;
@@ -332,16 +334,16 @@ DisplayObject.prototype.updateTransform = function() {
     wt.ty = _tempMatrix.tx * pt.b + _tempMatrix.ty * pt.d + pt.ty;
   }
   else {
-        // so if rotation is between 0 then we can simplify the multiplication process...
+    // so if rotation is between 0 then we can simplify the multiplication process...
     if (this.rotation % CONST.PI_2) {
-            // check to see if the rotation is the same as the previous render. This means we only need to use sin and cos when rotation actually changes
+      // check to see if the rotation is the same as the previous render. This means we only need to use sin and cos when rotation actually changes
       if (this.rotation !== this.rotationCache) {
         this.rotationCache = this.rotation;
         this._sr = Math.sin(this.rotation);
         this._cr = Math.cos(this.rotation);
       }
 
-            // get the matrix values of the displayobject based on its transform properties..
+      // get the matrix values of the displayobject based on its transform properties..
       a = this._cr * this.scale.x;
       b = this._sr * this.scale.x;
       c = -this._sr * this.scale.y;
@@ -349,13 +351,13 @@ DisplayObject.prototype.updateTransform = function() {
       tx = this.position.x;
       ty = this.position.y;
 
-            // check for pivot.. not often used so geared towards that fact!
+      // check for pivot.. not often used so geared towards that fact!
       if (this.pivot.x || this.pivot.y) {
         tx -= this.pivot.x * a + this.pivot.y * c;
         ty -= this.pivot.x * b + this.pivot.y * d;
       }
 
-            // concat the parent matrix with the objects transform.
+      // concat the parent matrix with the objects transform.
       wt.a = a * pt.a + b * pt.c;
       wt.b = a * pt.b + b * pt.d;
       wt.c = c * pt.a + d * pt.c;
@@ -364,7 +366,7 @@ DisplayObject.prototype.updateTransform = function() {
       wt.ty = tx * pt.b + ty * pt.d + pt.ty;
     }
     else {
-            // lets do the fast version as we know there is no rotation..
+      // lets do the fast version as we know there is no rotation..
       a = this.scale.x;
       d = this.scale.y;
 
@@ -380,10 +382,10 @@ DisplayObject.prototype.updateTransform = function() {
     }
   }
 
-    // multiply the alphas..
+  // multiply the alphas..
   this.worldAlpha = this.alpha * this.parent.worldAlpha;
 
-    // reset the bounds each time this is called!
+  // reset the bounds each time this is called!
   this._currentBounds = null;
 };
 
@@ -395,8 +397,8 @@ DisplayObject.prototype.displayObjectUpdateTransform = DisplayObject.prototype.u
  *
  * Retrieves the bounds of the displayObject as a rectangle object
  *
- * @param matrix {PIXI.Matrix}
- * @return {PIXI.Rectangle} the rectangular bounding area
+ * @param {Matrix} matrix Matrix to calculate bounds from.
+ * @return {Rectangle} the rectangular bounding area
  */
 DisplayObject.prototype.getBounds = function(matrix) { /* eslint no-unused-vars:0 */
   return math.Rectangle.EMPTY;
@@ -405,7 +407,7 @@ DisplayObject.prototype.getBounds = function(matrix) { /* eslint no-unused-vars:
 /**
  * Retrieves the local bounds of the displayObject as a rectangle object
  *
- * @return {PIXI.Rectangle} the rectangular bounding area
+ * @return {Rectangle} the rectangular bounding area
  */
 DisplayObject.prototype.getLocalBounds = function() {
   return this.getBounds(math.Matrix.IDENTITY);
@@ -414,8 +416,8 @@ DisplayObject.prototype.getLocalBounds = function() {
 /**
  * Calculates the global position of the display object
  *
- * @param position {PIXI.Point} The world origin to calculate from
- * @return {PIXI.Point} A point object representing the position of this object
+ * @param {Vector} position The world origin to calculate from
+ * @return {Vector} A point object representing the position of this object
  */
 DisplayObject.prototype.toGlobal = function(position) {
     // this parent check is for just in case the item is a root object.
@@ -437,19 +439,19 @@ DisplayObject.prototype.toGlobal = function(position) {
 /**
  * Calculates the local position of the display object relative to another point
  *
- * @param position {PIXI.Point} The world origin to calculate from
- * @param [from] {PIXI.DisplayObject} The DisplayObject to calculate the global position from
- * @param [point] {PIXI.Point} A Point object in which to store the value, optional (otherwise will create a new Point)
- * @return {PIXI.Point} A point object representing the position of this object
+ * @param {Vector} position       The world origin to calculate from
+ * @param {DisplayObject} [from]  The DisplayObject to calculate the global position from
+ * @param {Vector} [point]        A Point object in which to store the value, optional (otherwise will create a new Point)
+ * @return {Vector} A point object representing the position of this object
  */
 DisplayObject.prototype.toLocal = function(position, from, point) {
   if (from) {
     position = from.toGlobal(position);
   }
 
-    // this parent check is for just in case the item is a root object.
-    // If it is we need to give it a temporary parent so that displayObjectUpdateTransform works correctly
-    // this is mainly to avoid a parent check in the main loop. Every little helps for performance :)
+  // this parent check is for just in case the item is a root object.
+  // If it is we need to give it a temporary parent so that displayObjectUpdateTransform works correctly
+  // this is mainly to avoid a parent check in the main loop. Every little helps for performance :)
   if (!this.parent) {
     this.parent = _tempDisplayObjectParent;
     this.displayObjectUpdateTransform();
@@ -459,14 +461,14 @@ DisplayObject.prototype.toLocal = function(position, from, point) {
     this.displayObjectUpdateTransform();
   }
 
-    // simply apply the matrix..
+  // simply apply the matrix..
   return this.worldTransform.applyInverse(position, point);
 };
 
 /**
  * Renders the object using the WebGL renderer
  *
- * @param renderer {PIXI.WebGLRenderer} The renderer
+ * @param {WebGLRenderer} renderer The renderer
  * @private
  */
 DisplayObject.prototype.renderWebGL = function(renderer) { /* eslint no-unused-vars:0 */
@@ -476,7 +478,7 @@ DisplayObject.prototype.renderWebGL = function(renderer) { /* eslint no-unused-v
 /**
  * Renders the object using the Canvas renderer
  *
- * @param renderer {PIXI.CanvasRenderer} The renderer
+ * @param {CanvasRenderer} renderer The renderer
  * @private
  */
 DisplayObject.prototype.renderCanvas = function(renderer) { /* eslint no-unused-vars:0 */
@@ -486,10 +488,10 @@ DisplayObject.prototype.renderCanvas = function(renderer) { /* eslint no-unused-
  * Useful function that returns a texture of the display object that can then be used to create sprites
  * This can be quite useful if your displayObject is static / complicated and needs to be reused multiple times.
  *
- * @param renderer {PIXI.CanvasRenderer|PIXI.WebGLRenderer} The renderer used to generate the texture.
- * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
- * @param resolution {number} The resolution of the texture being generated
- * @return {PIXI.Texture} a texture of the display object
+ * @param {CanvasRenderer|WebGLRenderer} renderer The renderer used to generate the texture.
+ * @param {Number} scaleMode                      See {@link SCALE_MODES} for possible values
+ * @param {Number} resolution                     The resolution of the texture being generated
+ * @return {Texture} a texture of the display object
  */
 DisplayObject.prototype.generateTexture = function(renderer, scaleMode, resolution) {
   var bounds = this.getLocalBounds();
@@ -507,7 +509,7 @@ DisplayObject.prototype.generateTexture = function(renderer, scaleMode, resoluti
 /**
  * Set the parent Container of this DisplayObject
  *
- * @param container {Container} The Container to add this DisplayObject to
+ * @param {Container} container   The Container to add this DisplayObject to
  * @return {Container} The Container that this DisplayObject was added to
  */
 DisplayObject.prototype.setParent = function(container) {
@@ -522,16 +524,16 @@ DisplayObject.prototype.setParent = function(container) {
 /**
  * Convenience function to set the postion, scale, skew and pivot at once.
  *
- * @param [x=0] {number} The X position
- * @param [y=0] {number} The Y position
- * @param [scaleX=1] {number} The X scale value
- * @param [scaleY=1] {number} The Y scale value
- * @param [rotation=0] {number} The rotation
- * @param [skewX=0] {number} The X skew value
- * @param [skewY=0] {number} The Y skew value
- * @param [pivotX=0] {number} The X pivot value
- * @param [pivotY=0] {number} The Y pivot value
- * @return {PIXI.DisplayObject}
+ * @param {Number} [x=0]        The X position
+ * @param {Number} [y=0]        The Y position
+ * @param {Number} [scaleX=1]   The X scale value
+ * @param {Number} [scaleY=1]   The Y scale value
+ * @param {Number} [rotation=0] The rotation
+ * @param {Number} [skewX=0]    The X skew value
+ * @param {Number} [skewY=0]    The Y skew value
+ * @param {Number} [pivotX=0]   The X pivot value
+ * @param {Number} [pivotY=0]   The Y pivot value
+ * @return {DisplayObject} This for chaining.
  */
 DisplayObject.prototype.setTransform = function(x, y, scaleX, scaleY, rotation, skewX, skewY, pivotX, pivotY) {
   this.position.x = x || 0;
@@ -548,7 +550,6 @@ DisplayObject.prototype.setTransform = function(x, y, scaleX, scaleY, rotation, 
 
 /**
  * Base destroy method for generic display objects
- *
  */
 DisplayObject.prototype.destroy = function() {
 

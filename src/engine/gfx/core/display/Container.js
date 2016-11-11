@@ -3,6 +3,7 @@ const { removeItems } = require('../utils');
 const DisplayObject = require('./DisplayObject');
 const RenderTexture = require('../textures/RenderTexture');
 const _tempMatrix = new math.Matrix();
+const EMPTY_ARRAY = [];
 
 /**
  * A Container represents a collection of display objects.
@@ -16,13 +17,16 @@ const _tempMatrix = new math.Matrix();
  * @extends DisplayObject
  */
 class Container extends DisplayObject {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
     /**
      * The array of children of this container.
      *
-     * @member {PIXI.DisplayObject[]}
+     * @member {DisplayObject[]}
      * @readonly
      */
     this.children = [];
@@ -30,17 +34,17 @@ class Container extends DisplayObject {
 
   /**
    * Overridable method that can be used by Container subclasses whenever the children array is modified
-   *
+   * @memberof Container#
    * @private
    */
   onChildrenChange() {}
 
   /**
    * Adds a child to the container.
-   *
    * You can also add multple items like so: myContainer.addChild(thinkOne, thingTwo, thingThree)
-   * @param child {PIXI.DisplayObject} The DisplayObject to add to the container
-   * @return {PIXI.DisplayObject} The child that was added.
+   * @memberof Container#
+   * @param {DisplayObject} child The DisplayObject to add to the container
+   * @return {DisplayObject} The child that was added.
    */
   addChild(child) {
     var argumentsLength = arguments.length;
@@ -74,10 +78,10 @@ class Container extends DisplayObject {
 
   /**
    * Adds a child to the container at a specified index. If the index is out of bounds an error will be thrown
-   *
-   * @param child {PIXI.DisplayObject} The child to add
-   * @param index {number} The index to place the child in
-   * @return {PIXI.DisplayObject} The child that was added.
+   * @memberof Container#
+   * @param {DisplayObject} child The child to add
+   * @param {Number} index        The index to place the child in
+   * @return {DisplayObject} The child that was added.
    */
   addChildAt(child, index) {
     if (index >= 0 && index <= this.children.length) {
@@ -102,9 +106,9 @@ class Container extends DisplayObject {
 
   /**
    * Swaps the position of 2 Display Objects within this container.
-   *
-   * @param child {PIXI.DisplayObject}
-   * @param child2 {PIXI.DisplayObject}
+   * @memberof Container#
+   * @param {DisplayObject} child   Child to swap
+   * @param {DisplayObject} child2  Child to swap
    */
   swapChildren(child, child2) {
     if (child === child2) {
@@ -125,9 +129,9 @@ class Container extends DisplayObject {
 
   /**
    * Returns the index position of a child DisplayObject instance
-   *
-   * @param child {PIXI.DisplayObject} The DisplayObject instance to identify
-   * @return {number} The index position of the child display object to identify
+   * @memberof Container#
+   * @param {DisplayObject} child The DisplayObject instance to identify
+   * @return {Number} The index position of the child display object to identify
    */
   getChildIndex(child) {
     var index = this.children.indexOf(child);
@@ -141,9 +145,9 @@ class Container extends DisplayObject {
 
   /**
    * Changes the position of an existing child in the display object container
-   *
-   * @param child {PIXI.DisplayObject} The child DisplayObject instance for which you want to change the index number
-   * @param index {number} The resulting index number for the child display object
+   * @memberof Container#
+   * @param {DisplayObject} child The child DisplayObject instance for which you want to change the index number
+   * @param {Number} index        The resulting index number for the child display object
    */
   setChildIndex(child, index) {
     if (index < 0 || index >= this.children.length) {
@@ -159,9 +163,9 @@ class Container extends DisplayObject {
 
   /**
    * Returns the child at the specified index
-   *
-   * @param index {number} The index to get the child at
-   * @return {PIXI.DisplayObject} The child at the given index, if any.
+   * @memberof Container#
+   * @param {Number} index The index to get the child at
+   * @return {DisplayObject} The child at the given index, if any.
    */
   getChildAt(index) {
     if (index < 0 || index >= this.children.length) {
@@ -173,9 +177,9 @@ class Container extends DisplayObject {
 
   /**
    * Removes a child from the container.
-   *
-   * @param child {PIXI.DisplayObject} The DisplayObject to remove
-   * @return {PIXI.DisplayObject} The child that was removed.
+   * @memberof Container#
+   * @param {DisplayObject} child The DisplayObject to remove
+   * @return {DisplayObject} The child that was removed.
    */
   removeChild(child) {
     var argumentsLength = arguments.length;
@@ -209,9 +213,9 @@ class Container extends DisplayObject {
 
   /**
    * Removes a child from the specified index position.
-   *
-   * @param index {number} The index to get the child from
-   * @return {PIXI.DisplayObject} The child that was removed.
+   * @memberof Container#
+   * @param {Number} index The index to get the child from
+   * @return {DisplayObject} The child that was removed.
    */
   removeChildAt(index) {
     var child = this.getChildAt(index);
@@ -228,9 +232,10 @@ class Container extends DisplayObject {
 
   /**
    * Removes all children from this container that are within the begin and end indexes.
-   *
-   * @param beginIndex {number} The beginning position. Default value is 0.
-   * @param endIndex {number} The ending position. Default value is size of the container.
+   * @memberof Container#
+   * @param {Number} beginIndex The beginning position. Default value is 0.
+   * @param {Number} endIndex   The ending position. Default value is size of the container.
+   * @return {Array} Children removed from this container.
    */
   removeChildren(beginIndex, endIndex) {
     var begin = beginIndex || 0;
@@ -254,7 +259,7 @@ class Container extends DisplayObject {
       return removed;
     }
     else if (range === 0 && this.children.length === 0) {
-      return [];
+      return EMPTY_ARRAY;
     }
     else {
       throw new RangeError('removeChildren: numeric values are outside the acceptable range.');
@@ -264,11 +269,11 @@ class Container extends DisplayObject {
   /**
    * Useful function that returns a texture of the display object that can then be used to create sprites
    * This can be quite useful if your displayObject is static / complicated and needs to be reused multiple times.
-   *
-   * @param renderer {PIXI.CanvasRenderer|PIXI.WebGLRenderer} The renderer used to generate the texture.
-   * @param resolution {number} The resolution of the texture being generated
-   * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
-   * @return {PIXI.Texture} a texture of the display object
+   * @memberof Container#
+   * @param {CanvasRenderer|WebGLRenderer} renderer The renderer used to generate the texture
+   * @param {Number} resolution                     The resolution of the texture being generated
+   * @param {Number} scaleMode                      See {@link SCALE_MODES} for possible values
+   * @return {Texture} a texture of the display object
    */
   generateTexture(renderer, resolution, scaleMode) {
     var bounds = this.getLocalBounds();
@@ -283,9 +288,9 @@ class Container extends DisplayObject {
     return renderTexture;
   }
 
-  /*
+  /**
    * Updates the transform on all children of this container for rendering
-   *
+   * @memberof Container#
    * @private
    */
   updateTransform() {
@@ -302,8 +307,8 @@ class Container extends DisplayObject {
 
   /**
    * Retrieves the bounds of the Container as a rectangle. The bounds calculation takes all visible children into consideration.
-   *
-   * @return {PIXI.Rectangle} The rectangular bounding area
+   * @memberof Container#
+   * @return {Rectangle} The rectangular bounding area
    */
   getBounds() {
     if (!this._currentBounds) {
@@ -367,8 +372,8 @@ class Container extends DisplayObject {
   /**
    * Retrieves the non-global local bounds of the Container as a rectangle.
    * The calculation takes all visible children into consideration.
-   *
-   * @return {PIXI.Rectangle} The rectangular bounding area
+   * @memberof Container#
+   * @return {Rectangle} The rectangular bounding area
    */
   getLocalBounds() {
     var matrixCache = this.worldTransform;
@@ -388,8 +393,8 @@ class Container extends DisplayObject {
 
   /**
    * Renders the object using the WebGL renderer
-   *
-   * @param renderer {PIXI.WebGLRenderer} The renderer
+   * @memberof Container#
+   * @param {WebGLRenderer} renderer The renderer
    */
   renderWebGL(renderer) {
 
@@ -447,8 +452,8 @@ class Container extends DisplayObject {
 
   /**
    * To be overridden by the subclass
-   *
-   * @param renderer {PIXI.WebGLRenderer} The renderer
+   * @memberof Container#
+   * @param {WebGLRenderer} renderer The renderer
    * @private
    */
   _renderWebGL(renderer) {/* eslint no-unused-vars:0 */
@@ -457,8 +462,8 @@ class Container extends DisplayObject {
 
   /**
    * To be overridden by the subclass
-   *
-   * @param renderer {PIXI.CanvasRenderer} The renderer
+   * @memberof Container#
+   * @param {CanvasRenderer} renderer The renderer
    * @private
    */
   _renderCanvas(renderer) { /* eslint no-unused-vars:0 */
@@ -468,8 +473,8 @@ class Container extends DisplayObject {
 
   /**
    * Renders the object using the Canvas renderer
-   *
-   * @param renderer {PIXI.CanvasRenderer} The renderer
+   * @memberof Container#
+   * @param {CanvasRenderer} renderer The renderer
    */
   renderCanvas(renderer) {
       // if not visible or the alpha is 0 then no need to render this
@@ -493,7 +498,8 @@ class Container extends DisplayObject {
 
   /**
    * Destroys the container
-   * @param [destroyChildren=false] {boolean} if set to true, all the children will have their destroy method called as well
+   * @memberof Container#
+   * @param {Boolean} [destroyChildren=false] if set to true, all the children will have their destroy method called as well
    */
   destroy(destroyChildren) {
     DisplayObject.prototype.destroy.call(this);
@@ -515,18 +521,17 @@ Container.prototype.containerUpdateTransform = Container.prototype.updateTransfo
 Container.prototype.containerGetBounds = Container.prototype.getBounds;
 
 Object.defineProperties(Container.prototype, {
-    /**
-     * The width of the Container, setting this will actually modify the scale to achieve the value set
-     *
-     * @member {number}
-     * @memberof PIXI.Container#
-     */
+  /**
+   * The width of the Container, setting this will actually modify the scale to achieve the value set
+   *
+   * @member {number}
+   * @memberof Container#
+   */
   width: {
     get: function() {
       return this.scale.x * this.getLocalBounds().width;
     },
     set: function(value) {
-
       var width = this.getLocalBounds().width;
 
       if (width !== 0) {
@@ -538,18 +543,17 @@ Object.defineProperties(Container.prototype, {
     },
   },
 
-    /**
-     * The height of the Container, setting this will actually modify the scale to achieve the value set
-     *
-     * @member {number}
-     * @memberof PIXI.Container#
-     */
+  /**
+   * The height of the Container, setting this will actually modify the scale to achieve the value set
+   *
+   * @member {number}
+   * @memberof Container#
+   */
   height: {
     get: function() {
       return this.scale.y * this.getLocalBounds().height;
     },
     set: function(value) {
-
       var height = this.getLocalBounds().height;
 
       if (height !== 0) {
