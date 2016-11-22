@@ -145,7 +145,7 @@ class Collider {
   }
 
   /**
-   * Width of this body(of its shape or 0).
+   * Width of this collider(of its shape or 0).
    * @type {number}
    * @readonly
    */
@@ -154,7 +154,7 @@ class Collider {
   }
 
   /**
-   * Height of this body(of its shape or 0).
+   * Height of this collider(of its shape or 0).
    * @type {number}
    * @readonly
    */
@@ -164,23 +164,23 @@ class Collider {
 
   /**
    * Add this collider to the world.
-   * @memberof Body#
+   * @memberof Collider#
    * @method addTo
    * @param {SystemPhysics} world
    */
   addTo(world) {
-    world.addBody(this);
+    world.addCollider(this);
     return this;
   }
 
   /**
    * Remove collider from it's world.
-   * @memberof Body#
+   * @memberof Collider#
    * @method remove
    */
   remove() {
     if (this.world) {
-      this.world.removeBody(this);
+      this.world.removeCollider(this);
     }
   }
 
