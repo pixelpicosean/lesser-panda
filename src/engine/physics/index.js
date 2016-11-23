@@ -292,6 +292,7 @@ class SystemPhysics extends System {
    */
   onEntitySpawn(ent) {
     if (ent.coll) {
+      ent.coll.entity = ent;
       this.addCollider(ent.coll);
       // Override coll's position with the entity's
       ent.coll.position = ent.position;
