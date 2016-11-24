@@ -14,10 +14,9 @@ class Entity {
    * @constructor
    * @param {Number} x          X coordinate
    * @param {Number} y          Y coordinate
-   * @param {String} layer      Layer name to add this entity to
    * @param {Object} settings   Setting object to be merged in
    */
-  constructor(x, y, layer, settings) {
+  constructor(x, y, settings) {
     /**
      * Each entity has a unique ID.
      * @memberof Entity#
@@ -68,7 +67,7 @@ class Entity {
      * @memberof Entity#
      * @type {String}
      */
-    this.layer = layer;
+    this.layer = null;
 
     /**
      * Collider component.

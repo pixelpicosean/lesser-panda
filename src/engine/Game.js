@@ -311,6 +311,7 @@ class Game extends EventEmitter {
       ent = new ctor(x, y, settings);
       ent.CTOR = ctor;
     }
+    ent.layer = layer;
     ent.game = this;
 
     // Add to list
