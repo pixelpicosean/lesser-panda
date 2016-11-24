@@ -240,8 +240,8 @@ class SystemPhysics extends System {
           for (j = 0; j < group.length; j++) {
             coll2 = group[j];
 
-            // Pass: same collider
-            if (coll2 === coll) {
+            // Pass: same collider or someone is already removed
+            if (coll2 === coll || coll.isRemoved || coll2.isRemoved) {
               continue;
             }
 
