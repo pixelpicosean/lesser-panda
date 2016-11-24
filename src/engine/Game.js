@@ -305,10 +305,10 @@ class Game extends EventEmitter {
     // Create entity instance
     let ent;
     if (ctor.canBePooled) {
-      ent = ctor.create(x, y, layer, settings);
+      ent = ctor.create(x, y, settings);
     }
     else {
-      ent = new ctor(x, y, layer, settings);
+      ent = new ctor(x, y, settings);
       ent.CTOR = ctor;
     }
     ent.game = this;
