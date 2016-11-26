@@ -160,7 +160,7 @@ function createTimer(ms) {
     t = new Timer(ms);
   }
   else {
-    Timer.call(t, ms);
+    t.set(ms);
   }
   return t;
 }
