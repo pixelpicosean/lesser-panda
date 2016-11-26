@@ -22,15 +22,51 @@ module.exports = function(data) {
   // TODO: add fill/stroke support
   inst.beginFill(data.color || 0x000000);
   let shape = data.shape || 'Box';
-  if (shape === 'Circle') {
+  if (shape.toLowerCase() === 'circle') {
     inst.drawCircle(0, 0, data.radius || 8);
   }
-  else if (shape === 'Box') {
+  else if (shape.toLowerCase() === 'box') {
     let w = data.width || 8;
     let h = data.height || 8;
-    inst.drawRect(-w / 2, -h / 2, w, h);
+
+    let anchor = 'center';
+    if (typeof(data.anchor) === 'string') {
+      anchor = data.anchor.toLowerCase();
+    }
+
+    switch (anchor.toLowerCase()) {
+      case 'center':
+        inst.drawRect(-w / 2, -h / 2, w, h);
+        break;
+
+      case 'left':
+        inst.drawRect(0, -h / 2, w, h);
+        break;
+      case 'right':
+        inst.drawRect(-w, -h / 2, w, h);
+        break;
+      case 'top':
+        inst.drawRect(-w / 2, 0, w, h);
+        break;
+      case 'bottom':
+        inst.drawRect(-w / 2, -h, w, h);
+        break;
+
+      case 'topleft':
+        inst.drawRect(0, 0, w, h);
+        break;
+      case 'topright':
+        inst.drawRect(-w, 0, w, h);
+        break;
+      case 'bottomleft':
+        inst.drawRect(0, -h, w, h);
+        break;
+      case 'bottomright':
+        inst.drawRect(-w, -h, w, h);
+        break;
+    }
   }
-  else if (shape === 'Polygon') {
+  else if (shape.toLowerCase() === 'polygon') {
     let points = data.points || DEFAULT_POLYGON_VERTICES;
     inst.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
