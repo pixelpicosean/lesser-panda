@@ -153,12 +153,6 @@ class Game extends EventEmitter {
   update(delta, deltaSec) {
     let i, sys, ent;
 
-    // Update systems
-    for (i = 0; i < this.systemOrder.length; i++) {
-      sys = this.systemOrder[i];
-      this.systems[sys] && this.systems[sys].update(delta, deltaSec);
-    }
-
     // Update entities
     for (i = 0; i < this.entities.length; i++) {
       ent = this.entities[i];
@@ -174,6 +168,12 @@ class Game extends EventEmitter {
       }
     }
 
+    // Update systems
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].update(delta, deltaSec);
+    }
+
     this.emit('update', delta, deltaSec);
   }
 
@@ -186,12 +186,6 @@ class Game extends EventEmitter {
    */
   fixedUpdate(delta, deltaSec) {
     let i, sys, ent;
-
-    // Update systems
-    for (i = 0; i < this.systemOrder.length; i++) {
-      sys = this.systemOrder[i];
-      this.systems[sys] && this.systems[sys].fixedUpdate(delta, deltaSec);
-    }
 
     // Update entities
     for (i = 0; i < this.entities.length; i++) {
@@ -206,6 +200,12 @@ class Game extends EventEmitter {
         }
         removeItems(this.entities, i--, 1);
       }
+    }
+
+    // Update systems
+    for (i = 0; i < this.systemOrder.length; i++) {
+      sys = this.systemOrder[i];
+      this.systems[sys] && this.systems[sys].fixedUpdate(delta, deltaSec);
     }
 
     this.emit('fixedUpdate', delta, deltaSec);
