@@ -154,6 +154,7 @@ class SystemGfx extends System {
   onEntityRemove(ent) {
     if (ent.gfx) {
       ent.gfx.remove();
+      ent.gfx.entity = null;
     }
   }
 

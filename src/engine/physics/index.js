@@ -307,6 +307,7 @@ class SystemPhysics extends System {
   onEntityRemove(ent) {
     if (ent.coll) {
       ent.coll.remove();
+      ent.coll.entity = null;
     }
   }
 }
