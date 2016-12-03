@@ -26,8 +26,8 @@ require('./core/sprites/webgl/SpriteRenderer');
  *   anim.play('fall');
  * });
  *
- * @param {object} data
- * @return {AnimatedSprite}
+ * @param {object} data Data to create AnimatedSprite from
+ * @return {AnimatedSprite} AnimatedSprite instance
  */
 module.exports = function(data) {
   const inst = new AnimatedSprite(data.textures);

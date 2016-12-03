@@ -7,10 +7,12 @@ const { clamp } = require('engine/utils/math');
  * Physics system.
  *
  * @class SystemPhysics
- * @constructor
- * @param {object} [settings] Settings to be merged in.
  */
 class SystemPhysics extends System {
+  /**
+   * @constructor
+   * @param {Object} [settings] Settings to be merged in.
+   */
   constructor(settings) {
     super();
 
@@ -70,6 +72,12 @@ class SystemPhysics extends System {
     this.setup(settings);
   }
 
+  /**
+   * Setup this system with setting object.
+   * @memberof SystemPhysics#
+   * @method setup
+   * @param {Object} settings Setting object.
+   */
   setup(settings) {
     for (let k in settings) {
       switch (k) {
@@ -94,7 +102,7 @@ class SystemPhysics extends System {
    * Add collider to world.
    * @memberof SystemPhysics#
    * @method addCollider
-   * @param {Coll} coll
+   * @param {Coll} coll Collider to add
    */
   addCollider(coll) {
     coll.world = this;
@@ -108,7 +116,7 @@ class SystemPhysics extends System {
    * Remove collider from world.
    * @memberof SystemPhysics#
    * @method removeCollider
-   * @param {Coll} coll
+   * @param {Coll} coll Collider to remove
    */
   removeCollider(coll) {
     if (!coll.world) {return;}
@@ -120,8 +128,10 @@ class SystemPhysics extends System {
    * Update colliders and check collisions.
    * @memberof SystemPhysics#
    * @method fixedUpdate
+   * @param {Number} dt     Delta time in millisecond
+   * @param {Number} delta  Delta time in second
    */
-  fixedUpdate(_, delta) {
+  fixedUpdate(dt, delta) {
     this.collisionChecks = 0;
     this.checks = {};
 
@@ -230,8 +240,8 @@ class SystemPhysics extends System {
           for (j = 0; j < group.length; j++) {
             coll2 = group[j];
 
-            // Pass: same collider
-            if (coll2 === coll) {
+            // Pass: same collider or someone is already removed
+            if (coll2 === coll || coll.isRemoved || coll2.isRemoved) {
               continue;
             }
 
@@ -274,16 +284,30 @@ class SystemPhysics extends System {
     this.colliders.length = 0;
   }
 
+  /**
+   * Callback that will be invoked on each entity spawn.
+   * @memberof SystemPhysics#
+   * @method onEntitySpawn
+   * @param  {Entity} ent Entity instance
+   */
   onEntitySpawn(ent) {
     if (ent.coll) {
+      ent.coll.entity = ent;
       this.addCollider(ent.coll);
       // Override coll's position with the entity's
       ent.coll.position = ent.position;
     }
   }
+  /**
+   * Callback that will be invoked on each entity remove.
+   * @memberof SystemPhysics#
+   * @method onEntityRemove
+   * @param  {Entity} ent Entity instance
+   */
   onEntityRemove(ent) {
     if (ent.coll) {
       ent.coll.remove();
+      ent.coll.entity = null;
     }
   }
 }

@@ -19,10 +19,10 @@ const math = {
   /**
    * Force a value within the boundaries by clamping `x` to the range `[a, b]`.
    *
-   * @param {number} x
-   * @param {number} a
-   * @param {number} b
-   * @return {number}
+   * @param {number} x Target value to clamp
+   * @param {number} a Min value
+   * @param {number} b Max value
+   * @return {number} Clamped value
    */
   clamp: function(x, a, b) {
     return (x < a) ? a : ((x > b) ? b : x);

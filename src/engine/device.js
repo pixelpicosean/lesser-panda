@@ -1,3 +1,7 @@
+/**
+ * Collect device informations
+ * @return {Object} Device informations
+ */
 function fetchDeviceInfo() {
   const device = {};
   let ua = navigator.userAgent;

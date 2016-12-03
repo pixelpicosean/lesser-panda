@@ -99,7 +99,7 @@ class Entity {
   }
 
   /**
-   * Tag for filtering by systems.
+   * Get tag of this Entity
    * @type {string}
    */
   get tag() { return this._tag; }
@@ -112,12 +112,25 @@ class Entity {
     }
   }
 
-  // TODO: pooling support
-  init(x, y, settings) {
+  /**
+   * Poolable entity initialization (called immediately after picking from the pool)
+   * @memberof Entity#
+   * @param {Number} x        X coordinate
+   * @param {Number} y        Y coordinate
+   * @param {String} layer    Name of the layer to added to
+   * @param {Object} settings Setting object
+   * @return {Entity} Entity instance
+   */
+  init(x, y, layer, settings) {
     this.position.set(x, y);
+    this.layer = layer;
 
     return this.setup(settings);
   }
+  /**
+   * Remove self from game
+   * @memberof Entity#
+   */
   remove() {
     if (this.game) {
       this.game.removeEntity(this);
@@ -126,7 +139,8 @@ class Entity {
 
   /**
    * Setup this entity with settings(deeply merge is used by default)
-   * @param  {object} settings Settings
+   * @param {Object} settings Settings
+   * @return {Entity} Self for chaining
    */
   setup(settings) {
     merge(this, settings);
@@ -144,6 +158,8 @@ class Entity {
    * Doing nothing by default.
    * @method update
    * @memberof Entity#
+   * @param {Number} dt     Delta time in millisecond
+   * @param {Number} dtSec  Delta time in second
    */
   update(dt, dtSec) {} /* eslint no-unused-vars:0 */
   /**
@@ -151,11 +167,22 @@ class Entity {
    * Doing nothing by default.
    * @method fixedUpdate
    * @memberof Entity#
+   * @param {Number} dt     Delta time in millisecond
+   * @param {Number} dtSec  Delta time in second
    */
   fixedUpdate(dt, dtSec) {} /* eslint no-unused-vars:0 */
 }
+/**
+ * ID of next Entity instance
+ * @type {Number}
+ * @static
+ */
 Entity.nextId = 0;
 
+/**
+ * Entity class map.
+ * @type {Object}
+ */
 Entity.types = {};
 Entity.register = function(type, ctor) {
   if (!Entity.types[type]) {
@@ -169,7 +196,7 @@ Entity.register = function(type, ctor) {
 /**
  * Entity base class is not poolable.
  * @type {Boolean}
- * @private
+ * @static
  */
 Entity.canBePooled = false;
 

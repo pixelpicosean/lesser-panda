@@ -64,10 +64,13 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
-### 1.1.0
+### 1.0.1
 
 - New `input` system support key-maps bindings, on top of `keyboard`.
 - Basic `CollisionMap` implementation supports AABB vs rect tile collision.
+- Tons of small issue fixes.
+- More and better source code comments.
+- Local node modules supported (you can provide a `package.json` file and install whatever packages)
 
 ### 1.0.0
 

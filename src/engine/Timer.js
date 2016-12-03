@@ -20,13 +20,8 @@ class Timer {
   /**
    * Timer constructor should not be used directly, use the static methods instead:
    *
-   * - {@link Timer.later}
-   * - {@link Timer.laterSec}
-   * - {@link Timer.interval}
-   * - {@link Timer.intervalSec}
-   *
    * @constructor
-   * @param {number} [ms]
+   * @param {number} [ms] Time
    */
   constructor(ms) {
     /**
@@ -77,7 +72,8 @@ class Timer {
    * Set duration for timer.
    * @method set
    * @memberof Timer#
-   * @param {number} ms
+   * @param {number} ms Time to set to
+   * @return {Timer} Self for chaining
    */
   set(ms) {
     if (Number.isFinite(ms)) {
@@ -93,6 +89,7 @@ class Timer {
    * Reset timer to current duration.
    * @method reset
    * @memberof Timer#
+   * @return {Timer} Self for chaining
    */
   reset() {
     this.removed = false;
@@ -104,6 +101,7 @@ class Timer {
    * Pause timer.
    * @method pause
    * @memberof Timer#
+   * @return {Timer} Self for chaining
    */
   pause() {
     this.paused = true;
@@ -114,6 +112,7 @@ class Timer {
    * Resume paused timer.
    * @method resume
    * @memberof Timer#
+   * @return {Timer} Self for chaining
    */
   resume() {
     this.paused = false;
@@ -154,6 +153,11 @@ class Timer {
  * @private
  */
 const pool = [];
+/**
+ * Timer factory
+ * @param  {Number} ms  Time in millisecond
+ * @return {Timer}      Timer instance
+ */
 function createTimer(ms) {
   let t = pool.pop();
   if (!t) {
@@ -164,6 +168,10 @@ function createTimer(ms) {
   }
   return t;
 }
+/**
+ * Recycle a timer instance for later reuse
+ * @param  {Timer} timer Timer instance
+ */
 function recycleTimer(timer) {
   pool.push(timer);
 }
@@ -172,6 +180,9 @@ function recycleTimer(timer) {
  * Timer system.
  */
 class SystemTimer extends System {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
@@ -186,6 +197,10 @@ class SystemTimer extends System {
     this.deactiveTags = [];
   }
 
+  /**
+   * Update
+   * @param  {Number} delta Delta time in millisecond
+   */
   update(delta) {
     this.delta = delta;
 
@@ -215,8 +230,8 @@ class SystemTimer extends System {
    * @param {number}    wait      Time in milliseconds
    * @param {function}  callback  Callback function to run, when timer ends
    * @param {object}    context   Context of the callback to be invoked
-   * @param {string}    tag       Tag of this timer, default is '0'
-   * @return {Timer}
+   * @param {string}    [tag]     Tag of this timer, default is '0'
+   * @return {Timer} Timer instance
    */
   later(wait, callback, context, tag = '0') {
     let timer = createTimer(wait);
@@ -243,10 +258,14 @@ class SystemTimer extends System {
    * Create an one-shoot timer while the time is in seconds instead.
    * @memberof Timer
    * @method laterSec
-   * @see Timer.later
+   * @param {number}    wait      Time in seconds
+   * @param {function}  callback  Callback function to run, when timer ends
+   * @param {object}    context   Context of the callback to be invoked
+   * @param {string}    [tag]     Tag of this timer, default is '0'
+   * @return {Timer} Timer instance
    */
   laterSec(wait, callback, context, tag = '0') {
-    this.later(Math.floor(wait * 1000), callback, context, tag);
+    return this.later(Math.floor(wait * 1000), callback, context, tag);
   }
 
   /**
@@ -256,8 +275,8 @@ class SystemTimer extends System {
    * @param {number}    interval  Time in milliseconds
    * @param {function}  callback  Callback function to run, when timer ends
    * @param {object}    context   Context of the callback to be invoked
-   * @param {string}    tag       Tag of this timer, default is '0'
-   * @return {Timer}
+   * @param {string}    [tag]     Tag of this timer, default is '0'
+   * @return {Timer} Timer instance
    */
   interval(interval, callback, context, tag = '0') {
     let timer = createTimer(interval);
@@ -284,17 +303,21 @@ class SystemTimer extends System {
    * Create a repeat timer while the time is in seconds instead.
    * @memberof Timer
    * @method intervalSec
-   * @see Timer.interval
+   * @param {number}    interval  Time in seconds
+   * @param {function}  callback  Callback function to run, when timer ends
+   * @param {object}    context   Context of the callback to be invoked
+   * @param {string}    [tag]     Tag of this timer, default is '0'
+   * @return {Timer} Timer instance
    */
   intervalSec(interval, callback, context, tag = '0') {
-    this.later(Math.floor(interval * 1000), callback, context, tag);
+    return this.interval(Math.floor(interval * 1000), callback, context, tag);
   }
 
   /**
    * Remove a timer.
    * @memberof Timer
    * @method remove
-   * @param {Timer} timer
+   * @param {Timer} timer Timer to remove
    */
   remove(timer) {
     if (timer) {timer.removed = true;}
@@ -304,7 +327,8 @@ class SystemTimer extends System {
    * Pause timers with a specific tag.
    * @memberof Timer
    * @method pauseTimersTagged
-   * @param  {string} tag
+   * @param  {string} tag Tag of timers to resume
+   * @return {SystemTimer} Self for chaining
    */
   pauseTimersTagged(tag) {
     if (this.timers[tag]) {
@@ -319,7 +343,8 @@ class SystemTimer extends System {
    * Resume timers with a specific tag.
    * @memberof Timer
    * @method resumeTimersTagged
-   * @param  {string} tag
+   * @param  {string} tag Tag of timers to resume
+   * @return {SystemTimer} Self for chaining
    */
   resumeTimersTagged(tag) {
     if (this.timers[tag]) {

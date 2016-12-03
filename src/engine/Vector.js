@@ -19,13 +19,18 @@ const pool = [];
  * @param {number} [y=0]  Position of the point on the y axis
  */
 class Vector {
+  /**
+   * @constructor
+   * @param  {Number} [x=0] X coordinate
+   * @param  {Number} [y=0] Y coordinate
+   */
   constructor(x, y) {
     /**
-     * @type {number}
+     * @type {Number}
      */
     this.x = x || 0;
     /**
-     * @type {number}
+     * @type {Number}
      */
     this.y = y || ((y !== 0) ? this.x : 0);
   }
@@ -271,7 +276,7 @@ class Vector {
    * Get angle between two vectors from origin.
    * @method angleFromOrigin
    * @memberof Vector#
-   * @param {Vector} vector
+   * @param {Vector} vector The vector to calculate angle from.
    * @return {number} Angle.
    */
   angleFromOrigin(vector) {
@@ -393,7 +398,7 @@ class Vector {
    * Check whether the direction from self to other vector is clockwise.
    * @method sign
    * @memberof Vector#
-   * @param {Vector} vector
+   * @param {Vector} vector Vector to calculate from
    * @return {number} Result (1 = CW, -1 = CCW)
    */
   sign(vector) {

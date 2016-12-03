@@ -20,7 +20,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v1.1.0-dev',
+  version: 'v1.0.1',
 
   /**
    * Set to `false` to disable version info console output.
@@ -116,8 +116,9 @@ Object.assign(core, {
   /**
    * Switch to a game.
    * @memberof module:engine/core
-   * @param {Game} gameCtor       Game class to be set
-   * @param {boolean} newInstance Whether create new instance for this game.
+   * @param {Game} gameCtor               Game class to be set
+   * @param {Boolean} [newInstance=false] Whether create new instance for this game.
+   * @param {Object} [param={}]           Parameters to pass to the game(to `Game#awake`)
    */
   setGame: function(gameCtor, newInstance = false, param = {}) {
     if (!gameCtor.id) {
@@ -161,9 +162,9 @@ Object.assign(core, {
    * // And resume after the ad finished
    * core.resume('ad');
    *
-   * @param {string} reason  The reason to pause, you have to pass
-   *                         the same reason when resume from this
-   *                         pause.
+   * @param {String} [reason='untitled']  The reason to pause, you have to pass
+   *                                      the same reason when resume from this
+   *                                      pause.
    */
   pause: function(reason = 'untitled') {
     let i, alreadyPaused = false;
@@ -186,8 +187,8 @@ Object.assign(core, {
   /**
    * Unpause the engine.
    * @memberof module:engine/core
-   * @param {string} reasonP Resume from pause tagged with this reason
-   * @param {boolean} force Whether force to resume
+   * @param {String} [reason='untitled']  Resume from pause tagged with this reason
+   * @param {Boolean} [force=false]       Whether force to resume
    */
   resume: function(reason = 'untitled', force = false) {
     let i;
@@ -290,9 +291,16 @@ if (config.gfx && config.gfx.resolution) {
 let nextGame = null;
 let loopId = 0;
 let resizeFunc = _letterBoxResize;
+/**
+ * @private
+ */
 function startLoop() {
   loopId = requestAnimationFrame(loop);
 }
+/**
+ * @param {Number} timestamp Timestamp at this frame.
+ * @private
+ */
 function loop(timestamp) {
   loopId = requestAnimationFrame(loop);
 
@@ -335,9 +343,15 @@ function loop(timestamp) {
     core.emit('tick');
   }
 }
+/**
+ * @private
+ */
 core.endLoop = function endLoop() {
   cancelAnimationFrame(loopId);
 };
+/**
+ * @private
+ */
 function boot() {
   window.removeEventListener('load', boot);
   document.removeEventListener('DOMContentLoaded', boot);
@@ -348,7 +362,10 @@ function boot() {
   core.view = document.getElementById(config.canvas || 'game');
   core.containerView = document.getElementById('container');
 
-  // Keep focus when mouse/touch event occurs on the canvas
+  /**
+   * Keep focus when mouse/touch event occurs on the canvas.
+   * @private
+   */
   function focus() { window.focus(); }
   core.view.addEventListener('mousedown', focus);
   core.view.addEventListener('touchstart', focus);
@@ -502,6 +519,11 @@ function boot() {
   core.emit('boot');
   core.emit('booted');
 }
+/**
+ * @param {Object|Number} res Resolution configs
+ * @return {Number} Properly choosed resolution number
+ * @private
+ */
 function chooseProperResolution(res) {
   // Default value
   if (!res) {
@@ -530,6 +552,9 @@ function chooseProperResolution(res) {
     return result;
   }
 }
+/**
+ * @private
+ */
 function resizeRotatePrompt() {
   core.rotatePromptElm.style.width = `${window.innerWidth}px`;
   core.rotatePromptElm.style.height = `${window.innerHeight}px`;
@@ -554,6 +579,9 @@ function resizeRotatePrompt() {
 let windowSize = { x: 1, y: 1 };
 let scaledWidth, scaledHeight;
 let result, container;
+/**
+ * @private
+ */
 function _letterBoxResize() {
   // Update sizes
   windowSize.x = window.innerWidth;
@@ -583,6 +611,9 @@ function _letterBoxResize() {
     window.scrollTo(0, 1);
   }
 }
+/**
+ * @private
+ */
 function _cropResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
@@ -597,6 +628,9 @@ function _cropResize() {
     window.scrollTo(0, 1);
   }
 }
+/**
+ * @private
+ */
 function _scaleInnerResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
@@ -619,6 +653,9 @@ function _scaleInnerResize() {
     window.scrollTo(0, 1);
   }
 }
+/**
+ * @private
+ */
 function _scaleOuterResize() {
   // Update sizes
   core.viewSize.set(window.innerWidth, window.innerHeight);
@@ -643,10 +680,21 @@ function _scaleOuterResize() {
 }
 
 // CSS helpers
+/**
+ * Alien an element to the center.
+ * @param {HTMLElement} el  Element to align
+ * @param {Number} w        Width of this element
+ * @param {Number} h        Height of this element
+ * @private
+ */
 function _alignToWindowCenter(el, w, h) {
   el.style.marginLeft = `${Math.floor((window.innerWidth - w) / 2)}px`;
   el.style.marginTop = `${Math.floor((window.innerHeight - h) / 2)}px`;
 }
+/**
+ * Prevent mouse scroll
+ * @private
+ */
 function _noPageScroll() {
   document.ontouchmove = function(event) {
     event.preventDefault();

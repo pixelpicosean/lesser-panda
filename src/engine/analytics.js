@@ -18,9 +18,12 @@ const config = require('game/config');
  * analytics.send('category', 'action', 'label', 'value');
  *
  * @class Analytics
- * @constructor
  */
 class Analytics {
+  /**
+   * @constructor
+   * @param {Object} settings Settings object
+   */
   constructor(settings) {
     /**
      * @private
@@ -60,10 +63,10 @@ class Analytics {
    * Send event to analytics.
    * @method send
    * @memberof Analytics#
-   * @param {string} category
-   * @param {string} action
-   * @param {string} [label]
-   * @param {string} [value]
+   * @param {String} category Category of this event
+   * @param {String} action   Action of this event
+   * @param {String} [label]  Label of this event
+   * @param {String} [value]  Value of this event
    */
   send(category, action, label, value) {
     if (!navigator.onLine) {return;}

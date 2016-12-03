@@ -2,7 +2,14 @@ const System = require('engine/system');
 const keyboard = require('./keyboard');
 const { removeItems } = require('engine/utils/array');
 
+/**
+ * Input system which provides key bindings.
+ * @class SystemInput
+ */
 class SystemInput extends System {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
@@ -147,6 +154,7 @@ class SystemInput extends System {
    * Key down listener
    * @memberof SystemInput#
    * @method keydown
+   * @param {String} k Name of the key
    * @private
    */
   keydown(k) {
@@ -162,6 +170,7 @@ class SystemInput extends System {
    * Key up listener
    * @memberof SystemInput#
    * @method keyup
+   * @param {String} k Name of the key
    * @private
    */
   keyup(k) {
