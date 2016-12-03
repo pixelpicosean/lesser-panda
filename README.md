@@ -64,6 +64,10 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.1.0-dev
+
+- Nothing yet.
+
 ### 1.0.1
 
 - New `input` system support key-maps bindings, on top of `keyboard`.
