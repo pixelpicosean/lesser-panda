@@ -211,7 +211,7 @@ class AABBSolver {
         resA.x = overlapX * Math.cos(angle);
         resA.y = overlapY * Math.sin(angle);
       }
-      else {
+      else if (pushB) {
         resB.x = -overlapX * Math.cos(angle);
         resB.y = -overlapY * Math.sin(angle);
       }
