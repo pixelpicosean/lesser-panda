@@ -90,6 +90,7 @@ class Container extends DisplayObject {
       }
 
       child.parent = this;
+      child.system = this.system;
 
       this.children.splice(index, 0, child);
 
@@ -221,6 +222,7 @@ class Container extends DisplayObject {
     var child = this.getChildAt(index);
 
     child.parent = null;
+    child.system = null;
     removeItems(this.children, index, 1);
 
       // TODO - lets either do all callbacks or all events.. not both!
@@ -248,6 +250,7 @@ class Container extends DisplayObject {
 
       for (i = 0; i < removed.length; ++i) {
         removed[i].parent = null;
+        removed[i].system = null;
       }
 
       this.onChildrenChange(beginIndex);

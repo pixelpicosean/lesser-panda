@@ -157,7 +157,12 @@ class DisplayObject extends EventEmitter {
      */
     this._mask = null;
 
-    this.system = null;
+    /**
+     * Reference to the gfx system this object is added to
+     * @type {SystemGfx}
+     * @private
+     */
+    this._system = null;
   }
 
   /**
@@ -280,6 +285,21 @@ Object.defineProperties(DisplayObject.prototype, {
     },
     set: function(value) {
       this._filters = value && value.slice();
+    },
+  },
+
+  system: {
+    get: function() {
+      return this._system;
+    },
+    set: function(value) {
+      this._system = value;
+
+      if (Array.isArray(this.children)) {
+        for (var i = 0; i < this.children.length; i++) {
+          this.children[i].system = value;
+        }
+      }
     },
   },
 
