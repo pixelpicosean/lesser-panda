@@ -1,17 +1,14 @@
-const Sprite = require('./core/sprites/Sprite');
-const textureFromData = require('./utils').textureFromData;
+const Node = require('./core/Node');
 const CONST = require('./const');
-require('./core/sprites/webgl/SpriteRenderer');
 
 /**
- * Factory function for `Sprite`.
+ * Factory function for `Node`.
  *
  * @param {object} data
- * @return {Sprite}
+ * @return {Node}
  */
 module.exports = function(data) {
-  const tex = textureFromData(data.texture);
-  const inst = new Sprite(tex);
+  const inst = new Node();
 
   for (let k in data) {
     switch (k) {
@@ -25,8 +22,6 @@ module.exports = function(data) {
       case 'x':
       case 'y':
       case 'interactive':
-      // - Sprite
-      case 'tint':
         inst[k] = data[k];
         break;
 
@@ -35,9 +30,6 @@ module.exports = function(data) {
       case 'pivot':
       case 'position':
       case 'skew':
-
-      // - Sprite
-      case 'anchor':
         inst[k].x = data[k].x || 0;
         inst[k].y = data[k].y || 0;
         break;

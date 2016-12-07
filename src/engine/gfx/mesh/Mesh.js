@@ -1,6 +1,6 @@
 const Vector = require('engine/Vector');
 const { Polygon, Rectangle } = require('../core/math');
-const Container = require('../core/display/Container');
+const Node = require('../core/Node');
 const CONST = require('../const');
 
 const tempPoint = new Vector();
@@ -9,7 +9,7 @@ const tempPolygon = new Polygon();
 /**
  * Base mesh class
  * @class
- * @extends Container
+ * @extends Node
  * @memberof mesh
  * @param texture {Texture} The texture to use
  * @param [vertices] {Float32Array} if you want to specify the vertices
@@ -17,7 +17,7 @@ const tempPolygon = new Polygon();
  * @param [indices] {Uint16Array} if you want to specify the indices
  * @param [drawMode] {number} the drawMode, can be any of the Mesh.DRAW_MODES consts
  */
-class Mesh extends Container {
+class Mesh extends Node {
   constructor(texture, vertices, uvs, indices, drawMode) {
     super();
 

@@ -1,6 +1,6 @@
 const Vector = require('engine/Vector');
 const { removeItems } = require('engine/utils/array');
-const Container = require('../display/Container');
+const Node = require('../Node');
 const Sprite = require('../sprites/Sprite');
 
 /**
@@ -22,7 +22,7 @@ const Sprite = require('../sprites/Sprite');
  * http://www.bmglyph.com/ for mac.
  *
  * @class
- * @extends Container
+ * @extends Node
  * @param text {string} The copy that you would like the text to display
  * @param style {object} The style parameters
  * @param style.font {string|object} The font descriptor for the object, can be passed as a string of form
@@ -33,7 +33,7 @@ const Sprite = require('../sprites/Sprite');
  *      single line text
  * @param [style.tint=0xFFFFFF] {number} The tint color
  */
-class BitmapText extends Container {
+class BitmapText extends Node {
   constructor(text, style = {}) {
     super();
 

@@ -1,4 +1,4 @@
-const Container = require('./core/display/Container');
+const Node = require('./core/Node');
 const Sprite = require('./core/sprites/Sprite');
 const Texture = require('./core/textures/Texture');
 const { textureFromData } = require('./utils');
@@ -7,7 +7,7 @@ const { filmstrip } = require('./utils');
 const TILESETS = {};
 const POOL = [];
 
-class BackgroundMap extends Container {
+class BackgroundMap extends Node {
   constructor(tilesize, data, tileset) {
     super();
 

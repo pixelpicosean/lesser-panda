@@ -1,6 +1,6 @@
 const math = require('../math');
 const Texture = require('../textures/Texture');
-const Container = require('../display/Container');
+const Node = require('../Node');
 const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
 const utils = require('../utils');
 const CONST = require('../../const');
@@ -18,10 +18,10 @@ const canvasRenderWorldTransform = new math.Matrix();
  * ```
  *
  * @class
- * @extends Container
+ * @extends Node
  * @param texture {Texture} The texture for this sprite
  */
-class Sprite extends Container {
+class Sprite extends Node {
   constructor(texture) {
     super();
 
@@ -479,7 +479,7 @@ Sprite.prototype._renderCanvas = function(renderer) {
  * @param [destroyBaseTexture=false] {boolean} Should it destroy the base texture of the sprite as well
  */
 Sprite.prototype.destroy = function(destroyTexture, destroyBaseTexture) {
-  Container.prototype.destroy.call(this);
+  Node.prototype.destroy.call(this);
 
   this.anchor = null;
 

@@ -15,7 +15,7 @@ module.exports = function(data) {
   for (let k in data) {
     switch (k) {
       // Directly set
-      // - Container
+      // - Node
       case 'alpha':
       case 'width':
       case 'height':
@@ -30,7 +30,7 @@ module.exports = function(data) {
         break;
 
       // Set vector
-      // - Container
+      // - Node
       case 'pivot':
       case 'position':
       case 'skew':
@@ -38,7 +38,7 @@ module.exports = function(data) {
         inst[k].y = data[k].y || 0;
         break;
 
-      // - Container
+      // - Node
       case 'scale':
         inst[k].x = data[k].x || 1;
         inst[k].y = data[k].y || 1;
