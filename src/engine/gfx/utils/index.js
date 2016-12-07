@@ -33,7 +33,7 @@ module.exports.textureFromData = function(data) {
   else if (Array.isArray(data)) {
     return loader.resources[data[0]].textures[data[1]];
   }
-  else if (data instanceof Texture) {
+  else if (data.hasOwnProperty('baseTexture')) {
     return data;
   }
 };
