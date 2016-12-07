@@ -1,6 +1,6 @@
 /**
  * Default property values of accessible objects
- * used by {@link PIXI.accessibility.AccessibilityManager}.
+ * used by {@link AccessibilityManager}.
  *
  * @mixin
  * @example

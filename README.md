@@ -64,6 +64,15 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.0.2
+
+This version contains some breaking change, but I won't bump it to v1.1 since all the changes
+are applied to the built-in `gfx` module. It does not affect any public APIs.
+
+- Merge `DisplayObject` and `Container` into one and rename it as `Node`.
+- Remove `fromImage` and `fromFrame` functions from `Gfx` elements, `loader` should be used instead.
+- Add support to set Sprite textures using keys. (`sprite.texture = 'my_image.png'`)
+
 ### 1.0.1
 
 - New `input` system support key-maps bindings, on top of `keyboard`.

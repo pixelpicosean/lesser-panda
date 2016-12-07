@@ -1,4 +1,4 @@
-var Container = require('../display/Container'),
+var Node = require('../Node'),
   Texture = require('../textures/Texture'),
   CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer'),
   CanvasGraphics = require('../renderers/canvas/utils/CanvasGraphics'),
@@ -12,10 +12,9 @@ var Container = require('../display/Container'),
  * rectangles to the display, and to color and fill them.
  *
  * @class
- * @extends PIXI.Container
- * @memberof PIXI
+ * @extends Node
  */
-class Graphics extends Container {
+class Graphics extends Node {
   constructor() {
     super();
 
@@ -1082,7 +1081,7 @@ Graphics.prototype.drawShape = function(shape) {
  * Destroys the Graphics object.
  */
 Graphics.prototype.destroy = function() {
-  Container.prototype.destroy.apply(this, arguments);
+  Node.prototype.destroy.apply(this, arguments);
 
     // destroy each of the GraphicsData objects
   for (var i = 0; i < this.graphicsData.length; ++i) {

@@ -1,10 +1,8 @@
 const Resource = require('engine/loader').Resource;
-const dirname = require('./dirname');
 const Texture = require('../core/textures/Texture');
 const utils = require('../core/utils');
 const math = require('../core/math');
 const async = require('engine/loader').async;
-const Loader = require('engine/loader').Loader;
 
 const BATCH_SIZE = 1000;
 

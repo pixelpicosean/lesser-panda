@@ -1,29 +1,12 @@
 const Texture = require('../core/textures/Texture');
 const { Rectangle } = require('../core/math');
 const loader = require('engine/loader');
-const { Resource } = loader;
-
-// General asset middlewares (including texture support)
-const blobMiddlewareFactory = require('engine/loader/middlewares/parsing/blob').blobMiddlewareFactory;
-const textureParser = require('../loaders/textureParser');
-const spritesheetParser = require('../loaders/spritesheetParser');
-const bitmapFontParser = require('../loaders/bitmapFontParser');
-Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
-
-// - parse any blob into more usable objects (e.g. Image)
-loader.use(blobMiddlewareFactory());
-// - parse any Image objects into textures
-loader.use(textureParser());
-// - parse any spritesheet data into multiple textures
-loader.use(spritesheetParser());
-// - parse any spritesheet data into multiple textures
-loader.use(bitmapFontParser());
 
 /**
  * Get texture instance from data.
  * @param {String|Array|Texture} data   Key of the texture.
  */
-module.exports.textureFromData = function(data) {
+function textureFromData(data) {
   if (!data) {
     return undefined;
   }
@@ -33,10 +16,10 @@ module.exports.textureFromData = function(data) {
   else if (Array.isArray(data)) {
     return loader.resources[data[0]].textures[data[1]];
   }
-  else if (data instanceof Texture) {
+  else if (data.hasOwnProperty('baseTexture')) {
     return data;
   }
-};
+}
 
 /**
  * Create textures for tiles in a tileset. Can also be used to extract
@@ -47,7 +30,8 @@ module.exports.textureFromData = function(data) {
  * @param  {number} tileHeight  Height of a single tile.
  * @return {array<Texture>}     List of textures.
  */
-module.exports.filmstrip = function(tileset, tileWidth, tileHeight) {
+function filmstrip(tilesetp, tileWidth, tileHeight) {
+  var tileset = textureFromData(tilesetp);
   var strip = [];
 
   var w = tileset.width;
@@ -67,4 +51,7 @@ module.exports.filmstrip = function(tileset, tileWidth, tileHeight) {
   }
 
   return strip;
-};
+}
+
+module.exports.textureFromData = textureFromData;
+module.exports.filmstrip = filmstrip;

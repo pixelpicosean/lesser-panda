@@ -1,8 +1,8 @@
-const Container = require('../display/Container');
+const Node = require('../Node');
 const CONST = require('../../const');
 
 /**
- * The ParticleContainer class is a really fast version of the Container built solely for speed,
+ * The ParticleContainer class is a really fast version of the Node built solely for speed,
  * so use when you need a lot of sprites or particles. The tradeoff of the ParticleContainer is that advanced
  * functionality will not work. ParticleContainer implements only the basic object transform (position, scale, rotation).
  * Any other functionality like tinting, masking, etc will not work on sprites in this batch.
@@ -22,7 +22,7 @@ const CONST = require('../../const');
  * And here you have a hundred sprites that will be renderer at the speed of light.
  *
  * @class
- * @extends Container
+ * @extends Node
  * @param [maxSize=15000] {number} The maximum number of particles that can be renderer by the container.
  * @param [properties] {object} The properties of children that should be uploaded to the gpu and applied.
  * @param [properties.scale=false] {boolean} When true, scale be uploaded and applied.
@@ -32,7 +32,7 @@ const CONST = require('../../const');
  * @param [properties.alpha=false] {boolean} When true, alpha be uploaded and applied.
  * @param [batchSize=15000] {number} Number of particles per batch.
  */
-class ParticleContainer extends Container {
+class ParticleContainer extends Node {
   constructor(maxSize, properties, batchSize) {
     super();
 
@@ -134,7 +134,7 @@ ParticleContainer.prototype.updateTransform = function() {
 
     // TODO don't need to!
   this.displayObjectUpdateTransform();
-    //  PIXI.Container.prototype.updateTransform.call( this );
+    //  PIXI.Node.prototype.updateTransform.call( this );
 };
 
 /**
@@ -284,7 +284,7 @@ ParticleContainer.prototype.renderCanvas = function(renderer) {
  * @param [destroyChildren=false] {boolean} if set to true, all the children will have their destroy method called as well
  */
 ParticleContainer.prototype.destroy = function() {
-  Container.prototype.destroy.apply(this, arguments);
+  Node.prototype.destroy.apply(this, arguments);
 
   if (this._buffers) {
     for (var i = 0; i < this._buffers.length; ++i) {

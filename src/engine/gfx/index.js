@@ -5,9 +5,28 @@ const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
 const { isWebGLSupported } = require('./core/utils');
 const CONST = require('./const');
-const Container = require('./Container');
+const Node = require('./Node');
 const config = require('game/config');
 
+// General asset middlewares (including texture support)
+const loader = require('engine/loader');
+const { Resource } = loader;
+const blobMiddlewareFactory = require('engine/loader/middlewares/parsing/blob').blobMiddlewareFactory;
+const textureParser = require('./loaders/textureParser');
+const spritesheetParser = require('./loaders/spritesheetParser');
+const bitmapFontParser = require('./loaders/bitmapFontParser');
+Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
+
+// - parse any blob into more usable objects (e.g. Image)
+loader.use(blobMiddlewareFactory());
+// - parse any Image objects into textures
+loader.use(textureParser());
+// - parse any spritesheet data into multiple textures
+loader.use(spritesheetParser());
+// - parse any spritesheet data into multiple textures
+loader.use(bitmapFontParser());
+
+// System
 let sharedRenderer = null;
 
 class SystemGfx extends System {
@@ -52,9 +71,9 @@ class SystemGfx extends System {
     /**
      * Root drawing element.
      * @memberof SystemGfx#
-     * @type {Container}
+     * @type {Node}
      */
-    this.root = Container();
+    this.root = Node();
     this.root.system = this;
 
     /**
@@ -130,7 +149,7 @@ class SystemGfx extends System {
       return this;
     }
 
-    this.layers[name] = Container().addTo(c);
+    this.layers[name] = Node().addTo(c);
 
     return this;
   }

@@ -30,10 +30,10 @@ const tempMatrix = new math.Matrix();
  * ```
  *
  * The Sprite in this case will be rendered to a position of 0,0. To render this sprite at its actual
- * position a Container should be used:
+ * position a Node should be used:
  *
  * ```js
- * var doc = new Container();
+ * var doc = new Node();
  *
  * doc.addChild(sprite);
  *
