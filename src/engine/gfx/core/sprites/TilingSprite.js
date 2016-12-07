@@ -390,40 +390,4 @@ Object.defineProperties(TilingSprite.prototype, {
   },
 });
 
-/**
- * Helper function that creates a tiling sprite that will use a texture from the TextureCache based on the frameId
- * The frame ids are created when a Texture packer file has been loaded
- *
- * @static
- * @param frameId {string} The frame Id of the texture in the cache
- * @return {extras.TilingSprite} A new TilingSprite using a texture from the texture cache matching the frameId
- * @param width {number}  the width of the tiling sprite
- * @param height {number} the height of the tiling sprite
- */
-TilingSprite.fromFrame = function(frameId,width,height) {
-  var texture = utils.TextureCache[frameId];
-
-  if (!texture) {
-    throw new Error('The frameId "' + frameId + '" does not exist in the texture cache ' + this);
-  }
-
-  return new TilingSprite(texture, width, height);
-};
-
-/**
- * Helper function that creates a sprite that will contain a texture based on an image url
- * If the image is not in the texture cache it will be loaded
- *
- * @static
- * @param imageId {string} The image url of the texture
- * @param width {number}  the width of the tiling sprite
- * @param height {number} the height of the tiling sprite
- * @param [crossorigin=(auto)] {boolean} if you want to specify the cross-origin parameter
- * @param [scaleMode=SCALE_MODES.DEFAULT] {number} if you want to specify the scale mode, see {@link SCALE_MODES} for possible values
- * @return {extras.TilingSprite} A new TilingSprite using a texture from the texture cache matching the image id
- */
-TilingSprite.fromImage = function(imageId, width, height, crossorigin, scaleMode) {
-  return new TilingSprite(Texture.fromImage(imageId, crossorigin, scaleMode),width,height);
-};
-
 module.exports = TilingSprite;

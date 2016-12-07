@@ -491,38 +491,4 @@ Sprite.prototype.destroy = function(destroyTexture, destroyBaseTexture) {
   this.shader = null;
 };
 
-// some helper functions..
-
-/**
- * Helper function that creates a sprite that will contain a texture from the TextureCache based on the frameId
- * The frame ids are created when a Texture packer file has been loaded
- *
- * @static
- * @param frameId {string} The frame Id of the texture in the cache
- * @param [crossorigin=(auto)] {boolean} if you want to specify the cross-origin parameter
- * @param [scaleMode=SCALE_MODES.DEFAULT] {number} if you want to specify the scale mode, see {@link SCALE_MODES} for possible values
- * @return {Sprite} A new Sprite using a texture from the texture cache matching the frameId
- */
-Sprite.fromFrame = function(frameId) {
-  var texture = utils.TextureCache[frameId];
-
-  if (!texture) {
-    throw new Error('The frameId "' + frameId + '" does not exist in the texture cache');
-  }
-
-  return new Sprite(texture);
-};
-
-/**
- * Helper function that creates a sprite that will contain a texture based on an image url
- * If the image is not in the texture cache it will be loaded
- *
- * @static
- * @param imageId {string} The image url of the texture
- * @return {Sprite} A new Sprite using a texture from the texture cache matching the image id
- */
-Sprite.fromImage = function(imageId, crossorigin, scaleMode) {
-  return new Sprite(Texture.fromImage(imageId, crossorigin, scaleMode));
-};
-
 module.exports = Sprite;
