@@ -1,18 +1,18 @@
 const core = require('engine/core');
-const DisplayObject = require('../core/display/DisplayObject');
+const Node = require('../core/Node');
 const InteractionData = require('./InteractionData');
 const Vector = require('engine/Vector');
 const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
 
-// Mix interactiveTarget into DisplayObject.prototype
+// Mix interactiveTarget into Node.prototype
 Object.assign(
-  DisplayObject.prototype,
+  Node.prototype,
   require('./interactiveTarget')
 );
 
 /**
- * The interaction manager deals with mouse and touch events. Any DisplayObject can be interactive
+ * The interaction manager deals with mouse and touch events. Any Node can be interactive
  * if its interactive parameter is set to true
  * This manager also supports multitouch.
  *
@@ -70,7 +70,7 @@ function InteractionManager(renderer, options = {}) {
   };
 
     /**
-     * Tiny little interactiveData pool !
+     * Tiny little interactiveData pool!
      *
      * @member {interaction.InteractionData[]}
      */
@@ -87,8 +87,7 @@ function InteractionManager(renderer, options = {}) {
     /**
      * This property determins if mousemove and touchmove events are fired only when the cursror is over the object
      * Setting to true will make things work more in line with how the DOM verison works.
-     * Setting to false can make things easier for things like dragging
-     * It is currently set to false as this is how pixi used to work. This will be set to true in future versions of pixi.
+     * Setting to false can make things easier for things like dragging.
      * @member {boolean}
      * @private
      */
@@ -301,7 +300,7 @@ InteractionManager.prototype.update = function(deltaTime) {
 /**
  * Dispatches an event on the display object that was interacted with
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} the display object in question
+ * @param displayObject {Node} the display object in question
  * @param eventString {string} the name of the event (e.g, mousedown)
  * @param eventData {object} the event data object
  * @private
@@ -338,7 +337,7 @@ InteractionManager.prototype.mapPositionToPoint = function(point, x, y) {
  * It will also take care of hit testing the interactive objects and passes the hit across in the function.
  *
  * @param  {Vector} point the point that is tested for collision
- * @param  {Container|Sprite|extras.TilingSprite} displayObject the displayObject that will be hit test (recurcsivly crawls its children)
+ * @param  {Node} displayObject the displayObject that will be hit test (recurcsivly crawls its children)
  * @param  {Function} func the function that will be called on each interactive object. The displayObject and hit will be passed to the function
  * @param  {boolean} hitTest this indicates if the objects inside should be hit test against the point
  * @return {boolean} returns true if the displayObject hit the point
@@ -449,7 +448,7 @@ InteractionManager.prototype.onMouseDown = function(event) {
 /**
  * Processes the result of the mouse down check and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the dispay object
  * @private
  */
@@ -486,7 +485,7 @@ InteractionManager.prototype.onMouseUp = function(event) {
 /**
  * Processes the result of the mouse up check and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -543,7 +542,7 @@ InteractionManager.prototype.onMouseMove = function(event) {
 /**
  * Processes the result of the mouse move check and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -581,7 +580,7 @@ InteractionManager.prototype.onMouseOut = function(event) {
 /**
  * Processes the result of the mouse over/out check and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -638,7 +637,7 @@ InteractionManager.prototype.onTouchStart = function(event) {
 /**
  * Processes the result of a touch check and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -684,7 +683,7 @@ InteractionManager.prototype.onTouchEnd = function(event) {
 /**
  * Processes the result of the end of a touch and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
@@ -738,7 +737,7 @@ InteractionManager.prototype.onTouchMove = function(event) {
 /**
  * Processes the result of a touch move check and dispatches the event if need be
  *
- * @param displayObject {Container|Sprite|extras.TilingSprite} The display object that was tested
+ * @param displayObject {Node} The display object that was tested
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */

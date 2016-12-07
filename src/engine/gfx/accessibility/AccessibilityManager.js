@@ -1,25 +1,25 @@
-const DisplayObject = require('../core/display/DisplayObject');
+const Node = require('../core/Node');
 const { removeItems } = require('engine/utils/array');
 const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
 
 // add some extra variables to the container..
 Object.assign(
-  DisplayObject.prototype,
+  Node.prototype,
   require('./accessibleTarget')
 );
 
 
 /**
- * The Accessibility manager reacreates the ability to tab and and have content read by screen readers. This is very important as it can possibly help people with disabilities access pixi content.
- * Much like interaction any DisplayObject can be made accessible. This manager will map the events as if the mouse was being used, minimizing the efferot required to implement.
+ * The Accessibility manager reacreates the ability to tab and and have content read by screen readers. This is very important as it can possibly help people with disabilities access content.
+ * Much like interaction any Node can be made accessible. This manager will map the events as if the mouse was being used, minimizing the efferot required to implement.
  *
  * @class
  * @constructor
  * @param {CanvasRenderer|WebGLRenderer} renderer   A reference to the current renderer
  */
 function AccessibilityManager(renderer) {
-  // first we create a div that will sit over the pixi element. This is where the div overlays will go.
+  // first we create a div that will sit over the node. This is where the div overlays will go.
   var div = document.createElement('div');
 
   div.style.width = 100 + 'px';
@@ -30,20 +30,20 @@ function AccessibilityManager(renderer) {
    //
   div.style.zIndex = 2;
 
-    /**
-     * This is the dom element that will sit over the pixi element. This is where the div overlays will go.
-     *
-     * @type {HTMLElement}
-     * @private
-     */
+  /**
+   * This is the dom element that will sit over the node. This is where the div overlays will go.
+   *
+   * @type {HTMLElement}
+   * @private
+   */
   this.div = div;
 
-    /**
-     * A simple pool for storing divs.
-     *
-     * @type {Array}
-     * @private
-     */
+  /**
+   * A simple pool for storing divs.
+   *
+   * @type {Array}
+   * @private
+   */
   this.pool = [];
 
   /**
@@ -54,44 +54,44 @@ function AccessibilityManager(renderer) {
    */
   this.renderId = 0;
 
-    /**
-     * Setting this to true will visually show the divs
-     *
-     * @type {Boolean}
-     */
+  /**
+   * Setting this to true will visually show the divs
+   *
+   * @type {Boolean}
+   */
   this.debug = false;
 
-    /**
-     * The renderer this accessibility manager works for.
-     *
-     * @member {SystemRenderer}
-     */
+  /**
+   * The renderer this accessibility manager works for.
+   *
+   * @member {SystemRenderer}
+   */
   this.renderer = renderer;
 
-    /**
-     * The array of currently active accessible items.
-     *
-     * @member {Array}
-     * @private
-     */
+  /**
+   * The array of currently active accessible items.
+   *
+   * @member {Array}
+   * @private
+   */
   this.children = [];
 
-    /**
-     * pre bind the functions..
-     */
+  /**
+   * pre bind the functions..
+   */
   this._onKeyDown = this._onKeyDown.bind(this);
   this._onMouseMove = this._onMouseMove.bind(this);
 
-    /**
-     * stores the state of the manager. If there are no accessible objects or the mouse is moving the will be false.
-     *
-     * @member {Array}
-     * @private
-     */
+  /**
+   * stores the state of the manager. If there are no accessible objects or the mouse is moving the will be false.
+   *
+   * @member {Array}
+   * @private
+   */
   this.isActive = false;
 
 
-    // let listen for tab.. once pressed we can fire up and show the accessibility layer
+  // let listen for tab.. once pressed we can fire up and show the accessibility layer
   window.addEventListener('keydown', this._onKeyDown, false);
 }
 
@@ -143,7 +143,7 @@ AccessibilityManager.prototype.deactivate = function() {
 /**
  * This recursive function will run throught he scene graph and add any new accessible objects to the DOM layer.
  * @memberof AccessibilityManager#
- * @param {Container} displayObject   The DisplayObject to check.
+ * @param {Node} displayObject   The Node to check.
  * @private
  */
 AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject) {
@@ -173,7 +173,7 @@ AccessibilityManager.prototype.updateAccessibleObjects = function(displayObject)
 
 
 /**
- * Before each render this function will ensure that all divs are mapped correctly to their DisplayObjects
+ * Before each render this function will ensure that all divs are mapped correctly to their Node
  * @memberof AccessibilityManager#
  * @private
  */
@@ -264,9 +264,9 @@ AccessibilityManager.prototype.capHitArea = function(hitArea) {
 
 
 /**
- * Adds a DisplayObject to the accessibility manager.
+ * Adds a Node to the accessibility manager.
  * @memberof AccessibilityManager#
- * @param {Container} displayObject Object to add
+ * @param {Node} displayObject Object to add
  * @private
  */
 AccessibilityManager.prototype.addChild = function(displayObject) {
@@ -307,7 +307,7 @@ AccessibilityManager.prototype.addChild = function(displayObject) {
 
 
 /**
- * Maps the div button press to pixi's InteractionManager (click)
+ * Maps the div button press to InteractionManager (click)
  * @memberof AccessibilityManager#
  * @param {Event} e Mouse event
  * @private
@@ -318,7 +318,7 @@ AccessibilityManager.prototype._onClick = function(e) {
 };
 
 /**
- * Maps the div focus events to pixis InteractionManager (mouseover)
+ * Maps the div focus events to InteractionManager (mouseover)
  * @memberof AccessibilityManager#
  * @param {Event} e Mouse event
  * @private
@@ -329,7 +329,7 @@ AccessibilityManager.prototype._onFocus = function(e) {
 };
 
 /**
- * Maps the div focus events to pixis InteractionManager (mouseout)
+ * Maps the div focus events to InteractionManager (mouseout)
  * @memberof AccessibilityManager#
  * @param {Event} e Mouse event
  * @private

@@ -41,9 +41,9 @@ module.exports = {
 
     "comma-dangle": ["error", "always-multiline"],
     "no-console": "off",
-    "no-fallthrough": "off",
+    "no-fallthrough": "off"
 
-    "require-jsdoc": ["error", {
+    /*"require-jsdoc": ["error", {
       "require": {
         "FunctionDeclaration": true,
         "MethodDefinition": true,
@@ -52,6 +52,6 @@ module.exports = {
     }],
     "valid-jsdoc": ["error", {
       "requireReturn": false,
-    }],
+    }],*/
   },
 };

@@ -1,5 +1,7 @@
 const core = require('engine/core');
 
+const EmptySettings = {};
+
 /**
  * Add ability of object pooling to a class(function).
  * @param  {function} ctor        Target class(constructor).
@@ -14,17 +16,17 @@ module.exports = function(ctor, preAllocSize = 20) {
   core.once('ready', function() {
     ctor.pool = Array(preAllocSize);
     for (let i = 0; i < preAllocSize; i++) {
-      ctor.pool[i] = new ctor();
+      ctor.pool[i] = new ctor(0, 0, EmptySettings);
     }
   });
 
   // Get an initialized instance
-  ctor.create = function(s) {
+  ctor.create = function(x, y, s) {
     let a = this.pool.pop();
     if (!a) {
-      a = new this();
+      a = new this(x, y, s);
     }
-    a.init(s);
+    a.init(x, y, s);
     return a;
   };
 

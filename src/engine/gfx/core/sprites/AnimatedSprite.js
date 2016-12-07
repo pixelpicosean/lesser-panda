@@ -1,4 +1,3 @@
-const core = require('engine/core');
 const Sprite = require('./Sprite');
 const { merge } = require('engine/utils/object');
 

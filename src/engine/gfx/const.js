@@ -3,15 +3,6 @@
  */
 const CONST = {
   /**
-   * String of the current PIXI version
-   *
-   * @static
-   * @constant
-   * @property {string} VERSION
-   */
-  VERSION: '3.0.10-dev',
-
-  /**
    * @property {number} PI_2 - Two Pi
    * @constant
    * @static
