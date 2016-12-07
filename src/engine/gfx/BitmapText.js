@@ -1,5 +1,4 @@
 const BitmapText = require('./core/text/BitmapText');
-const textureFromData = require('./utils').textureFromData;
 const CONST = require('./const');
 require('./core/sprites/webgl/SpriteRenderer');
 

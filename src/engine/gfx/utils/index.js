@@ -19,7 +19,7 @@ function textureFromData(data) {
   else if (data.hasOwnProperty('baseTexture')) {
     return data;
   }
-};
+}
 
 /**
  * Create textures for tiles in a tileset. Can also be used to extract
@@ -51,7 +51,7 @@ function filmstrip(tilesetp, tileWidth, tileHeight) {
   }
 
   return strip;
-};
+}
 
 module.exports.textureFromData = textureFromData;
 module.exports.filmstrip = filmstrip;

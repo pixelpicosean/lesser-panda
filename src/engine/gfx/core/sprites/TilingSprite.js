@@ -5,8 +5,6 @@ const CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer');
 const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
 const TextureUvs = require('../textures/TextureUvs');
 const AbstractFilter = require('../renderers/webgl/filters/AbstractFilter');
-const utils = require('../utils');
-const Texture = require('../textures/Texture');
 
 /**
  * A tiling sprite is a fast way of rendering a tiling image
