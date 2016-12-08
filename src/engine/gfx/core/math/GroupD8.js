@@ -57,8 +57,6 @@ init();
  * Mirrors: vertical (8), main diagonal (10), horizontal (12), reverse diagonal (14)
  * This is the small part of gameofbombs.com portal system. It works.
  * @author Ivan @ivanpopelyshev
- *
- * @namespace GroupD8
  */
 var GroupD8 = {
   E: 0,
