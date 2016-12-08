@@ -3,11 +3,13 @@ const { BOX, CIRC } = require('./const');
 /**
  * Box shape for physic body.
  * @class Box
- * @constructor
- * @param {number} [width]
- * @param {number} [height]
  */
 class Box {
+  /**
+   * @constructor
+   * @param {number} [width]  Width of this box
+   * @param {number} [height] Height of this box
+   */
   constructor(width = 8, height = 8) {
     /**
       Width of rectangle.
@@ -35,10 +37,12 @@ class Box {
  * Circle shape for physic body.
  *
  * @class Circle
- * @constructor
- * @param {number} [radius]
  */
 class Circle {
+  /**
+   * @constructor
+   * @param {number} [radius]   Radius of this circle
+   */
   constructor(radius = 4) {
     /**
      * Radius of circle.

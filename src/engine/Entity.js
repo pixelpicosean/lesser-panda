@@ -123,6 +123,11 @@ class Entity {
    * @type {string}
    */
   get tag() { return this._tag; }
+  /**
+   * Set tag of this Entity
+   * @type {string}
+   * @param {String} t Tag to set
+   */
   set tag(t) {
     if (this.game) {
       this.game.changeEntityTag(this, t);
@@ -175,21 +180,21 @@ class Entity {
   ready() {}
   /**
    * Add a behavior to this entity.
-   * @param  {Object} bhv         Behavior to be added
+   * @param  {Object} behavior    Behavior to be added
    * @param  {Object} [settings]  Settings passed to this behavior
    * @return {Entity}             Self for chaining
    */
-  behave(behaviorp, settings) {
+  behave(behavior, settings) {
     var bhv;
-    switch (typeof(behaviorp)) {
+    switch (typeof(behavior)) {
       case 'function':
-        bhv = new behaviorp();
+        bhv = new behavior();
         break;
       case 'string':
-        bhv = new Behavior.types[behaviorp]();
+        bhv = new Behavior.types[behavior]();
         break;
       case 'object':
-        bhv = behaviorp;
+        bhv = behavior;
         break;
     }
 

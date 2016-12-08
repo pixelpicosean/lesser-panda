@@ -51,10 +51,12 @@ const { Box, Circle } = require('./shapes');
  * For more complex samples, take a look at the [physics sample code](https://github.com/pixelpicosean/lesser-panda-samples/blob/master/src/game/samples/physics.js).
  *
  * @class Collider
- * @constructor
- * @param {object} [properties] Settings to merge.
  */
 class Collider {
+  /**
+   * @constructor
+   * @param {object} [properties] Settings to merge.
+   */
   constructor(properties) {
     /**
      * ID of this collider.
@@ -166,7 +168,8 @@ class Collider {
    * Add this collider to the world.
    * @memberof Collider#
    * @method addTo
-   * @param {SystemPhysics} world
+   * @param {SystemPhysics} world   Physics system instance to add to
+   * @return {Collider}             Self for chaining
    */
   addTo(world) {
     world.addCollider(this);
@@ -222,6 +225,7 @@ class Collider {
    * @memberof Collider#
    * @method setup
    * @param {Object} settings Setting object.
+   * @return {Collider}       Self for chaining
    */
   setup(settings) {
     for (let k in settings) {

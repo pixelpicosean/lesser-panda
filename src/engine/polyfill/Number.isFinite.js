@@ -8,6 +8,11 @@
  * Spec: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite
  */
 if (typeof(Number.isFinite) !== 'function') {
+  /**
+   * `Number.isFinite` polyfill
+   * @param  {*}  value Value to check
+   * @return {Boolean}  Whether the value is a finite number
+   */
   Number.isFinite = function(value) {
     // 1. If Type(number) is not Number, return false.
     if (typeof(value) !== 'number') {

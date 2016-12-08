@@ -3,6 +3,12 @@
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
+/**
+ * Convert a value to object.
+ * @private
+ * @param {*} val Value to convert
+ * @return {Object} Object from the value
+ */
 function toObject(val) {
   if (val === null || val === undefined) {
     throw new TypeError('Object.assign cannot be called with null or undefined');
