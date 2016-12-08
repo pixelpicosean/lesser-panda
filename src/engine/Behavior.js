@@ -4,7 +4,7 @@ class Behavior {
 
     this.entity = null;
   }
-  init(entity) {
+  init(entity, settings) {
     this.entity = entity;
   }
   update(dt, sec) {} /* eslint no-unused-vars:0 */

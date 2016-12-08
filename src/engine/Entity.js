@@ -1,4 +1,6 @@
 const Vector = require('engine/Vector');
+const EventEmitter = require('engine/EventEmitter');
+const Behavior = require('engine/Behavior');
 const { merge } = require('engine/utils/object');
 
 /**
@@ -88,6 +90,12 @@ class Entity {
     this.behaviorList = [];
 
     /**
+     * Events dispatcher
+     * @type {EventEmitter}
+     */
+    this.events = new EventEmitter();
+
+    /**
      * Position of this entity.
      * @memberof Entity#
      */
@@ -175,10 +183,10 @@ class Entity {
     var bhv;
     switch (typeof(behaviorp)) {
       case 'function':
-        bhv = new behaviorp(settings);
+        bhv = new behaviorp();
         break;
       case 'string':
-        bhv = new Behavior.types[behaviorp](settings);
+        bhv = new Behavior.types[behaviorp]();
         break;
       case 'object':
         bhv = behaviorp;
@@ -188,7 +196,7 @@ class Entity {
     this.behaviors[bhv.type] = bhv;
     this.behaviorList.push(bhv);
 
-    bhv.init(this);
+    bhv.init(this, settings);
 
     return this;
   }
