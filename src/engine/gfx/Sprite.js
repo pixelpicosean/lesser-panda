@@ -6,8 +6,8 @@ require('./core/sprites/webgl/SpriteRenderer');
 /**
  * Factory function for `Sprite`.
  *
- * @param {object} data
- * @return {Sprite}
+ * @param {object} data   Data to create the instance from
+ * @return {Sprite}       Sprite instance
  */
 module.exports = function(data) {
   const tex = textureFromData(data.texture);

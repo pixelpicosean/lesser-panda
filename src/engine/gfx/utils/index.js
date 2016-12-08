@@ -5,6 +5,7 @@ const loader = require('engine/loader');
 /**
  * Get texture instance from data.
  * @param {String|Array|Texture} data   Key of the texture.
+ * @return {Texture|undefined} Texture instance of `undefined`
  */
 function textureFromData(data) {
   if (!data) {
@@ -25,7 +26,7 @@ function textureFromData(data) {
  * Create textures for tiles in a tileset. Can also be used to extract
  * grid based sprite-sheets.
  *
- * @param  {Texture} tileset    Tileset texture.
+ * @param  {Texture} tilesetp   Tileset texture.
  * @param  {number} tileWidth   Width of a single tile.
  * @param  {number} tileHeight  Height of a single tile.
  * @return {array<Texture>}     List of textures.

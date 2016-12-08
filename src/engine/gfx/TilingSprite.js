@@ -2,6 +2,12 @@ const TilingSprite = require('./core/sprites/TilingSprite');
 const textureFromData = require('./utils').textureFromData;
 const CONST = require('./const');
 
+/**
+ * Factory function for `TilingSprite`.
+ *
+ * @param {object} data   Data to create the instance from
+ * @return {TilingSprite} TilingSprite instance
+ */
 module.exports = function(data) {
   const tex = textureFromData(data.texture);
   const inst = new TilingSprite(tex, data.width || tex.width, data.height || tex.height);

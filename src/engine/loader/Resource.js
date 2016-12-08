@@ -10,7 +10,9 @@ const STATUS_NONE = 0;
 const STATUS_OK = 200;
 const STATUS_EMPTY = 204;
 
-// noop
+/**
+ * Empty function
+ */
 function _noop() { /* empty */ }
 
 /**

@@ -12,9 +12,11 @@ const Vector = require('engine/Vector');
  * | 0 | 0 | 1 |
  *
  * @class
- * @memberof PIXI
  */
 class Matrix {
+  /**
+   * @constructor
+   */
   constructor() {
     /**
      * @member {number}
@@ -63,7 +65,7 @@ class Matrix {
    * tx = array[2]
    * ty = array[5]
    *
-   * @param array {number[]} The array that the matrix will be populated from.
+   * @param {number[]} array The array that the matrix will be populated from.
    */
   fromArray(array) {
     this.a = array[0];
@@ -78,14 +80,14 @@ class Matrix {
   /**
    * sets the matrix properties
    *
-   * @param {number} a
-   * @param {number} b
-   * @param {number} c
-   * @param {number} d
-   * @param {number} tx
-   * @param {number} ty
+   * @param {number} a  Matrix property a
+   * @param {number} b  Matrix property b
+   * @param {number} c  Matrix property c
+   * @param {number} d  Matrix property d
+   * @param {number} tx Matrix property tx
+   * @param {number} ty Matrix property ty
    *
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @return {Matrix} This matrix. Good for chaining method calls.
    */
   set(a, b, c, d, tx, ty) {
     this.a = a;
@@ -102,9 +104,9 @@ class Matrix {
   /**
    * Creates an array from the current Matrix object.
    *
-   * @param transpose {boolean} Whether we need to transpose the matrix or not
-   * @param [out] {Array} If provided the array will be assigned to out
-   * @return {number[]} the newly created array which contains the matrix
+   * @param {boolean} transpose Whether we need to transpose the matrix or not
+   * @param {Array} [out]       If provided the array will be assigned to out
+   * @return {number[]}         the newly created array which contains the matrix
    */
   toArray(transpose, out) {
     if (!this.array) {
@@ -143,9 +145,9 @@ class Matrix {
    * Get a new position with the current transformation applied.
    * Can be used to go from a child's coordinate space to the world coordinate space. (e.g. rendering)
    *
-   * @param pos {PIXI.Vector} The origin
-   * @param [newPos] {PIXI.Vector} The point that the new position is assigned to (allowed to be same as input)
-   * @return {PIXI.Vector} The new point, transformed through this matrix
+   * @param {Vector} pos      The origin
+   * @param {Vector} [newPos] The point that the new position is assigned to (allowed to be same as input)
+   * @return {Vector}         The new point, transformed through this matrix
    */
   apply(pos, newPos) {
     newPos = newPos || new Vector();
@@ -163,9 +165,9 @@ class Matrix {
    * Get a new position with the inverse of the current transformation applied.
    * Can be used to go from the world coordinate space to a child's coordinate space. (e.g. input)
    *
-   * @param pos {PIXI.Vector} The origin
-   * @param [newPos] {PIXI.Vector} The point that the new position is assigned to (allowed to be same as input)
-   * @return {PIXI.Vector} The new point, inverse-transformed through this matrix
+   * @param {Vector} pos      The origin
+   * @param {Vector} [newPos] The point that the new position is assigned to (allowed to be same as input)
+   * @return {Vector}         The new point, inverse-transformed through this matrix
    */
   applyInverse(pos, newPos) {
     newPos = newPos || new Vector();
@@ -184,9 +186,9 @@ class Matrix {
   /**
    * Translates the matrix on the x and y.
    *
-   * @param {number} x
-   * @param {number} y
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @param {number} x  The amount to move on x axis
+   * @param {number} y  The amount to move on y axis
+   * @return {Matrix}   This matrix. Good for chaining method calls.
    */
   translate(x, y) {
     this.tx += x;
@@ -198,9 +200,9 @@ class Matrix {
   /**
    * Applies a scale transformation to the matrix.
    *
-   * @param {number} x The amount to scale horizontally
-   * @param {number} y The amount to scale vertically
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @param {number} x  The amount to scale horizontally
+   * @param {number} y  The amount to scale vertically
+   * @return {Matrix}   This matrix. Good for chaining method calls.
    */
   scale(x, y) {
     this.a *= x;
@@ -217,8 +219,8 @@ class Matrix {
   /**
    * Applies a rotation transformation to the matrix.
    *
-   * @param {number} angle - The angle in radians.
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @param {number} angle  The angle in radians.
+   * @return {Matrix}       This matrix. Good for chaining method calls.
    */
   rotate(angle) {
     var cos = Math.cos(angle);
@@ -241,8 +243,8 @@ class Matrix {
   /**
    * Appends the given Matrix to this Matrix.
    *
-   * @param {PIXI.Matrix} matrix
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @param {Matrix} matrix   Matrix to append
+   * @return {Matrix}         This matrix. Good for chaining method calls.
    */
   append(matrix) {
     var a1 = this.a;
@@ -264,17 +266,17 @@ class Matrix {
   /**
    * Sets the matrix based on all the available properties
    *
-   * @param {number} x
-   * @param {number} y
-   * @param {number} pivotX
-   * @param {number} pivotY
-   * @param {number} scaleX
-   * @param {number} scaleY
-   * @param {number} rotation
-   * @param {number} skewX
-   * @param {number} skewY
+   * @param {number} x          Position x
+   * @param {number} y          Position y
+   * @param {number} pivotX     Pivot x
+   * @param {number} pivotY     Pivot y
+   * @param {number} scaleX     Scale x
+   * @param {number} scaleY     Scale y
+   * @param {number} rotation   Rotation
+   * @param {number} skewX      Skew x
+   * @param {number} skewY      Skew y
    *
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @return {Matrix}           This matrix. Good for chaining method calls.
    */
   setTransform(x, y, pivotX, pivotY, scaleX, scaleY, rotation, skewX, skewY) {
     var a, b, c, d, sr, cr, cy, sy, nsx, cx;
@@ -305,8 +307,8 @@ class Matrix {
   /**
    * Prepends the given Matrix to this Matrix.
    *
-   * @param {PIXI.Matrix} matrix
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @param {Matrix} matrix   Matrix to prepend
+   * @return {Matrix}         This matrix. Good for chaining method calls.
    */
   prepend(matrix) {
     var tx1 = this.tx;
@@ -329,7 +331,7 @@ class Matrix {
   /**
    * Inverts this matrix
    *
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @return {Matrix} This matrix. Good for chaining method calls.
    */
   invert() {
     var a1 = this.a;
@@ -353,7 +355,7 @@ class Matrix {
   /**
    * Resets this Matix to an identity (default) matrix.
    *
-   * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+   * @return {Matrix} This matrix. Good for chaining method calls.
    */
   identity() {
     this.a = 1;
@@ -369,7 +371,7 @@ class Matrix {
   /**
    * Creates a new Matrix object with the same values as this one.
    *
-   * @return {PIXI.Matrix} A copy of this matrix. Good for chaining method calls.
+   * @return {Matrix} A copy of this matrix. Good for chaining method calls.
    */
   clone() {
     let matrix = new Matrix();
@@ -386,7 +388,8 @@ class Matrix {
   /**
    * Changes the values of the given matrix to be the same as the ones in this matrix
    *
-   * @return {PIXI.Matrix} The matrix given in parameter with its values updated.
+   * @param {Matrix} matrix   Target matrix to set to
+   * @return {Matrix}         The matrix given in parameter with its values updated.
    */
   copy(matrix) {
     matrix.a = this.a;

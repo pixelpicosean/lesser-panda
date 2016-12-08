@@ -5,11 +5,14 @@ const CONST = require('../../../const');
  * The Circle object can be used to specify a hit area for displayObjects
  *
  * @class
- * @param x {number} The X coordinate of the center of this circle
- * @param y {number} The Y coordinate of the center of this circle
- * @param radius {number} The radius of the circle
  */
 class Circle {
+  /**
+   * @constructor
+   * @param {number} x      The X coordinate of the center of this circle
+   * @param {number} y      The Y coordinate of the center of this circle
+   * @param {number} radius The radius of the circle
+   */
   constructor(x, y, radius) {
     /**
      * @member {number}
@@ -40,7 +43,7 @@ class Circle {
   /**
    * Creates a clone of this Circle instance
    *
-   * @return {PIXI.Circle} a copy of the Circle
+   * @return {Circle} a copy of the Circle
    */
   clone() {
     return new Circle(this.x, this.y, this.radius);
@@ -49,8 +52,8 @@ class Circle {
   /**
    * Checks whether the x and y coordinates given are contained within this circle
    *
-   * @param x {number} The X coordinate of the point to test
-   * @param y {number} The Y coordinate of the point to test
+   * @param {number} x The X coordinate of the point to test
+   * @param {number} y The Y coordinate of the point to test
    * @return {boolean} Whether the x/y coordinates are within this Circle
    */
   contains(x, y) {
@@ -71,7 +74,7 @@ class Circle {
   /**
   * Returns the framing rectangle of the circle as a Rectangle object
   *
-  * @return {PIXI.Rectangle} the framing rectangle
+  * @return {Rectangle} the framing rectangle
   */
   getBounds() {
     return new Rectangle(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);

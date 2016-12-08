@@ -1,3 +1,6 @@
+/**
+ * Listener function and context pack.
+ */
 class MiniSignalBinding {
 
   /**
@@ -15,6 +18,10 @@ class MiniSignalBinding {
     this._next = this._prev = this._owner = null;
   }
 
+  /**
+   * Disconnect this signal binding
+   * @return {Boolean} True if succeed, otherwise false
+   */
   detach() {
     if (this._owner === null) {return false;}
     this._owner.detach(this);
@@ -25,6 +32,9 @@ class MiniSignalBinding {
 
 /**
 * @private
+* @param {*} self Dispatcher itself
+* @param {*} node Node to add
+* @return {*}     The node just added
 */
 function _addMiniSignalBinding(self, node) {
   if (!self._head) {
@@ -42,19 +52,20 @@ function _addMiniSignalBinding(self, node) {
   return node;
 }
 
+/**
+ * MiniSignal constructor.
+ * @api public
+ *
+ * @example
+ * let mySignal = new MiniSignal();
+ * let binding = mySignal.add(onSignal);
+ * mySignal.dispatch('foo', 'bar');
+ * mySignal.detach(binding);
+ */
 class MiniSignal {
-
   /**
-  * MiniSignal constructor.
-  * @constructs MiniSignal
-  * @api public
-  *
-  * @example
-  * let mySignal = new MiniSignal();
-  * let binding = mySignal.add(onSignal);
-  * mySignal.dispatch('foo', 'bar');
-  * mySignal.detach(binding);
-  */
+   * @constructor
+   */
   constructor() {
     this._head = this._tail = undefined;
   }

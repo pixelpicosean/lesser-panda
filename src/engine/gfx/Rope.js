@@ -8,8 +8,8 @@ require('./mesh/webgl/MeshShader');
 /**
  * Factory function for `Rope`.
  *
- * @param {object} data
- * @return {Rope}
+ * @param {object} data   Data to create the instance from
+ * @return {Rope}         Rope instance
  */
 module.exports = function(data) {
   const tex = textureFromData(data.texture);

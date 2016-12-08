@@ -65,7 +65,12 @@ class EventEmitter {
    *
    * @memberof EventEmitter#
    * @method emit
-   * @param {string} event The name of the event.
+   * @param {string} event  The name of the event.
+   * @param {*} a1          First param
+   * @param {*} a2          Second param
+   * @param {*} a3          Third param
+   * @param {*} a4          Forth param
+   * @param {*} a5          Fifth param
    * @returns {boolean} Indication if we've emitted an event.
    */
   emit(event, a1, a2, a3, a4, a5) {
