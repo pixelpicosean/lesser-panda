@@ -3,11 +3,14 @@ const { merge } = require('engine/utils/object');
 
 /**
  * @class AnimationData
- * @constructor
- * @param {Array} frames
- * @param {Object} [props]
  */
 class AnimationData {
+  /**
+   * @constructor
+   * @constructor
+   * @param {Array} frames    Frame data
+   * @param {Object} [props]  Properties
+   */
   constructor(frames, props) {
     /**
      * Is animation looping.
@@ -46,10 +49,12 @@ class AnimationData {
 /**
  * @class AnimatedSprite
  * @extends Sprite
- * @constructor
- * @param {Array} textures Textures this animation made up of
  */
 class AnimatedSprite extends Sprite {
+  /**
+   * @constructor
+   * @param {Array} textures Textures this animation made up of
+   */
   constructor(textures) {
     super(textures[0]);
 
@@ -67,6 +72,11 @@ class AnimatedSprite extends Sprite {
     this.addAnim('default');
   }
 
+  /**
+   * Remove from parent
+   * @method remove
+   * @memberof AnimatedSprite#
+   */
   remove() {
     this.off('finish');
     this.system.cancelAnimate(this);
@@ -76,9 +86,11 @@ class AnimatedSprite extends Sprite {
   /**
    * Add new animation.
    * @method addAnim
-   * @param {String} name
-   * @param {Array} [frames]
-   * @param {Object} [props]
+   * @memberof AnimatedSprite#
+   * @param {String} name     Name of the animation
+   * @param {Array} [frames]  Frames list
+   * @param {Object} [props]  Properties
+   * @return {AnimatedSprite} Self for chaining
    */
   addAnim(name, frames, props) {
     if (!name) {
@@ -99,8 +111,10 @@ class AnimatedSprite extends Sprite {
   /**
    * Play animation.
    * @method play
-   * @param {String} name Name of animation
-   * @param {Number} [frame] Frame index
+   * @memberof AnimatedSprite#
+   * @param {String} name     Name of animation
+   * @param {Number} [frame]  Frame index
+   * @return {AnimatedSprite} Self for chaining
    */
   play(name, frame = 0) {
     name = name || this.currentAnim;
@@ -126,7 +140,9 @@ class AnimatedSprite extends Sprite {
   /**
    * Stop animation.
    * @method stop
-   * @param {Number} [frame] Frame index
+   * @memberof AnimatedSprite#
+   * @param {Number} [frame]  Frame index
+   * @return {AnimatedSprite} Self for chaining
    */
   stop(frame) {
     this.isPlaying = false;
@@ -142,7 +158,9 @@ class AnimatedSprite extends Sprite {
   /**
    * Jump to specific frame.
    * @method gotoFrame
+   * @memberof AnimatedSprite#
    * @param {Number} frame
+   * @return {AnimatedSprite} Self for chaining
    */
   gotoFrame(frame) {
     var anim = this.anims[this.currentAnim];
@@ -158,6 +176,7 @@ class AnimatedSprite extends Sprite {
   /**
    * @memberof AnimatedSprite#
    * @method update
+   * @memberof AnimatedSprite#
    * @private
    * @param {Number} delta Delta time since last frame.
    */

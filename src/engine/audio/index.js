@@ -7,8 +7,11 @@ const config = require('game/config');
 
 /**
  * Audio manager.
+ * @private
  */
-const audio = Object.assign(new EventEmitter(), {
+const audio = new EventEmitter();
+
+Object.assign(audio, {
   Howl: Howl,
   Howler: Howler,
 

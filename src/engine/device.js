@@ -1,5 +1,6 @@
 /**
  * Collect device informations
+ * @private
  * @return {Object} Device informations
  */
 function fetchDeviceInfo() {

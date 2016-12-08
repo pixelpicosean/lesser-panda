@@ -316,6 +316,7 @@ module.exports = SystemPhysics;
 
 /**
  * Get a collision group by index
+ * @memberof module:engine/physics
  * @param  {Number} idx Index of the group.
  * @return {Number}     Group mask
  */

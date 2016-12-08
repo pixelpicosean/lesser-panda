@@ -4,6 +4,7 @@ const loader = require('engine/loader');
 
 /**
  * Get texture instance from data.
+ * @memberof module:engine/gfx/utils
  * @param {String|Array|Texture} data   Key of the texture.
  * @return {Texture|undefined} Texture instance of `undefined`
  */
@@ -25,7 +26,7 @@ function textureFromData(data) {
 /**
  * Create textures for tiles in a tileset. Can also be used to extract
  * grid based sprite-sheets.
- *
+ * @memberof module:engine/gfx/utils
  * @param  {Texture} tilesetp   Tileset texture.
  * @param  {number} tileWidth   Width of a single tile.
  * @param  {number} tileHeight  Height of a single tile.
@@ -54,5 +55,14 @@ function filmstrip(tilesetp, tileWidth, tileHeight) {
   return strip;
 }
 
+/**
+ * Gfx utils.
+ *
+ * @exports engine/gfx/utils
+ *
+ * @requires module:engine/gfx/core/textures/Texture
+ * @requires module:engine/gfx/core/math
+ * @requires module:engine/loader
+ */
 module.exports.textureFromData = textureFromData;
 module.exports.filmstrip = filmstrip;
