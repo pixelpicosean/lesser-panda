@@ -1,7 +1,5 @@
-'use strict';
-
-var device = require('engine/device');
-var config = require('game/config').default;
+const device = require('engine/device');
+const config = require('game/config');
 
 /**
  * Google Analytics tracking.
@@ -20,67 +18,72 @@ var config = require('game/config').default;
  * analytics.send('category', 'action', 'label', 'value');
  *
  * @class Analytics
- * @constructor
  */
-function Analytics(settings) {
+class Analytics {
   /**
-   * @private
+   * @constructor
+   * @param {Object} settings Settings object
    */
-  this.trackId = settings.id;
+  constructor(settings) {
+    /**
+     * @private
+     */
+    this.trackId = settings.id;
 
-  if (!navigator.onLine) return;
+    if (!navigator.onLine) {return;}
 
-  if (device.cocoonJS) {
-    this.clientId = Date.now();
-    var request = new XMLHttpRequest();
-    var params = 'v=1&tid=' + this.trackId + '&cid=' + this.clientId + '&t=pageview&dp=%2F';
-    request.open('POST', 'http://www.google-analytics.com/collect', true);
-    request.send(params);
+    if (device.cocoonJS) {
+      this.clientId = Date.now();
+      var request = new XMLHttpRequest();
+      var params = 'v=1&tid=' + this.trackId + '&cid=' + this.clientId + '&t=pageview&dp=%2F';
+      request.open('POST', 'http://www.google-analytics.com/collect', true);
+      request.send(params);
+    }
+    else {
+      (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+          (i[r].q = i[r].q || []).push(arguments);
+        };
+
+        i[r].l = 1 * new Date();
+        a = s.createElement(o);
+        m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m);
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', this.trackId, 'auto');
+      ga('send', 'pageview');
+    }
   }
-  else {
-    (function(i, s, o, g, r, a, m) {
-      i['GoogleAnalyticsObject'] = r;
-      i[r] = i[r] || function() {
-        (i[r].q = i[r].q || []).push(arguments)
-      };
 
-      i[r].l = 1 * new Date();
-      a = s.createElement(o);
-      m = s.getElementsByTagName(o)[0];
-      a.async = 1;
-      a.src = g;
-      m.parentNode.insertBefore(a, m);
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  /**
+   * Send event to analytics.
+   * @method send
+   * @memberof Analytics#
+   * @param {String} category Category of this event
+   * @param {String} action   Action of this event
+   * @param {String} [label]  Label of this event
+   * @param {String} [value]  Value of this event
+   */
+  send(category, action, label, value) {
+    if (!navigator.onLine) {return;}
 
-    ga('create', this.trackId, 'auto');
-    ga('send', 'pageview');
+    if (device.cocoonJS) {
+      let request = new XMLHttpRequest();
+      let params = 'v=1&tid=' + this.trackId + '&cid=' + this.clientId + '&t=event&ec=' + category + '&ea=' + action;
+      if (typeof label !== 'undefined') {params += '&el=' + label;}
+      if (typeof value !== 'undefined') {params += '&ev=' + value;}
+      request.open('POST', 'http://www.google-analytics.com/collect', true);
+      request.send(params);
+    }
+    else {
+      ga('send', 'event', category, action, label, value);
+    }
   }
 }
-
-/**
- * Send event to analytics.
- * @method send
- * @memberof Analytics#
- * @param {string} category
- * @param {string} action
- * @param {string} [label]
- * @param {string} [value]
- */
-Analytics.prototype.send = function send(category, action, label, value) {
-  if (!navigator.onLine) return;
-
-  if (device.cocoonJS) {
-    var request = new XMLHttpRequest();
-    var params = 'v=1&tid=' + this.trackId + '&cid=' + this.clientId + '&t=event&ec=' + category + '&ea=' + action;
-    if (typeof label !== 'undefined') params += '&el=' + label;
-    if (typeof value !== 'undefined') params += '&ev=' + value;
-    request.open('POST', 'http://www.google-analytics.com/collect', true);
-    request.send(params);
-  }
-  else {
-    ga('send', 'event', category, action, label, value);
-  }
-};
 
 /**
  * Analytics module makes it easier to work with Google Analytics.
@@ -97,3 +100,4 @@ Analytics.prototype.send = function send(category, action, label, value) {
 module.exports = new Analytics(Object.assign({
   id: '',
 }, config.analytics));
+module.exports.Analytics = Analytics;

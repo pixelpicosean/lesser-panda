@@ -4,54 +4,54 @@
  * An instance of `RandomDataGenerator` is exported as `engine/rnd`.
  *
  * @class RandomDataGenerator
- * @constructor
- * @param {any[]|string} [seeds] - An array of values to use as the seed, or a generator state (from {#state}).
  */
-function RandomDataGenerator(seeds) {
-  if (seeds === undefined) { seeds = []; }
-
+class RandomDataGenerator {
   /**
-   * @type {number}
-   * @private
+   * @constructor
+   * @param {Array|String} [seeds=[]] - An array of values to use as the seed, or a generator state (from {#state}).
    */
-  this.c = 1;
+  constructor(seeds = []) {
+    /**
+     * @type {number}
+     * @private
+     */
+    this.c = 1;
 
-  /**
-   * @type {number}
-   * @private
-   */
-  this.s0 = 0;
+    /**
+     * @type {number}
+     * @private
+     */
+    this.s0 = 0;
 
-  /**
-   * @type {number}
-   * @private
-   */
-  this.s1 = 0;
+    /**
+     * @type {number}
+     * @private
+     */
+    this.s1 = 0;
 
-  /**
-   * @type {number}
-   * @private
-   */
-  this.s2 = 0;
+    /**
+     * @type {number}
+     * @private
+     */
+    this.s2 = 0;
 
-  if (typeof(seeds) === 'string') {
-    this.state(seeds);
+    if (typeof(seeds) === 'string') {
+      this.state(seeds);
+    }
+    else {
+      this.sow(seeds);
+    }
   }
-  else {
-    this.sow(seeds);
-  }
-};
 
-Object.assign(RandomDataGenerator.prototype, {
   /**
    * Private random helper.
    *
    * @method RandomDataGenerator#rnd
    * @private
-   * @return {number}
+   * @return {number} Random number
    */
-  rnd: function rnd() {
-    var t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
+  rnd() {
+    let t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
 
     this.c = t | 0;
     this.s0 = this.s1;
@@ -59,7 +59,7 @@ Object.assign(RandomDataGenerator.prototype, {
     this.s2 = t - this.c;
 
     return this.s2;
-  },
+  }
 
   /**
    * Reset the seed of the random data generator.
@@ -69,7 +69,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#sow
    * @param {any[]} seeds - The array of seeds: the `toString()` of each value is used.
    */
-  sow: function sow(seeds) {
+  sow(seeds) {
     // Always reset to default seed
     this.s0 = this.hash(' ');
     this.s1 = this.hash(this.s0);
@@ -81,8 +81,9 @@ Object.assign(RandomDataGenerator.prototype, {
     }
 
     // Apply any seeds
-    for (var i = 0; i < seeds.length && (seeds[i] != null); i++) {
-      var seed = seeds[i];
+    let i, seed;
+    for (i = 0; i < seeds.length && (seeds[i] != null); i++) {
+      seed = seeds[i];
 
       this.s0 -= this.hash(seed);
       this.s0 += ~~(this.s0 < 0);
@@ -91,18 +92,18 @@ Object.assign(RandomDataGenerator.prototype, {
       this.s2 -= this.hash(seed);
       this.s2 += ~~(this.s2 < 0);
     }
-  },
+  }
 
   /**
    * Internal method that creates a seed hash.
    *
    * @method RandomDataGenerator#hash
    * @private
-   * @param {any} data
+   * @param {any} data  Data to create hash from
    * @return {number} hashed value.
    */
-  hash: function hash(data) {
-    var h, i, n;
+  hash(data) {
+    let h, i, n;
     n = 0xefc8249d;
     data = data.toString();
 
@@ -118,7 +119,7 @@ Object.assign(RandomDataGenerator.prototype, {
     }
 
     return (n >>> 0) * 2.3283064365386963e-10;// 2^-32
-  },
+  }
 
   /**
    * Returns a random integer between 0 and 2^32.
@@ -126,9 +127,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#integer
    * @return {number} A random integer between 0 and 2^32.
    */
-  integer: function integer() {
+  integer() {
     return this.rnd.apply(this) * 0x100000000;// 2^32
-  },
+  }
 
   /**
    * Returns a random real number between 0 and 1.
@@ -136,9 +137,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#frac
    * @return {number} A random real number between 0 and 1.
    */
-  frac: function frac() {
+  frac() {
     return this.rnd.apply(this) + (this.rnd.apply(this) * 0x200000 | 0) * 1.1102230246251565e-16;   // 2^-53
-  },
+  }
 
   /**
    * Returns a random real number between 0 and 2^32.
@@ -146,9 +147,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#real
    * @return {number} A random real number between 0 and 2^32.
    */
-  real: function real() {
+  real() {
     return this.integer() + this.frac();
-  },
+  }
 
   /**
    * Returns a random integer between and including min and max.
@@ -158,9 +159,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {number} max - The maximum value in the range.
    * @return {number} A random number between min and max.
    */
-  integerInRange: function integerInRange(min, max) {
+  integerInRange(min, max) {
     return Math.floor(this.realInRange(0, max - min + 1) + min);
-  },
+  }
 
   /**
    * Returns a random integer between and including min and max.
@@ -171,9 +172,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {number} max - The maximum value in the range.
    * @return {number} A random number between min and max.
    */
-  between: function between(min, max) {
+  between(min, max) {
     return this.integerInRange(min, max);
-  },
+  }
 
   /**
    * Returns a random real number between min and max.
@@ -183,9 +184,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {number} max - The maximum value in the range.
    * @return {number} A random number between min and max.
    */
-  realInRange: function realInRange(min, max) {
+  realInRange(min, max) {
     return this.frac() * (max - min) + min;
-  },
+  }
 
   /**
    * Returns a random real number between -1 and 1.
@@ -193,9 +194,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#normal
    * @return {number} A random real number between -1 and 1.
    */
-  normal: function normal() {
+  normal() {
     return 1 - 2 * this.frac();
-  },
+  }
 
   /**
    * Returns a valid RFC4122 version4 ID hex string from https://gist.github.com/1308368
@@ -203,14 +204,14 @@ Object.assign(RandomDataGenerator.prototype, {
    * @method RandomDataGenerator#uuid
    * @return {string} A valid RFC4122 version4 ID hex string
    */
-  uuid: function uuid() {
-    var a = '';
-    var b = '';
+  uuid() {
+    let a = '', b = '';
 
-    for (b = a = ''; a++ < 36; b +=~a % 5 | a * 3&4 ? (a^15 ? 8^this.frac() * (a^20 ? 16 : 4) : 4).toString(16) : '-') {}
+    /* eslint no-empty:0*/
+    for (b = a = ''; a++ < 36; b += ~a % 5 | a * 3 & 4 ? (a ^ 15 ? 8 ^ this.frac() * (a ^ 20 ? 16 : 4) : 4).toString(16) : '-') {}
 
     return b;
-  },
+  }
 
   /**
    * Returns a random member of `array`.
@@ -219,9 +220,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {Array} ary - An Array to pick a random member of.
    * @return {any} A random member of the array.
    */
-  pick: function pick(ary) {
+  pick(ary) {
     return ary[this.integerInRange(0, ary.length - 1)];
-  },
+  }
 
   /**
    * Returns a random member of `array`, favoring the earlier entries.
@@ -230,9 +231,9 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {Array} ary - An Array to pick a random member of.
    * @return {any} A random member of the array.
    */
-  weightedPick: function weightedPick(ary) {
+  weightedPick(ary) {
     return ary[~~(Math.pow(this.frac(), 2) * (ary.length - 1) + 0.5)];
-  },
+  }
 
   /**
    * Gets or Sets the state of the generator. This allows you to retain the values
@@ -251,7 +252,7 @@ Object.assign(RandomDataGenerator.prototype, {
    * @param {string} [state] - Generator state to be set.
    * @return {string} The current state of the generator.
    */
-  state: function state(state) {
+  state(state) {
     if (typeof state === 'string' && state.match(/^!rnd/)) {
       state = state.split(',');
 
@@ -262,8 +263,8 @@ Object.assign(RandomDataGenerator.prototype, {
     }
 
     return ['!rnd', this.c, this.s0, this.s1, this.s2].join(',');
-  },
-});
+  }
+}
 
 /**
  * An extremely useful repeatable random data generator.
@@ -280,3 +281,4 @@ Object.assign(RandomDataGenerator.prototype, {
  * @exports engine/rnd
  */
 module.exports = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
+module.exports.RandomDataGenerator = RandomDataGenerator;
