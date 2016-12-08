@@ -8,8 +8,8 @@ require('./mesh/webgl/MeshShader');
 /**
  * Factory function for `Plane`.
  *
- * @param {object} data
- * @return {Plane}
+ * @param {object} data   Data to create the instance from
+ * @return {Plane}        Plane instance
  */
 module.exports = function(data) {
   const tex = textureFromData(data.texture);

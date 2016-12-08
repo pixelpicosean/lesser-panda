@@ -7,7 +7,16 @@ const { filmstrip } = require('./utils');
 const TILESETS = {};
 const POOL = [];
 
+/**
+ * Tilemap node
+ */
 class BackgroundMap extends Node {
+  /**
+   * @constructor
+   * @param  {Number} tilesize  Size of a single tile(in pixel)
+   * @param  {Array} data       Map ata
+   * @param  {Texture} tileset  Tileset texture
+   */
   constructor(tilesize, data, tileset) {
     super();
 
@@ -37,16 +46,36 @@ class BackgroundMap extends Node {
     this.drawTiles();
   }
 
+  /**
+   * Width of this map (in tile)
+   * @readonly
+   */
   get width() {
     return this._width;
   }
+  /**
+   * Height of this map (in tile)
+   * @readonly
+   */
   get height() {
     return this._height;
   }
 
+  /**
+   * Get the tile with its row and column
+   * @param  {Number} r Row
+   * @param  {Number} q Column
+   * @return {Number}   Tile index
+   */
   getTile(r, q) {
     return (q >= 0 && q < this._width && r >= 0 && r < this._height) ? this.data[r][q] : 0;
   }
+  /**
+   * Get the tile at a specific position
+   * @param  {Number} x X position
+   * @param  {Number} y Y position
+   * @return {Number}   Tile index
+   */
   getTileAt(x, y) {
     const q = Math.floor(x / this.tilesize);
     const r = Math.floor(y / this.tilesize);
@@ -54,6 +83,12 @@ class BackgroundMap extends Node {
     return (q >= 0 && q < this._width && r >= 0 && r < this._height) ? this.data[r][q] : 0;
   }
 
+  /**
+   * Set the tile at (row, column)
+   * @param {Number} r    Row
+   * @param {Number} q    Column
+   * @param {Number} tile Tile index to set
+   */
   setTile(r, q, tile) {
     if (q >= 0 && q < this._width && r >= 0 && r < this._height) {
       this.data[r][q] = tile;
@@ -67,6 +102,12 @@ class BackgroundMap extends Node {
       }
     }
   }
+  /**
+   * Set the tile at a specific position
+   * @param {Number} x    X position
+   * @param {Number} y    Y position
+   * @param {Number} tile Tile index
+   */
   setTileAt(x, y, tile) {
     const q = Math.floor(x / this.tilesize);
     const r = Math.floor(y / this.tilesize);
@@ -83,6 +124,10 @@ class BackgroundMap extends Node {
     }
   }
 
+  /**
+   * Parse the tileset of this map
+   * @private
+   */
   parseTileset() {
     let tileList;
 
@@ -98,6 +143,10 @@ class BackgroundMap extends Node {
     this.tilesetTextures = tileList;
   }
 
+  /**
+   * Draw tiles of this map
+   * @private
+   */
   drawTiles() {
     // Draw nothing if tileset is invalid
     if (!this.tileset || !this.tilesetTextures || this.tilesetTextures.length === 0) {
@@ -125,6 +174,10 @@ class BackgroundMap extends Node {
     }
   }
 
+  /**
+   * Create sprites for drawing
+   * @private
+   */
   createTileSprites() {
     this.tileSprites = new Array(this._height);
 
@@ -149,6 +202,13 @@ class BackgroundMap extends Node {
   }
 }
 
+/**
+ * BackgroundMap factory
+ * @param  {Number} tilesize Size of a single tile
+ * @param  {Array}  data     Map data
+ * @param  {Texture} tileset Tileset texture
+ * @return {BackgroundMap}   BackgroundMap instance
+ */
 module.exports = function(tilesize = 8, data = [[]], tileset = null) {
   return new BackgroundMap(tilesize, data, textureFromData(tileset));
 };

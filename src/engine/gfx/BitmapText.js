@@ -5,8 +5,8 @@ require('./core/sprites/webgl/SpriteRenderer');
 /**
  * Factory function for `BitmapText`.
  *
- * @param {object} data
- * @return {BitmapText}
+ * @param {object} data   Data to create the instance from
+ * @return {BitmapText}   BitmapText instance
  */
 module.exports = function(data) {
   const inst = new BitmapText(data.text, data);

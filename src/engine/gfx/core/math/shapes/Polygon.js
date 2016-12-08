@@ -3,13 +3,16 @@ const CONST = require('../../../const');
 
 /**
  * @class
- * @param points {PIXI.Vector[]|number[]|...PIXI.Vector|...number} This can be an array of Points that form the polygon,
- *      a flat array of numbers that will be interpreted as [x,y, x,y, ...], or the arguments passed can be
- *      all the points of the polygon e.g. `new PIXI.Polygon(new PIXI.Vector(), new PIXI.Vector(), ...)`, or the
- *      arguments passed can be flat x,y values e.g. `new Polygon(x,y, x,y, x,y, ...)` where `x` and `y` are
- *      Numbers.
  */
 class Polygon {
+  /**
+   * @constructor
+   * @param {Vector[]|number[]|Vector|number} points_  This can be an array of Points that form the polygon,
+   *    a flat array of numbers that will be interpreted as [x,y, x,y, ...], or the arguments passed can be
+   *    all the points of the polygon e.g. `new Polygon(new Vector(), new Vector(), ...)`, or the
+   *    arguments passed can be flat x,y values e.g. `new Polygon(x,y, x,y, x,y, ...)` where `x` and `y` are
+   *    Numbers.
+   */
   constructor(points_) {
     // prevents an argument assignment deopt
     // see section 3.1: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
@@ -17,8 +20,8 @@ class Polygon {
 
     // if points isn't an array, use arguments as the array
     if (!Array.isArray(points)) {
-        // prevents an argument leak deopt
-        // see section 3.2: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
+      // prevents an argument leak deopt
+      // see section 3.2: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
       points = new Array(arguments.length);
 
       for (var a = 0; a < points.length; ++a) {
@@ -56,7 +59,7 @@ class Polygon {
   /**
    * Creates a clone of this polygon
    *
-   * @return {PIXI.Polygon} a copy of the polygon
+   * @return {Polygon} a copy of the polygon
    */
   clone() {
     return new Polygon(this.points.slice());
@@ -65,15 +68,15 @@ class Polygon {
   /**
    * Checks whether the x and y coordinates passed to this function are contained within this polygon
    *
-   * @param x {number} The X coordinate of the point to test
-   * @param y {number} The Y coordinate of the point to test
+   * @param {number} x The X coordinate of the point to test
+   * @param {number} y The Y coordinate of the point to test
    * @return {boolean} Whether the x/y coordinates are within this polygon
    */
   contains(x, y) {
     var inside = false;
 
-      // use some raycasting to test hits
-      // https://github.com/substack/point-in-polygon/blob/master/index.js
+    // use some raycasting to test hits
+    // https://github.com/substack/point-in-polygon/blob/master/index.js
     var length = this.points.length / 2;
 
     for (var i = 0, j = length - 1; i < length; j = i++) {

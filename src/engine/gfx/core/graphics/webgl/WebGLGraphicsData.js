@@ -2,11 +2,13 @@
  * An object containing WebGL specific properties to be used by the WebGL renderer
  *
  * @class
- * @memberof PIXI
- * @param gl {WebGLRenderingContext} the current WebGL drawing context
  * @private
  */
 class WebGLGraphicsData {
+  /**
+   * @constructor
+   * @param {WebGLRenderingContext} gl the current WebGL drawing context
+   */
   constructor(gl) {
 
     /**
@@ -96,6 +98,9 @@ class WebGLGraphicsData {
     this.dirty = false;
   }
 
+  /**
+   * Destroy this data
+   */
   destroy() {
     this.color = null;
     this.points = null;

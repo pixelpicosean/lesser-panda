@@ -11,11 +11,13 @@ const utils = require('../../utils'),
  *
  * @class
  * @private
- * @memberof PIXI
- * @extends PIXI.ObjectRenderer
- * @param renderer {PIXI.WebGLRenderer} The renderer this object renderer works for.
  */
 class GraphicsRenderer extends ObjectRenderer {
+  /**
+   * @constructor
+   * @extends ObjectRenderer
+   * @param {WebGLRenderer} renderer The renderer this object renderer works for.
+   */
   constructor(renderer) {
     super(renderer);
 
@@ -58,7 +60,7 @@ class GraphicsRenderer extends ObjectRenderer {
   /**
    * Renders a graphics object.
    *
-   * @param graphics {PIXI.Graphics} The graphics object to render.
+   * @param {Graphics} graphics The graphics object to render.
    */
   render(graphics) {
     var renderer = this.renderer;
@@ -73,13 +75,9 @@ class GraphicsRenderer extends ObjectRenderer {
 
     var webGL = graphics._webGL[gl.id];
 
-      // This  could be speeded up for sure!
+    // This could be speeded up for sure!
 
     renderer.blendModeManager.setBlendMode(graphics.blendMode);
-
-  //    var matrix =  graphics.worldTransform.clone();
-  //    var matrix =  renderer.currentRenderTarget.projectionMatrix.clone();
-  //    matrix.append(graphics.worldTransform);
 
     for (var i = 0, n = webGL.data.length; i < n; i++) {
       webGLData = webGL.data[i];
@@ -115,7 +113,7 @@ class GraphicsRenderer extends ObjectRenderer {
         gl.vertexAttribPointer(shader.attributes.aVertexPosition, 2, gl.FLOAT, false, 4 * 6, 0);
         gl.vertexAttribPointer(shader.attributes.aColor, 4, gl.FLOAT, false,4 * 6, 2 * 4);
 
-              // set the index buffer!
+        // set the index buffer!
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, webGLData.indexBuffer);
         gl.drawElements(gl.TRIANGLE_STRIP, webGLData.indices.length, gl.UNSIGNED_SHORT, 0);
       }
@@ -128,59 +126,59 @@ class GraphicsRenderer extends ObjectRenderer {
    * Updates the graphics object
    *
    * @private
-   * @param graphics {PIXI.Graphics} The graphics object to update
+   * @param {Graphics} graphics The graphics object to update
    */
   updateGraphics(graphics) {
     var gl = this.renderer.gl;
 
-       // get the contexts graphics object
+    // get the contexts graphics object
     var webGL = graphics._webGL[gl.id];
 
-      // if the graphics object does not exist in the webGL context time to create it!
+    // if the graphics object does not exist in the webGL context time to create it!
     if (!webGL) {
       webGL = graphics._webGL[gl.id] = { lastIndex:0, data:[], gl:gl };
     }
 
-      // flag the graphics as not dirty as we are about to update it...
+    // flag the graphics as not dirty as we are about to update it...
     graphics.dirty = false;
 
     var i;
 
-      // if the user cleared the graphics object we will need to clear every object
+    // if the user cleared the graphics object we will need to clear every object
     if (graphics.clearDirty) {
       graphics.clearDirty = false;
 
-          // loop through and return all the webGLDatas to the object pool so than can be reused later on
+      // loop through and return all the webGLDatas to the object pool so than can be reused later on
       for (i = 0; i < webGL.data.length; i++) {
         var graphicsData = webGL.data[i];
         graphicsData.reset();
         this.graphicsDataPool.push(graphicsData);
       }
 
-          // clear the array and reset the index..
+      // clear the array and reset the index..
       webGL.data = [];
       webGL.lastIndex = 0;
     }
 
     var webGLData;
 
-      // loop through the graphics datas and construct each one..
-      // if the object is a complex fill then the new stencil buffer technique will be used
-      // other wise graphics objects will be pushed into a batch..
+    // loop through the graphics datas and construct each one..
+    // if the object is a complex fill then the new stencil buffer technique will be used
+    // other wise graphics objects will be pushed into a batch..
     for (i = webGL.lastIndex; i < graphics.graphicsData.length; i++) {
       var data = graphics.graphicsData[i];
 
       if (data.type === CONST.SHAPES.POLY) {
-              // need to add the points the the graphics object..
+        // need to add the points the the graphics object..
         data.points = data.shape.points.slice();
         if (data.shape.closed) {
-                  // close the poly if the value is true!
+          // close the poly if the value is true!
           if (data.points[0] !== data.points[data.points.length - 2] || data.points[1] !== data.points[data.points.length - 1]) {
             data.points.push(data.points[0], data.points[1]);
           }
         }
 
-              // MAKE SURE WE HAVE THE CORRECT TYPE..
+        // MAKE SURE WE HAVE THE CORRECT TYPE..
         if (data.fill) {
           if (data.points.length >= 6) {
             if (data.points.length < this.maximumSimplePolySize * 2) {
@@ -223,7 +221,7 @@ class GraphicsRenderer extends ObjectRenderer {
       webGL.lastIndex++;
     }
 
-      // upload all the dirty data...
+    // upload all the dirty data...
     for (i = 0; i < webGL.data.length; i++) {
       webGLData = webGL.data[i];
 
@@ -237,8 +235,9 @@ class GraphicsRenderer extends ObjectRenderer {
    *
    *
    * @private
-   * @param webGL {WebGLRenderingContext} the current WebGL drawing context
-   * @param type {number} TODO @Alvin
+   * @param {WebGLRenderingContext} webGL the current WebGL drawing context
+   * @param {number} type                 TODO
+   * @return {WebGLGraphicsData}          New WebGL graphics data
    */
   switchMode(webGL, type) {
     var webGLData;
@@ -267,13 +266,13 @@ class GraphicsRenderer extends ObjectRenderer {
    * Builds a rectangle to draw
    *
    * @private
-   * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
-   * @param webGLData {object} an object containing all the webGL-specific information to create this shape
+   * @param {Graphics} graphicsData The graphics object containing all the necessary properties
+   * @param {object} webGLData      an object containing all the webGL-specific information to create this shape
    */
   buildRectangle(graphicsData, webGLData) {
-      // --- //
-      // need to convert points to a nice regular data
-      //
+    // --- //
+    // need to convert points to a nice regular data
+    //
     var rectData = graphicsData.shape;
     var x = rectData.x;
     var y = rectData.y;
@@ -293,7 +292,7 @@ class GraphicsRenderer extends ObjectRenderer {
 
       var vertPos = verts.length / 6;
 
-          // start
+      // start
       verts.push(x, y);
       verts.push(r, g, b, alpha);
 
@@ -306,7 +305,7 @@ class GraphicsRenderer extends ObjectRenderer {
       verts.push(x + width, y + height);
       verts.push(r, g, b, alpha);
 
-          // insert 2 dead triangles..
+      // insert 2 dead triangles..
       indices.push(vertPos, vertPos, vertPos + 1, vertPos + 2, vertPos + 3, vertPos + 3);
     }
 
@@ -319,7 +318,6 @@ class GraphicsRenderer extends ObjectRenderer {
         x, y + height,
         x, y];
 
-
       this.buildLine(graphicsData, webGLData);
 
       graphicsData.points = tempPoints;
@@ -330,8 +328,8 @@ class GraphicsRenderer extends ObjectRenderer {
    * Builds a rounded rectangle to draw
    *
    * @private
-   * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
-   * @param webGLData {object} an object containing all the webGL-specific information to create this shape
+   * @param {Graphics} graphicsData The graphics object containing all the necessary properties
+   * @param {object} webGLData      an object containing all the webGL-specific information to create this shape
    */
   buildRoundedRectangle(graphicsData, webGLData) {
     var rrectData = graphicsData.shape;
@@ -349,8 +347,8 @@ class GraphicsRenderer extends ObjectRenderer {
     this.quadraticBezierCurve(x + width, y + radius, x + width, y, x + width - radius, y, recPoints);
     this.quadraticBezierCurve(x + radius, y, x, y, x, y + radius + 0.0000000001, recPoints);
 
-      // this tiny number deals with the issue that occurs when points overlap and earcut fails to triangulate the item.
-      // TODO - fix this properly, this is not very elegant.. but it works for now.
+    // this tiny number deals with the issue that occurs when points overlap and earcut fails to triangulate the item.
+    // TODO - fix this properly, this is not very elegant.. but it works for now.
 
     if (graphicsData.fill) {
       var color = utils.hex2rgb(graphicsData.fillColor);
@@ -397,14 +395,14 @@ class GraphicsRenderer extends ObjectRenderer {
    * Based on: https://stackoverflow.com/questions/785097/how-do-i-implement-a-bezier-curve-in-c
    *
    * @private
-   * @param fromX {number} Origin point x
-   * @param fromY {number} Origin point x
-   * @param cpX {number} Control point x
-   * @param cpY {number} Control point y
-   * @param toX {number} Destination point x
-   * @param toY {number} Destination point y
-   * @param [out] {number[]} The output array to add points into. If not passed, a new array is created.
-   * @return {number[]} an array of points
+   * @param {number} fromX    Origin point x
+   * @param {number} fromY    Origin point x
+   * @param {number} cpX      Control point x
+   * @param {number} cpY      Control point y
+   * @param {number} toX      Destination point x
+   * @param {number} toY      Destination point y
+   * @param {number[]} [out]  The output array to add points into. If not passed, a new array is created.
+   * @return {number[]}       an array of points
    */
   quadraticBezierCurve(fromX, fromY, cpX, cpY, toX, toY, out) {
     var xa,
@@ -416,6 +414,7 @@ class GraphicsRenderer extends ObjectRenderer {
       n = 20,
       points = out || [];
 
+    // eslint-disable-next-line
     function getPt(n1 , n2, perc) {
       var diff = n2 - n1;
 
@@ -446,18 +445,18 @@ class GraphicsRenderer extends ObjectRenderer {
    * Builds a circle to draw
    *
    * @private
-   * @param graphicsData {PIXI.Graphics} The graphics object to draw
-   * @param webGLData {object} an object containing all the webGL-specific information to create this shape
+   * @param {Graphics} graphicsData The graphics object to draw
+   * @param {object} webGLData      an object containing all the webGL-specific information to create this shape
    */
   buildCircle(graphicsData, webGLData) {
-      // need to convert points to a nice regular data
+    // need to convert points to a nice regular data
     var circleData = graphicsData.shape;
     var x = circleData.x;
     var y = circleData.y;
     var width;
     var height;
 
-      // TODO - bit hacky??
+    // TODO - bit hacky??
     if (graphicsData.type === CONST.SHAPES.CIRC) {
       width = circleData.radius;
       height = circleData.radius;
@@ -491,8 +490,8 @@ class GraphicsRenderer extends ObjectRenderer {
         verts.push(x,y, r, g, b, alpha);
 
         verts.push(x + Math.sin(seg * i) * width,
-                         y + Math.cos(seg * i) * height,
-                         r, g, b, alpha);
+          y + Math.cos(seg * i) * height,
+          r, g, b, alpha);
 
         indices.push(vecPos++, vecPos++);
       }
@@ -507,7 +506,7 @@ class GraphicsRenderer extends ObjectRenderer {
 
       for (i = 0; i < totalSegs + 1; i++) {
         graphicsData.points.push(x + Math.sin(seg * i) * width,
-                                       y + Math.cos(seg * i) * height);
+          y + Math.cos(seg * i) * height);
       }
 
       this.buildLine(graphicsData, webGLData);
@@ -520,34 +519,25 @@ class GraphicsRenderer extends ObjectRenderer {
    * Builds a line to draw
    *
    * @private
-   * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
-   * @param webGLData {object} an object containing all the webGL-specific information to create this shape
+   * @param {Graphics} graphicsData The graphics object containing all the necessary properties
+   * @param {object} webGLData      an object containing all the webGL-specific information to create this shape
    */
   buildLine(graphicsData, webGLData) {
-      // TODO OPTIMISE!
+    // TODO OPTIMISE!
     var i = 0;
     var points = graphicsData.points;
 
     if (points.length === 0) {
       return;
     }
-      // if the line width is an odd number add 0.5 to align to a whole pixel
-      // commenting this out fixes #711 and #1620
-      // if (graphicsData.lineWidth%2)
-      // {
-      //     for (i = 0; i < points.length; i++)
-      //     {
-      //         points[i] += 0.5;
-      //     }
-      // }
 
-      // get first and last point.. figure out the middle!
+    // get first and last point.. figure out the middle!
     var firstPoint = new math.Point(points[0], points[1]);
     var lastPoint = new math.Point(points[points.length - 2], points[points.length - 1]);
 
-      // if the first point is the last point - gonna have issues :)
+    // if the first point is the last point - gonna have issues :)
     if (firstPoint.x === lastPoint.x && firstPoint.y === lastPoint.y) {
-          // need to clone as we are going to slightly modify the shape..
+      // need to clone as we are going to slightly modify the shape..
       points = points.slice();
 
       points.pop();
@@ -568,10 +558,10 @@ class GraphicsRenderer extends ObjectRenderer {
     var indexCount = points.length;
     var indexStart = verts.length / 6;
 
-      // DRAW the Line
+    // DRAW the Line
     var width = graphicsData.lineWidth / 2;
 
-      // sort color
+    // sort color
     var color = utils.hex2rgb(graphicsData.lineColor);
     var alpha = graphicsData.lineAlpha;
     var r = color[0] * alpha;
@@ -599,7 +589,7 @@ class GraphicsRenderer extends ObjectRenderer {
     perpx *= width;
     perpy *= width;
 
-      // start
+    // start
     verts.push(p1x - perpx , p1y - perpy,
                   r, g, b, alpha);
 
@@ -727,24 +717,24 @@ class GraphicsRenderer extends ObjectRenderer {
    * Builds a complex polygon to draw
    *
    * @private
-   * @param graphicsData {PIXI.Graphics} The graphics object containing all the necessary properties
-   * @param webGLData {object} an object containing all the webGL-specific information to create this shape
+   * @param {Graphics} graphicsData The graphics object containing all the necessary properties
+   * @param {object} webGLData      an object containing all the webGL-specific information to create this shape
    */
   buildComplexPoly(graphicsData, webGLData) {
-      // TODO - no need to copy this as it gets turned into a FLoat32Array anyways..
+    // TODO - no need to copy this as it gets turned into a FLoat32Array anyways..
     var points = graphicsData.points.slice();
 
     if (points.length < 6) {
       return;
     }
 
-      // get first and last point.. figure out the middle!
+    // get first and last point.. figure out the middle!
     var indices = webGLData.indices;
     webGLData.points = points;
     webGLData.alpha = graphicsData.fillAlpha;
     webGLData.color = utils.hex2rgb(graphicsData.fillColor);
 
-      // calclate the bounds..
+    // calclate the bounds..
     var minX = Infinity;
     var maxX = -Infinity;
 
@@ -753,7 +743,7 @@ class GraphicsRenderer extends ObjectRenderer {
 
     var x,y;
 
-      // get size..
+    // get size..
     for (var i = 0; i < points.length; i += 2) {
       x = points[i];
       y = points[i + 1];
@@ -765,15 +755,15 @@ class GraphicsRenderer extends ObjectRenderer {
       maxY = y > maxY ? y : maxY;
     }
 
-      // add a quad to the end cos there is no point making another buffer!
+    // add a quad to the end cos there is no point making another buffer!
     points.push(minX, minY,
                   maxX, minY,
                   maxX, maxY,
                   minX, maxY);
 
-      // push a quad onto the end..
+    // push a quad onto the end..
 
-      // TODO - this aint needed!
+    // TODO - this aint needed!
     var length = points.length / 2;
     for (i = 0; i < length; i++) {
       indices.push(i);
@@ -785,23 +775,24 @@ class GraphicsRenderer extends ObjectRenderer {
    * Builds a polygon to draw
    *
    * @private
-   * @param graphicsData {PIXI.WebGLGraphicsData} The graphics object containing all the necessary properties
-   * @param webGLData {object} an object containing all the webGL-specific information to create this shape
+   * @param {WebGLGraphicsData} graphicsData  The graphics object containing all the necessary properties
+   * @param {object} webGLData                an object containing all the webGL-specific information to create this shape
+   * @return {Boolean} Whether can be drawn using simple methods
    */
   buildPoly(graphicsData, webGLData) {
     var points = graphicsData.points;
 
     if (points.length < 6) {
-      return;
+      return false;
     }
 
-      // get first and last point.. figure out the middle!
+    // get first and last point.. figure out the middle!
     var verts = webGLData.points;
     var indices = webGLData.indices;
 
     var length = points.length / 2;
 
-      // sort color
+    // sort color
     var color = utils.hex2rgb(graphicsData.fillColor);
     var alpha = graphicsData.fillAlpha;
     var r = color[0] * alpha;
@@ -828,7 +819,7 @@ class GraphicsRenderer extends ObjectRenderer {
 
     for (i = 0; i < length; i++) {
       verts.push(points[i * 2], points[i * 2 + 1],
-                     r, g, b, alpha);
+        r, g, b, alpha);
     }
 
     return true;

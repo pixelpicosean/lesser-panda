@@ -1,28 +1,27 @@
-const DisplayObject = require('./core/display/DisplayObject');
+const Node = require('./core/Node');
 const { Matrix } = require('./core/math');
 const RenderTexture = require('./core/textures/RenderTexture');
 const Sprite = require('./core/sprites/Sprite');
 const _tempMatrix = new Matrix();
 
-DisplayObject.prototype._cacheAsBitmap = false;
-DisplayObject.prototype._originalRenderWebGL = null;
-DisplayObject.prototype._originalRenderCanvas = null;
+Node.prototype._cacheAsBitmap = false;
+Node.prototype._originalRenderWebGL = null;
+Node.prototype._originalRenderCanvas = null;
 
-DisplayObject.prototype._originalUpdateTransform = null;
-DisplayObject.prototype._originalHitTest = null;
-DisplayObject.prototype._originalDestroy = null;
-DisplayObject.prototype._cachedSprite = null;
+Node.prototype._originalUpdateTransform = null;
+Node.prototype._originalHitTest = null;
+Node.prototype._originalDestroy = null;
+Node.prototype._cachedSprite = null;
 
-Object.defineProperties(DisplayObject.prototype, {
-
-    /**
-     * Set this to true if you want this display object to be cached as a bitmap.
-     * This basically takes a snap shot of the display object as it is at that moment. It can provide a performance benefit for complex static displayObjects.
-     * To remove simply set this property to 'false'
-     *
-     * @member {boolean}
-     * @memberof PIXI.DisplayObject#
-     */
+Object.defineProperties(Node.prototype, {
+  /**
+   * Set this to true if you want this display object to be cached as a bitmap.
+   * This basically takes a snap shot of the display object as it is at that moment. It can provide a performance benefit for complex static displayObjects.
+   * To remove simply set this property to 'false'
+   *
+   * @member {boolean}
+   * @memberof Node#
+   */
   cacheAsBitmap: {
     get: function() {
       return this._cacheAsBitmap;
@@ -71,10 +70,10 @@ Object.defineProperties(DisplayObject.prototype, {
 /**
 * Renders a cached version of the sprite with WebGL
 *
-* @param renderer {PIXI.WebGLRenderer} the WebGL renderer
+* @param {WebGLRenderer} renderer the WebGL renderer
 * @private
 */
-DisplayObject.prototype._renderCachedWebGL = function(renderer) {
+Node.prototype._renderCachedWebGL = function(renderer) {
   if (!this.visible || this.worldAlpha <= 0 || !this.renderable) {
     return;
   }
@@ -90,23 +89,23 @@ DisplayObject.prototype._renderCachedWebGL = function(renderer) {
 /**
 * Prepares the WebGL renderer to cache the sprite
 *
-* @param renderer {PIXI.WebGLRenderer} the WebGL renderer
+* @param {WebGLRenderer} renderer the WebGL renderer
 * @private
 */
-DisplayObject.prototype._initCachedDisplayObject = function(renderer) {
+Node.prototype._initCachedDisplayObject = function(renderer) {
   if (this._cachedSprite) {
     return;
   }
 
-    // first we flush anything left in the renderer (otherwise it would get rendered to the cached texture)
+  // first we flush anything left in the renderer (otherwise it would get rendered to the cached texture)
   renderer.currentRenderer.flush();
-    // this.filters= [];
-    // next we find the dimensions of the untransformed object
-    // this function also calls updatetransform on all its children as part of the measuring. This means we don't need to update the transform again in this function
-    // TODO pass an object to clone too? saves having to create a new one each time!
+  // this.filters= [];
+  // next we find the dimensions of the untransformed object
+  // this function also calls updatetransform on all its children as part of the measuring. This means we don't need to update the transform again in this function
+  // TODO pass an object to clone too? saves having to create a new one each time!
   var bounds = this.getLocalBounds().clone();
 
-    // add some padding!
+  // add some padding!
   if (this._filters) {
     var padding = this._filters[0].padding;
     bounds.x -= padding;
@@ -116,16 +115,16 @@ DisplayObject.prototype._initCachedDisplayObject = function(renderer) {
     bounds.height += padding * 2;
   }
 
-    // for now we cache the current renderTarget that the webGL renderer is currently using.
-    // this could be more elegent..
+  // for now we cache the current renderTarget that the webGL renderer is currently using.
+  // this could be more elegent..
   var cachedRenderTarget = renderer.currentRenderTarget;
-    // We also store the filter stack - I will definitely look to change how this works a little later down the line.
+  // We also store the filter stack - I will definitely look to change how this works a little later down the line.
   var stack = renderer.filterManager.filterStack;
 
-    // this renderTexture will be used to store the cached DisplayObject
+  // this renderTexture will be used to store the cached Node
   var renderTexture = new RenderTexture(renderer, bounds.width | 0, bounds.height | 0);
 
-    // need to set //
+  // need to set
   var m = _tempMatrix;
 
   m.tx = -bounds.x;
@@ -133,12 +132,12 @@ DisplayObject.prototype._initCachedDisplayObject = function(renderer) {
 
 
 
-    // set all properties to there original so we can render to a texture
+  // set all properties to there original so we can render to a texture
   this.renderWebGL = this._originalRenderWebGL;
 
   renderTexture.render(this, m, true, true);
 
-    // now restore the state be setting the new properties
+  // now restore the state be setting the new properties
   renderer.setRenderTarget(cachedRenderTarget);
   renderer.filterManager.filterStack = stack;
 
@@ -147,26 +146,26 @@ DisplayObject.prototype._initCachedDisplayObject = function(renderer) {
   this.getBounds = this._getCachedBounds;
 
 
-    // create our cached sprite
+  // create our cached sprite
   this._cachedSprite = new Sprite(renderTexture);
   this._cachedSprite.worldTransform = this.worldTransform;
   this._cachedSprite.anchor.x = -(bounds.x / bounds.width);
   this._cachedSprite.anchor.y = -(bounds.y / bounds.height);
 
-    // restore the transform of the cached sprite to avoid the nasty flicker..
+  // restore the transform of the cached sprite to avoid the nasty flicker..
   this.updateTransform();
 
-    // map the hit test..
+  // map the hit test..
   this.containsPoint = this._cachedSprite.containsPoint.bind(this._cachedSprite);
 };
 
 /**
 * Renders a cached version of the sprite with canvas
 *
-* @param renderer {PIXI.CanvasRenderer} the Canvas renderer
+* @param {CanvasRenderer} renderer the Canvas renderer
 * @private
 */
-DisplayObject.prototype._renderCachedCanvas = function(renderer) {
+Node.prototype._renderCachedCanvas = function(renderer) {
   if (!this.visible || this.worldAlpha <= 0 || !this.renderable) {
     return;
   }
@@ -182,10 +181,10 @@ DisplayObject.prototype._renderCachedCanvas = function(renderer) {
 /**
 * Prepares the Canvas renderer to cache the sprite
 *
-* @param renderer {PIXI.CanvasRenderer} the Canvas renderer
+* @param {CanvasRenderer} renderer the Canvas renderer
 * @private
 */
-DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer) {
+Node.prototype._initCachedDisplayObjectCanvas = function(renderer) {
   if (this._cachedSprite) {
     return;
   }
@@ -203,12 +202,12 @@ DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer) {
   m.tx = -bounds.x;
   m.ty = -bounds.y;
 
-    // set all properties to there original so we can render to a texture
+  // set all properties to there original so we can render to a texture
   this.renderCanvas = this._originalRenderCanvas;
 
   renderTexture.render(this, m, true);
 
-    // now restore the state be setting the new properties
+  // now restore the state be setting the new properties
   renderer.context = cachedRenderTarget;
 
   this.renderCanvas = this._renderCachedCanvas;
@@ -216,7 +215,7 @@ DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer) {
   this.getBounds = this._getCachedBounds;
 
 
-    // create our cached sprite
+  // create our cached sprite
   this._cachedSprite = new Sprite(renderTexture);
   this._cachedSprite.worldTransform = this.worldTransform;
   this._cachedSprite.anchor.x = -(bounds.x / bounds.width);
@@ -229,10 +228,10 @@ DisplayObject.prototype._initCachedDisplayObjectCanvas = function(renderer) {
 
 /**
 * Calculates the bounds of the cached sprite
-*
 * @private
+* @return {Rectangle} Bounds of this object
 */
-DisplayObject.prototype._getCachedBounds = function() {
+Node.prototype._getCachedBounds = function() {
   this._cachedSprite._currentBounds = null;
 
   return this._cachedSprite.getBounds();
@@ -243,12 +242,12 @@ DisplayObject.prototype._getCachedBounds = function() {
 *
 * @private
 */
-DisplayObject.prototype._destroyCachedDisplayObject = function() {
+Node.prototype._destroyCachedDisplayObject = function() {
   this._cachedSprite._texture.destroy();
   this._cachedSprite = null;
 };
 
-DisplayObject.prototype._cacheAsBitmapDestroy = function() {
+Node.prototype._cacheAsBitmapDestroy = function() {
   this.cacheAsBitmap = false;
   this._originalDestroy();
 };
