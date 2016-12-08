@@ -76,6 +76,18 @@ class Entity {
     this.coll = null;
 
     /**
+     * Behavior hash map
+     * @type {Object}
+     */
+    this.behaviors = {};
+
+    /**
+     * Behavior list
+     * @type {Array}
+     */
+    this.behaviorList = [];
+
+    /**
      * Position of this entity.
      * @memberof Entity#
      */
@@ -154,23 +166,64 @@ class Entity {
    */
   ready() {}
   /**
+   * Add a behavior to this entity.
+   * @param  {Object} bhv         Behavior to be added
+   * @param  {Object} [settings]  Settings passed to this behavior
+   * @return {Entity}             Self for chaining
+   */
+  behave(behaviorp, settings) {
+    var bhv;
+    switch (typeof(behaviorp)) {
+      case 'function':
+        bhv = new behaviorp(settings);
+        break;
+      case 'string':
+        bhv = new Behavior.types[behaviorp](settings);
+        break;
+      case 'object':
+        bhv = behaviorp;
+        break;
+    }
+
+    this.behaviors[bhv.type] = bhv;
+    this.behaviorList.push(bhv);
+
+    bhv.init(this);
+
+    return this;
+  }
+  /**
    * Update method to be called each frame. Set `canEverTick = true` to activate.
-   * Doing nothing by default.
+   * This method will only update behaviors by default,
+   * no need to call `super.update` if you don't have any behaviors.
+   *
    * @method update
    * @memberof Entity#
    * @param {Number} dt     Delta time in millisecond
    * @param {Number} dtSec  Delta time in second
    */
-  update(dt, dtSec) {} /* eslint no-unused-vars:0 */
+  update(dt, dtSec) {
+    let i;
+    for (i = 0; i < this.behaviorList.length; i++) {
+      this.behaviorList[i].update(dt, dtSec);
+    }
+  }
   /**
    * Update method to be called each fixed step. Set `canFixedTick = true` to activate.
-   * Doing nothing by default.
+   * This method will only update behaviors by default,
+   * no need to call `super.update` if you don't have any behaviors.
+   *
    * @method fixedUpdate
    * @memberof Entity#
    * @param {Number} dt     Delta time in millisecond
    * @param {Number} dtSec  Delta time in second
    */
-  fixedUpdate(dt, dtSec) {} /* eslint no-unused-vars:0 */
+  fixedUpdate(dt, dtSec) {
+    let i;
+    for (i = 0; i < this.behaviorList.length; i++) {
+      this.behaviorList[i].fixedUpdate(dt, dtSec);
+    }
+  }
 }
 /**
  * ID of next Entity instance
