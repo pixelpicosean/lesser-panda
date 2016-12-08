@@ -283,7 +283,7 @@ class Text extends Sprite {
    */
   renderWebGL(renderer) {
     if (this.dirty) {
-          // this.resolution = 1//renderer.resolution;
+    // this.resolution = 1//renderer.resolution;
 
       this.updateText();
     }

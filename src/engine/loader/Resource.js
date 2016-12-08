@@ -12,6 +12,7 @@ const STATUS_EMPTY = 204;
 
 /**
  * Empty function
+ * @private
  */
 function _noop() { /* empty */ }
 

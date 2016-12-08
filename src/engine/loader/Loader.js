@@ -13,247 +13,250 @@ const rgxExtractUrlHash = /(#[\w\-]+)?$/;
  * @class
  */
 class Loader {
-    /**
-     * @param {string} [baseUrl=''] - The base url for all resources loaded by this loader.
-     * @param {number} [concurrency=10] - The number of resources to load concurrently.
-     */
+  /**
+   * @constructor
+   * @param {string} [baseUrl=''] - The base url for all resources loaded by this loader.
+   * @param {number} [concurrency=10] - The number of resources to load concurrently.
+   */
   constructor(baseUrl = '', concurrency = 10) {
-        /**
-         * The base url for all resources loaded by this loader.
-         *
-         * @member {string}
-         */
+    /**
+     * The base url for all resources loaded by this loader.
+     *
+     * @member {string}
+     */
     this.baseUrl = baseUrl;
 
-        /**
-         * The progress percent of the loader going through the queue.
-         *
-         * @member {number}
-         */
+    /**
+     * The progress percent of the loader going through the queue.
+     *
+     * @member {number}
+     */
     this.progress = 0;
 
-        /**
-         * Loading state of the loader, true if it is currently loading resources.
-         *
-         * @member {boolean}
-         */
+    /**
+     * Loading state of the loader, true if it is currently loading resources.
+     *
+     * @member {boolean}
+     */
     this.loading = false;
 
-        /**
-         * A querystring to append to every URL added to the loader.
-         *
-         * This should be a valid query string *without* the question-mark (`?`). The loader will
-         * also *not* escape values for you. Make sure to escape your parameters with
-         * [`encodeURIComponent`](https://mdn.io/encodeURIComponent) before assigning this property.
-         *
-         * @example
-         *
-         * ```js
-         * const loader = new Loader();
-         *
-         * loader.defaultQueryString = 'user=me&password=secret';
-         *
-         * // This will request 'image.png?user=me&password=secret'
-         * loader.add('image.png').load();
-         *
-         * loader.reset();
-         *
-         * // This will request 'image.png?v=1&user=me&password=secret'
-         * loader.add('iamge.png?v=1').load();
-         * ```
-         */
+    /**
+     * A querystring to append to every URL added to the loader.
+     *
+     * This should be a valid query string *without* the question-mark (`?`). The loader will
+     * also *not* escape values for you. Make sure to escape your parameters with
+     * [`encodeURIComponent`](https://mdn.io/encodeURIComponent) before assigning this property.
+     *
+     * @example
+     *
+     * ```js
+     * const loader = new Loader();
+     *
+     * loader.defaultQueryString = 'user=me&password=secret';
+     *
+     * // This will request 'image.png?user=me&password=secret'
+     * loader.add('image.png').load();
+     *
+     * loader.reset();
+     *
+     * // This will request 'image.png?v=1&user=me&password=secret'
+     * loader.add('iamge.png?v=1').load();
+     * ```
+     */
     this.defaultQueryString = '';
 
-        /**
-         * The middleware to run before loading each resource.
-         *
-         * @member {function[]}
-         */
+    /**
+     * The middleware to run before loading each resource.
+     *
+     * @member {function[]}
+     */
     this._beforeMiddleware = [];
 
-        /**
-         * The middleware to run after loading each resource.
-         *
-         * @member {function[]}
-         */
+    /**
+     * The middleware to run after loading each resource.
+     *
+     * @member {function[]}
+     */
     this._afterMiddleware = [];
 
-        /**
-         * The `_loadResource` function bound with this object context.
-         *
-         * @private
-         * @member {function}
-         * @param {Resource} r - The resource to load
-         * @param {Function} d - The dequeue function
-         * @return {undefined}
-         */
+    /**
+     * The `_loadResource` function bound with this object context.
+     *
+     * @private
+     * @member {function}
+     * @param {Resource} r - The resource to load
+     * @param {Function} d - The dequeue function
+     * @return {undefined}
+     */
     this._boundLoadResource = (r, d) => this._loadResource(r, d);
 
-        /**
-         * The resources waiting to be loaded.
-         *
-         * @private
-         * @member {Resource[]}
-         */
+    /**
+     * The resources waiting to be loaded.
+     *
+     * @private
+     * @member {Resource[]}
+     */
     this._queue = async.queue(this._boundLoadResource, concurrency);
 
     this._queue.pause();
 
-        /**
-         * All the resources for this loader keyed by name.
-         *
-         * @member {object<string, Resource>}
-         */
+    /**
+     * All the resources for this loader keyed by name.
+     *
+     * @member {object<string, Resource>}
+     */
     this.resources = {};
 
-        /**
-         * Dispatched once per loaded or errored resource.
-         *
-         * The callback looks like {@link Loader.OnProgressSignal}.
-         *
-         * @member {Signal}
-         */
+    /**
+     * Dispatched once per loaded or errored resource.
+     *
+     * The callback looks like {@link Loader.OnProgressSignal}.
+     *
+     * @member {Signal}
+     */
     this.onProgress = new Signal();
 
-        /**
-         * Dispatched once per errored resource.
-         *
-         * The callback looks like {@link Loader.OnErrorSignal}.
-         *
-         * @member {Signal}
-         */
+    /**
+     * Dispatched once per errored resource.
+     *
+     * The callback looks like {@link Loader.OnErrorSignal}.
+     *
+     * @member {Signal}
+     */
     this.onError = new Signal();
 
-        /**
-         * Dispatched once per loaded resource.
-         *
-         * The callback looks like {@link Loader.OnLoadSignal}.
-         *
-         * @member {Signal}
-         */
+    /**
+     * Dispatched once per loaded resource.
+     *
+     * The callback looks like {@link Loader.OnLoadSignal}.
+     *
+     * @member {Signal}
+     */
     this.onLoad = new Signal();
 
-        /**
-         * Dispatched when the loader begins to process the queue.
-         *
-         * The callback looks like {@link Loader.OnStartSignal}.
-         *
-         * @member {Signal}
-         */
+    /**
+     * Dispatched when the loader begins to process the queue.
+     *
+     * The callback looks like {@link Loader.OnStartSignal}.
+     *
+     * @member {Signal}
+     */
     this.onStart = new Signal();
 
-        /**
-         * Dispatched when the queued resources all load.
-         *
-         * The callback looks like {@link Loader.OnCompleteSignal}.
-         *
-         * @member {Signal}
-         */
+    /**
+     * Dispatched when the queued resources all load.
+     *
+     * The callback looks like {@link Loader.OnCompleteSignal}.
+     *
+     * @member {Signal}
+     */
     this.onComplete = new Signal();
 
-        /**
-         * When the progress changes the loader and resource are disaptched.
-         *
-         * @memberof Loader
-         * @callback OnProgressSignal
-         * @param {Loader} loader - The loader the progress is advancing on.
-         * @param {Resource} resource - The resource that has completed or failed to cause the progress to advance.
-         */
-
-        /**
-         * When an error occurrs the loader and resource are disaptched.
-         *
-         * @memberof Loader
-         * @callback OnErrorSignal
-         * @param {Loader} loader - The loader the error happened in.
-         * @param {Resource} resource - The resource that caused the error.
-         */
-
-        /**
-         * When a load completes the loader and resource are disaptched.
-         *
-         * @memberof Loader
-         * @callback OnLoadSignal
-         * @param {Loader} loader - The loader that laoded the resource.
-         * @param {Resource} resource - The resource that has completed loading.
-         */
-
-        /**
-         * When the loader starts loading resources it dispatches this callback.
-         *
-         * @memberof Loader
-         * @callback OnStartSignal
-         * @param {Loader} loader - The loader that has started loading resources.
-         */
-
-        /**
-         * When the loader completes loading resources it dispatches this callback.
-         *
-         * @memberof Loader
-         * @callback OnCompleteSignal
-         * @param {Loader} loader - The loader that has finished loading resources.
-         */
-  }
+    /**
+     * When the progress changes the loader and resource are disaptched.
+     *
+     * @memberof Loader
+     * @callback OnProgressSignal
+     * @param {Loader} loader - The loader the progress is advancing on.
+     * @param {Resource} resource - The resource that has completed or failed to cause the progress to advance.
+     */
 
     /**
-     * Adds a resource (or multiple resources) to the loader queue.
+     * When an error occurrs the loader and resource are disaptched.
      *
-     * This function can take a wide variety of different parameters. The only thing that is always
-     * required the url to load. All the following will work:
-     *
-     * ```js
-     * loader
-     *     // normal param syntax
-     *     .add('key', 'http://...', function () {})
-     *     .add('http://...', function () {})
-     *     .add('http://...')
-     *
-     *     // object syntax
-     *     .add({
-     *         name: 'key2',
-     *         url: 'http://...'
-     *     }, function () {})
-     *     .add({
-     *         url: 'http://...'
-     *     }, function () {})
-     *     .add({
-     *         name: 'key3',
-     *         url: 'http://...'
-     *         onComplete: function () {}
-     *     })
-     *     .add({
-     *         url: 'https://...',
-     *         onComplete: function () {},
-     *         crossOrigin: true
-     *     })
-     *
-     *     // you can also pass an array of objects or urls or both
-     *     .add([
-     *         { name: 'key4', url: 'http://...', onComplete: function () {} },
-     *         { url: 'http://...', onComplete: function () {} },
-     *         'http://...'
-     *     ])
-     *
-     *     // and you can use both params and options
-     *     .add('key', 'http://...', { crossOrigin: true }, function () {})
-     *     .add('http://...', { crossOrigin: true }, function () {});
-     * ```
-     *
-     * @param {string} [name] - The name of the resource to load, if not passed the url is used.
-     * @param {string} [url] - The url for this resource, relative to the baseUrl of this loader.
-     * @param {object} [options] - The options for the load.
-     * @param {boolean} [options.crossOrigin] - Is this request cross-origin? Default is to determine automatically.
-     * @param {Resource.LOAD_TYPE} [options.loadType=Resource.LOAD_TYPE.XHR] - How should this resource be loaded?
-     * @param {Resource.XHR_RESPONSE_TYPE} [options.xhrType=Resource.XHR_RESPONSE_TYPE.DEFAULT] - How should
-     *      the data being loaded be interpreted when using XHR?
-     * @param {object} [options.metadata] - Extra configuration for middleware and the Resource object.
-     * @param {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [options.metadata.loadElement=null] - The
-     *      element to use for loading, instead of creating one.
-     * @param {boolean} [options.metadata.skipSource=false] - Skips adding source(s) to the load element. This
-     *      is useful if you want to pass in a `loadElement` that you already added load sources to.
-     * @param {function} [cb] - Function to call when this specific resource completes loading.
-     * @return {Loader} Returns itself.
+     * @memberof Loader
+     * @callback OnErrorSignal
+     * @param {Loader} loader - The loader the error happened in.
+     * @param {Resource} resource - The resource that caused the error.
      */
+
+    /**
+     * When a load completes the loader and resource are disaptched.
+     *
+     * @memberof Loader
+     * @callback OnLoadSignal
+     * @param {Loader} loader - The loader that laoded the resource.
+     * @param {Resource} resource - The resource that has completed loading.
+     */
+
+    /**
+     * When the loader starts loading resources it dispatches this callback.
+     *
+     * @memberof Loader
+     * @callback OnStartSignal
+     * @param {Loader} loader - The loader that has started loading resources.
+     */
+
+    /**
+     * When the loader completes loading resources it dispatches this callback.
+     *
+     * @memberof Loader
+     * @callback OnCompleteSignal
+     * @param {Loader} loader - The loader that has finished loading resources.
+     */
+  }
+
+  /**
+   * Adds a resource (or multiple resources) to the loader queue.
+   *
+   * This function can take a wide variety of different parameters. The only thing that is always
+   * required the url to load. All the following will work:
+   *
+   * ```js
+   * loader
+   *     // normal param syntax
+   *     .add('key', 'http://...', function () {})
+   *     .add('http://...', function () {})
+   *     .add('http://...')
+   *
+   *     // object syntax
+   *     .add({
+   *         name: 'key2',
+   *         url: 'http://...'
+   *     }, function () {})
+   *     .add({
+   *         url: 'http://...'
+   *     }, function () {})
+   *     .add({
+   *         name: 'key3',
+   *         url: 'http://...'
+   *         onComplete: function () {}
+   *     })
+   *     .add({
+   *         url: 'https://...',
+   *         onComplete: function () {},
+   *         crossOrigin: true
+   *     })
+   *
+   *     // you can also pass an array of objects or urls or both
+   *     .add([
+   *         { name: 'key4', url: 'http://...', onComplete: function () {} },
+   *         { url: 'http://...', onComplete: function () {} },
+   *         'http://...'
+   *     ])
+   *
+   *     // and you can use both params and options
+   *     .add('key', 'http://...', { crossOrigin: true }, function () {})
+   *     .add('http://...', { crossOrigin: true }, function () {});
+   * ```
+   *
+   * @memberof Loader#
+   *
+   * @param {string} [name] - The name of the resource to load, if not passed the url is used.
+   * @param {string} [url] - The url for this resource, relative to the baseUrl of this loader.
+   * @param {object} [options] - The options for the load.
+   * @param {boolean} [options.crossOrigin] - Is this request cross-origin? Default is to determine automatically.
+   * @param {Resource.LOAD_TYPE} [options.loadType=Resource.LOAD_TYPE.XHR] - How should this resource be loaded?
+   * @param {Resource.XHR_RESPONSE_TYPE} [options.xhrType=Resource.XHR_RESPONSE_TYPE.DEFAULT] - How should
+   *      the data being loaded be interpreted when using XHR?
+   * @param {object} [options.metadata] - Extra configuration for middleware and the Resource object.
+   * @param {HTMLImageElement|HTMLAudioElement|HTMLVideoElement} [options.metadata.loadElement=null] - The
+   *      element to use for loading, instead of creating one.
+   * @param {boolean} [options.metadata.skipSource=false] - Skips adding source(s) to the load element. This
+   *      is useful if you want to pass in a `loadElement` that you already added load sources to.
+   * @param {function} [cb] - Function to call when this specific resource completes loading.
+   * @return {Loader} Returns itself.
+   */
   add(name, url, options, cb) {
         // special case of an array of objects or urls
     if (Array.isArray(name)) {
@@ -330,40 +333,42 @@ class Loader {
     return this;
   }
 
-    /**
-     * Sets up a middleware function that will run *before* the
-     * resource is loaded.
-     *
-     * @method before
-     * @param {function} fn - The middleware function to register.
-     * @return {Loader} Returns itself.
-     */
+  /**
+   * Sets up a middleware function that will run *before* the
+   * resource is loaded.
+   *
+   * @method before
+   * @memberof Loader#
+   * @param {function} fn - The middleware function to register.
+   * @return {Loader} Returns itself.
+   */
   pre(fn) {
     this._beforeMiddleware.push(fn);
 
     return this;
   }
 
-    /**
-     * Sets up a middleware function that will run *after* the
-     * resource is loaded.
-     *
-     * @alias use
-     * @method after
-     * @param {function} fn - The middleware function to register.
-     * @return {Loader} Returns itself.
-     */
+  /**
+   * Sets up a middleware function that will run *after* the
+   * resource is loaded.
+   *
+   * @alias use
+   * @method after
+   * @memberof Loader#
+   * @param {function} fn - The middleware function to register.
+   * @return {Loader} Returns itself.
+   */
   use(fn) {
     this._afterMiddleware.push(fn);
 
     return this;
   }
 
-    /**
-     * Resets the queue of the loader to prepare for a new load.
-     *
-     * @return {Loader} Returns itself.
-     */
+  /**
+   * Resets the queue of the loader to prepare for a new load.
+   * @memberof Loader#
+   * @return {Loader} Returns itself.
+   */
   reset() {
     this.progress = 0;
     this.loading = false;
@@ -392,7 +397,7 @@ class Loader {
 
   /**
    * Starts loading the queued resources.
-   *
+   * @memberof Loader#
    * @param {function} [cb] - Optional callback that will be bound to the `complete` event.
    * @return {Loader} Returns itself.
    */
@@ -432,13 +437,14 @@ class Loader {
     return this;
   }
 
-    /**
-     * Prepares a url for usage based on the configuration of this object
-     *
-     * @private
-     * @param {string} url - The url to prepare.
-     * @return {string} The prepared url.
-     */
+  /**
+   * Prepares a url for usage based on the configuration of this object
+   *
+   * @private
+   * @memberof Loader#
+   * @param {string} url - The url to prepare.
+   * @return {string} The prepared url.
+   */
   _prepareUrl(url) {
     const parsedUrl = parseUri(url, { strictMode: true });
     let result, hash;
@@ -477,13 +483,14 @@ class Loader {
     return result;
   }
 
-    /**
-     * Loads a single resource.
-     *
-     * @private
-     * @param {Resource} resource - The resource to load.
-     * @param {function} dequeue - The function to call when we need to dequeue this item.
-     */
+  /**
+   * Loads a single resource.
+   *
+   * @private
+   * @memberof Loader#
+   * @param {Resource} resource - The resource to load.
+   * @param {function} dequeue - The function to call when we need to dequeue this item.
+   */
   _loadResource(resource, dequeue) {
     resource._dequeue = dequeue;
 
@@ -509,55 +516,57 @@ class Loader {
         );
   }
 
-    /**
-     * Called once each resource has loaded.
-     *
-     * @private
-     */
+  /**
+   * Called once each resource has loaded.
+   *
+   * @private
+   * @memberof Loader#
+   */
   _onComplete() {
     this.loading = false;
 
     this.onComplete.dispatch(this, this.resources);
   }
 
-    /**
-     * Called each time a resources is loaded.
-     *
-     * @private
-     * @param {Resource} resource - The resource that was loaded
-     */
+  /**
+   * Called each time a resources is loaded.
+   *
+   * @private
+   * @memberof Loader#
+   * @param {Resource} resource - The resource that was loaded
+   */
   _onLoad(resource) {
     resource._onLoadBinding = null;
 
         // run middleware, this *must* happen before dequeue so sub-assets get added properly
     async.eachSeries(
-            this._afterMiddleware,
-            (fn, next) => {
-              fn.call(this, resource, next);
-            },
-            () => {
-              resource.onAfterMiddleware.dispatch(resource);
+      this._afterMiddleware,
+      (fn, next) => {
+        fn.call(this, resource, next);
+      },
+      () => {
+        resource.onAfterMiddleware.dispatch(resource);
 
-              this.progress += resource.progressChunk;
-              this.onProgress.dispatch(this, resource);
+        this.progress += resource.progressChunk;
+        this.onProgress.dispatch(this, resource);
 
-              if (resource.error) {
-                this.onError.dispatch(resource.error, this, resource);
-              }
-              else {
-                this.onLoad.dispatch(this, resource);
-              }
+        if (resource.error) {
+          this.onError.dispatch(resource.error, this, resource);
+        }
+        else {
+          this.onLoad.dispatch(this, resource);
+        }
 
-                // remove this resource from the async queue
-              resource._dequeue();
+        // remove this resource from the async queue
+        resource._dequeue();
 
-                // do completion check
-              if (this._queue.idle()) {
-                this.progress = MAX_PROGRESS;
-                this._onComplete();
-              }
-            }
-        );
+        // do completion check
+        if (this._queue.idle()) {
+          this.progress = MAX_PROGRESS;
+          this._onComplete();
+        }
+      }
+    );
   }
 }
 

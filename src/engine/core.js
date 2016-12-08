@@ -24,6 +24,7 @@ Object.assign(core, {
 
   /**
    * Set to `false` to disable version info console output.
+   * @memberof module:engine/core
    * @type {Boolean}
    */
   sayHello: true,

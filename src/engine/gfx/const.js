@@ -1,5 +1,6 @@
 /**
  * Constant values.
+ * @private
  */
 const CONST = {
   /**

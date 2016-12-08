@@ -4,12 +4,12 @@
  *
  * @mixin
  * @example
- *      function MyObject() {}
+ * function MyObject() {}
  *
- *      Object.assign(
- *        MyObject.prototype,
- *        accessibility.accessibleTarget
- *      );
+ * Object.assign(
+ *   MyObject.prototype,
+ *   accessibility.accessibleTarget
+ * );
  */
 const accessibleTarget = {
 

@@ -1,6 +1,6 @@
 /**
  * Behavior base class
- * @class Behavior
+ * @interface
  */
 class Behavior {
   /**
