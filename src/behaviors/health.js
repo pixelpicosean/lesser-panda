@@ -38,10 +38,7 @@ class Health extends Behavior {
 
     this.entity.canFixedTick = true;
 
-    Object.assign(this, DefaultSettings);
-    if (settings) {
-      Object.assign(this, settings);
-    }
+    Object.assign(this, DefaultSettings, settings);
 
     // Init variables
     this.health = this.MaxHealth;
