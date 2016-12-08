@@ -8,15 +8,7 @@
             "./src/engine/"
         ],
         "exclude": [
-            "./src/engine/ai/",
-            "./src/engine/audio/howler.core.js",
-            "./src/engine/device-patch/",
-            "./src/engine/polyfill/",
-            "./src/engine/pixi/",
-            "./src/engine/resource-loader",
-            "./src/engine/reactive.js",
-            "./src/engine/tilemap/decomp",
-            "./src/engine/tilemap/pixi-tilemap.js"
+            "./src/engine/audio/howler.core.js"
         ],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
@@ -25,23 +17,23 @@
         "plugins/markdown"
     ],
     "templates": {
-        "applicationName": "Lesser Panda",
+        "applicationName": "LesserPanda",
         "cleverLinks"   : false,
-        "copyright"     : "Lesser Panda Copyright © 2015-2016 The contributors to the Lesser Panda project.",
+        "copyright"     : "LesserPanda Copyright © 2015-2016 The contributors to the LesserPanda project.",
         "disqus": "",
         "footer"        : "<span class=\"jsdoc-message\">Made with ♥ by Sean Bohan</span>",
         "googleAnalytics": "UA-57114930-3",
         "includeDate"   : false,
         "linenums"      : true,
         "meta": {
-            "title": "Lesser Panda",
+            "title": "LesserPanda",
             "description": "",
             "keyword": ""
         },
         "monospaceLinks": false,
         "navType"       : "inline",
         "openGraph": {
-            "title": "Lesser Panda",
+            "title": "LesserPanda",
             "type": "website",
             "image": "",
             "site_name": "",
@@ -50,7 +42,7 @@
         "outputSourceFiles" : true,
         "theme"         : "flatly",
         "syntaxTheme"   : "default",
-        "systemName"    : "Lesser Panda"
+        "systemName"    : "LesserPanda"
     },
     "markdown"  : {
         "parser"        : "gfm",

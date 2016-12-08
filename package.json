@@ -1,23 +1,23 @@
 {
   "name": "lesser-panda",
-  "version": "0.4.2-dev",
+  "version": "1.1.0-dev",
   "description": "A module based HTML5 game engine designed to be flexible and powerful.",
   "dependencies": {},
   "devDependencies": {
-    "ink-docstrap": "^1.2.1",
-    "jsdoc": "^3.4.0"
+    "ink-docstrap": "^1.3.0",
+    "jsdoc": "^3.4.3"
   },
   "scripts": {
     "docs": "jsdoc -c ./jsdoc.conf.json -t ./node_modules/ink-docstrap/template -R README.md"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LesserPanda-Engine/LP-Engine.git"
+    "url": "git+https://github.com/pixelpicosean/lesser-panda.git"
   },
   "author": "Sean Bohan (pixelpicosean@gmail.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LesserPanda-Engine/LP-Engine/issues"
+    "url": "https://github.com/pixelpicosean/lesser-panda/issues"
   },
-  "homepage": "https://github.com/LesserPanda-Engine/LP-Engine#readme"
+  "homepage": "https://github.com/pixelpicosean/lesser-panda#readme"
 }
