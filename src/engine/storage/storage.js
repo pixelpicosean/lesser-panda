@@ -5,11 +5,12 @@ const config = require('game/config');
  * No need to create instance, an instance is exported as default.
  *
  * @class Storage
- * @constructor
- *
- * @param {object} config Settings from `game/config`.
  */
 class Storage {
+  /**
+   * @constructor
+   * @param {object} config Settings from `game/config`.
+   */
   constructor(config) {
     /**
      * Namespace to save data to.
@@ -27,11 +28,13 @@ class Storage {
    * Set value to local storage.
    * @memberof Storage#
    * @method set
-   * @param {string} key
-   * @param {*} value
+   * @param {string} key  Key of the property
+   * @param {*} value     Value to set
    */
   set(key, value) {
-    if (!this.supported) {return false;}
+    if (!this.supported) {
+      return;
+    }
     localStorage.setItem(this.id + '.' + key, this._encode(value));
   }
 
@@ -39,9 +42,9 @@ class Storage {
    * Get key from local storage.
    * @memberof Storage#
    * @method get
-   * @param {string} key
-   * @param {*} [defaultValue]
-   * @return {*} value
+   * @param {string} key        Key of the property
+   * @param {*} [defaultValue]  Default value if no value is found
+   * @return {*} value          Value for the key
    */
   get(key, defaultValue) {
     let raw = localStorage.getItem(this.id + '.' + key);
@@ -58,8 +61,8 @@ class Storage {
    * Check if a key is in local storage.
    * @memberof Storage#
    * @method has
-   * @param {string} key
-   * @return {boolean}
+   * @param {string} key  Key to find
+   * @return {boolean}    Whether a property with this key exists
    */
   has(key) {
     return localStorage.getItem(this.id + '.' + key) !== null;
@@ -69,7 +72,7 @@ class Storage {
    * Remove key from local storage.
    * @memberof Storage#
    * @method remove
-   * @param {string} key
+   * @param {string} key  Key to remove
    */
   remove(key) {
     localStorage.removeItem(this.id + '.' + key);
@@ -92,6 +95,8 @@ class Storage {
    * @memberof Storage#
    * @method _encode
    * @private
+   * @param {*} val Value to encoe
+   * @return {String} Encoded string
    */
   _encode(val) {
     return JSON.stringify(val);
@@ -101,6 +106,8 @@ class Storage {
    * @memberof Storage#
    * @method _decode
    * @private
+   * @param {String} str  String to decode
+   * @return {Object} Decoded object
    */
   _decode(str) {
     return JSON.parse(str);
@@ -110,6 +117,7 @@ class Storage {
    * @memberof Storage#
    * @method _isSupported
    * @private
+   * @return {Boolean} Whether `localStorage` is supported by the browser
    */
   _isSupported() {
     if (typeof localStorage !== 'object') {return false;}
