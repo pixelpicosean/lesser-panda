@@ -7,37 +7,47 @@
  * @event health Health is changed
  */
 
-import Behavior from 'engine/behavior';
-import { clamp } from 'engine/utils';
+const Behavior = require('engine/Behavior');
+const { clamp } = require('engine/utils/math');
 
-export default class Health extends Behavior {
-  static TYPE = 'Health';
+const DefaultSettings = {
+  /* Max health value */
+  MaxHealth: 3,
+  DamageInvincibleTime: 0,
+  HealInvincibleTime: 0,
+};
 
-  static DEFAULT_SETTINGS = {
-    /* Max health value */
-    maxHealth: 3,
-    damageInvincibleTime: 0,
-    healInvincibleTime: 0,
-  };
+class Health extends Behavior {
+  constructor() {
+    super();
 
-  get health() {
-    return this._health;
-  }
-  set health(v) {
-    this._health = v;
-    this.actor.emit('health', v);
-  }
+    this.type = 'Health';
 
-  get invincible() {
-    return this.invincibleTimer > 0;
-  }
+    // Constants
+    this.MaxHealth = 0;
+    this.DamageInvincibleTime = 0;
+    this.HealInvincibleTime = 0;
 
-  awake() {
-    // Init variables
-    this.health = this.maxHealth;
+    // Properties
+    this.health = 0;
     this.invincibleTimer = 0;
   }
-  update(dt) {
+
+  init(ent, settings) {
+    super.init(ent);
+
+    this.entity.canFixedTick = true;
+
+    Object.assign(this, DefaultSettings);
+    if (settings) {
+      Object.assign(this, settings);
+    }
+
+    // Init variables
+    this.health = this.MaxHealth;
+    this.invincibleTimer = 0;
+  }
+  fixedUpdate(dt) {
     if (this.invincibleTimer > 0) {
       this.invincibleTimer -= dt;
     }
@@ -46,33 +56,27 @@ export default class Health extends Behavior {
   // Actions
   // Recover some health
   heal(v) {
-    this.health = clamp(this.health + v, 1, this.maxHealth);
-    this.actor.emit('heal', v);
-  }
-  // Reset health to maxHealth
-  fullHeal() {
-    this.health = this.maxHealth;
-    this.actor.emit('heal');
+    this.health = clamp(this.health + v, 1, this.MaxHealth);
+
+    this.entity.events.emit('heal', v);
   }
   // Received damages
   receiveDamage(dmg) {
     if (this.invincibleTimer > 0) return;
 
-    this.health = clamp(this.health - dmg, 0, this.maxHealth);
-
-    this.actor.emit('receiveDamage', dmg);
+    this.health = clamp(this.health - dmg, 0, this.MaxHealth);
 
     if (this.health === 0) {
-      this.kill();
+      this.entity.events.emit('kill');
       return;
     }
 
-    this.invincibleTimer = this.damageInvincibleTime;
-  }
-  // Health is 0
-  kill() {
-    this.actor.emit('kill');
+    this.invincibleTimer = this.DamageInvincibleTime;
+
+    this.entity.events.emit('receiveDamage', dmg);
   }
 }
 
 Behavior.register('Health', Health);
+
+module.exports = Health;
