@@ -1,5 +1,6 @@
 const core = require('engine/core');
 const System = require('engine/system');
+const Vector = require('engine/Vector');
 const { removeItems } = require('engine/utils/array');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
@@ -28,6 +29,7 @@ loader.use(bitmapFontParser());
 
 // System
 let sharedRenderer = null;
+const Zero = Vector.create(0, 0);
 
 class SystemGfx extends System {
   constructor() {
@@ -101,6 +103,15 @@ class SystemGfx extends System {
   }
   get backgroundColor() {
     return this._backgroundColor;
+  }
+
+  get mouse() {
+    if (this.renderer.plugins.interaction) {
+      return this.renderer.plugins.interaction.mouse.global;
+    }
+    else {
+      return Zero.set(0, 0);
+    }
   }
 
   requestAnimate(item) {
