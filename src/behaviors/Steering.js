@@ -2,44 +2,71 @@
  * Steering.
  */
 
-import Behavior from 'engine/behavior';
-import Vector from 'engine/vector';
-import rnd from 'engine/rnd';
-import { clamp } from 'engine/utils';
+const Behavior = require('engine/Behavior');
+const Vector = require('engine/Vector');
+const rnd = require('engine/rnd');
+const { clamp } = require('engine/utils/math');
 
-const VELOCITY_ESP = 0.001;
-const VELOCITY_ESP_SQ = VELOCITY_ESP * VELOCITY_ESP;
+const VelocityEsp = 0.001;
+const VelocityEspSq = VelocityEsp * VelocityEsp;
 
-export default class Steering extends Behavior {
-  static TYPE = 'Steering';
+const DefaultSettings = {
+  MaxSpeed: 100,
 
-  static DEFAULT_SETTINGS = {
-    maxSpeed: 100,
+  // Flee
+  PanicDistance: 100,
 
-    // Flee
-    panicDistance: 100,
+  // Wander
+  WanderJitter: 100,
+  WanderRadius: 100,
+  WanderDistance: 10,
+};
 
-    // Wander
-    wanderJitter: 100,
-    wanderRadius: 100,
-    wanderDistance: 10,
-  };
+class Steering extends Behavior {
+  constructor() {
+    super();
 
-  awake() {
-    // Init variables
+    this.type = 'Steering';
+
+    // Constants
+    this.MaxSpeed = 100;
+
+    this.PanicDistance = 100;
+
+    this.WanderJitter = 100;
+    this.WanderRadius = 100;
+    this.WanderDistance = 10;
+
+    // Properties
     this.force = Vector.create();
     this.wanderTarget = Vector.create();
 
     this.heading = Vector.create(1, 0);
     this.side = this.heading.clone().perp();
 
-    this.panicDistanceSq = this.panicDistance * this.panicDistance;
+    this.panicDistanceSq = this.PanicDistance * this.PanicDistance;
   }
 
-  update(_, dt) {
+  init(ent, settings) {
+    super.init(ent);
+
+    Object.assign(this, DefaultSettings, settings);
+
+    this.entity.canFixedTick = true;
+
+    // Init variables
+    this.force.set(0, 0);
+    this.wanderTarget.set(0, 0);
+
+    this.heading.set(1, 0);
+    this.side.copy(this.heading).perp();
+
+    this.panicDistanceSq = this.PanicDistance * this.PanicDistance;
+  }
+  fixedUpdate(_, dt) {
     // Update heading and side
-    if (this.actor.body.velocity.squaredLength() > VELOCITY_ESP_SQ) {
-      this.heading.copy(this.actor.body.velocity).normalize();
+    if (this.entity.body.velocity.squaredLength() > VelocityEspSq) {
+      this.heading.copy(this.entity.body.velocity).normalize();
       this.side.copy(this.heading).perp();
     }
   }
@@ -47,27 +74,27 @@ export default class Steering extends Behavior {
   // Actions
   seek(targetPos) {
     let desiredVel = targetPos.clone()
-      .subtract(this.actor.position)
+      .subtract(this.entity.position)
       .normalize()
       .multiply(this.maxSpeed);
 
-    return desiredVel.subtract(this.actor.body.velocity);
+    return desiredVel.subtract(this.entity.body.velocity);
   }
   flee(targetPos) {
     // Do nothing when distance is large enough
-    if (this.actor.position.squaredDistance(targetPos) > this.panicDistanceSq) {
+    if (this.entity.position.squaredDistance(targetPos) > this.panicDistanceSq) {
       return Vector.create();
     }
 
-    let desiredVel = this.actor.position.clone()
+    let desiredVel = this.entity.position.clone()
       .subtract(targetPos)
       .normalize()
       .multiply(this.maxSpeed);
 
-    return desiredVel.subtract(this.actor.body.velocity);
+    return desiredVel.subtract(this.entity.body.velocity);
   }
   arrive(targetPos, deceleration) {
-    let toTarget = targetPos.clone().subtract(this.actor.position);
+    let toTarget = targetPos.clone().subtract(this.entity.position);
     let dist = toTarget.length();
 
     // Distance is larger than minimal distance
@@ -77,16 +104,16 @@ export default class Steering extends Behavior {
 
       let desiredVel = toTarget.multiply(speed).divide(dist);
 
-      return desiredVel.subtract(this.actor.body.velocity);
+      return desiredVel.subtract(this.entity.body.velocity);
     }
     else {
       return toTarget.set(0);
     }
   }
   pursuit(evader) {
-    let toEvader = evader.position.clone().subtract(this.actor.position);
+    let toEvader = evader.position.clone().subtract(this.entity.position);
 
-    let selfHeading = this.actor.body.velocity.clone().normalize();
+    let selfHeading = this.entity.body.velocity.clone().normalize();
     let evaderHeading = evader.body.velocity.clone().normalize();
 
     let relativeHeading = selfHeading
@@ -102,7 +129,7 @@ export default class Steering extends Behavior {
       .add(evader.position));
   }
   evade(pursuer) {
-    let toPursuer = pursuer.position.clone().subtract(this.actor.position);
+    let toPursuer = pursuer.position.clone().subtract(this.entity.position);
 
     let lookAheadTime = toPursuer.length() / (this.maxSpeed + pursuer.body.velocity.length());
 
@@ -115,16 +142,16 @@ export default class Steering extends Behavior {
       .multiply(this.wanderRadius);
 
     let targetLocal = this.wanderTarget.clone().add(this.wanderDistance, 0);
-    let targetWorld = pointToWorldSpace(targetLocal, this.heading, this.side, this.actor.position);
+    let targetWorld = pointToWorldSpace(targetLocal, this.heading, this.side, this.entity.position);
 
-    return targetWorld.subtract(this.actor.position);
+    return targetWorld.subtract(this.entity.position);
   }
 
   interpose(agentA, agentB) {
     let midPoint = agentA.position.clone().add(agentB.position)
       .divide(2);
 
-    let timeToReachMidPoint = this.actor.position.distance(midPoint) / this.maxSpeed;
+    let timeToReachMidPoint = this.entity.position.distance(midPoint) / this.maxSpeed;
 
     let aPos = agentA.body.velocity.clone().multiply(timeToReachMidPoint)
       .add(agentA.position);
@@ -145,3 +172,5 @@ function pointToWorldSpace(point, heading, side, localPosition) {
 }
 
 Behavior.register('Steering', Steering);
+
+module.exports = Steering;
