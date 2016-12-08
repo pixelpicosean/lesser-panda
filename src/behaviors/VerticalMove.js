@@ -40,14 +40,20 @@ class VerticalMove extends Behavior {
     this.bottom = 0;
     this.hasRange = false;
   }
-  awake() {
+  init(ent, settings) {
+    super.init(ent);
+
+    Object.assign(this, DefaultSettings, settings);
+
+    this.entity.canFixedTick = true;
+
     this.hasRange = Number.isFinite(this.Range);
     if (this.hasRange) {
       this.top = this.entity.position.y - this.Range * this.StartPct;
       this.bottom = this.top + this.Range;
     }
   }
-  update(_, dt) {
+  fixedUpdate(_, dt) {
     if (this.UseKeyboard) {
       this.dir = 0;
       if (keyboard.down(this.UpKey)) this.dir -= 1;
