@@ -23,14 +23,14 @@ LesserPanda has a lot of features, and the list is still growing:
 ## Samples
 
 Samples are moved to its own [repo here](https://github.com/pixelpicosean/lesser-panda-samples).
-Currently the samples are located inside `src/game/samples` folder, and each is just a simple `Scene` focusing on one or more particular feature.
+Currently the samples are located inside `src/game/samples` folder, and each is just a simple `Game` focusing on one or more particular feature.
 
-**Note: Samples have not been converted to latest v1.0.0 yet.**
+**Note: Samples have not been converted to latest v1.x yet.**
 
 ## Document
 
-- [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
-- [API document](https://pixelpicosean.github.io/lesser-panda/)
+- [Getting Start Guide(old **v0.x** version)](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
+- [API document(old **v0.x** version)](https://pixelpicosean.github.io/lesser-panda/)
 
 **Devlog** posts what happened to LesserPanda, read them at [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), it will be updated on each Wednesday.
 
@@ -63,6 +63,10 @@ There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which 
 Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
+
+### 1.1.0
+
+- Update behaviors for new `Entity` API
 
 ### 1.0.2
 
