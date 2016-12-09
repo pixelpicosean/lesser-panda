@@ -55,7 +55,9 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 - `Game` is the main hub for your game.
 - `Timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
 - `utils` provides utility functions and constants for array, color, math, object.
-- `Vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
+- `Vector` is the 2D vector class, with tons of useful methods
+- `Behavior` interface for behaviors of `Entity`
+- `System` interface for all the sub-systems of `Game`
 
 ## Progress
 
@@ -64,9 +66,12 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
-### 1.1.0
+### 1.1
 
 - Update behaviors for new `Entity` API
+- Cache arrays for physics updating
+- Add "canHitMap" to `Collider` to toggle map collision
+- More JSDoc comments and better API document
 
 ### 1.0.2
 
