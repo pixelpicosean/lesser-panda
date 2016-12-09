@@ -179,7 +179,7 @@ class SystemPhysics extends System {
 
         // Trace against the map there is one
         // TODO: add a flag to pass this step
-        if (this.collisionMap) {
+        if (this.collisionMap && coll.canHitMap) {
           this.collisionMap.trace(coll, this.res.x, this.res.y, this.res);
           // Manually handle trace result
           coll.handleMovementTrace(this.res);

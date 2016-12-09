@@ -70,6 +70,11 @@ class Collider {
      */
     this.isStatic = false;
     /**
+     * Whether this collider will hit CollisionMap.
+     * @type {Boolean}
+     */
+    this.canHitMap = true;
+    /**
      * Collider's parent world.
      * @type {SystemPhysics}
      */
