@@ -1,9 +1,6 @@
 const core = require('engine/core');
 var CONST = require('../../const');
 
-/**
- * @namespace utils
- */
 var utils = {
   _uid: 0,
   saidHello: false,

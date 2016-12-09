@@ -1,6 +1,6 @@
 /**
  * Utilty functions for animation module.
- * @module engine/animation/utils
+ * @module engine/anime/utils
  */
 
 /**

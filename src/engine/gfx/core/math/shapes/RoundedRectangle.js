@@ -4,13 +4,16 @@ const CONST = require('../../../const');
  * The Rounded Rectangle object is an area that has nice rounded corners, as indicated by its top-left corner point (x, y) and by its width and its height and its radius.
  *
  * @class
- * @param x {number} The X coordinate of the upper-left corner of the rounded rectangle
- * @param y {number} The Y coordinate of the upper-left corner of the rounded rectangle
- * @param width {number} The overall width of this rounded rectangle
- * @param height {number} The overall height of this rounded rectangle
- * @param radius {number} Controls the radius of the rounded corners
  */
 class RoundedRectangle {
+  /**
+   * @constructor
+   * @param {number} x      The X coordinate of the upper-left corner of the rounded rectangle
+   * @param {number} y      The Y coordinate of the upper-left corner of the rounded rectangle
+   * @param {number} width  The overall width of this rounded rectangle
+   * @param {number} height The overall height of this rounded rectangle
+   * @param {number} radius Controls the radius of the rounded corners
+   */
   constructor(x, y, width, height, radius) {
     /**
      * @member {number}
@@ -53,7 +56,7 @@ class RoundedRectangle {
   /**
    * Creates a clone of this Rounded Rectangle
    *
-   * @return {PIXI.RoundedRectangle} a copy of the rounded rectangle
+   * @return {RoundedRectangle} a copy of the rounded rectangle
    */
   clone() {
     return new RoundedRectangle(this.x, this.y, this.width, this.height, this.radius);
@@ -62,8 +65,8 @@ class RoundedRectangle {
   /**
    * Checks whether the x and y coordinates given are contained within this Rounded Rectangle
    *
-   * @param x {number} The X coordinate of the point to test
-   * @param y {number} The Y coordinate of the point to test
+   * @param {number} x The X coordinate of the point to test
+   * @param {number} y The Y coordinate of the point to test
    * @return {boolean} Whether the x/y coordinates are within this Rounded Rectangle
    */
   contains(x, y) {

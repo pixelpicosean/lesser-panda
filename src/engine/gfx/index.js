@@ -1,5 +1,6 @@
 const core = require('engine/core');
 const System = require('engine/system');
+const Vector = require('engine/Vector');
 const { removeItems } = require('engine/utils/array');
 const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
 const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
@@ -28,8 +29,15 @@ loader.use(bitmapFontParser());
 
 // System
 let sharedRenderer = null;
+const Zero = Vector.create(0, 0);
 
+/**
+ * Graphic system.
+ */
 class SystemGfx extends System {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
@@ -96,19 +104,51 @@ class SystemGfx extends System {
     this.animList = [];
   }
 
+  /**
+   * Background color setter
+   * @param  {Number} c Color to set
+   */
   set backgroundColor(c) {
     this.renderer.backgroundColor = this._backgroundColor = c;
   }
+  /**
+   * Background color getter
+   * @return {Number} Background color as number
+   */
   get backgroundColor() {
     return this._backgroundColor;
   }
 
+  /**
+   * Mouse position getter. Require the `engine/gfx/interaction` before
+   * using.
+   * @return {Vector} Mouse position
+   */
+  get mouse() {
+    if (this.renderer.plugins.interaction) {
+      return this.renderer.plugins.interaction.mouse.global;
+    }
+    else {
+      return Zero.set(0, 0);
+    }
+  }
+
+  /**
+   * Request animating an item
+   * @param  {Node} item Item to be animated
+   * @private
+   */
   requestAnimate(item) {
     let idx = this.animList.indexOf(item);
     if (idx < 0) {
       this.animList.push(item);
     }
   }
+  /**
+   * Cancel the request of an animating
+   * @param  {Node} item Item to be canceled
+   * @private
+   */
   cancelAnimate(item) {
     let idx = this.animList.indexOf(item);
     if (idx >= 0) {
@@ -116,13 +156,23 @@ class SystemGfx extends System {
     }
   }
 
+  /**
+   * Awake callback
+   */
   awake() {
     this.renderer.backgroundColor = this._backgroundColor;
     this.timestamp = performance.now();
   }
+  /**
+   * Update callback
+   */
   update() {
     this.renderer.render(this.root);
   }
+  /**
+   * Fixed update callback
+   * @param {Number} delta Delta time in ms
+   */
   fixedUpdate(delta) {
     this.delta = delta;
 
@@ -131,6 +181,12 @@ class SystemGfx extends System {
     }
   }
 
+  /**
+   * Create a layer
+   * @param  {String} name   Name of this layer
+   * @param  {String} parent Which layer to add this into
+   * @return {SystemGfx}     Self for chaining
+   */
   createLayer(name, parent) {
     if (this.layers[name]) {
       console.log(`Layer "${name}" already exist!`);
@@ -154,6 +210,10 @@ class SystemGfx extends System {
     return this;
   }
 
+  /**
+   * Entity spawn callback
+   * @param {Entity} ent Entity to be spawned
+   */
   onEntitySpawn(ent) {
     let name = ent.layer;
     if (ent.gfx) {
@@ -170,15 +230,16 @@ class SystemGfx extends System {
       ent.gfx.position = ent.position;
     }
   }
+  /**
+   * Entity remove callback
+   * @param {Entity} ent Entity to be removed
+   */
   onEntityRemove(ent) {
     if (ent.gfx) {
       ent.gfx.remove();
       ent.gfx.entity = null;
     }
   }
-
-  onPause() {}
-  onResume() {}
 }
 
 module.exports = SystemGfx;

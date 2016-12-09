@@ -50,9 +50,21 @@ class CollisionMap {
     return this._height;
   }
 
+  /**
+   * Get the tile index with its row and column number
+   * @param  {Number} r Row of this tile
+   * @param  {Number} q Column of this tile
+   * @return {Number}   Tile index
+   */
   getTile(r, q) {
     return (q >= 0 && q < this._width && r >= 0 && r < this._height) ? this.data[r][q] : 0;
   }
+  /**
+   * Get the tile index at a specific position(in pixel)
+   * @param  {Number} x X position
+   * @param  {Number} y Y position
+   * @return {Number}   Tile index
+   */
   getTileAt(x, y) {
     const q = Math.floor(x / this.tilesize);
     const r = Math.floor(y / this.tilesize);
@@ -60,11 +72,23 @@ class CollisionMap {
     return (q >= 0 && q < this._width && r >= 0 && r < this._height) ? this.data[r][q] : 0;
   }
 
+  /**
+   * Set the tile at the giving row and column
+   * @param {Number} r    Row of this tile
+   * @param {Number} q    Column of this tile
+   * @param {Number} tile New tile index
+   */
   setTile(r, q, tile) {
     if (q >= 0 && q < this._width && r >= 0 && r < this._height) {
       this.data[r][q] = tile;
     }
   }
+  /**
+   * Set the tile at a specific position
+   * @param {Number} x    X position
+   * @param {Number} y    Y position
+   * @param {Number} tile New tile index
+   */
   setTileAt(x, y, tile) {
     const q = Math.floor(x / this.tilesize);
     const r = Math.floor(y / this.tilesize);

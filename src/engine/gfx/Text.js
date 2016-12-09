@@ -5,8 +5,8 @@ require('./core/sprites/webgl/SpriteRenderer');
 /**
  * Factory function for `Text`.
  *
- * @param {object} data
- * @return {Text}
+ * @param {object} data   Data to create the instance from
+ * @return {Text}         Text instance
  */
 module.exports = function(data) {
   const inst = new Text(data.text, data, data.resolution || 1);

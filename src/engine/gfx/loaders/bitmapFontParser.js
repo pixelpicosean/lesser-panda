@@ -5,6 +5,7 @@ const dirname = require('./dirname');
 const utils = require('../core/utils');
 const BitmapText = require('../core/text/BitmapText');
 
+// eslint-disable-next-line
 function parse(resource, texture) {
   let i;
 

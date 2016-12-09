@@ -13,8 +13,8 @@ const DEFAULT_POLYGON_VERTICES = [
 /**
  * Factory function for `Graphics`.
  *
- * @param {object} data
- * @return {Graphics}
+ * @param {object} data   Data to create the instance from
+ * @return {Graphics}     Graphics instance
  */
 module.exports = function(data) {
   let inst = new Graphics();

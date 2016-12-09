@@ -155,6 +155,7 @@ class Timer {
 const pool = [];
 /**
  * Timer factory
+ * @private
  * @param  {Number} ms  Time in millisecond
  * @return {Timer}      Timer instance
  */
@@ -170,6 +171,7 @@ function createTimer(ms) {
 }
 /**
  * Recycle a timer instance for later reuse
+ * @private
  * @param  {Timer} timer Timer instance
  */
 function recycleTimer(timer) {
@@ -199,7 +201,8 @@ class SystemTimer extends System {
 
   /**
    * Update
-   * @param  {Number} delta Delta time in millisecond
+   * @memberof SystemTimer#
+   * @param {Number} delta Delta time in millisecond
    */
   update(delta) {
     this.delta = delta;
@@ -225,7 +228,7 @@ class SystemTimer extends System {
 
   /**
    * Create an one-shoot timer.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method later
    * @param {number}    wait      Time in milliseconds
    * @param {function}  callback  Callback function to run, when timer ends
@@ -256,7 +259,7 @@ class SystemTimer extends System {
   }
   /**
    * Create an one-shoot timer while the time is in seconds instead.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method laterSec
    * @param {number}    wait      Time in seconds
    * @param {function}  callback  Callback function to run, when timer ends
@@ -270,7 +273,7 @@ class SystemTimer extends System {
 
   /**
    * Create a repeat timer.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method interval
    * @param {number}    interval  Time in milliseconds
    * @param {function}  callback  Callback function to run, when timer ends
@@ -301,7 +304,7 @@ class SystemTimer extends System {
   }
   /**
    * Create a repeat timer while the time is in seconds instead.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method intervalSec
    * @param {number}    interval  Time in seconds
    * @param {function}  callback  Callback function to run, when timer ends
@@ -315,7 +318,7 @@ class SystemTimer extends System {
 
   /**
    * Remove a timer.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method remove
    * @param {Timer} timer Timer to remove
    */
@@ -325,7 +328,7 @@ class SystemTimer extends System {
 
   /**
    * Pause timers with a specific tag.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method pauseTimersTagged
    * @param  {string} tag Tag of timers to resume
    * @return {SystemTimer} Self for chaining
@@ -341,7 +344,7 @@ class SystemTimer extends System {
 
   /**
    * Resume timers with a specific tag.
-   * @memberof Timer
+   * @memberof SystemTimer#
    * @method resumeTimersTagged
    * @param  {string} tag Tag of timers to resume
    * @return {SystemTimer} Self for chaining

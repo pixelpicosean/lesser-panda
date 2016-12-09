@@ -9,6 +9,7 @@ var Matrix = require('./Matrix');
 
 var mul = [];
 
+// eslint-disable-next-line
 function signum(x) {
   if (x < 0) {
     return -1;
@@ -19,6 +20,7 @@ function signum(x) {
   return 0;
 }
 
+// eslint-disable-next-line
 function init() {
   for (var i = 0; i < 16; i++) {
     var row = [];
@@ -48,15 +50,15 @@ init();
 
 /**
  * Implements Dihedral Group D_8, see [group D4]{@link http://mathworld.wolfram.com/DihedralGroupD4.html}, D8 is the same but with diagonals
- * Used for texture rotations
+ * Used for texture rotations.
+ *
  * Vector xX(i), xY(i) is U-axis of sprite with rotation i
  * Vector yY(i), yY(i) is V-axis of sprite with rotation i
  * Rotations: 0 grad (0), 90 grad (2), 180 grad (4), 270 grad (6)
  * Mirrors: vertical (8), main diagonal (10), horizontal (12), reverse diagonal (14)
  * This is the small part of gameofbombs.com portal system. It works.
- * @author Ivan @ivanpopelyshev
  *
- * @namespace PIXI.GroupD8
+ * @author Ivan @ivanpopelyshev
  */
 var GroupD8 = {
   E: 0,
@@ -93,19 +95,19 @@ var GroupD8 = {
   sub: function(rotationSecond, rotationFirst) {
     return mul[rotationSecond][GroupD8.inv(rotationFirst)];
   },
-    /**
-     * Adds 180 degrees to rotation. Commutative operation
-     * @param rotation
-     * @returns {number}
-     */
+  /**
+   * Adds 180 degrees to rotation. Commutative operation
+   * @param {number} rotation   Rotation to add
+   * @returns {number}          Result rotation
+   */
   rotate180: function(rotation) {
     return rotation ^ 4;
   },
-    /**
-     * I dont know why sometimes width and heights needs to be swapped. We'll fix it later.
-     * @param rotation
-     * @returns {boolean}
-     */
+  /**
+   * I dont know why sometimes width and heights needs to be swapped. We'll fix it later.
+   * @param {number} rotation Rotation to check
+   * @returns {boolean}       Needs to be swapped or not
+   */
   isSwapWidthHeight: function(rotation) {
     return (rotation & 3) === 2;
   },
@@ -143,15 +145,15 @@ var GroupD8 = {
       }
     }
   },
-    /**
-     * Helps sprite to compensate texture packer rotation.
-     * @param matrix {PIXI.Matrix} sprite world matrix
-     * @param rotation {number}
-     * @param tx {number|*} sprite anchoring
-     * @param ty {number|*} sprite anchoring
-     */
+  /**
+   * Helps sprite to compensate texture packer rotation.
+   * @param {Matrix} matrix   Sprite world matrix
+   * @param {number} rotation Rotation to append
+   * @param {number|*} tx     Sprite anchoring x
+   * @param {number|*} ty     Sprite anchoring y
+   */
   matrixAppendRotationInv: function(matrix, rotation, tx, ty) {
-        // Packer used "rotation", we use "inv(rotation)"
+    // Packer used "rotation", we use "inv(rotation)"
     var mat = tempMatrices[GroupD8.inv(rotation)];
     tx = tx || 0;
     ty = ty || 0;
@@ -161,4 +163,7 @@ var GroupD8 = {
   },
 };
 
+/**
+ * @module engine/gfx/core/math/GroupD8
+ */
 module.exports = GroupD8;

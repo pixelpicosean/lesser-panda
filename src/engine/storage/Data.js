@@ -4,10 +4,12 @@ const EventEmitter = require('engine/EventEmitter');
  * Data storage base class. Provides data define, set and get support.
  *
  * @class Data
- * @constructor
  * @extends {EventEmitter}
  */
 class Data extends EventEmitter {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
 
@@ -36,8 +38,8 @@ class Data extends EventEmitter {
    * Check whether a key is valid.
    * @memberof Data#
    * @method validKey
-   * @param  {string} key
-   * @return {boolean}
+   * @param  {String} key   Key to validate
+   * @return {Boolean}      Whether this key is valid
    */
   validKey(key) {
     if (this.keys.indexOf(key) >= 0) {
@@ -51,9 +53,9 @@ class Data extends EventEmitter {
    * Add a boolean property.
    * @memberof Data#
    * @method addBool
-   * @param {string} key
-   * @param {boolean} defaultVal
-   * @return {Data} Self for chaining
+   * @param {String} key            Key of this property
+   * @param {Boolean} defaultVal    Default value of this property
+   * @return {Data}                 Self for chaining
    */
   addBool(key, defaultVal) {
     if (this.validKey(key)) {
@@ -68,9 +70,9 @@ class Data extends EventEmitter {
    * Add a integer number property.
    * @memberof Data#
    * @method addInt
-   * @param {string} key
-   * @param {number} defaultVal
-   * @return {Data} Self for chaining
+   * @param {string} key          Key of this property
+   * @param {number} defaultVal   Default value of this property
+   * @return {Data}               Self for chaining
    */
   addInt(key, defaultVal) {
     if (this.validKey(key)) {
@@ -85,9 +87,9 @@ class Data extends EventEmitter {
    * Add a float number property.
    * @memberof Data#
    * @method addFloat
-   * @param {string} key
-   * @param {number} defaultVal
-   * @return {Data} Self for chaining
+   * @param {string} key          Key of this property
+   * @param {number} defaultVal   Default value of this property
+   * @return {Data}               Self for chaining
    */
   addFloat(key, defaultVal) {
     if (this.validKey(key)) {
@@ -102,9 +104,9 @@ class Data extends EventEmitter {
    * Add a string property.
    * @memberof Data#
    * @method addString
-   * @param {string} key
-   * @param {string} defaultVal
-   * @return {Data} Self for chaining
+   * @param {string} key          Key of this property
+   * @param {string} defaultVal   Default value of this property
+   * @return {Data}               Self for chaining
    */
   addString(key, defaultVal) {
     if (this.validKey(key)) {
@@ -119,9 +121,9 @@ class Data extends EventEmitter {
    * Add an array property.
    * @memberof Data#
    * @method addArray
-   * @param {string} key
-   * @param {array} defaultVal
-   * @return {Data} Self for chaining
+   * @param {string} key        Key of this property
+   * @param {array} defaultVal  Default value of this property
+   * @return {Data}             Self for chaining
    */
   addArray(key, defaultVal) {
     if (this.validKey(key)) {
@@ -137,8 +139,8 @@ class Data extends EventEmitter {
    * Check whether this data has a property with a key.
    * @memberof Data#
    * @method has
-   * @param {string} key
-   * @return {boolean}
+   * @param {string} key  Key to find
+   * @return {boolean}    Whether a property with this key exist
    */
   has(key) {
     return this.keys.indexOf(key) >= 0;
@@ -148,9 +150,9 @@ class Data extends EventEmitter {
    * Set a property by key.
    * @memberof Data#
    * @method set
-   * @param {string} key
-   * @param {*} value
-   * @return {Data} Self for chaining
+   * @param {string} key  Key of the property
+   * @param {*} value     Value to set
+   * @return {Data}       Self for chaining
    */
   set(key, value) {
     if (this.has(key)) {
@@ -164,9 +166,9 @@ class Data extends EventEmitter {
    * Set a boolean property
    * @memberof Data#
    * @method setBool
-   * @param {string} key
-   * @param {boolean} value
-   * @return {Data} Self for chaining
+   * @param {string} key      Key of this property
+   * @param {boolean} value   Value to set
+   * @return {Data}           Self for chaining
    */
   setBool(key, value) {
     return this.set(key, Boolean(value));
@@ -175,9 +177,9 @@ class Data extends EventEmitter {
    * Set a integer number property
    * @memberof Data#
    * @method setInt
-   * @param {string} key
-   * @param {number} value
-   * @return {Data} Self for chaining
+   * @param {string} key    Key of the property
+   * @param {number} value  Value to set
+   * @return {Data}         Self for chaining
    */
   setInt(key, value) {
     return this.set(key, parseInt(value));
@@ -186,9 +188,9 @@ class Data extends EventEmitter {
    * Set a float number property
    * @memberof Data#
    * @method setFloat
-   * @param {string} key
-   * @param {number} value
-   * @return {Data} Self for chaining
+   * @param {string} key    Key of the property
+   * @param {number} value  Value to set
+   * @return {Data}         Self for chaining
    */
   setFloat(key, value) {
     return this.set(key, parseFloat(value));
@@ -197,9 +199,9 @@ class Data extends EventEmitter {
    * Set a string property
    * @memberof Data#
    * @method setString
-   * @param {string} key
-   * @param {string} value
-   * @return {Data} Self for chaining
+   * @param {string} key    Key of the property
+   * @param {string} value  Value to set
+   * @return {Data}         Self for chaining
    */
   setString(key, value) {
     return this.set(key, JSON.stringify(value));
@@ -208,10 +210,10 @@ class Data extends EventEmitter {
    * Set value of an element of array property
    * @memberof Data#
    * @method setArrayItem
-   * @param {string} key
-   * @param {number} idx
-   * @param {bool} value
-   * @return {Data} Self for chaining
+   * @param {string} key  Key of the array
+   * @param {number} idx  Index of the element
+   * @param {bool} value  Value to set
+   * @return {Data}       Self for chaining
    */
   setArrayItem(key, idx, value) {
     let arr = this.get(key);
@@ -227,7 +229,8 @@ class Data extends EventEmitter {
    * Get value of a property
    * @memberof Data#
    * @method get
-   * @param {string} key
+   * @param {string} key  Key of the property
+   * @return {*}          Value of the property
    */
   get(key) {
     if (this.has(key)) {
@@ -240,8 +243,9 @@ class Data extends EventEmitter {
    * Get value of an element of an array property
    * @memberof Data#
    * @method getArrayItem
-   * @param {string} key
-   * @param {number} idx
+   * @param {string} key  Key of the array
+   * @param {number} idx  Index of the element
+   * @return {*}          Value of the element or `undefined`
    */
   getArrayItem(key, idx) {
     let arr = this.get(key);
@@ -254,9 +258,9 @@ class Data extends EventEmitter {
 }
 
 /**
- * @exports engine/storage/data
+ * @exports engine/storage/Data
  * @see Data
  *
- * @requires module:engine/eventemitter3
+ * @requires module:engine/EventEmitter
  */
 module.exports = Data;

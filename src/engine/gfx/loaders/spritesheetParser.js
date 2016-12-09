@@ -31,6 +31,7 @@ module.exports = function() {
       var resolution = utils.getResolutionOfUrl(resource.url);
       var batchIndex = 0;
 
+      // eslint-disable-next-line
       function processFrames(initialFrameIndex, maxFrames) {
         var frameIndex = initialFrameIndex;
 
@@ -80,10 +81,12 @@ module.exports = function() {
         }
       }
 
+      // eslint-disable-next-line
       function shouldProcessNextBatch() {
         return batchIndex * BATCH_SIZE < frameKeys.length;
       }
 
+      // eslint-disable-next-line
       function processNextBatch(done) {
         processFrames(batchIndex * BATCH_SIZE, BATCH_SIZE);
         batchIndex++;

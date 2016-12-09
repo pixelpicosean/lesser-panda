@@ -7,9 +7,11 @@ const { UP, DOWN, LEFT, RIGHT, OVERLAP, BOX, CIRC } = require('./const');
  * Box vs Box, Box vs Circle collisions.
  *
  * @class AABBSolver
- * @constructor
  */
 class AABBSolver {
+  /**
+   * @constructor
+   */
   constructor() {
     this.response = [
       new Vector(),
@@ -21,8 +23,8 @@ class AABBSolver {
    * Hit test a versus b.
    * @memberof AABBSolver#
    * @method hitTest
-   * @param {Collider} a
-   * @param {Collider} b
+   * @param {Collider} a  First collider
+   * @param {Collider} b  Second collider
    * @return {boolean} return true if bodies hit.
    */
   hitTest(a, b) {
@@ -77,11 +79,10 @@ class AABBSolver {
    * Hit response a versus b.
    * @memberof AABBSolver#
    * @method hitResponse
-   * @param {Collider} a
-   * @param {Collider} b
-   * @param {boolean}  a2b
-   * @param {boolean}  b2a
-   * @return {boolean}
+   * @param {Collider} a    First collider
+   * @param {Collider} b    Second collider
+   * @param {boolean}  a2b  Whether first collider receives hit response
+   * @param {boolean}  b2a  Whether second collider receives hit response
    */
   hitResponse(a, b, a2b, b2a) {
     let pushA = false, pushB = false;

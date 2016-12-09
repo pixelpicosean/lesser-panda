@@ -20,10 +20,11 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v1.0.2',
+  version: 'v1.1',
 
   /**
    * Set to `false` to disable version info console output.
+   * @memberof module:engine/core
    * @type {Boolean}
    */
   sayHello: true,

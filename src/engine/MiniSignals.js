@@ -1,3 +1,6 @@
+/**
+ * Listener function and context pack.
+ */
 class MiniSignalBinding {
 
   /**
@@ -6,7 +9,7 @@ class MiniSignalBinding {
   * @param {Function} fn Event handler to be called.
   * @param {Boolean} [once=false] Should this listener be removed after dispatch
   * @param {Mixed} [thisArg] The context of the callback function.
-  * @api private
+  * @private
   */
   constructor(fn, once = false, thisArg) {
     this._fn = fn;
@@ -15,6 +18,10 @@ class MiniSignalBinding {
     this._next = this._prev = this._owner = null;
   }
 
+  /**
+   * Disconnect this signal binding
+   * @return {Boolean} True if succeed, otherwise false
+   */
   detach() {
     if (this._owner === null) {return false;}
     this._owner.detach(this);
@@ -25,6 +32,9 @@ class MiniSignalBinding {
 
 /**
 * @private
+* @param {*} self Dispatcher itself
+* @param {*} node Node to add
+* @return {*}     The node just added
 */
 function _addMiniSignalBinding(self, node) {
   if (!self._head) {
@@ -42,19 +52,20 @@ function _addMiniSignalBinding(self, node) {
   return node;
 }
 
+/**
+ * MiniSignal constructor.
+ * @public
+ *
+ * @example
+ * let mySignal = new MiniSignal();
+ * let binding = mySignal.add(onSignal);
+ * mySignal.dispatch('foo', 'bar');
+ * mySignal.detach(binding);
+ */
 class MiniSignal {
-
   /**
-  * MiniSignal constructor.
-  * @constructs MiniSignal
-  * @api public
-  *
-  * @example
-  * let mySignal = new MiniSignal();
-  * let binding = mySignal.add(onSignal);
-  * mySignal.dispatch('foo', 'bar');
-  * mySignal.detach(binding);
-  */
+   * @constructor
+   */
   constructor() {
     this._head = this._tail = undefined;
   }
@@ -64,7 +75,7 @@ class MiniSignal {
   *
   * @param {Boolean} [exists=false] We only need to know if there are handlers.
   * @returns {MiniSignalBinding[]|Boolean} Array of attached MiniSignalBinding or Boolean if called with exists = true
-  * @api public
+  * @public
   */
   handlers(exists = false) {
     let node = this._head;
@@ -86,7 +97,7 @@ class MiniSignal {
   *
   * @param {MiniSignalBinding} node Node to check.
   * @returns {Boolean} True if node is attache to mini-signal
-  * @api public
+  * @public
   */
   has(node) {
     if (!(node instanceof MiniSignalBinding)) {
@@ -100,7 +111,7 @@ class MiniSignal {
   * Dispaches a signal to all registered listeners.
   *
   * @returns {Boolean} Indication if we've emitted an event.
-  * @api public
+  * @public
   */
   dispatch() {
     let node = this._head;
@@ -122,7 +133,7 @@ class MiniSignal {
   * @param {Function} fn Callback function.
   * @param {Mixed} [thisArg] The context of the callback function.
   * @returns {MiniSignalBinding} The MiniSignalBinding node that was added.
-  * @api public
+  * @public
   */
   add(fn, thisArg = null) {
     if (typeof fn !== 'function') {
@@ -137,7 +148,7 @@ class MiniSignal {
   * @param {Function} fn Callback function.
   * @param {Mixed} [thisArg] The context of the callback function.
   * @returns {MiniSignalBinding} The MiniSignalBinding node that was added.
-  * @api public
+  * @public
   */
   once(fn, thisArg = null) {
     if (typeof fn !== 'function') {
@@ -151,7 +162,7 @@ class MiniSignal {
   *
   * @param {MiniSignalBinding} node The binding node that will be removed.
   * @returns {MiniSignal} The instance on which this method was called.
-  * @api public */
+  * @public */
   detach(node) {
     if (!(node instanceof MiniSignalBinding)) {
       throw new Error('MiniSignal#detach(): First arg must be a MiniSignalBinding object.');
@@ -180,7 +191,7 @@ class MiniSignal {
   * Detach all listeners.
   *
   * @returns {MiniSignal} The instance on which this method was called.
-  * @api public
+  * @public
   */
   detachAll() {
     let node = this._head;

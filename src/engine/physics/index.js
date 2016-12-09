@@ -3,6 +3,22 @@ const Vector = require('engine/Vector');
 const { removeItems } = require('engine/utils/array');
 const { clamp } = require('engine/utils/math');
 
+const Arrays = new Array(20);
+for (let i = 0; i < 20; i++) {
+  Arrays[i] = [];
+}
+const getArray = () => {
+  let arr = Arrays.pop();
+  if (!arr) {
+    arr = [];
+  }
+  return arr;
+};
+const putArray = (arr) => {
+  arr.length = 0;
+  Arrays.push(arr);
+};
+
 /**
  * Physics system.
  *
@@ -178,8 +194,7 @@ class SystemPhysics extends System {
         this.res.y = coll.velocity.y * delta;
 
         // Trace against the map there is one
-        // TODO: add a flag to pass this step
-        if (this.collisionMap) {
+        if (this.collisionMap && coll.canHitMap) {
           this.collisionMap.trace(coll, this.res.x, this.res.y, this.res);
           // Manually handle trace result
           coll.handleMovementTrace(this.res);
@@ -224,7 +239,7 @@ class SystemPhysics extends System {
             hash[x] = {};
           }
           if (!hash[x][y]) {
-            hash[x][y] = [];
+            hash[x][y] = getArray();
           }
           group = hash[x][y];
 
@@ -273,6 +288,16 @@ class SystemPhysics extends System {
         }
       }
     }
+
+    // Recycle arrays in the hash
+    for (i in hash) {
+      group = hash[i];
+      for (j in group) {
+        putArray(group[j]);
+        delete group[j];
+      }
+      delete hash[i];
+    }
   }
 
   /**
@@ -316,6 +341,7 @@ module.exports = SystemPhysics;
 
 /**
  * Get a collision group by index
+ * @memberof module:engine/physics
  * @param  {Number} idx Index of the group.
  * @return {Number}     Group mask
  */

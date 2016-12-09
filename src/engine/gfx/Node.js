@@ -4,8 +4,8 @@ const CONST = require('./const');
 /**
  * Factory function for `Node`.
  *
- * @param {object} data
- * @return {Node}
+ * @param {object} data   Data to create the instance from
+ * @return {Node}         Node instance
  */
 module.exports = function(data) {
   const inst = new Node();

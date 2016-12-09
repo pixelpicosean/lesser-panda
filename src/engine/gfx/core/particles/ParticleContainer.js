@@ -12,10 +12,9 @@ const CONST = require('../../const');
  * ```js
  * var container = new ParticleContainer();
  *
- * for (var i = 0; i < 100; ++i)
- * {
- *     var sprite = new Sprite.fromImage("myImage.png");
- *     container.addChild(sprite);
+ * for (var i = 0; i < 100; ++i) {
+ *   var sprite = new Sprite("myImage.png");
+ *   container.addChild(sprite);
  * }
  * ```
  *
@@ -23,16 +22,19 @@ const CONST = require('../../const');
  *
  * @class
  * @extends Node
- * @param [maxSize=15000] {number} The maximum number of particles that can be renderer by the container.
- * @param [properties] {object} The properties of children that should be uploaded to the gpu and applied.
- * @param [properties.scale=false] {boolean} When true, scale be uploaded and applied.
- * @param [properties.position=true] {boolean} When true, position be uploaded and applied.
- * @param [properties.rotation=false] {boolean} When true, rotation be uploaded and applied.
- * @param [properties.uvs=false] {boolean} When true, uvs be uploaded and applied.
- * @param [properties.alpha=false] {boolean} When true, alpha be uploaded and applied.
- * @param [batchSize=15000] {number} Number of particles per batch.
  */
 class ParticleContainer extends Node {
+  /**
+   * @constructor
+   * @param {number} [maxSize=15000] The maximum number of particles that can be renderer by the container.
+   * @param {object} [properties] The properties of children that should be uploaded to the gpu and applied.
+   * @param {boolean} [properties.scale=false] When true, scale be uploaded and applied.
+   * @param {boolean} [properties.position=true] When true, position be uploaded and applied.
+   * @param {boolean} [properties.rotation=false] When true, rotation be uploaded and applied.
+   * @param {boolean} [properties.uvs=false] When true, uvs be uploaded and applied.
+   * @param {boolean} [properties.alpha=false] When true, alpha be uploaded and applied.
+   * @param {number} [batchSize=15000] Number of particles per batch.
+   */
   constructor(maxSize, properties, batchSize) {
     super();
 
@@ -90,11 +92,11 @@ class ParticleContainer extends Node {
     this.interactiveChildren = false;
 
     /**
-     * The blend mode to be applied to the sprite. Apply a value of `PIXI.BLEND_MODES.NORMAL` to reset the blend mode.
+     * The blend mode to be applied to the sprite. Apply a value of `BLEND_MODES.NORMAL` to reset the blend mode.
      *
      * @member {number}
-     * @default PIXI.BLEND_MODES.NORMAL
-     * @see PIXI.BLEND_MODES
+     * @default BLEND_MODES.NORMAL
+     * @see BLEND_MODES
      */
     this.blendMode = CONST.BLEND_MODES.NORMAL;
 
@@ -113,7 +115,7 @@ class ParticleContainer extends Node {
 /**
  * Sets the private properties array to dynamic / static based on the passed properties object
  *
- * @param properties {object} The properties to be uploaded
+ * @param {object} properties The properties to be uploaded
  */
 ParticleContainer.prototype.setProperties = function(properties) {
   if (properties) {
@@ -131,16 +133,14 @@ ParticleContainer.prototype.setProperties = function(properties) {
  * @private
  */
 ParticleContainer.prototype.updateTransform = function() {
-
-    // TODO don't need to!
+  // TODO don't need to!
   this.displayObjectUpdateTransform();
-    //  PIXI.Node.prototype.updateTransform.call( this );
 };
 
 /**
  * Renders the container using the WebGL renderer
  *
- * @param renderer {PIXI.WebGLRenderer} The webgl renderer
+ * @param {WebGLRenderer} renderer The webgl renderer
  * @private
  */
 ParticleContainer.prototype.renderWebGL = function(renderer) {
@@ -154,8 +154,8 @@ ParticleContainer.prototype.renderWebGL = function(renderer) {
 
 /**
  * Set the flag that static data should be updated to true
- *
  * @private
+ * @param {Number} smallestChildIndex The very first child index
  */
 ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex) {
   var bufferIndex = Math.floor(smallestChildIndex / this._batchSize);
@@ -167,7 +167,7 @@ ParticleContainer.prototype.onChildrenChange = function(smallestChildIndex) {
 /**
  * Renders the object using the Canvas renderer
  *
- * @param renderer {PIXI.CanvasRenderer} The canvas renderer
+ * @param {CanvasRenderer} renderer The canvas renderer
  * @private
  */
 ParticleContainer.prototype.renderCanvas = function(renderer) {
@@ -209,13 +209,13 @@ ParticleContainer.prototype.renderCanvas = function(renderer) {
             // this is the fastest  way to optimise! - if rotation is 0 then we can avoid any kind of setTransform call
       if (isRotated) {
         context.setTransform(
-                    transform.a,
-                    transform.b,
-                    transform.c,
-                    transform.d,
-                    transform.tx,
-                    transform.ty
-                );
+          transform.a,
+          transform.b,
+          transform.c,
+          transform.d,
+          transform.tx,
+          transform.ty
+        );
 
         isRotated = false;
       }
@@ -238,23 +238,23 @@ ParticleContainer.prototype.renderCanvas = function(renderer) {
 
       if (renderer.roundPixels) {
         context.setTransform(
-                    childTransform.a,
-                    childTransform.b,
-                    childTransform.c,
-                    childTransform.d,
-                    childTransform.tx | 0,
-                    childTransform.ty | 0
-                );
+          childTransform.a,
+          childTransform.b,
+          childTransform.c,
+          childTransform.d,
+          childTransform.tx | 0,
+          childTransform.ty | 0
+        );
       }
       else {
         context.setTransform(
-                    childTransform.a,
-                    childTransform.b,
-                    childTransform.c,
-                    childTransform.d,
-                    childTransform.tx,
-                    childTransform.ty
-                );
+          childTransform.a,
+          childTransform.b,
+          childTransform.c,
+          childTransform.d,
+          childTransform.tx,
+          childTransform.ty
+        );
       }
 
       positionX = ((child.anchor.x) * (-frame.width) + 0.5);
@@ -265,23 +265,23 @@ ParticleContainer.prototype.renderCanvas = function(renderer) {
     }
 
     context.drawImage(
-            child.texture.baseTexture.source,
-            frame.x,
-            frame.y,
-            frame.width,
-            frame.height,
-            positionX,
-            positionY,
-            finalWidth,
-            finalHeight
-        );
+      child.texture.baseTexture.source,
+      frame.x,
+      frame.y,
+      frame.width,
+      frame.height,
+      positionX,
+      positionY,
+      finalWidth,
+      finalHeight
+    );
   }
 };
 
 /**
  * Destroys the container
  *
- * @param [destroyChildren=false] {boolean} if set to true, all the children will have their destroy method called as well
+ * @param {boolean} [destroyChildren=false] if set to true, all the children will have their destroy method called as well
  */
 ParticleContainer.prototype.destroy = function() {
   Node.prototype.destroy.apply(this, arguments);

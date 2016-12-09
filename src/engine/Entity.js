@@ -1,4 +1,6 @@
 const Vector = require('engine/Vector');
+const EventEmitter = require('engine/EventEmitter');
+const Behavior = require('engine/Behavior');
 const { merge } = require('engine/utils/object');
 
 /**
@@ -76,6 +78,24 @@ class Entity {
     this.coll = null;
 
     /**
+     * Behavior hash map
+     * @type {Object}
+     */
+    this.behaviors = {};
+
+    /**
+     * Behavior list
+     * @type {Array}
+     */
+    this.behaviorList = [];
+
+    /**
+     * Events dispatcher
+     * @type {EventEmitter}
+     */
+    this.events = new EventEmitter();
+
+    /**
      * Position of this entity.
      * @memberof Entity#
      */
@@ -103,6 +123,11 @@ class Entity {
    * @type {string}
    */
   get tag() { return this._tag; }
+  /**
+   * Set tag of this Entity
+   * @type {string}
+   * @param {String} t Tag to set
+   */
   set tag(t) {
     if (this.game) {
       this.game.changeEntityTag(this, t);
@@ -154,23 +179,64 @@ class Entity {
    */
   ready() {}
   /**
+   * Add a behavior to this entity.
+   * @param  {Object} behavior    Behavior to be added
+   * @param  {Object} [settings]  Settings passed to this behavior
+   * @return {Entity}             Self for chaining
+   */
+  behave(behavior, settings) {
+    var bhv;
+    switch (typeof(behavior)) {
+      case 'function':
+        bhv = new behavior();
+        break;
+      case 'string':
+        bhv = new Behavior.types[behavior]();
+        break;
+      case 'object':
+        bhv = behavior;
+        break;
+    }
+
+    this.behaviors[bhv.type] = bhv;
+    this.behaviorList.push(bhv);
+
+    bhv.init(this, settings);
+
+    return this;
+  }
+  /**
    * Update method to be called each frame. Set `canEverTick = true` to activate.
-   * Doing nothing by default.
+   * This method will only update behaviors by default,
+   * no need to call `super.update` if you don't have any behaviors.
+   *
    * @method update
    * @memberof Entity#
    * @param {Number} dt     Delta time in millisecond
    * @param {Number} dtSec  Delta time in second
    */
-  update(dt, dtSec) {} /* eslint no-unused-vars:0 */
+  update(dt, dtSec) {
+    let i;
+    for (i = 0; i < this.behaviorList.length; i++) {
+      this.behaviorList[i].update(dt, dtSec);
+    }
+  }
   /**
    * Update method to be called each fixed step. Set `canFixedTick = true` to activate.
-   * Doing nothing by default.
+   * This method will only update behaviors by default,
+   * no need to call `super.update` if you don't have any behaviors.
+   *
    * @method fixedUpdate
    * @memberof Entity#
    * @param {Number} dt     Delta time in millisecond
    * @param {Number} dtSec  Delta time in second
    */
-  fixedUpdate(dt, dtSec) {} /* eslint no-unused-vars:0 */
+  fixedUpdate(dt, dtSec) {
+    let i;
+    for (i = 0; i < this.behaviorList.length; i++) {
+      this.behaviorList[i].fixedUpdate(dt, dtSec);
+    }
+  }
 }
 /**
  * ID of next Entity instance
@@ -200,4 +266,7 @@ Entity.register = function(type, ctor) {
  */
 Entity.canBePooled = false;
 
+/**
+ * @exports engine/Entity
+ */
 module.exports = Entity;

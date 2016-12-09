@@ -23,14 +23,14 @@ LesserPanda has a lot of features, and the list is still growing:
 ## Samples
 
 Samples are moved to its own [repo here](https://github.com/pixelpicosean/lesser-panda-samples).
-Currently the samples are located inside `src/game/samples` folder, and each is just a simple `Scene` focusing on one or more particular feature.
+Currently the samples are located inside `src/game/samples` folder, and each is just a simple `Game` focusing on one or more particular feature.
 
-**Note: Samples have not been converted to latest v1.0.0 yet.**
+**Note: Samples have not been converted to latest v1.x yet.**
 
 ## Document
 
-- [Getting Start Guide](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
-- [API document](https://pixelpicosean.github.io/lesser-panda/)
+- [Getting Start Guide(old **v0.x** version)](https://github.com/pixelpicosean/lesser-panda/wiki/Getting-Start) at [Wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home) page.
+- [API document(old **v0.x** version)](https://pixelpicosean.github.io/lesser-panda/)
 
 **Devlog** posts what happened to LesserPanda, read them at [wiki](https://github.com/pixelpicosean/lesser-panda/wiki/Home), it will be updated on each Wednesday.
 
@@ -55,7 +55,9 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 - `Game` is the main hub for your game.
 - `Timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
 - `utils` provides utility functions and constants for array, color, math, object.
-- `Vector` provide a `Vector` class that is used everywhere `PIXI.Point` is also an alias of it.
+- `Vector` is the 2D vector class, with tons of useful methods
+- `Behavior` interface for behaviors of `Entity`
+- `System` interface for all the sub-systems of `Game`
 
 ## Progress
 
@@ -63,6 +65,13 @@ There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which 
 Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
+
+### 1.1
+
+- Update behaviors for new `Entity` API
+- Cache arrays for physics updating
+- Add "canHitMap" to `Collider` to toggle map collision
+- More JSDoc comments and better API document
 
 ### 1.0.2
 
