@@ -1063,4 +1063,7 @@ Object.defineProperties(Node.prototype, {
   },
 });
 
+/**
+ * @module engine/gfx/core/Node
+ */
 module.exports = Node;

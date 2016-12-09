@@ -438,17 +438,17 @@ class Game extends EventEmitter {
 
 /**
  * @example <captain>Create a new game class</captain>
- * import Game from 'engine/game';
+ * const Game = require('engine/Game');
  * class MyGame extends Game {}
  *
  * @example <captain>Switch to another game</captain>
- * import core from 'engine/core';
- * import MyGame from 'engine/my-game';
+ * const core = require('engine/core');
+ * const MyGame = require('engine/MyGame');
  * core.setGame(MyGame);
  *
- * @exports engine/game
- * @requires engine/eventemitter3
+ * @exports engine/Game
  * @requires engine/core
- * @requires engine/utils
+ * @requires engine/EventEmitter
+ * @requires engine/utils/math
  */
 module.exports = Game;

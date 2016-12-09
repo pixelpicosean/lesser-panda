@@ -50,12 +50,14 @@ init();
 
 /**
  * Implements Dihedral Group D_8, see [group D4]{@link http://mathworld.wolfram.com/DihedralGroupD4.html}, D8 is the same but with diagonals
- * Used for texture rotations
+ * Used for texture rotations.
+ *
  * Vector xX(i), xY(i) is U-axis of sprite with rotation i
  * Vector yY(i), yY(i) is V-axis of sprite with rotation i
  * Rotations: 0 grad (0), 90 grad (2), 180 grad (4), 270 grad (6)
  * Mirrors: vertical (8), main diagonal (10), horizontal (12), reverse diagonal (14)
  * This is the small part of gameofbombs.com portal system. It works.
+ *
  * @author Ivan @ivanpopelyshev
  */
 var GroupD8 = {
@@ -161,4 +163,7 @@ var GroupD8 = {
   },
 };
 
+/**
+ * @module engine/gfx/core/math/GroupD8
+ */
 module.exports = GroupD8;

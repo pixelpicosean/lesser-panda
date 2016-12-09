@@ -258,9 +258,9 @@ class Data extends EventEmitter {
 }
 
 /**
- * @exports engine/storage/data
+ * @exports engine/storage/Data
  * @see Data
  *
- * @requires module:engine/eventemitter3
+ * @requires module:engine/EventEmitter
  */
 module.exports = Data;

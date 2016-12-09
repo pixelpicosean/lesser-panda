@@ -266,4 +266,7 @@ Entity.register = function(type, ctor) {
  */
 Entity.canBePooled = false;
 
+/**
+ * @exports engine/Entity
+ */
 module.exports = Entity;

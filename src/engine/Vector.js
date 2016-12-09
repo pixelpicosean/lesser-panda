@@ -13,10 +13,6 @@ const pool = [];
  * Prefer {@link Vector.create} for new instances.
  *
  * @class Vector
- *
- * @constructor
- * @param {number} [x=0]  Position of the point on the x axis
- * @param {number} [y=0]  Position of the point on the y axis
  */
 class Vector {
   /**
@@ -434,7 +430,7 @@ Vector.recycle = function(vector) {
 };
 
 /**
- * @exports engine/vector
+ * @exports engine/Vector
  * @see Vector
  */
 module.exports = Vector;
