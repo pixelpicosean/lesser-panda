@@ -53,10 +53,10 @@ class PersistentData extends Data {
 }
 
 /**
- * @exports engine/storage/persistent-data
+ * @exports engine/storage/PersistentData
  * @see PersistentData
  *
  * @requires module:engine/storage/storage
- * @requires module:engine/storage/data
+ * @requires module:engine/storage/Data
  */
 module.exports = PersistentData;

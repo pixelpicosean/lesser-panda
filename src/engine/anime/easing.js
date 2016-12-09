@@ -1,7 +1,7 @@
 /**
  * Easing and interpolation functions for variable lerping.
  *
- * @module engine/animation/easing
+ * @module engine/anime/easing
  */
 
 /**

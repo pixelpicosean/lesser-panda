@@ -460,13 +460,12 @@ Object.defineProperty(Camera.prototype, 'bottom', {
 });
 
 /**
- * @exports engine/camera
+ * @exports engine/Camera
  *
  * @see Camera
  *
  * @requires module:engine/core
  * @requires module:engine/Vector
- * @requires module:engine/Timer
  * @requires module:engine/utils/math
  */
 module.exports = Camera;
