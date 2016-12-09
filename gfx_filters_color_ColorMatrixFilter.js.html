@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>LesserPanda Source: gfx/filters/color/ColorMatrixFilter.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">LesserPanda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_anime.html">engine/anime</a></li><li><a href="module-engine_anime_action.html">engine/anime/action</a></li><li><a href="module-engine_anime_easing.html">engine/anime/easing</a></li><li><a href="module-engine_anime_tween.html">engine/anime/tween</a></li><li><a href="module-engine_anime_utils.html">engine/anime/utils</a></li><li><a href="module-engine_audio.html">engine/audio</a></li><li><a href="module-engine_Camera.html">engine/Camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_Entity.html">engine/Entity</a></li><li><a href="module-engine_EventEmitter.html">engine/EventEmitter</a></li><li><a href="module-engine_Game.html">engine/Game</a></li><li><a href="module-engine_gfx_core_math_GroupD8.html">engine/gfx/core/math/GroupD8</a></li><li><a href="module-engine_gfx_core_Node.html">engine/gfx/core/Node</a></li><li><a href="module-engine_gfx_utils.html">engine/gfx/utils</a></li><li><a href="module-engine_input_keyboard.html">engine/input/keyboard</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_storage.html">engine/storage</a></li><li><a href="module-engine_storage_Data.html">engine/storage/Data</a></li><li><a href="module-engine_storage_PersistentData.html">engine/storage/PersistentData</a></li><li><a href="module-engine_utils_array.html">engine/utils/array</a></li><li><a href="module-engine_utils_color.html">engine/utils/color</a></li><li><a href="module-engine_utils_math.html">engine/utils/math</a></li><li><a href="module-engine_utils_object.html">engine/utils/object</a></li><li><a href="module-engine_Vector.html">engine/Vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="AbstractFilter.html">AbstractFilter</a></li><li><a href="AccessibilityManager.html">AccessibilityManager</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="AnimatedSprite.html">AnimatedSprite</a></li><li><a href="AnimationData.html">AnimationData</a></li><li><a href="AsciiFilter.html">AsciiFilter</a></li><li><a href="BackgroundMap.html">BackgroundMap</a></li><li><a href="BaseTexture.html">BaseTexture</a></li><li><a href="BitmapText.html">BitmapText</a></li><li><a href="BlendModeManager.html">BlendModeManager</a></li><li><a href="BloomFilter.html">BloomFilter</a></li><li><a href="BlurDirFilter.html">BlurDirFilter</a></li><li><a href="BlurFilter.html">BlurFilter</a></li><li><a href="BlurXFilter.html">BlurXFilter</a></li><li><a href="BlurYFilter.html">BlurYFilter</a></li><li><a href="BlurYTintFilter.html">BlurYTintFilter</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="CanvasBuffer.html">CanvasBuffer</a></li><li><a href="CanvasGraphics.html">CanvasGraphics</a></li><li><a href="CanvasMaskManager.html">CanvasMaskManager</a></li><li><a href="CanvasRenderer.html">CanvasRenderer</a></li><li><a href="CanvasTinter.html">CanvasTinter</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Collider.html">Collider</a></li><li><a href="CollisionMap.html">CollisionMap</a></li><li><a href="ColorMatrixFilter.html">ColorMatrixFilter</a></li><li><a href="ColorStepFilter.html">ColorStepFilter</a></li><li><a href="ComplexPrimitiveShader.html">ComplexPrimitiveShader</a></li><li><a href="ConvolutionFilter.html">ConvolutionFilter</a></li><li><a href="CrossHatchFilter.html">CrossHatchFilter</a></li><li><a href="Data.html">Data</a></li><li><a href="DisplacementFilter.html">DisplacementFilter</a></li><li><a href="DotScreenFilter.html">DotScreenFilter</a></li><li><a href="DropShadowFilter.html">DropShadowFilter</a></li><li><a href="Ellipse.html">Ellipse</a></li><li><a href="Entity.html">Entity</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="FilterManager.html">FilterManager</a></li><li><a href="filters.PixelateFilter.html">filters.PixelateFilter</a></li><li><a href="FXAAFilter.html">FXAAFilter</a></li><li><a href="Game.html">Game</a></li><li><a href="Graphics.html">Graphics</a></li><li><a href="GraphicsData.html">GraphicsData</a></li><li><a href="GrayFilter.html">GrayFilter</a></li><li><a href="interaction.InteractionData.html">interaction.InteractionData</a></li><li><a href="interaction.InteractionManager.html">interaction.InteractionManager</a></li><li><a href="InvertFilter.html">InvertFilter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Loader.html">Loader</a></li><li><a href="MaskManager.html">MaskManager</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="mesh.Mesh.html">mesh.Mesh</a></li><li><a href="mesh.MeshShader.html">mesh.MeshShader</a></li><li><a href="mesh.Plane.html">mesh.Plane</a></li><li><a href="mesh.Rope.html">mesh.Rope</a></li><li><a href="MiniSignal.html">MiniSignal</a></li><li><a href="MiniSignalBinding.html">MiniSignalBinding</a></li><li><a href="module-engine_anime_action-Action.html">engine/anime/action~Action</a></li><li><a href="module-engine_anime_action-Action.Action.html">engine/anime/action~Action.Action</a></li><li><a href="module-engine_anime_action-ActionPlayer.html">engine/anime/action~ActionPlayer</a></li><li><a href="module-engine_anime_action-ActionPlayer.ActionPlayer.html">engine/anime/action~ActionPlayer.ActionPlayer</a></li><li><a href="module-engine_anime_action-Channel.html">engine/anime/action~Channel</a></li><li><a href="module-engine_anime_action-Channel.Channel.html">engine/anime/action~Channel.Channel</a></li><li><a href="module-engine_anime_action-Key.html">engine/anime/action~Key</a></li><li><a href="module-engine_anime_action-Key.Key.html">engine/anime/action~Key.Key</a></li><li><a href="module-engine_anime-SystemAnime.html">engine/anime~SystemAnime</a></li><li><a href="Node.html">Node</a></li><li><a href="NoiseFilter.html">NoiseFilter</a></li><li><a href="ObjectRenderer.html">ObjectRenderer</a></li><li><a href="ParticleContainer.html">ParticleContainer</a></li><li><a href="ParticleShader.html">ParticleShader</a></li><li><a href="PersistentData.html">PersistentData</a></li><li><a href="PIXI.SpriteMaskFilter.html">PIXI.SpriteMaskFilter</a></li><li><a href="PIXI.VideoBaseTexture.html">PIXI.VideoBaseTexture</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="PrimitiveShader.html">PrimitiveShader</a></li><li><a href="Quad.html">Quad</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="RenderTarget.html">RenderTarget</a></li><li><a href="RenderTexture.html">RenderTexture</a></li><li><a href="Resource.html">Resource</a></li><li><a href="RGBSplitFilter.html">RGBSplitFilter</a></li><li><a href="RoundedRectangle.html">RoundedRectangle</a></li><li><a href="SepiaFilter.html">SepiaFilter</a></li><li><a href="Shader.html">Shader</a></li><li><a href="ShaderManager.html">ShaderManager</a></li><li><a href="ShockwaveFilter.html">ShockwaveFilter</a></li><li><a href="SmartBlurFilter.html">SmartBlurFilter</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="StencilMaskStack.html">StencilMaskStack</a></li><li><a href="Storage.html">Storage</a></li><li><a href="SystemGfx.html">SystemGfx</a></li><li><a href="SystemInput.html">SystemInput</a></li><li><a href="SystemPhysics.html">SystemPhysics</a></li><li><a href="SystemRenderer.html">SystemRenderer</a></li><li><a href="SystemTimer.html">SystemTimer</a></li><li><a href="Text.html">Text</a></li><li><a href="Texture.html">Texture</a></li><li><a href="TextureShader.html">TextureShader</a></li><li><a href="TilingSprite.html">TilingSprite</a></li><li><a href="TiltShiftAxisFilter.html">TiltShiftAxisFilter</a></li><li><a href="TiltShiftFilter.html">TiltShiftFilter</a></li><li><a href="TiltShiftXFilter.html">TiltShiftXFilter</a></li><li><a href="TiltShiftYFilter.html">TiltShiftYFilter</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="TwistFilter.html">TwistFilter</a></li><li><a href="Vector.html">Vector</a></li><li><a href="WebGLManager.html">WebGLManager</a></li><li><a href="WebGLMaskManager.html">WebGLMaskManager</a></li><li><a href="WebGLRenderer.html">WebGLRenderer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="accessibleTarget.html">accessibleTarget</a></li><li><a href="interactiveTarget.html">interactiveTarget</a></li><li><a href="pluginTarget.html">pluginTarget</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="BaseTexture.html#event:error">BaseTexture#event:error</a></li><li><a href="BaseTexture.html#event:loaded">BaseTexture#event:loaded</a></li><li><a href="RenderTexture.html#event:update">RenderTexture#event:update</a></li><li><a href="Texture.html#event:update">Texture#event:update</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="interfaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Interfaces<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Behavior.html">Behavior</a></li><li><a href="System.html">System</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#GroupD8">GroupD8</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: gfx/filters/color/ColorMatrixFilter.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">const AbstractFilter = require('../../core/renderers/webgl/filters/AbstractFilter');
+
+/**
+ * The ColorMatrixFilter class lets you apply a 5x4 matrix transformation on the RGBA
+ * color and alpha values of every pixel on your displayObject to produce a result
+ * with a new set of RGBA color and alpha values. It's pretty powerful!
+ *
+ * ```js
+ *  var colorMatrix = new ColorMatrixFilter();
+ *  container.filters = [colorMatrix];
+ *  colorMatrix.contrast(2);
+ * ```
+ * @author Clément Chenebault &lt;clement@goodboydigital.com>
+ * @class
+ * @extends AbstractFilter
+ */
+function ColorMatrixFilter() {
+  AbstractFilter.call(this,
+        // vertex shader
+        null,
+        // fragment shader
+        require('./colorMatrix.frag'),
+        // custom uniforms
+    {
+      m: {
+        type: '1fv', value: [
+          1, 0, 0, 0, 0,
+          0, 1, 0, 0, 0,
+          0, 0, 1, 0, 0,
+          0, 0, 0, 1, 0,
+        ],
+      },
+    }
+    );
+}
+
+ColorMatrixFilter.prototype = Object.create(AbstractFilter.prototype);
+ColorMatrixFilter.prototype.constructor = ColorMatrixFilter;
+module.exports = ColorMatrixFilter;
+
+
+/**
+ * Transforms current matrix and set the new one
+ *
+ * @param matrix {number[]} (mat 5x4)
+ * @param multiply {boolean} if true, current matrix and matrix are multiplied. If false, just set the current matrix with @param matrix
+ */
+ColorMatrixFilter.prototype._loadMatrix = function(matrix, multiply) {
+  multiply = !!multiply;
+
+  var newMatrix = matrix;
+
+  if (multiply) {
+    this._multiply(newMatrix, this.uniforms.m.value, matrix);
+    newMatrix = this._colorMatrix(newMatrix);
+  }
+
+    // set the new matrix
+  this.uniforms.m.value = newMatrix;
+};
+
+/**
+ * Multiplies two mat5's
+ *
+ * @param out {number[]} (mat 5x4) the receiving matrix
+ * @param a {number[]} (mat 5x4) the first operand
+ * @param b {number[]} (mat 5x4) the second operand
+ * @returns out {number[]} (mat 5x4)
+ */
+ColorMatrixFilter.prototype._multiply = function(out, a, b) {
+
+    // Red Channel
+  out[0] = (a[0] * b[0]) + (a[1] * b[5]) + (a[2] * b[10]) + (a[3] * b[15]);
+  out[1] = (a[0] * b[1]) + (a[1] * b[6]) + (a[2] * b[11]) + (a[3] * b[16]);
+  out[2] = (a[0] * b[2]) + (a[1] * b[7]) + (a[2] * b[12]) + (a[3] * b[17]);
+  out[3] = (a[0] * b[3]) + (a[1] * b[8]) + (a[2] * b[13]) + (a[3] * b[18]);
+  out[4] = (a[0] * b[4]) + (a[1] * b[9]) + (a[2] * b[14]) + (a[3] * b[19]);
+
+    // Green Channel
+  out[5] = (a[5] * b[0]) + (a[6] * b[5]) + (a[7] * b[10]) + (a[8] * b[15]);
+  out[6] = (a[5] * b[1]) + (a[6] * b[6]) + (a[7] * b[11]) + (a[8] * b[16]);
+  out[7] = (a[5] * b[2]) + (a[6] * b[7]) + (a[7] * b[12]) + (a[8] * b[17]);
+  out[8] = (a[5] * b[3]) + (a[6] * b[8]) + (a[7] * b[13]) + (a[8] * b[18]);
+  out[9] = (a[5] * b[4]) + (a[6] * b[9]) + (a[7] * b[14]) + (a[8] * b[19]);
+
+    // Blue Channel
+  out[10] = (a[10] * b[0]) + (a[11] * b[5]) + (a[12] * b[10]) + (a[13] * b[15]);
+  out[11] = (a[10] * b[1]) + (a[11] * b[6]) + (a[12] * b[11]) + (a[13] * b[16]);
+  out[12] = (a[10] * b[2]) + (a[11] * b[7]) + (a[12] * b[12]) + (a[13] * b[17]);
+  out[13] = (a[10] * b[3]) + (a[11] * b[8]) + (a[12] * b[13]) + (a[13] * b[18]);
+  out[14] = (a[10] * b[4]) + (a[11] * b[9]) + (a[12] * b[14]) + (a[13] * b[19]);
+
+    // Alpha Channel
+  out[15] = (a[15] * b[0]) + (a[16] * b[5]) + (a[17] * b[10]) + (a[18] * b[15]);
+  out[16] = (a[15] * b[1]) + (a[16] * b[6]) + (a[17] * b[11]) + (a[18] * b[16]);
+  out[17] = (a[15] * b[2]) + (a[16] * b[7]) + (a[17] * b[12]) + (a[18] * b[17]);
+  out[18] = (a[15] * b[3]) + (a[16] * b[8]) + (a[17] * b[13]) + (a[18] * b[18]);
+  out[19] = (a[15] * b[4]) + (a[16] * b[9]) + (a[17] * b[14]) + (a[18] * b[19]);
+
+  return out;
+};
+
+/**
+ * Create a Float32 Array and normalize the offset component to 0-1
+ *
+ * @param matrix {number[]} (mat 5x4)
+ * @return m {number[]} (mat 5x4) with all values between 0-1
+ */
+ColorMatrixFilter.prototype._colorMatrix = function(matrix) {
+    // Create a Float32 Array and normalize the offset component to 0-1
+  var m = new Float32Array(matrix);
+  m[4] /= 255;
+  m[9] /= 255;
+  m[14] /= 255;
+  m[19] /= 255;
+
+  return m;
+};
+
+/**
+ * Adjusts brightness
+ *
+ * @param b {number} value of the brigthness (0 is black)
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.brightness = function(b, multiply) {
+  var matrix = [
+    b, 0, 0, 0, 0,
+    0, b, 0, 0, 0,
+    0, 0, b, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Set the matrices in grey scales
+ *
+ * @param scale {number} value of the grey (0 is black)
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.greyscale = function(scale, multiply) {
+  var matrix = [
+    scale, scale, scale, 0, 0,
+    scale, scale, scale, 0, 0,
+    scale, scale, scale, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+// Americanized alias
+ColorMatrixFilter.prototype.grayscale = ColorMatrixFilter.prototype.greyscale;
+
+/**
+ * Set the black and white matrice
+ * Multiply the current matrix
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.blackAndWhite = function(multiply) {
+  var matrix = [
+    0.3, 0.6, 0.1, 0, 0,
+    0.3, 0.6, 0.1, 0, 0,
+    0.3, 0.6, 0.1, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Set the hue property of the color
+ *
+ * @param rotation {number} in degrees
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.hue = function(rotation, multiply) {
+  rotation = (rotation || 0) / 180 * Math.PI;
+  var cos = Math.cos(rotation),
+    sin = Math.sin(rotation);
+
+    // luminanceRed, luminanceGreen, luminanceBlue
+  var lumR = 0.213, // or 0.3086
+    lumG = 0.715, // or 0.6094
+    lumB = 0.072; // or 0.0820
+
+  var matrix = [
+    lumR + cos * (1 - lumR) + sin * (-lumR), lumG + cos * (-lumG) + sin * (-lumG), lumB + cos * (-lumB) + sin * (1 - lumB), 0, 0,
+    lumR + cos * (-lumR) + sin * (0.143), lumG + cos * (1 - lumG) + sin * (0.140), lumB + cos * (-lumB) + sin * (-0.283), 0, 0,
+    lumR + cos * (-lumR) + sin * (-(1 - lumR)), lumG + cos * (-lumG) + sin * (lumG), lumB + cos * (1 - lumB) + sin * (lumB), 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+
+/**
+ * Set the contrast matrix, increase the separation between dark and bright
+ * Increase contrast : shadows darker and highlights brighter
+ * Decrease contrast : bring the shadows up and the highlights down
+ *
+ * @param amount {number} value of the contrast
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.contrast = function(amount, multiply) {
+  var v = (amount || 0) + 1;
+  var o = -128 * (v - 1);
+
+  var matrix = [
+    v, 0, 0, 0, o,
+    0, v, 0, 0, o,
+    0, 0, v, 0, o,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Set the saturation matrix, increase the separation between colors
+ * Increase saturation : increase contrast, brightness, and sharpness
+ *
+ * @param amount {number}
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.saturate = function(amount, multiply) {
+  var x = (amount || 0) * 2 / 3 + 1;
+  var y = ((x - 1) * -0.5);
+
+  var matrix = [
+    x, y, y, 0, 0,
+    y, x, y, 0, 0,
+    y, y, x, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Desaturate image (remove color)
+ *
+ * Call the saturate function
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.desaturate = function(multiply) { /* eslint no-unused-vars:0 */
+  this.saturate(-1);
+};
+
+/**
+ * Negative image (inverse of classic rgb matrix)
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.negative = function(multiply) {
+  var matrix = [
+    0, 1, 1, 0, 0,
+    1, 0, 1, 0, 0,
+    1, 1, 0, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Sepia image
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.sepia = function(multiply) {
+  var matrix = [
+    0.393, 0.7689999, 0.18899999, 0, 0,
+    0.349, 0.6859999, 0.16799999, 0, 0,
+    0.272, 0.5339999, 0.13099999, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Color motion picture process invented in 1916 (thanks Dominic Szablewski)
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.technicolor = function(multiply) {
+  var matrix = [
+    1.9125277891456083, -0.8545344976951645, -0.09155508482755585, 0, 11.793603434377337,
+    -0.3087833385928097, 1.7658908555458428, -0.10601743074722245, 0, -70.35205161461398,
+    -0.231103377548616, -0.7501899197440212, 1.847597816108189, 0, 30.950940869491138,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Polaroid filter
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.polaroid = function(multiply) {
+  var matrix = [
+    1.438, -0.062, -0.062, 0, 0,
+    -0.122, 1.378, -0.122, 0, 0,
+    -0.016, -0.016, 1.483, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Filter who transforms : Red -> Blue and Blue -> Red
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.toBGR = function(multiply) {
+  var matrix = [
+    0, 0, 1, 0, 0,
+    0, 1, 0, 0, 0,
+    1, 0, 0, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Color reversal film introduced by Eastman Kodak in 1935. (thanks Dominic Szablewski)
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.kodachrome = function(multiply) {
+  var matrix = [
+    1.1285582396593525, -0.3967382283601348, -0.03992559172921793, 0, 63.72958762196502,
+    -0.16404339962244616, 1.0835251566291304, -0.05498805115633132, 0, 24.732407896706203,
+    -0.16786010706155763, -0.5603416277695248, 1.6014850761964943, 0, 35.62982807460946,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/**
+ * Brown delicious browni filter (thanks Dominic Szablewski)
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.browni = function(multiply) {
+  var matrix = [
+    0.5997023498159715, 0.34553243048391263, -0.2708298674538042, 0, 47.43192855600873,
+    -0.037703249837783157, 0.8609577587992641, 0.15059552388459913, 0, -36.96841498319127,
+    0.24113635128153335, -0.07441037908422492, 0.44972182064877153, 0, -7.562075277591283,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/*
+ * Vintage filter (thanks Dominic Szablewski)
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.vintage = function(multiply) {
+  var matrix = [
+    0.6279345635605994, 0.3202183420819367, -0.03965408211312453, 0, 9.651285835294123,
+    0.02578397704808868, 0.6441188644374771, 0.03259127616149294, 0, 7.462829176470591,
+    0.0466055556782719, -0.0851232987247891, 0.5241648018700465, 0, 5.159190588235296,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/*
+ * We don't know exactly what it does, kind of gradient map, but funny to play with!
+ *
+ * @param desaturation {number}
+ * @param toned {number}
+ * @param lightColor {string} (example : "0xFFE580")
+ * @param darkColor {string}  (example : "0xFFE580")
+ *
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.colorTone = function(desaturation, toned, lightColor, darkColor, multiply) {
+  desaturation = desaturation || 0.2;
+  toned = toned || 0.15;
+  lightColor = lightColor || 0xFFE580;
+  darkColor = darkColor || 0x338000;
+
+  var lR = ((lightColor >> 16) &amp; 0xFF) / 255;
+  var lG = ((lightColor >> 8) &amp; 0xFF) / 255;
+  var lB = (lightColor &amp; 0xFF) / 255;
+
+  var dR = ((darkColor >> 16) &amp; 0xFF) / 255;
+  var dG = ((darkColor >> 8) &amp; 0xFF) / 255;
+  var dB = (darkColor &amp; 0xFF) / 255;
+
+  var matrix = [
+    0.3, 0.59, 0.11, 0, 0,
+    lR, lG, lB, desaturation, 0,
+    dR, dG, dB, toned, 0,
+    lR - dR, lG - dG, lB - dB, 0, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/*
+ * Night effect
+ *
+ * @param intensity {number}
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.night = function(intensity, multiply) {
+  intensity = intensity || 0.1;
+  var matrix = [
+    intensity * (-2.0), -intensity, 0, 0, 0,
+    -intensity, 0, intensity, 0, 0,
+    0, intensity, intensity * 2.0, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+
+/*
+ * Predator effect
+ *
+ * Erase the current matrix by setting a new indepent one
+ *
+ * @param amount {number} how much the predator feels his future victim
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.predator = function(amount, multiply) {
+  var matrix = [
+    11.224130630493164 * amount, -4.794486999511719 * amount, -2.8746118545532227 * amount, 0 * amount, 0.40342438220977783 * amount,
+    -3.6330697536468506 * amount, 9.193157196044922 * amount, -2.951810836791992 * amount, 0 * amount, -1.316135048866272 * amount,
+    -3.2184197902679443 * amount, -4.2375030517578125 * amount, 7.476448059082031 * amount, 0 * amount, 0.8044459223747253 * amount,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/*
+ * LSD effect
+ *
+ * Multiply the current matrix
+ *
+ * @param amount {number} How crazy is your effect
+ * @param multiply {boolean} refer to ._loadMatrix() method
+ */
+ColorMatrixFilter.prototype.lsd = function(multiply) {
+  var matrix = [
+    2, -0.4, 0.5, 0, 0,
+    -0.5, 2, -0.4, 0, 0,
+    -0.4, -0.5, 3, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, multiply);
+};
+
+/*
+ * Erase the current matrix by setting the default one
+ *
+ */
+ColorMatrixFilter.prototype.reset = function() {
+  var matrix = [
+    1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
+
+  this._loadMatrix(matrix, false);
+};
+
+
+Object.defineProperties(ColorMatrixFilter.prototype, {
+    /**
+     * Sets the matrix of the color matrix filter
+     *
+     * @member {number[]}
+     * @memberof filters.ColorMatrixFilter#
+     * @default [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
+     */
+  matrix: {
+    get: function() {
+      return this.uniforms.m.value;
+    },
+    set: function(value) {
+      this.uniforms.m.value = value;
+    },
+  },
+});
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	LesserPanda Copyright © 2015-2016 The contributors to the LesserPanda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

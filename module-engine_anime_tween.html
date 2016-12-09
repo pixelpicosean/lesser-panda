@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>LesserPanda Module: engine/anime/tween</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">LesserPanda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_anime.html">engine/anime</a></li><li><a href="module-engine_anime_action.html">engine/anime/action</a></li><li><a href="module-engine_anime_easing.html">engine/anime/easing</a></li><li><a href="module-engine_anime_tween.html">engine/anime/tween</a></li><li><a href="module-engine_anime_utils.html">engine/anime/utils</a></li><li><a href="module-engine_audio.html">engine/audio</a></li><li><a href="module-engine_Camera.html">engine/Camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_Entity.html">engine/Entity</a></li><li><a href="module-engine_EventEmitter.html">engine/EventEmitter</a></li><li><a href="module-engine_Game.html">engine/Game</a></li><li><a href="module-engine_gfx_core_math_GroupD8.html">engine/gfx/core/math/GroupD8</a></li><li><a href="module-engine_gfx_core_Node.html">engine/gfx/core/Node</a></li><li><a href="module-engine_gfx_utils.html">engine/gfx/utils</a></li><li><a href="module-engine_input_keyboard.html">engine/input/keyboard</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_storage.html">engine/storage</a></li><li><a href="module-engine_storage_Data.html">engine/storage/Data</a></li><li><a href="module-engine_storage_PersistentData.html">engine/storage/PersistentData</a></li><li><a href="module-engine_utils_array.html">engine/utils/array</a></li><li><a href="module-engine_utils_color.html">engine/utils/color</a></li><li><a href="module-engine_utils_math.html">engine/utils/math</a></li><li><a href="module-engine_utils_object.html">engine/utils/object</a></li><li><a href="module-engine_Vector.html">engine/Vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="AbstractFilter.html">AbstractFilter</a></li><li><a href="AccessibilityManager.html">AccessibilityManager</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="AnimatedSprite.html">AnimatedSprite</a></li><li><a href="AnimationData.html">AnimationData</a></li><li><a href="AsciiFilter.html">AsciiFilter</a></li><li><a href="BackgroundMap.html">BackgroundMap</a></li><li><a href="BaseTexture.html">BaseTexture</a></li><li><a href="BitmapText.html">BitmapText</a></li><li><a href="BlendModeManager.html">BlendModeManager</a></li><li><a href="BloomFilter.html">BloomFilter</a></li><li><a href="BlurDirFilter.html">BlurDirFilter</a></li><li><a href="BlurFilter.html">BlurFilter</a></li><li><a href="BlurXFilter.html">BlurXFilter</a></li><li><a href="BlurYFilter.html">BlurYFilter</a></li><li><a href="BlurYTintFilter.html">BlurYTintFilter</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="CanvasBuffer.html">CanvasBuffer</a></li><li><a href="CanvasGraphics.html">CanvasGraphics</a></li><li><a href="CanvasMaskManager.html">CanvasMaskManager</a></li><li><a href="CanvasRenderer.html">CanvasRenderer</a></li><li><a href="CanvasTinter.html">CanvasTinter</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Collider.html">Collider</a></li><li><a href="CollisionMap.html">CollisionMap</a></li><li><a href="ColorMatrixFilter.html">ColorMatrixFilter</a></li><li><a href="ColorStepFilter.html">ColorStepFilter</a></li><li><a href="ComplexPrimitiveShader.html">ComplexPrimitiveShader</a></li><li><a href="ConvolutionFilter.html">ConvolutionFilter</a></li><li><a href="CrossHatchFilter.html">CrossHatchFilter</a></li><li><a href="Data.html">Data</a></li><li><a href="DisplacementFilter.html">DisplacementFilter</a></li><li><a href="DotScreenFilter.html">DotScreenFilter</a></li><li><a href="DropShadowFilter.html">DropShadowFilter</a></li><li><a href="Ellipse.html">Ellipse</a></li><li><a href="Entity.html">Entity</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="FilterManager.html">FilterManager</a></li><li><a href="filters.PixelateFilter.html">filters.PixelateFilter</a></li><li><a href="FXAAFilter.html">FXAAFilter</a></li><li><a href="Game.html">Game</a></li><li><a href="Graphics.html">Graphics</a></li><li><a href="GraphicsData.html">GraphicsData</a></li><li><a href="GrayFilter.html">GrayFilter</a></li><li><a href="interaction.InteractionData.html">interaction.InteractionData</a></li><li><a href="interaction.InteractionManager.html">interaction.InteractionManager</a></li><li><a href="InvertFilter.html">InvertFilter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Loader.html">Loader</a></li><li><a href="MaskManager.html">MaskManager</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="mesh.Mesh.html">mesh.Mesh</a></li><li><a href="mesh.MeshShader.html">mesh.MeshShader</a></li><li><a href="mesh.Plane.html">mesh.Plane</a></li><li><a href="mesh.Rope.html">mesh.Rope</a></li><li><a href="MiniSignal.html">MiniSignal</a></li><li><a href="MiniSignalBinding.html">MiniSignalBinding</a></li><li><a href="module-engine_anime_action-Action.html">engine/anime/action~Action</a></li><li><a href="module-engine_anime_action-Action.Action.html">engine/anime/action~Action.Action</a></li><li><a href="module-engine_anime_action-ActionPlayer.html">engine/anime/action~ActionPlayer</a></li><li><a href="module-engine_anime_action-ActionPlayer.ActionPlayer.html">engine/anime/action~ActionPlayer.ActionPlayer</a></li><li><a href="module-engine_anime_action-Channel.html">engine/anime/action~Channel</a></li><li><a href="module-engine_anime_action-Channel.Channel.html">engine/anime/action~Channel.Channel</a></li><li><a href="module-engine_anime_action-Key.html">engine/anime/action~Key</a></li><li><a href="module-engine_anime_action-Key.Key.html">engine/anime/action~Key.Key</a></li><li><a href="module-engine_anime-SystemAnime.html">engine/anime~SystemAnime</a></li><li><a href="Node.html">Node</a></li><li><a href="NoiseFilter.html">NoiseFilter</a></li><li><a href="ObjectRenderer.html">ObjectRenderer</a></li><li><a href="ParticleContainer.html">ParticleContainer</a></li><li><a href="ParticleShader.html">ParticleShader</a></li><li><a href="PersistentData.html">PersistentData</a></li><li><a href="PIXI.SpriteMaskFilter.html">PIXI.SpriteMaskFilter</a></li><li><a href="PIXI.VideoBaseTexture.html">PIXI.VideoBaseTexture</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="PrimitiveShader.html">PrimitiveShader</a></li><li><a href="Quad.html">Quad</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="RenderTarget.html">RenderTarget</a></li><li><a href="RenderTexture.html">RenderTexture</a></li><li><a href="Resource.html">Resource</a></li><li><a href="RGBSplitFilter.html">RGBSplitFilter</a></li><li><a href="RoundedRectangle.html">RoundedRectangle</a></li><li><a href="SepiaFilter.html">SepiaFilter</a></li><li><a href="Shader.html">Shader</a></li><li><a href="ShaderManager.html">ShaderManager</a></li><li><a href="ShockwaveFilter.html">ShockwaveFilter</a></li><li><a href="SmartBlurFilter.html">SmartBlurFilter</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="StencilMaskStack.html">StencilMaskStack</a></li><li><a href="Storage.html">Storage</a></li><li><a href="SystemGfx.html">SystemGfx</a></li><li><a href="SystemInput.html">SystemInput</a></li><li><a href="SystemPhysics.html">SystemPhysics</a></li><li><a href="SystemRenderer.html">SystemRenderer</a></li><li><a href="SystemTimer.html">SystemTimer</a></li><li><a href="Text.html">Text</a></li><li><a href="Texture.html">Texture</a></li><li><a href="TextureShader.html">TextureShader</a></li><li><a href="TilingSprite.html">TilingSprite</a></li><li><a href="TiltShiftAxisFilter.html">TiltShiftAxisFilter</a></li><li><a href="TiltShiftFilter.html">TiltShiftFilter</a></li><li><a href="TiltShiftXFilter.html">TiltShiftXFilter</a></li><li><a href="TiltShiftYFilter.html">TiltShiftYFilter</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="TwistFilter.html">TwistFilter</a></li><li><a href="Vector.html">Vector</a></li><li><a href="WebGLManager.html">WebGLManager</a></li><li><a href="WebGLMaskManager.html">WebGLMaskManager</a></li><li><a href="WebGLRenderer.html">WebGLRenderer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="accessibleTarget.html">accessibleTarget</a></li><li><a href="interactiveTarget.html">interactiveTarget</a></li><li><a href="pluginTarget.html">pluginTarget</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="BaseTexture.html#event:error">BaseTexture#event:error</a></li><li><a href="BaseTexture.html#event:loaded">BaseTexture#event:loaded</a></li><li><a href="RenderTexture.html#event:update">RenderTexture#event:update</a></li><li><a href="Texture.html#event:update">Texture#event:update</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="interfaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Interfaces<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Behavior.html">Behavior</a></li><li><a href="System.html">System</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#GroupD8">GroupD8</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Module: engine/anime/tween</h1>
+<section>
+
+<header>
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Classic tween animation.<br>Use <a href="SystemAnime.html#tween">SystemAnime#tween</a> to create a new tween and start it immediately.</p></div>
+        
+
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="anime_tween.js.html">anime/tween.js</a>,
+				 <a href="anime_tween.js.html#sunlight-1-line-431">line 431</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="module-engine_EventEmitter.html">module:engine/EventEmitter</a></li>
+        
+            <li><a href="module-engine_anime_utils.html">module:engine/anime/utils</a></li>
+        
+            <li><a href="module-engine_anime_easing.html">module:engine/anime/easing</a></li>
+        </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	LesserPanda Copyright © 2015-2016 The contributors to the LesserPanda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>LesserPanda Source: gfx/core/textures/Texture.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">LesserPanda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_anime.html">engine/anime</a></li><li><a href="module-engine_anime_action.html">engine/anime/action</a></li><li><a href="module-engine_anime_easing.html">engine/anime/easing</a></li><li><a href="module-engine_anime_tween.html">engine/anime/tween</a></li><li><a href="module-engine_anime_utils.html">engine/anime/utils</a></li><li><a href="module-engine_audio.html">engine/audio</a></li><li><a href="module-engine_Camera.html">engine/Camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_Entity.html">engine/Entity</a></li><li><a href="module-engine_EventEmitter.html">engine/EventEmitter</a></li><li><a href="module-engine_Game.html">engine/Game</a></li><li><a href="module-engine_gfx_core_math_GroupD8.html">engine/gfx/core/math/GroupD8</a></li><li><a href="module-engine_gfx_core_Node.html">engine/gfx/core/Node</a></li><li><a href="module-engine_gfx_utils.html">engine/gfx/utils</a></li><li><a href="module-engine_input_keyboard.html">engine/input/keyboard</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_storage.html">engine/storage</a></li><li><a href="module-engine_storage_Data.html">engine/storage/Data</a></li><li><a href="module-engine_storage_PersistentData.html">engine/storage/PersistentData</a></li><li><a href="module-engine_utils_array.html">engine/utils/array</a></li><li><a href="module-engine_utils_color.html">engine/utils/color</a></li><li><a href="module-engine_utils_math.html">engine/utils/math</a></li><li><a href="module-engine_utils_object.html">engine/utils/object</a></li><li><a href="module-engine_Vector.html">engine/Vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="AbstractFilter.html">AbstractFilter</a></li><li><a href="AccessibilityManager.html">AccessibilityManager</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="AnimatedSprite.html">AnimatedSprite</a></li><li><a href="AnimationData.html">AnimationData</a></li><li><a href="AsciiFilter.html">AsciiFilter</a></li><li><a href="BackgroundMap.html">BackgroundMap</a></li><li><a href="BaseTexture.html">BaseTexture</a></li><li><a href="BitmapText.html">BitmapText</a></li><li><a href="BlendModeManager.html">BlendModeManager</a></li><li><a href="BloomFilter.html">BloomFilter</a></li><li><a href="BlurDirFilter.html">BlurDirFilter</a></li><li><a href="BlurFilter.html">BlurFilter</a></li><li><a href="BlurXFilter.html">BlurXFilter</a></li><li><a href="BlurYFilter.html">BlurYFilter</a></li><li><a href="BlurYTintFilter.html">BlurYTintFilter</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="CanvasBuffer.html">CanvasBuffer</a></li><li><a href="CanvasGraphics.html">CanvasGraphics</a></li><li><a href="CanvasMaskManager.html">CanvasMaskManager</a></li><li><a href="CanvasRenderer.html">CanvasRenderer</a></li><li><a href="CanvasTinter.html">CanvasTinter</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Collider.html">Collider</a></li><li><a href="CollisionMap.html">CollisionMap</a></li><li><a href="ColorMatrixFilter.html">ColorMatrixFilter</a></li><li><a href="ColorStepFilter.html">ColorStepFilter</a></li><li><a href="ComplexPrimitiveShader.html">ComplexPrimitiveShader</a></li><li><a href="ConvolutionFilter.html">ConvolutionFilter</a></li><li><a href="CrossHatchFilter.html">CrossHatchFilter</a></li><li><a href="Data.html">Data</a></li><li><a href="DisplacementFilter.html">DisplacementFilter</a></li><li><a href="DotScreenFilter.html">DotScreenFilter</a></li><li><a href="DropShadowFilter.html">DropShadowFilter</a></li><li><a href="Ellipse.html">Ellipse</a></li><li><a href="Entity.html">Entity</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="FilterManager.html">FilterManager</a></li><li><a href="filters.PixelateFilter.html">filters.PixelateFilter</a></li><li><a href="FXAAFilter.html">FXAAFilter</a></li><li><a href="Game.html">Game</a></li><li><a href="Graphics.html">Graphics</a></li><li><a href="GraphicsData.html">GraphicsData</a></li><li><a href="GrayFilter.html">GrayFilter</a></li><li><a href="interaction.InteractionData.html">interaction.InteractionData</a></li><li><a href="interaction.InteractionManager.html">interaction.InteractionManager</a></li><li><a href="InvertFilter.html">InvertFilter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Loader.html">Loader</a></li><li><a href="MaskManager.html">MaskManager</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="mesh.Mesh.html">mesh.Mesh</a></li><li><a href="mesh.MeshShader.html">mesh.MeshShader</a></li><li><a href="mesh.Plane.html">mesh.Plane</a></li><li><a href="mesh.Rope.html">mesh.Rope</a></li><li><a href="MiniSignal.html">MiniSignal</a></li><li><a href="MiniSignalBinding.html">MiniSignalBinding</a></li><li><a href="module-engine_anime_action-Action.html">engine/anime/action~Action</a></li><li><a href="module-engine_anime_action-Action.Action.html">engine/anime/action~Action.Action</a></li><li><a href="module-engine_anime_action-ActionPlayer.html">engine/anime/action~ActionPlayer</a></li><li><a href="module-engine_anime_action-ActionPlayer.ActionPlayer.html">engine/anime/action~ActionPlayer.ActionPlayer</a></li><li><a href="module-engine_anime_action-Channel.html">engine/anime/action~Channel</a></li><li><a href="module-engine_anime_action-Channel.Channel.html">engine/anime/action~Channel.Channel</a></li><li><a href="module-engine_anime_action-Key.html">engine/anime/action~Key</a></li><li><a href="module-engine_anime_action-Key.Key.html">engine/anime/action~Key.Key</a></li><li><a href="module-engine_anime-SystemAnime.html">engine/anime~SystemAnime</a></li><li><a href="Node.html">Node</a></li><li><a href="NoiseFilter.html">NoiseFilter</a></li><li><a href="ObjectRenderer.html">ObjectRenderer</a></li><li><a href="ParticleContainer.html">ParticleContainer</a></li><li><a href="ParticleShader.html">ParticleShader</a></li><li><a href="PersistentData.html">PersistentData</a></li><li><a href="PIXI.SpriteMaskFilter.html">PIXI.SpriteMaskFilter</a></li><li><a href="PIXI.VideoBaseTexture.html">PIXI.VideoBaseTexture</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="PrimitiveShader.html">PrimitiveShader</a></li><li><a href="Quad.html">Quad</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="RenderTarget.html">RenderTarget</a></li><li><a href="RenderTexture.html">RenderTexture</a></li><li><a href="Resource.html">Resource</a></li><li><a href="RGBSplitFilter.html">RGBSplitFilter</a></li><li><a href="RoundedRectangle.html">RoundedRectangle</a></li><li><a href="SepiaFilter.html">SepiaFilter</a></li><li><a href="Shader.html">Shader</a></li><li><a href="ShaderManager.html">ShaderManager</a></li><li><a href="ShockwaveFilter.html">ShockwaveFilter</a></li><li><a href="SmartBlurFilter.html">SmartBlurFilter</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="StencilMaskStack.html">StencilMaskStack</a></li><li><a href="Storage.html">Storage</a></li><li><a href="SystemGfx.html">SystemGfx</a></li><li><a href="SystemInput.html">SystemInput</a></li><li><a href="SystemPhysics.html">SystemPhysics</a></li><li><a href="SystemRenderer.html">SystemRenderer</a></li><li><a href="SystemTimer.html">SystemTimer</a></li><li><a href="Text.html">Text</a></li><li><a href="Texture.html">Texture</a></li><li><a href="TextureShader.html">TextureShader</a></li><li><a href="TilingSprite.html">TilingSprite</a></li><li><a href="TiltShiftAxisFilter.html">TiltShiftAxisFilter</a></li><li><a href="TiltShiftFilter.html">TiltShiftFilter</a></li><li><a href="TiltShiftXFilter.html">TiltShiftXFilter</a></li><li><a href="TiltShiftYFilter.html">TiltShiftYFilter</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="TwistFilter.html">TwistFilter</a></li><li><a href="Vector.html">Vector</a></li><li><a href="WebGLManager.html">WebGLManager</a></li><li><a href="WebGLMaskManager.html">WebGLMaskManager</a></li><li><a href="WebGLRenderer.html">WebGLRenderer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="accessibleTarget.html">accessibleTarget</a></li><li><a href="interactiveTarget.html">interactiveTarget</a></li><li><a href="pluginTarget.html">pluginTarget</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="BaseTexture.html#event:error">BaseTexture#event:error</a></li><li><a href="BaseTexture.html#event:loaded">BaseTexture#event:loaded</a></li><li><a href="RenderTexture.html#event:update">RenderTexture#event:update</a></li><li><a href="Texture.html#event:update">Texture#event:update</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="interfaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Interfaces<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Behavior.html">Behavior</a></li><li><a href="System.html">System</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#GroupD8">GroupD8</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: gfx/core/textures/Texture.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">const BaseTexture = require('./BaseTexture');
+const VideoBaseTexture = require('./VideoBaseTexture');
+const TextureUvs = require('./TextureUvs');
+const EventEmitter = require('engine/EventEmitter');
+const math = require('../math');
+const utils = require('../utils');
+
+/**
+ * A texture stores the information that represents an image or part of an image. It cannot be added
+ * to the display list directly. Instead use it as the texture for a Sprite. If no frame is provided then the whole image is used.
+ *
+ * You can directly create a texture from an image and then reuse it multiple times like this :
+ *
+ * ```js
+ * var texture = textureFromData('assets/image.png');
+ * var sprite1 = new Sprite(texture);
+ * var sprite2 = new Sprite(texture);
+ * ```
+ *
+ * @class
+ */
+class Texture extends EventEmitter {
+  /**
+   * @constructor
+   * @param baseTexture {BaseTexture} The base texture source to create the texture from
+   * @param [frame] {Rectangle} The rectangle frame of the texture to show
+   * @param [crop] {Rectangle} The area of original texture
+   * @param [trim] {Rectangle} Trimmed texture rectangle
+   * @param [rotate] {number} indicates how the texture was rotated by texture packer. See {@link GroupD8}
+   */
+  constructor(baseTexture, frame, crop, trim, rotate) {
+    super();
+
+    /**
+     * Does this Texture have any frame data assigned to it?
+     *
+     * @member {boolean}
+     */
+    this.noFrame = false;
+
+    if (!frame) {
+      this.noFrame = true;
+      frame = new math.Rectangle(0, 0, 1, 1);
+    }
+
+    if (baseTexture instanceof Texture) {
+      baseTexture = baseTexture.baseTexture;
+    }
+
+    /**
+     * The base texture that this texture uses.
+     *
+     * @member {BaseTexture}
+     */
+    this.baseTexture = baseTexture;
+
+    /**
+     * The frame specifies the region of the base texture that this texture uses
+     *
+     * @member {Rectangle}
+     * @private
+     */
+    this._frame = frame;
+
+    /**
+     * The texture trim data.
+     *
+     * @member {Rectangle}
+     */
+    this.trim = trim;
+
+    /**
+     * This will let the renderer know if the texture is valid. If it's not then it cannot be rendered.
+     *
+     * @member {boolean}
+     */
+    this.valid = false;
+
+    /**
+     * This will let a renderer know that a texture has been updated (used mainly for webGL uv updates)
+     *
+     * @member {boolean}
+     */
+    this.requiresUpdate = false;
+
+    /**
+     * The WebGL UV data cache.
+     *
+     * @member {TextureUvs}
+     * @private
+     */
+    this._uvs = null;
+
+    /**
+     * The width of the Texture in pixels.
+     *
+     * @member {number}
+     */
+    this.width = 0;
+
+    /**
+     * The height of the Texture in pixels.
+     *
+     * @member {number}
+     */
+    this.height = 0;
+
+    /**
+     * This is the area of the BaseTexture image to actually copy to the Canvas / WebGL when rendering,
+     * irrespective of the actual frame size or placement (which can be influenced by trimmed texture atlases)
+     *
+     * @member {Rectangle}
+     */
+    this.crop = crop || frame;// new math.Rectangle(0, 0, 1, 1);
+
+    this._rotate = +(rotate || 0);
+
+    if (rotate === true) {
+        // this is old texturepacker legacy, some games/libraries are passing "true" for rotated textures
+      this._rotate = 2;
+    }
+    else {
+      if (this._rotate % 2 !== 0) {
+        throw 'attempt to use diamond-shaped UVs. If you are sure, set rotation manually';
+      }
+    }
+
+    if (baseTexture.hasLoaded) {
+      if (this.noFrame) {
+        frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+
+            // if there is no frame we should monitor for any base texture changes..
+        baseTexture.on('update', this.onBaseTextureUpdated, this);
+      }
+      this.frame = frame;
+    }
+    else {
+      baseTexture.once('loaded', this.onBaseTextureLoaded, this);
+    }
+
+    /**
+     * Fired when the texture is updated. This happens if the frame or the baseTexture is updated.
+     *
+     * @event update
+     * @memberof Texture#
+     * @protected
+     */
+  }
+
+  /**
+   * Updates this texture on the gpu.
+   * @memberof Texture#
+   */
+  update() {
+    this.baseTexture.update();
+  }
+
+  /**
+   * Called when the base texture is loaded
+   * @memberof Texture#
+   * @private
+   */
+  onBaseTextureLoaded(baseTexture) {
+      // TODO this code looks confusing.. boo to abusing getters and setterss!
+    if (this.noFrame) {
+      this.frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+    }
+    else {
+      this.frame = this._frame;
+    }
+
+    this.emit('update', this);
+  }
+
+  /**
+   * Called when the base texture is updated
+   * @memberof Texture#
+   * @private
+   */
+  onBaseTextureUpdated(baseTexture) {
+    this._frame.width = baseTexture.width;
+    this._frame.height = baseTexture.height;
+
+    this.emit('update', this);
+  }
+
+  /**
+   * Destroys this texture
+   * @memberof Texture#
+   * @param [destroyBase=false] {boolean} Whether to destroy the base texture as well
+   */
+  destroy(destroyBase) {
+    if (this.baseTexture) {
+      if (destroyBase) {
+        this.baseTexture.destroy();
+      }
+
+      this.baseTexture.off('update', this.onBaseTextureUpdated, this);
+      this.baseTexture.off('loaded', this.onBaseTextureLoaded, this);
+
+      this.baseTexture = null;
+    }
+
+    this._frame = null;
+    this._uvs = null;
+    this.trim = null;
+    this.crop = null;
+
+    this.valid = false;
+
+    this.off('dispose', this.dispose, this);
+    this.off('update', this.update, this);
+  }
+
+  /**
+   * Creates a new texture object that acts the same as this one.
+   * @memberof Texture#
+   * @return {Texture}
+   */
+  clone() {
+    return new Texture(this.baseTexture, this.frame, this.crop, this.trim, this.rotate);
+  }
+
+  /**
+   * Updates the internal WebGL UV cache.
+   * @memberof Texture#
+   * @private
+   */
+  _updateUvs() {
+    if (!this._uvs) {
+      this._uvs = new TextureUvs();
+    }
+
+    this._uvs.set(this.crop, this.baseTexture, this.rotate);
+  }
+}
+
+Object.defineProperties(Texture.prototype, {
+  /**
+   * The frame specifies the region of the base texture that this texture uses.
+   *
+   * @member {Rectangle}
+   * @memberof Texture#
+   */
+  frame: {
+    get: function() {
+      return this._frame;
+    },
+    set: function(frame) {
+      this._frame = frame;
+
+      this.noFrame = false;
+
+      this.width = frame.width;
+      this.height = frame.height;
+
+      if (!this.trim &amp;&amp; !this.rotate &amp;&amp; (frame.x + frame.width > this.baseTexture.width || frame.y + frame.height > this.baseTexture.height)) {
+        throw new Error('Texture Error: frame does not fit inside the base Texture dimensions ' + this);
+      }
+
+            // this.valid = frame &amp;&amp; frame.width &amp;&amp; frame.height &amp;&amp; this.baseTexture.source &amp;&amp; this.baseTexture.hasLoaded;
+      this.valid = frame &amp;&amp; frame.width &amp;&amp; frame.height &amp;&amp; this.baseTexture.hasLoaded;
+
+      if (this.trim) {
+        this.width = this.trim.width;
+        this.height = this.trim.height;
+        this._frame.width = this.trim.width;
+        this._frame.height = this.trim.height;
+      }
+      else {
+        this.crop = frame;
+      }
+
+      if (this.valid) {
+        this._updateUvs();
+      }
+    },
+  },
+  /**
+   * Indicates whether the texture is rotated inside the atlas
+   * set to 2 to compensate for texture packer rotation
+   * set to 6 to compensate for spine packer rotation
+   * can be used to rotate or mirror sprites
+   * See {@link GroupD8} for explanation
+   *
+   * @member {number}
+   * @memberof Texture#
+   */
+  rotate: {
+    get: function() {
+      return this._rotate;
+    },
+    set: function(rotate) {
+      this._rotate = rotate;
+      if (this.valid) {
+        this._updateUvs();
+      }
+    },
+  },
+});
+
+/**
+ * Helper function that creates a Texture object from the given image url.
+ * If the image is not in the texture cache it will be  created and loaded.
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param imageUrl {string} The image url of the texture
+ * @param crossorigin {boolean} Whether requests should be treated as crossorigin
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return {Texture} The newly created texture
+ */
+Texture.fromImage = function(imageUrl, crossorigin, scaleMode) {
+  var texture = utils.TextureCache[imageUrl];
+
+  if (!texture) {
+    texture = new Texture(BaseTexture.fromImage(imageUrl, crossorigin, scaleMode));
+    utils.TextureCache[imageUrl] = texture;
+  }
+
+  return texture;
+};
+
+/**
+ * Helper function that creates a sprite that will contain a texture from the TextureCache based on the frameId
+ * The frame ids are created when a Texture packer file has been loaded
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param frameId {string} The frame Id of the texture in the cache
+ * @return {Texture} The newly created texture
+ */
+Texture.fromFrame = function(frameId) {
+  var texture = utils.TextureCache[frameId];
+
+  if (!texture) {
+    throw new Error('The frameId "' + frameId + '" does not exist in the texture cache');
+  }
+
+  return texture;
+};
+
+/**
+ * Helper function that creates a new Texture based on the given canvas element.
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param canvas {Canvas} The canvas element source of the texture
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return {Texture}
+ */
+Texture.fromCanvas = function(canvas, scaleMode) {
+  return new Texture(BaseTexture.fromCanvas(canvas, scaleMode));
+};
+
+/**
+ * Helper function that creates a new Texture based on the given video element.
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param video {HTMLVideoElement}
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return {Texture} A Texture
+ */
+Texture.fromVideo = function(video, scaleMode) {
+  if (typeof video === 'string') {
+    return Texture.fromVideoUrl(video, scaleMode);
+  }
+  else {
+    return new Texture(VideoBaseTexture.fromVideo(video, scaleMode));
+  }
+};
+
+/**
+ * Helper function that creates a new Texture based on the video url.
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param videoUrl {string}
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return {Texture} A Texture
+ */
+Texture.fromVideoUrl = function(videoUrl, scaleMode) {
+  return new Texture(VideoBaseTexture.fromUrl(videoUrl, scaleMode));
+};
+
+/**
+ * Adds a texture to the global utils.TextureCache. This cache is shared across the whole PIXI object.
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param texture {Texture} The Texture to add to the cache.
+ * @param id {string} The id that the texture will be stored against.
+ */
+Texture.addTextureToCache = function(texture, id) {
+  utils.TextureCache[id] = texture;
+};
+
+/**
+ * Remove a texture from the global utils.TextureCache.
+ *
+ * @static
+ * @memberof Texture
+ *
+ * @param id {string} The id of the texture to be removed
+ * @return {Texture} The texture that was removed
+ */
+Texture.removeTextureFromCache = function(id) {
+  var texture = utils.TextureCache[id];
+
+  delete utils.TextureCache[id];
+  delete utils.BaseTextureCache[id];
+
+  return texture;
+};
+
+/**
+ * An empty texture, used often to not have to create multiple empty textures.
+ *
+ * @static
+ * @constant
+ */
+Texture.EMPTY = new Texture(new BaseTexture());
+
+module.exports = Texture;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	LesserPanda Copyright © 2015-2016 The contributors to the LesserPanda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

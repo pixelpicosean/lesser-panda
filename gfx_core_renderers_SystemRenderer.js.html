@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>LesserPanda Source: gfx/core/renderers/SystemRenderer.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">LesserPanda</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-engine_analytics.html">engine/analytics</a></li><li><a href="module-engine_anime.html">engine/anime</a></li><li><a href="module-engine_anime_action.html">engine/anime/action</a></li><li><a href="module-engine_anime_easing.html">engine/anime/easing</a></li><li><a href="module-engine_anime_tween.html">engine/anime/tween</a></li><li><a href="module-engine_anime_utils.html">engine/anime/utils</a></li><li><a href="module-engine_audio.html">engine/audio</a></li><li><a href="module-engine_Camera.html">engine/Camera</a></li><li><a href="module-engine_core.html">engine/core</a></li><li><a href="module-engine_device.html">engine/device</a></li><li><a href="module-engine_Entity.html">engine/Entity</a></li><li><a href="module-engine_EventEmitter.html">engine/EventEmitter</a></li><li><a href="module-engine_Game.html">engine/Game</a></li><li><a href="module-engine_gfx_core_math_GroupD8.html">engine/gfx/core/math/GroupD8</a></li><li><a href="module-engine_gfx_core_Node.html">engine/gfx/core/Node</a></li><li><a href="module-engine_gfx_utils.html">engine/gfx/utils</a></li><li><a href="module-engine_input_keyboard.html">engine/input/keyboard</a></li><li><a href="module-engine_resize.html">engine/resize</a></li><li><a href="module-engine_rnd.html">engine/rnd</a></li><li><a href="module-engine_storage.html">engine/storage</a></li><li><a href="module-engine_storage_Data.html">engine/storage/Data</a></li><li><a href="module-engine_storage_PersistentData.html">engine/storage/PersistentData</a></li><li><a href="module-engine_utils_array.html">engine/utils/array</a></li><li><a href="module-engine_utils_color.html">engine/utils/color</a></li><li><a href="module-engine_utils_math.html">engine/utils/math</a></li><li><a href="module-engine_utils_object.html">engine/utils/object</a></li><li><a href="module-engine_Vector.html">engine/Vector</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="AABBSolver.html">AABBSolver</a></li><li><a href="AbstractFilter.html">AbstractFilter</a></li><li><a href="AccessibilityManager.html">AccessibilityManager</a></li><li><a href="Analytics.html">Analytics</a></li><li><a href="AnimatedSprite.html">AnimatedSprite</a></li><li><a href="AnimationData.html">AnimationData</a></li><li><a href="AsciiFilter.html">AsciiFilter</a></li><li><a href="BackgroundMap.html">BackgroundMap</a></li><li><a href="BaseTexture.html">BaseTexture</a></li><li><a href="BitmapText.html">BitmapText</a></li><li><a href="BlendModeManager.html">BlendModeManager</a></li><li><a href="BloomFilter.html">BloomFilter</a></li><li><a href="BlurDirFilter.html">BlurDirFilter</a></li><li><a href="BlurFilter.html">BlurFilter</a></li><li><a href="BlurXFilter.html">BlurXFilter</a></li><li><a href="BlurYFilter.html">BlurYFilter</a></li><li><a href="BlurYTintFilter.html">BlurYTintFilter</a></li><li><a href="Box.html">Box</a></li><li><a href="Camera.html">Camera</a></li><li><a href="CanvasBuffer.html">CanvasBuffer</a></li><li><a href="CanvasGraphics.html">CanvasGraphics</a></li><li><a href="CanvasMaskManager.html">CanvasMaskManager</a></li><li><a href="CanvasRenderer.html">CanvasRenderer</a></li><li><a href="CanvasTinter.html">CanvasTinter</a></li><li><a href="Circle.html">Circle</a></li><li><a href="Collider.html">Collider</a></li><li><a href="CollisionMap.html">CollisionMap</a></li><li><a href="ColorMatrixFilter.html">ColorMatrixFilter</a></li><li><a href="ColorStepFilter.html">ColorStepFilter</a></li><li><a href="ComplexPrimitiveShader.html">ComplexPrimitiveShader</a></li><li><a href="ConvolutionFilter.html">ConvolutionFilter</a></li><li><a href="CrossHatchFilter.html">CrossHatchFilter</a></li><li><a href="Data.html">Data</a></li><li><a href="DisplacementFilter.html">DisplacementFilter</a></li><li><a href="DotScreenFilter.html">DotScreenFilter</a></li><li><a href="DropShadowFilter.html">DropShadowFilter</a></li><li><a href="Ellipse.html">Ellipse</a></li><li><a href="Entity.html">Entity</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="FilterManager.html">FilterManager</a></li><li><a href="filters.PixelateFilter.html">filters.PixelateFilter</a></li><li><a href="FXAAFilter.html">FXAAFilter</a></li><li><a href="Game.html">Game</a></li><li><a href="Graphics.html">Graphics</a></li><li><a href="GraphicsData.html">GraphicsData</a></li><li><a href="GrayFilter.html">GrayFilter</a></li><li><a href="interaction.InteractionData.html">interaction.InteractionData</a></li><li><a href="interaction.InteractionManager.html">interaction.InteractionManager</a></li><li><a href="InvertFilter.html">InvertFilter</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Loader.html">Loader</a></li><li><a href="MaskManager.html">MaskManager</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="mesh.Mesh.html">mesh.Mesh</a></li><li><a href="mesh.MeshShader.html">mesh.MeshShader</a></li><li><a href="mesh.Plane.html">mesh.Plane</a></li><li><a href="mesh.Rope.html">mesh.Rope</a></li><li><a href="MiniSignal.html">MiniSignal</a></li><li><a href="MiniSignalBinding.html">MiniSignalBinding</a></li><li><a href="module-engine_anime_action-Action.html">engine/anime/action~Action</a></li><li><a href="module-engine_anime_action-Action.Action.html">engine/anime/action~Action.Action</a></li><li><a href="module-engine_anime_action-ActionPlayer.html">engine/anime/action~ActionPlayer</a></li><li><a href="module-engine_anime_action-ActionPlayer.ActionPlayer.html">engine/anime/action~ActionPlayer.ActionPlayer</a></li><li><a href="module-engine_anime_action-Channel.html">engine/anime/action~Channel</a></li><li><a href="module-engine_anime_action-Channel.Channel.html">engine/anime/action~Channel.Channel</a></li><li><a href="module-engine_anime_action-Key.html">engine/anime/action~Key</a></li><li><a href="module-engine_anime_action-Key.Key.html">engine/anime/action~Key.Key</a></li><li><a href="module-engine_anime-SystemAnime.html">engine/anime~SystemAnime</a></li><li><a href="Node.html">Node</a></li><li><a href="NoiseFilter.html">NoiseFilter</a></li><li><a href="ObjectRenderer.html">ObjectRenderer</a></li><li><a href="ParticleContainer.html">ParticleContainer</a></li><li><a href="ParticleShader.html">ParticleShader</a></li><li><a href="PersistentData.html">PersistentData</a></li><li><a href="PIXI.SpriteMaskFilter.html">PIXI.SpriteMaskFilter</a></li><li><a href="PIXI.VideoBaseTexture.html">PIXI.VideoBaseTexture</a></li><li><a href="Polygon.html">Polygon</a></li><li><a href="PrimitiveShader.html">PrimitiveShader</a></li><li><a href="Quad.html">Quad</a></li><li><a href="RandomDataGenerator.html">RandomDataGenerator</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="RenderTarget.html">RenderTarget</a></li><li><a href="RenderTexture.html">RenderTexture</a></li><li><a href="Resource.html">Resource</a></li><li><a href="RGBSplitFilter.html">RGBSplitFilter</a></li><li><a href="RoundedRectangle.html">RoundedRectangle</a></li><li><a href="SepiaFilter.html">SepiaFilter</a></li><li><a href="Shader.html">Shader</a></li><li><a href="ShaderManager.html">ShaderManager</a></li><li><a href="ShockwaveFilter.html">ShockwaveFilter</a></li><li><a href="SmartBlurFilter.html">SmartBlurFilter</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="StencilMaskStack.html">StencilMaskStack</a></li><li><a href="Storage.html">Storage</a></li><li><a href="SystemGfx.html">SystemGfx</a></li><li><a href="SystemInput.html">SystemInput</a></li><li><a href="SystemPhysics.html">SystemPhysics</a></li><li><a href="SystemRenderer.html">SystemRenderer</a></li><li><a href="SystemTimer.html">SystemTimer</a></li><li><a href="Text.html">Text</a></li><li><a href="Texture.html">Texture</a></li><li><a href="TextureShader.html">TextureShader</a></li><li><a href="TilingSprite.html">TilingSprite</a></li><li><a href="TiltShiftAxisFilter.html">TiltShiftAxisFilter</a></li><li><a href="TiltShiftFilter.html">TiltShiftFilter</a></li><li><a href="TiltShiftXFilter.html">TiltShiftXFilter</a></li><li><a href="TiltShiftYFilter.html">TiltShiftYFilter</a></li><li><a href="Timer.html">Timer</a></li><li><a href="Tween.html">Tween</a></li><li><a href="TwistFilter.html">TwistFilter</a></li><li><a href="Vector.html">Vector</a></li><li><a href="WebGLManager.html">WebGLManager</a></li><li><a href="WebGLMaskManager.html">WebGLMaskManager</a></li><li><a href="WebGLRenderer.html">WebGLRenderer</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Mixins<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="accessibleTarget.html">accessibleTarget</a></li><li><a href="interactiveTarget.html">interactiveTarget</a></li><li><a href="pluginTarget.html">pluginTarget</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="BaseTexture.html#event:error">BaseTexture#event:error</a></li><li><a href="BaseTexture.html#event:loaded">BaseTexture#event:loaded</a></li><li><a href="RenderTexture.html#event:update">RenderTexture#event:update</a></li><li><a href="Texture.html#event:update">Texture#event:update</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="interfaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Interfaces<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Behavior.html">Behavior</a></li><li><a href="System.html">System</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#GroupD8">GroupD8</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: gfx/core/renderers/SystemRenderer.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">var utils = require('../utils'),
+  math = require('../math'),
+  CONST = require('../../const'),
+  EventEmitter = require('engine/EventEmitter');
+
+/**
+ * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.
+ * Don't forget to add the CanvasRenderer.view to your DOM or you will not see anything :)
+ *
+ * @class
+ * @param system {string} The name of the system this renderer is for.
+ * @param [width=800] {number} the width of the canvas view
+ * @param [height=600] {number} the height of the canvas view
+ * @param [options] {object} The optional renderer parameters
+ * @param [options.view] {HTMLCanvasElement} the canvas to use as a view, optional
+ * @param [options.transparent=false] {boolean} If the render view is transparent, default false
+ * @param [options.autoResize=false] {boolean} If the render view is automatically resized, default false
+ * @param [options.antialias=false] {boolean} sets antialias (only applicable in chrome at the moment)
+ * @param [options.resolution=1] {number} the resolution of the renderer retina would be 2
+ * @param [options.clearBeforeRender=true] {boolean} This sets if the CanvasRenderer will clear the canvas or
+ *      not before the new render pass.
+ * @param [options.backgroundColor=0x000000] {number} The background color of the rendered area (shown if not transparent).
+ * @param [options.roundPixels=false] {boolean} If true Pixi will Math.floor() x/y values when rendering, stopping pixel interpolation.
+ */
+class SystemRenderer extends EventEmitter {
+  constructor(system, width, height, options) {
+    super();
+
+    utils.sayHello(system);
+
+    // prepare options
+    if (options) {
+      for (var i in CONST.DEFAULT_RENDER_OPTIONS) {
+        if (typeof options[i] === 'undefined') {
+          options[i] = CONST.DEFAULT_RENDER_OPTIONS[i];
+        }
+      }
+    }
+    else {
+      options = CONST.DEFAULT_RENDER_OPTIONS;
+    }
+
+    /**
+     * The type of the renderer.
+     *
+     * @member {number}
+     * @default RENDERER_TYPE.UNKNOWN
+     * @see RENDERER_TYPE
+     */
+    this.type = CONST.RENDERER_TYPE.UNKNOWN;
+
+    /**
+     * The width of the canvas view
+     *
+     * @member {number}
+     * @default 800
+     */
+    this.width = width || 800;
+
+    /**
+     * The height of the canvas view
+     *
+     * @member {number}
+     * @default 600
+     */
+    this.height = height || 600;
+
+    /**
+     * The canvas element that everything is drawn to
+     *
+     * @member {HTMLCanvasElement}
+     */
+    this.view = options.view || document.createElement('canvas');
+
+    /**
+     * The resolution of the renderer
+     *
+     * @member {number}
+     * @default 1
+     */
+    this.resolution = options.resolution;
+
+    /**
+     * Whether the render view is transparent
+     *
+     * @member {boolean}
+     */
+    this.transparent = options.transparent;
+
+    /**
+     * Whether the render view should be resized automatically
+     *
+     * @member {boolean}
+     */
+    this.autoResize = options.autoResize || false;
+
+    /**
+     * Tracks the blend modes useful for this renderer.
+     *
+     * @member {object&lt;string, mixed>}
+     */
+    this.blendModes = null;
+
+    /**
+     * The value of the preserveDrawingBuffer flag affects whether or not the contents of the stencil buffer is retained after rendering.
+     *
+     * @member {boolean}
+     */
+    this.preserveDrawingBuffer = options.preserveDrawingBuffer;
+
+    /**
+     * This sets if the CanvasRenderer will clear the canvas or not before the new render pass.
+     * If the scene is NOT transparent Pixi will use a canvas sized fillRect operation every frame to set the canvas background color.
+     * If the scene is transparent Pixi will use clearRect to clear the canvas every frame.
+     * Disable this by setting this to false. For example if your game has a canvas filling background image you often don't need this set.
+     *
+     * @member {boolean}
+     * @default
+     */
+    this.clearBeforeRender = options.clearBeforeRender;
+
+    /**
+     * If true Pixi will Math.floor() x/y values when rendering, stopping pixel interpolation.
+     * Handy for crisp pixel art and speed on legacy devices.
+     *
+     * @member {boolean}
+     */
+    this.roundPixels = options.roundPixels;
+
+    /**
+     * The background color as a number.
+     *
+     * @member {number}
+     * @private
+     */
+    this._backgroundColor = 0x000000;
+
+    /**
+     * The background color as an [R, G, B] array.
+     *
+     * @member {number[]}
+     * @private
+     */
+    this._backgroundColorRgb = [0, 0, 0];
+
+    /**
+     * The background color as a string.
+     *
+     * @member {string}
+     * @private
+     */
+    this._backgroundColorString = '#000000';
+
+    this.backgroundColor = options.backgroundColor || this._backgroundColor; // run bg color setter
+
+    /**
+     * This temporary display object used as the parent of the currently being rendered item
+     *
+     * @member {DisplayObject}
+     * @private
+     */
+    this._tempDisplayObjectParent = { worldTransform:new math.Matrix(), worldAlpha:1, children:[] };
+
+    /**
+     * The last root object that the renderer tried to render.
+     *
+     * @member {DisplayObject}
+     * @private
+     */
+    this._lastObjectRendered = this._tempDisplayObjectParent;
+  }
+}
+
+Object.defineProperties(SystemRenderer.prototype, {
+    /**
+     * The background color to fill if not transparent
+     *
+     * @member {number}
+     * @memberof SystemRenderer#
+     */
+  backgroundColor:
+  {
+    get: function() {
+      return this._backgroundColor;
+    },
+    set: function(val) {
+      this._backgroundColor = val;
+      this._backgroundColorString = utils.hex2string(val);
+      utils.hex2rgb(val, this._backgroundColorRgb);
+    },
+  },
+});
+
+/**
+ * Resizes the canvas view to the specified width and height
+ *
+ * @param width {number} the new width of the canvas view
+ * @param height {number} the new height of the canvas view
+ */
+SystemRenderer.prototype.resize = function(width, height) {
+  this.width = width * this.resolution;
+  this.height = height * this.resolution;
+
+  this.view.width = this.width;
+  this.view.height = this.height;
+
+  if (this.autoResize) {
+    this.view.style.width = this.width / this.resolution + 'px';
+    this.view.style.height = this.height / this.resolution + 'px';
+  }
+};
+
+/**
+ * Removes everything from the renderer and optionally removes the Canvas DOM element.
+ *
+ * @param [removeView=false] {boolean} Removes the Canvas element from the DOM.
+ */
+SystemRenderer.prototype.destroy = function(removeView) {
+  if (removeView &amp;&amp; this.view.parentNode) {
+    this.view.parentNode.removeChild(this.view);
+  }
+
+  this.type = CONST.RENDERER_TYPE.UNKNOWN;
+
+  this.width = 0;
+  this.height = 0;
+
+  this.view = null;
+
+  this.resolution = 0;
+
+  this.transparent = false;
+
+  this.autoResize = false;
+
+  this.blendModes = null;
+
+  this.preserveDrawingBuffer = false;
+  this.clearBeforeRender = false;
+
+  this.roundPixels = false;
+
+  this._backgroundColor = 0;
+  this._backgroundColorRgb = null;
+  this._backgroundColorString = null;
+};
+
+module.exports = SystemRenderer;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+	<span class="jsdoc-message">Made with ♥ by Sean Bohan</span>
+
+
+	<span class="copyright">
+	LesserPanda Copyright © 2015-2016 The contributors to the LesserPanda project.
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
