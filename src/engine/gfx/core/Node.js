@@ -26,6 +26,9 @@ const EMPTY_ARRAY = [];
  * @extends EventEmitter
  */
 class Node extends EventEmitter {
+  get key() {
+    return 'gfx';
+  }
   /**
    * @constructor
    */
@@ -33,25 +36,31 @@ class Node extends EventEmitter {
     super();
 
     /**
+     * The entity this node is attached to
+     * @type {Entity}
+     */
+    this.entity = null;
+
+    /**
      * The coordinate of the node relative to the local coordinates of the parent.
      *
      * @type {Vector}
      */
-    this.position = new Vector();
+    this.position = Vector.create();
 
     /**
      * The scale factor of the node.
      *
      * @type {Vector}
      */
-    this.scale = new Vector(1, 1);
+    this.scale = Vector.create(1, 1);
 
     /**
      * The pivot point of the node that it rotates around
      *
      * @type {Vector}
      */
-    this.pivot = new Vector(0, 0);
+    this.pivot = Vector.create(0, 0);
 
 
     /**
@@ -59,14 +68,14 @@ class Node extends EventEmitter {
      *
      * @type {Vector}
      */
-    this.skew = new Vector(0, 0);
+    this.skew = Vector.create(0, 0);
 
     /**
      * The rotation of the node in radians.
-     *
+     * @private
      * @type {Number}
      */
-    this.rotation = 0;
+    this._rotation = 0;
 
     /**
      * The opacity of the node.
@@ -177,6 +186,29 @@ class Node extends EventEmitter {
      * @private
      */
     this._system = null;
+  }
+
+  attach(entity) {
+    // Recycle vectors if this is not attached to Entity
+    if (!this.entity) {
+      Vector.recycle(this.position);
+      Vector.recycle(this.scale);
+    }
+
+    // Replace the vectors with the entity
+    this.position = entity.position;
+    this.scale = entity.scale;
+
+    this.entity = entity;
+  }
+  detach() {
+    if (this.entity) {
+      // De-reference to the entity's vectors
+      this.position = this.position.clone();
+      this.scale = this.scale.clone();
+
+      this.entity = null;
+    }
   }
 
   /**
@@ -927,6 +959,21 @@ Object.defineProperties(Node.prototype, {
     },
     set: function(value) {
       this.position.y = value;
+    },
+  },
+  /**
+   * The rotation of the node in radians.
+   * @type {Number}
+   */
+  rotation: {
+    get: function() {
+      return (this.entity) ? this.entity._rotation : this._rotation;
+    },
+    set: function(value) {
+      this._rotation = value;
+      if (this.entity) {
+        this.entity.rotation = value;
+      }
     },
   },
 

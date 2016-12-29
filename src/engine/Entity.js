@@ -19,6 +19,27 @@ class Entity {
    * @param {Object} settings   Setting object to be merged in
    */
   constructor(x, y, settings) {
+    //
+    // Configs
+    //
+    /**
+     * Want this actor to be updated?
+     * @type {boolean}
+     * @default false
+     */
+    this.canEverTick = false;
+
+    /**
+     * Want this actor to be fixed-updated?
+     * @type {boolean}
+     * @default false
+     */
+    this.canFixedTick = false;
+
+
+    //
+    // Properties
+    //
     /**
      * Each entity has a unique ID.
      * @memberof Entity#
@@ -30,6 +51,13 @@ class Entity {
      * @type {string}
      */
     this.name = null;
+
+    /**
+     * Name of the layer that `gfx` will be added to while spawning.
+     * @memberof Entity#
+     * @type {String}
+     */
+    this.layer = null;
 
     /**
      * Real tag field
@@ -45,63 +73,6 @@ class Entity {
     this.isRemoved = false;
 
     /**
-     * Want this actor to be updated?
-     * @type {boolean}
-     * @default false
-     */
-    this.canEverTick = false;
-
-    /**
-     * Want this actor to be fixed-updated?
-     * @type {boolean}
-     * @default false
-     */
-    this.canFixedTick = false;
-
-    /**
-     * Graphic component.
-     * @memberof Entity#
-     */
-    this.gfx = null;
-
-    /**
-     * Name of the layer that `gfx` will be added to while spawning.
-     * @memberof Entity#
-     * @type {String}
-     */
-    this.layer = null;
-
-    /**
-     * Collider component.
-     * @memberof Entity#
-     */
-    this.coll = null;
-
-    /**
-     * Behavior hash map
-     * @type {Object}
-     */
-    this.behaviors = {};
-
-    /**
-     * Behavior list
-     * @type {Array}
-     */
-    this.behaviorList = [];
-
-    /**
-     * Events dispatcher
-     * @type {EventEmitter}
-     */
-    this.events = new EventEmitter();
-
-    /**
-     * Position of this entity.
-     * @memberof Entity#
-     */
-    this.position = new Vector(x, y);
-
-    /**
      * Reference to the game this actor is added to.
      * @type {Game}
      * @default null
@@ -113,6 +84,76 @@ class Entity {
      * @type {class}
      */
     this.CTOR = Entity;
+
+    /**
+     * Behavior hash map
+     * @type {Object}
+     */
+    this.behaviors = {};
+    /**
+     * Behavior list
+     * @type {Array}
+     */
+    this.behaviorList = [];
+
+
+    //
+    // Components
+    //
+    /**
+     * Component hash map
+     * @type {Object}
+     */
+    this.components = {};
+    /**
+     * Component list
+     * @type {Array}
+     */
+    this.componentList = [];
+    /**
+     * Graphic component.
+     * @memberof Entity#
+     */
+    this.gfx = null;
+
+    /**
+     * Collider component.
+     * @memberof Entity#
+     */
+    this.coll = null;
+
+    /**
+     * Events dispatcher
+     * @type {EventEmitter}
+     * @memberof Entity#
+     */
+    this.events = new EventEmitter();
+
+
+    //
+    // Transform
+    //
+    /**
+     * Position of this entity.
+     * @memberof Entity#
+     * @type {Vector}
+     */
+    this.position = new Vector(x, y);
+
+    /**
+     * Scale of this entity.
+     * @memberof Entity#
+     * @type {Vector}
+     */
+    this.scale = new Vector(1, 1);
+
+    /**
+     * Rotation of this entity.
+     * @memberof Entity#
+     * @type {Number}
+     */
+    this.rotation = 0;
+
 
     // Apply settings
     this.setup(settings);
@@ -236,6 +277,34 @@ class Entity {
     for (i = 0; i < this.behaviorList.length; i++) {
       this.behaviorList[i].fixedUpdate(dt, dtSec);
     }
+  }
+
+  /**
+   * Add a component instance to this entity.
+   * @example
+   * class MyEntity extends Entity {
+   *   constructor(x, y, s) {
+   *     super(x, y, s);
+   *
+   *     // Use `addComponent` method
+   *     this.addComponent(Sprite({
+   *       texture: 'player.png',
+   *     }));
+   *
+   *     // is the same as
+   *     this.gfx = Sprite({
+   *       texture: 'player.png',
+   *     });
+   *   }
+   * }
+   *
+   * @param {Component} c Component instance to add to
+   * @return {Entity}     Self for chaining
+   */
+  addComponent(c) {
+    this.components[c.key] = c;
+
+    return this;
   }
 }
 /**

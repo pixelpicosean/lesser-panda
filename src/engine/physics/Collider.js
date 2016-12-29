@@ -53,6 +53,9 @@ const { Box, Circle } = require('./shapes');
  * @class Collider
  */
 class Collider {
+  get key() {
+    return 'coll';
+  }
   /**
    * @constructor
    * @param {object} [properties] Settings to merge.
@@ -63,6 +66,11 @@ class Collider {
      * @type {number}
      */
     this.id = Collider.nextId++;
+    /**
+     * Reference to owner entity.
+     * @type {Entity}
+     */
+    this.entity = null;
     /**
      * Static collider will never update or response to collisions.
      * @type {Boolean}
@@ -89,6 +97,11 @@ class Collider {
      * @type {Vector}
      */
     this.position = Vector.create();
+    /**
+     * Scale of this collider. Not used yet.
+     * @type {Vector}
+     */
+    this.scale = Vector.create();
     /**
      * Last position of collider.
      * @type {Vector}
@@ -136,6 +149,12 @@ class Collider {
      * @default 0
      */
     this.damping = 0;
+    /**
+     * The rotation of the collider in radians.
+     * @private
+     * @type {Number}
+     */
+    this._rotation = 0;
 
     // Bounding info
     this.left = 0;
@@ -167,6 +186,16 @@ class Collider {
    */
   get height() {
     return this.shape ? this.shape.height : 0;
+  }
+
+  get rotation() {
+    return (this.entity) ? this.entity._rotation : this._rotation;
+  }
+  set rotation(v) {
+    this._rotation = v;
+    if (this.entity) {
+      this.entity._rotation = v;
+    }
   }
 
   /**
@@ -274,6 +303,30 @@ class Collider {
     }
 
     return this;
+  }
+
+  // Implement `Component` interface
+  attach(entity) {
+    // Recycle vectors if this is not attached to Entity
+    if (!this.entity) {
+      Vector.recycle(this.position);
+      Vector.recycle(this.scale);
+    }
+
+    // Replace the vectors with the entity
+    this.position = entity.position;
+    this.scale = entity.scale;
+
+    this.entity = entity;
+  }
+  detach() {
+    if (this.entity) {
+      // De-reference to the entity's vectors
+      this.position = this.position.clone();
+      this.scale = this.scale.clone();
+
+      this.entity = null;
+    }
   }
 }
 
