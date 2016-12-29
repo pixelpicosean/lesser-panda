@@ -19,6 +19,27 @@ class Entity {
    * @param {Object} settings   Setting object to be merged in
    */
   constructor(x, y, settings) {
+    //
+    // Configs
+    //
+    /**
+     * Want this actor to be updated?
+     * @type {boolean}
+     * @default false
+     */
+    this.canEverTick = false;
+
+    /**
+     * Want this actor to be fixed-updated?
+     * @type {boolean}
+     * @default false
+     */
+    this.canFixedTick = false;
+
+
+    //
+    // Properties
+    //
     /**
      * Each entity has a unique ID.
      * @memberof Entity#
@@ -30,6 +51,13 @@ class Entity {
      * @type {string}
      */
     this.name = null;
+
+    /**
+     * Name of the layer that `gfx` will be added to while spawning.
+     * @memberof Entity#
+     * @type {String}
+     */
+    this.layer = null;
 
     /**
      * Real tag field
@@ -45,37 +73,17 @@ class Entity {
     this.isRemoved = false;
 
     /**
-     * Want this actor to be updated?
-     * @type {boolean}
-     * @default false
+     * Reference to the game this actor is added to.
+     * @type {Game}
+     * @default null
      */
-    this.canEverTick = false;
+    this.game = null;
 
     /**
-     * Want this actor to be fixed-updated?
-     * @type {boolean}
-     * @default false
+     * Reference to the constructor for pooling.
+     * @type {class}
      */
-    this.canFixedTick = false;
-
-    /**
-     * Graphic component.
-     * @memberof Entity#
-     */
-    this.gfx = null;
-
-    /**
-     * Name of the layer that `gfx` will be added to while spawning.
-     * @memberof Entity#
-     * @type {String}
-     */
-    this.layer = null;
-
-    /**
-     * Collider component.
-     * @memberof Entity#
-     */
-    this.coll = null;
+    this.CTOR = Entity;
 
     /**
      * Behavior hash map
@@ -89,30 +97,54 @@ class Entity {
      */
     this.behaviorList = [];
 
+
+    //
+    // Components
+    //
+    /**
+     * Graphic component.
+     * @memberof Entity#
+     */
+    this.gfx = null;
+
+    /**
+     * Collider component.
+     * @memberof Entity#
+     */
+    this.coll = null;
+
     /**
      * Events dispatcher
      * @type {EventEmitter}
+     * @memberof Entity#
      */
     this.events = new EventEmitter();
 
+
+    //
+    // Transform
+    //
     /**
      * Position of this entity.
      * @memberof Entity#
+     * @type {Vector}
      */
     this.position = new Vector(x, y);
 
     /**
-     * Reference to the game this actor is added to.
-     * @type {Game}
-     * @default null
+     * Scale of this entity.
+     * @memberof Entity#
+     * @type {Vector}
      */
-    this.game = null;
+    this.scale = new Vector(1, 1);
 
     /**
-     * Reference to the constructor for pooling.
-     * @type {class}
+     * Rotation of this entity.
+     * @memberof Entity#
+     * @type {Number}
      */
-    this.CTOR = Entity;
+    this.rotation = 0;
+
 
     // Apply settings
     this.setup(settings);

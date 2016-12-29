@@ -25,6 +25,9 @@ module.exports = function(data) {
       case 'interactive':
       // - Sprite
       case 'tint':
+      // - BitmapText
+      case 'maxWidth':
+      case 'maxLineHeight':
         inst[k] = data[k];
         break;
 
