@@ -66,6 +66,10 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.2
+
+- Remove `OVERLAP` collision state, now boxes will never overlap if they intend to push against others
+
 ### 1.1
 
 - Update behaviors for new `Entity` API
