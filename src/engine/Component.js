@@ -6,13 +6,22 @@ const Vector = require('engine/Vector');
  */
 class Component {
   get rotation() {
-    return this._rotation;
+    return (this.entity) ? this.entity._rotation : this._rotation;
   }
   set rotation(v) {
     this._rotation = v;
     if (this.entity) {
       this.entity._rotation = v;
     }
+  }
+
+  /**
+   * Key name this component will be saved as in owner entity
+   * @type {String}
+   * @readonly
+   */
+  get key() {
+    return '';
   }
 
   constructor() {

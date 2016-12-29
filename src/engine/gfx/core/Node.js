@@ -26,6 +26,9 @@ const EMPTY_ARRAY = [];
  * @extends EventEmitter
  */
 class Node extends EventEmitter {
+  get key() {
+    return 'gfx';
+  }
   /**
    * @constructor
    */
@@ -964,7 +967,7 @@ Object.defineProperties(Node.prototype, {
    */
   rotation: {
     get: function() {
-      return this._rotation;
+      return (this.entity) ? this.entity._rotation : this._rotation;
     },
     set: function(value) {
       this._rotation = value;

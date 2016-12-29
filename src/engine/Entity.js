@@ -90,7 +90,6 @@ class Entity {
      * @type {Object}
      */
     this.behaviors = {};
-
     /**
      * Behavior list
      * @type {Array}
@@ -101,6 +100,16 @@ class Entity {
     //
     // Components
     //
+    /**
+     * Component hash map
+     * @type {Object}
+     */
+    this.components = {};
+    /**
+     * Component list
+     * @type {Array}
+     */
+    this.componentList = [];
     /**
      * Graphic component.
      * @memberof Entity#
@@ -268,6 +277,34 @@ class Entity {
     for (i = 0; i < this.behaviorList.length; i++) {
       this.behaviorList[i].fixedUpdate(dt, dtSec);
     }
+  }
+
+  /**
+   * Add a component instance to this entity.
+   * @example
+   * class MyEntity extends Entity {
+   *   constructor(x, y, s) {
+   *     super(x, y, s);
+   *
+   *     // Use `addComponent` method
+   *     this.addComponent(Sprite({
+   *       texture: 'player.png',
+   *     }));
+   *
+   *     // is the same as
+   *     this.gfx = Sprite({
+   *       texture: 'player.png',
+   *     });
+   *   }
+   * }
+   *
+   * @param {Component} c Component instance to add to
+   * @return {Entity}     Self for chaining
+   */
+  addComponent(c) {
+    this.components[c.key] = c;
+
+    return this;
   }
 }
 /**
