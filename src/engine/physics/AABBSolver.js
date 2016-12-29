@@ -2,6 +2,8 @@ const Vector = require('engine/Vector');
 const { clamp } = require('engine/utils/math');
 const { TOP, BOTTOM, LEFT, RIGHT, BOX, CIRC } = require('./const');
 
+const Radian2Degree = 180 / Math.PI;
+
 /**
  * AABB collision solver. This collision solver only supports
  * Box vs Box, Box vs Circle collisions.
@@ -13,10 +15,21 @@ class AABBSolver {
    * @constructor
    */
   constructor() {
-    this.response = [
+    this.resVecs = [
       new Vector(),
       new Vector(),
     ];
+    this.res = Object.seal({
+      angle: 0,
+      angleInDegree: 0,
+
+      set: function(angle) {
+        this.angle = angle;
+        this.angleInDegree = (angle * Radian2Degree) | 0;
+
+        return this;
+      },
+    });
   }
 
   /**
@@ -85,8 +98,8 @@ class AABBSolver {
    * @param {boolean}  b2a  Whether second collider receives hit response
    */
   hitResponse(a, b, a2b, b2a) {
-    let pushA = false, pushB = false;
-    let resA = this.response[0].set(0), resB = this.response[1].set(0);
+    let pushA = false, pushB = false, pushBox = false, pushCircle = false;
+    let resA = this.resVecs[0].set(0), resB = this.resVecs[1].set(0);
     let angle, dist, overlapX, overlapY;
 
     if (a.shape.type === BOX && b.shape.type === BOX) {
@@ -159,24 +172,38 @@ class AABBSolver {
         overlapY = (a.position.y < b.position.y) ? (a.bottom - b.top) : (a.top - b.bottom);
 
         if (Math.abs(overlapX) > Math.abs(overlapY)) {
-          overlapY /= 2;
+          pushA = (a2b && a.collide(b, overlapY> 0 ? BOTTOM : TOP));
+          pushB = (b2a && b.collide(a, overlapY> 0 ? TOP : BOTTOM));
 
-          resA.x = resB.x = 0;
-          resA.y = -overlapY;
-          resB.y = +overlapY;
+          if (pushA && pushB) {
+            overlapY /= 2;
 
-          a2b && a.collide(b, overlapY > 0 ? BOTTOM : TOP);
-          b2a && b.collide(a, overlapY > 0 ? TOP : BOTTOM);
+            resA.y = -overlapY;
+            resB.y = +overlapY;
+          }
+          else if (pushA) {
+            resA.y = -overlapY;
+          }
+          else if (pushB) {
+            resB.y = +overlapY;
+          }
         }
         else {
-          overlapX /= 2;
+          pushA = (a2b && a.collide(b, overlapX> 0 ? RIGHT : LEFT));
+          pushB = (b2a && b.collide(a, overlapX> 0 ? LEFT : RIGHT));
 
-          resA.y = resB.y = 0;
-          resA.x = -overlapX;
-          resB.x = +overlapX;
+          if (pushA && pushB) {
+            overlapY /= 2;
 
-          a2b && a.collide(b, overlapX > 0 ? RIGHT : LEFT);
-          b2a && b.collide(a, overlapX > 0 ? LEFT : RIGHT);
+            resA.y = -overlapY;
+            resB.y = +overlapY;
+          }
+          else if (pushA) {
+            resA.y = -overlapY;
+          }
+          else if (pushB) {
+            resB.y = +overlapY;
+          }
         }
       }
     }
@@ -184,8 +211,8 @@ class AABBSolver {
       angle = b.position.angle(a.position);
       dist = a.shape.radius + b.shape.radius;
 
-      pushA = (a2b && a.collide(b, angle));
-      pushB = (b2a && b.collide(a, angle));
+      pushA = (a2b && a.collide(b, this.res.set(+angle)));
+      pushB = (b2a && b.collide(a, this.res.set(-angle)));
 
       if (pushA && pushB) {
         resA.x = Math.cos(angle) * dist * 0.5;
@@ -203,40 +230,144 @@ class AABBSolver {
       }
     }
     else {
-      let box, circle;
+      let box, circle, box2circle, circle2box;
       if (a.shape.type === BOX && b.shape.type === CIRC) {
         box = a;
         circle = b;
+        box2circle = a2b;
+        circle2box = b2a;
       }
       else {
         box = b;
         circle = a;
+        box2circle = b2a;
+        circle2box = a2b;
       }
-      let closeX = clamp(circle.position.x, box.left, box.right);
-      let closeY = clamp(circle.position.y, box.top, box.bottom);
-      let radiusSq = circle.shape.radius * circle.shape.radius;
-      let overlapX = Math.sqrt(radiusSq - (closeY - circle.position.y) * (closeY - circle.position.y)) - Math.abs(closeX - circle.position.x);
-      let overlapY = Math.sqrt(radiusSq - (closeX - circle.position.x) * (closeX - circle.position.x)) - Math.abs(closeY - circle.position.y);
-      overlapX = Math.max(0, overlapX);
-      overlapY = Math.max(0, overlapY);
+      let innerCount = 0;
+      let closeX = circle.position.x;
+      if (closeX < box.left) {
+        closeX = box.left;
+        innerCount += 1;
+      }
+      else if (closeX > box.right) {
+        closeX = box.right;
+        innerCount += 1;
+      }
+      let closeY = circle.position.y;
+      if (closeY < box.top) {
+        closeY = box.top;
+        innerCount += 1;
+      }
+      else if (closeY > box.bottom) {
+        closeY = box.bottom;
+        innerCount += 1;
+      }
 
-      angle = Math.atan2(b.velocity.y - a.velocity.y, b.velocity.x - a.velocity.x);
-      pushA = (a2b && a.collide(b, -angle));
-      pushB = (b2a && b.collide(a, angle));
+      // A corner of the box is inside the circle
+      if (innerCount === 2) {
+        let radiusSq = circle.shape.radius * circle.shape.radius;
+        overlapX = Math.sqrt(radiusSq - (closeY - circle.position.y) * (closeY - circle.position.y)) - Math.abs(closeX - circle.position.x);
+        overlapY = Math.sqrt(radiusSq - (closeX - circle.position.x) * (closeX - circle.position.x)) - Math.abs(closeY - circle.position.y);
+        overlapX = Math.max(0, overlapX);
+        overlapY = Math.max(0, overlapY);
 
-      if (pushA && pushB) {
-        resA.x = overlapX * Math.cos(angle) * 0.5;
-        resA.y = overlapY * Math.sin(angle) * 0.5;
-        resB.x = -resA.x;
-        resB.y = -resA.y;
+        angle = Math.atan2(b.velocity.y - a.velocity.y, b.velocity.x - a.velocity.x);
+
+        pushA = (a2b && a.collide(b, this.res.set(-angle)));
+        pushB = (b2a && b.collide(a, this.res.set(+angle)));
+
+        if (pushA && pushB) {
+          resA.x = overlapX * Math.cos(angle) * 0.5;
+          resA.y = overlapY * Math.sin(angle) * 0.5;
+          resB.x = -resA.x;
+          resB.y = -resA.y;
+        }
+        else if (pushA) {
+          resA.x = overlapX * Math.cos(angle);
+          resA.y = overlapY * Math.sin(angle);
+        }
+        else if (pushB) {
+          resB.x = -overlapX * Math.cos(angle);
+          resB.y = -overlapY * Math.sin(angle);
+        }
       }
-      else if (pushA) {
-        resA.x = overlapX * Math.cos(angle);
-        resA.y = overlapY * Math.sin(angle);
-      }
-      else if (pushB) {
-        resB.x = -overlapX * Math.cos(angle);
-        resB.y = -overlapY * Math.sin(angle);
+      else {
+        if (closeX === box.left) {
+          overlapX = (circle.position.x + circle.shape.radius) - box.left;
+
+          pushBox = (box2circle && box.collide(circle, LEFT));
+          pushCircle = (circle2box && circle.collide(box, RIGHT));
+
+          if (pushBox && pushCircle) {
+            resA.x = overlapX * 0.5;
+            resB.x = -resA.x;
+          }
+          else if (pushBox) {
+            resA.x = overlapX;
+          }
+          else if (pushCircle) {
+            resB.x = -overlapX;
+          }
+        }
+        else if (closeX === box.right) {
+          overlapX = box.right - (circle.position.x - circle.shape.radius);
+
+          pushBox = (box2circle && box.collide(circle, RIGHT));
+          pushCircle = (circle2box && circle.collide(box, LEFT));
+
+          if (pushBox && pushCircle) {
+            resA.x = -overlapX * 0.5;
+            resB.x = -resA.x;
+          }
+          else if (pushBox) {
+            resA.x = -overlapX;
+          }
+          else if (pushCircle) {
+            resB.x = +overlapX;
+          }
+        }
+        else if (closeY === box.top) {
+          overlapY = (circle.position.y + circle.shape.radius) - box.top;
+
+          pushBox = (box2circle && box.collide(circle, TOP));
+          pushCircle = (circle2box && circle.collide(box, BOTTOM));
+
+          if (pushBox && pushCircle) {
+            resA.y = overlapY * 0.5;
+            resB.y = -resA.y;
+          }
+          else if (pushBox) {
+            resA.y = overlapY;
+          }
+          else if (pushCircle) {
+            resB.y = -overlapY;
+          }
+        }
+        else if (closeY === box.bottom) {
+          overlapY = box.bottom - (circle.position.y - circle.shape.radius);
+
+          pushBox = (box2circle && box.collide(circle, BOTTOM));
+          pushCircle = (circle2box && circle.collide(box, TOP));
+
+          if (pushBox && pushCircle) {
+            resA.y = overlapY * 0.5;
+            resB.y = -resA.y;
+          }
+          else if (pushBox) {
+            resA.y = overlapY;
+          }
+          else if (pushCircle) {
+            resB.y = -overlapY;
+          }
+        }
+
+        box.position.x += resA.x;
+        box.position.y += resA.y;
+        circle.position.x += resB.x;
+        circle.position.y += resB.y;
+
+        resA.set(0);
+        resB.set(0);
       }
     }
 
