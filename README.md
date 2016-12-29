@@ -71,6 +71,7 @@ Github issue and milestone maybe better for progress tracking~
 - Remove `OVERLAP` collision state, now boxes will never overlap if they intend to push against others
 - Complete circle vs box solution
 - Better `collide` API (now pass in a direction(Object) parameter)
+- Better entity component design, you can now use `addComponent` instead while the old way still works
 
 ### 1.1
 
