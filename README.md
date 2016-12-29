@@ -69,6 +69,8 @@ Github issue and milestone maybe better for progress tracking~
 ### 1.2
 
 - Remove `OVERLAP` collision state, now boxes will never overlap if they intend to push against others
+- Complete circle vs box solution
+- Better `collide` API (now pass in a direction(Object) parameter)
 
 ### 1.1
 
