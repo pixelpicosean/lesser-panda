@@ -1,6 +1,6 @@
 const Vector = require('engine/Vector');
 const { clamp } = require('engine/utils/math');
-const { UP, DOWN, LEFT, RIGHT, OVERLAP, BOX, CIRC } = require('./const');
+const { TOP, BOTTOM, LEFT, RIGHT, BOX, CIRC } = require('./const');
 
 /**
  * AABB collision solver. This collision solver only supports
@@ -87,13 +87,13 @@ class AABBSolver {
   hitResponse(a, b, a2b, b2a) {
     let pushA = false, pushB = false;
     let resA = this.response[0].set(0), resB = this.response[1].set(0);
-    let angle, dist;
+    let angle, dist, overlapX, overlapY;
 
     if (a.shape.type === BOX && b.shape.type === BOX) {
       // a.bottom <-> b.top
       if (a.lastBottom <= b.lastTop) {
-        pushA = (a2b && a.collide(b, DOWN));
-        pushB = (b2a && b.collide(a, UP));
+        pushA = (a2b && a.collide(b, BOTTOM));
+        pushB = (b2a && b.collide(a, TOP));
 
         if (pushA && pushB) {
           resA.y = (b.top - a.bottom) * 0.5;
@@ -108,8 +108,8 @@ class AABBSolver {
       }
       // a.top <-> b.bottom
       else if (a.lastTop >= b.lastBottom) {
-        pushA = (a2b && a.collide(b, UP));
-        pushB = (b2a && b.collide(a, DOWN));
+        pushA = (a2b && a.collide(b, TOP));
+        pushB = (b2a && b.collide(a, BOTTOM));
 
         if (pushA && pushB) {
           resA.y = (b.bottom - a.top) * 0.5;
@@ -152,10 +152,32 @@ class AABBSolver {
           resB.x = (a.left - b.right);
         }
       }
+      // These 2 box have already overlapped with each other
       else {
-        // Overlap does not push at all
-        a2b && a.collide(b, OVERLAP);
-        b2a && b.collide(a, OVERLAP);
+        // Calculate the shortest overlap (x or y) and apply
+        overlapX = (a.position.x < b.position.x) ? (a.right - b.left) : (a.left - b.right);
+        overlapY = (a.position.y < b.position.y) ? (a.bottom - b.top) : (a.top - b.bottom);
+
+        if (Math.abs(overlapX) > Math.abs(overlapY)) {
+          overlapY /= 2;
+
+          resA.x = resB.x = 0;
+          resA.y = -overlapY;
+          resB.y = +overlapY;
+
+          a2b && a.collide(b, overlapY > 0 ? BOTTOM : TOP);
+          b2a && b.collide(a, overlapY > 0 ? TOP : BOTTOM);
+        }
+        else {
+          overlapX /= 2;
+
+          resA.y = resB.y = 0;
+          resA.x = -overlapX;
+          resB.x = +overlapX;
+
+          a2b && a.collide(b, overlapX > 0 ? RIGHT : LEFT);
+          b2a && b.collide(a, overlapX > 0 ? LEFT : RIGHT);
+        }
       }
     }
     else if (a.shape.type === CIRC && b.shape.type === CIRC) {
@@ -219,10 +241,10 @@ class AABBSolver {
     }
 
     // Apply response to colliders
-    a.position.x = a.position.x + resA.x;
-    a.position.y = a.position.y + resA.y;
-    b.position.x = b.position.x + resB.x;
-    b.position.y = b.position.y + resB.y;
+    a.position.x += resA.x;
+    a.position.y += resA.y;
+    b.position.x += resB.x;
+    b.position.y += resB.y;
   }
 }
 
