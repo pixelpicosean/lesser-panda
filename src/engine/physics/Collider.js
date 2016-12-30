@@ -189,12 +189,12 @@ class Collider {
   }
 
   get rotation() {
-    return (this.entity) ? this.entity._rotation : this._rotation;
+    return (this.entity) ? this.entity.rotation : this._rotation;
   }
   set rotation(v) {
     this._rotation = v;
     if (this.entity) {
-      this.entity._rotation = v;
+      this.entity.rotation = v;
     }
   }
 
