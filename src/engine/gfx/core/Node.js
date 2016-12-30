@@ -967,7 +967,7 @@ Object.defineProperties(Node.prototype, {
    */
   rotation: {
     get: function() {
-      return (this.entity) ? this.entity._rotation : this._rotation;
+      return (this.entity) ? this.entity.rotation : this._rotation;
     },
     set: function(value) {
       this._rotation = value;

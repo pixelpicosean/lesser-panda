@@ -20,7 +20,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v1.2',
+  version: 'v1.2.1',
 
   /**
    * Set to `false` to disable version info console output.
