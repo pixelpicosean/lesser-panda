@@ -69,6 +69,9 @@ Github issue and milestone maybe better for progress tracking~
 ### 1.2.2
 
 - Do not share `scale` between components of `Entity` since gfx scales a lot but colliders won't
+- Behaviors attached to `Entity` will now be save as a property. (`Health` will become `bhvHealth`)
+- `Entity.prototype.behaviors` is now a list of behaviors
+
 ### 1.2.1
 
 - Fix `Component.rotation` not work issue.

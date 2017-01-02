@@ -86,30 +86,15 @@ class Entity {
     this.CTOR = Entity;
 
     /**
-     * Behavior hash map
-     * @type {Object}
-     */
-    this.behaviors = {};
-    /**
      * Behavior list
      * @type {Array}
      */
-    this.behaviorList = [];
+    this.behaviors = [];
 
 
     //
     // Components
     //
-    /**
-     * Component hash map
-     * @type {Object}
-     */
-    this.components = {};
-    /**
-     * Component list
-     * @type {Array}
-     */
-    this.componentList = [];
     /**
      * Graphic component.
      * @memberof Entity#
@@ -232,8 +217,8 @@ class Entity {
         break;
     }
 
-    this.behaviors[bhv.type] = bhv;
-    this.behaviorList.push(bhv);
+    this[`bhv${bhv.type}`] = bhv;
+    this.behaviors.push(bhv);
 
     bhv.init(this, settings);
 
@@ -251,8 +236,8 @@ class Entity {
    */
   update(dt, dtSec) {
     let i;
-    for (i = 0; i < this.behaviorList.length; i++) {
-      this.behaviorList[i].update(dt, dtSec);
+    for (i = 0; i < this.behaviors.length; i++) {
+      this.behaviors[i].update(dt, dtSec);
     }
   }
   /**
@@ -267,8 +252,8 @@ class Entity {
    */
   fixedUpdate(dt, dtSec) {
     let i;
-    for (i = 0; i < this.behaviorList.length; i++) {
-      this.behaviorList[i].fixedUpdate(dt, dtSec);
+    for (i = 0; i < this.behaviors.length; i++) {
+      this.behaviors[i].fixedUpdate(dt, dtSec);
     }
   }
 
