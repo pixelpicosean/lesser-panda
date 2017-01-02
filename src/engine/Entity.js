@@ -141,13 +141,6 @@ class Entity {
     this.position = new Vector(x, y);
 
     /**
-     * Scale of this entity.
-     * @memberof Entity#
-     * @type {Vector}
-     */
-    this.scale = new Vector(1, 1);
-
-    /**
      * Rotation of this entity.
      * @memberof Entity#
      * @type {Number}

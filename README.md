@@ -66,6 +66,9 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.2.2
+
+- Do not share `scale` between components of `Entity` since gfx scales a lot but colliders won't
 ### 1.2.1
 
 - Fix `Component.rotation` not work issue.
