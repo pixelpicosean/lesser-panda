@@ -28,7 +28,7 @@ class Loading extends Game {
 
     this.pct = Text({
       text: '100%',
-      font: `${BAR_HEIGHT - 2}px Verdana`,
+      font: `${BAR_HEIGHT - 2}px "Helvetica Neue", "Calibri Light", Roboto, sans-serif`,
       fill: '#ffffff',
       anchor: { x: 0.5, y: 0.5 },
       position: { x: core.width / 2, y: core.height / 2 - BAR_HEIGHT * 1.5 },
