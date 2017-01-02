@@ -286,15 +286,9 @@ class Entity {
    *   constructor(x, y, s) {
    *     super(x, y, s);
    *
-   *     // Use `addComponent` method
    *     this.addComponent(Sprite({
    *       texture: 'player.png',
    *     }));
-   *
-   *     // is the same as
-   *     this.gfx = Sprite({
-   *       texture: 'player.png',
-   *     });
    *   }
    * }
    *
@@ -302,7 +296,7 @@ class Entity {
    * @return {Entity}     Self for chaining
    */
   addComponent(c) {
-    this.components[c.key] = c;
+    c.attach(this);
 
     return this;
   }
