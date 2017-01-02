@@ -274,6 +274,7 @@ class Entity {
    * @return {Entity}     Self for chaining
    */
   addComponent(c) {
+    this[c.key] = c;
     c.attach(this);
 
     return this;
