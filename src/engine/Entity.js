@@ -86,30 +86,15 @@ class Entity {
     this.CTOR = Entity;
 
     /**
-     * Behavior hash map
-     * @type {Object}
-     */
-    this.behaviors = {};
-    /**
      * Behavior list
      * @type {Array}
      */
-    this.behaviorList = [];
+    this.behaviors = [];
 
 
     //
     // Components
     //
-    /**
-     * Component hash map
-     * @type {Object}
-     */
-    this.components = {};
-    /**
-     * Component list
-     * @type {Array}
-     */
-    this.componentList = [];
     /**
      * Graphic component.
      * @memberof Entity#
@@ -139,13 +124,6 @@ class Entity {
      * @type {Vector}
      */
     this.position = new Vector(x, y);
-
-    /**
-     * Scale of this entity.
-     * @memberof Entity#
-     * @type {Vector}
-     */
-    this.scale = new Vector(1, 1);
 
     /**
      * Rotation of this entity.
@@ -239,8 +217,8 @@ class Entity {
         break;
     }
 
-    this.behaviors[bhv.type] = bhv;
-    this.behaviorList.push(bhv);
+    this[`bhv${bhv.type}`] = bhv;
+    this.behaviors.push(bhv);
 
     bhv.init(this, settings);
 
@@ -258,8 +236,8 @@ class Entity {
    */
   update(dt, dtSec) {
     let i;
-    for (i = 0; i < this.behaviorList.length; i++) {
-      this.behaviorList[i].update(dt, dtSec);
+    for (i = 0; i < this.behaviors.length; i++) {
+      this.behaviors[i].update(dt, dtSec);
     }
   }
   /**
@@ -274,8 +252,8 @@ class Entity {
    */
   fixedUpdate(dt, dtSec) {
     let i;
-    for (i = 0; i < this.behaviorList.length; i++) {
-      this.behaviorList[i].fixedUpdate(dt, dtSec);
+    for (i = 0; i < this.behaviors.length; i++) {
+      this.behaviors[i].fixedUpdate(dt, dtSec);
     }
   }
 
@@ -286,15 +264,9 @@ class Entity {
    *   constructor(x, y, s) {
    *     super(x, y, s);
    *
-   *     // Use `addComponent` method
    *     this.addComponent(Sprite({
    *       texture: 'player.png',
    *     }));
-   *
-   *     // is the same as
-   *     this.gfx = Sprite({
-   *       texture: 'player.png',
-   *     });
    *   }
    * }
    *
@@ -302,7 +274,8 @@ class Entity {
    * @return {Entity}     Self for chaining
    */
   addComponent(c) {
-    this.components[c.key] = c;
+    this[c.key] = c;
+    c.attach(this);
 
     return this;
   }

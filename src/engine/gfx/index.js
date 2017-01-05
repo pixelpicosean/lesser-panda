@@ -217,7 +217,6 @@ class SystemGfx extends System {
   onEntitySpawn(ent) {
     let name = ent.layer;
     if (ent.gfx) {
-      ent.gfx.entity = ent;
       // Default layer is the root
       if (!name) {
         this.root.addChild(ent.gfx);
@@ -226,8 +225,6 @@ class SystemGfx extends System {
       else if (this.layers.hasOwnProperty(name)) {
         this.layers[name].addChild(ent.gfx);
       }
-      // Override gfx's position with the entity's
-      ent.gfx.position = ent.position;
     }
   }
   /**
@@ -237,7 +234,6 @@ class SystemGfx extends System {
   onEntityRemove(ent) {
     if (ent.gfx) {
       ent.gfx.remove();
-      ent.gfx.entity = null;
     }
   }
 }

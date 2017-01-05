@@ -16,7 +16,7 @@ const Loading = require('game/Loading');
 
 // Load some resources
 loader
-  .add('KenPixel.fnt')
+  .add('04b03.fnt')
   .add('bat', 'bat.png');
 
 // A game acts like a scene/screen or whatever you call
@@ -44,7 +44,7 @@ class MyGame extends Game {
     // Add some gfx elements
     const label = BitmapText({
       text: 'It Works!',
-      font: '16px KenPixel',
+      font: '16px 04b03',
     }).addTo(this.sysGfx.layers['background']);
     label.position.set(core.width / 2 - label.width / 2, core.height / 2 - label.height / 2);
 

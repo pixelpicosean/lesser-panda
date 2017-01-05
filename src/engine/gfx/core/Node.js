@@ -192,12 +192,10 @@ class Node extends EventEmitter {
     // Recycle vectors if this is not attached to Entity
     if (!this.entity) {
       Vector.recycle(this.position);
-      Vector.recycle(this.scale);
     }
 
     // Replace the vectors with the entity
     this.position = entity.position;
-    this.scale = entity.scale;
 
     this.entity = entity;
   }
@@ -205,7 +203,6 @@ class Node extends EventEmitter {
     if (this.entity) {
       // De-reference to the entity's vectors
       this.position = this.position.clone();
-      this.scale = this.scale.clone();
 
       this.entity = null;
     }
