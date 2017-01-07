@@ -66,6 +66,10 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.3.1
+
+- New `CutoutAnimatedSprite` that support `scon` formatted animation from Spriter.
+
 ### 1.3
 
 - **Breaking change**: components need to be added by `addComponent`, `this.gfx = Node()` will no longer work.
