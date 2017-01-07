@@ -1312,9 +1312,9 @@ class Entity {
   }
 }
 
-class CutoutAnimatedSprite extends Node {
+class COASprite extends Node {
   /**
-   * CutoutAnimatedSprite is the represent of "entity" in Spriter
+   * COASprite(cutout animation sprite) is the represent of "entity" in Spriter
    * @param {String} sconKey    Which scon file to use for this animation
    * @param {String} entityName Name of the entity you want to create
    */
@@ -2017,4 +2017,4 @@ function tweenAngleRadians(a, b, t, spin) {
   return wrapAngleRadians(a + (wrapAngleRadians(b - a) * t));
 }
 
-module.exports = CutoutAnimatedSprite;
+module.exports = COASprite;
