@@ -1,7 +1,5 @@
 /**
- * Spriter plugin for LesserPanda engine
- * @version 0.3.0
- * @author Sean Bohan (pixelpicosean@gmail.com)
+ * Spriter runtime object
  *
  * Based on Spriter.js by:
  * - Jason Andersen jgandersen@gmail.com
@@ -850,7 +848,7 @@ class MainlineKeyframe extends Keyframe {
       this.bones.push(new BoneRef().load(json.bone_ref[i]));
     }
 
-    this.bones = this.bones.sort(function(a, b) {
+    this.bones.sort(function(a, b) {
       return a.id - b.id;
     });
 
@@ -862,7 +860,7 @@ class MainlineKeyframe extends Keyframe {
       this.objects.push(new ObjRef().load(json.object_ref[i]));
     }
 
-    this.objects = this.objects.sort(function(a, b) {
+    this.objects.sort(function(a, b) {
       return a.id - b.id;
     });
 
@@ -885,7 +883,7 @@ class Mainline {
     for (let i = 0, len = json.key.length; i < len; i++) {
       this.keyframes.push(new MainlineKeyframe().load(data, json.key[i]));
     }
-    this.keyframes = this.keyframes.sort(Keyframe.compare);
+    this.keyframes.sort(Keyframe.compare);
     return this;
   }
 }
@@ -1088,7 +1086,7 @@ class Timeline {
         console.log('TODO: Timeline::load', this.type);
         break;
     }
-    this.keyframes = this.keyframes.sort(Keyframe.compare);
+    this.keyframes.sort(Keyframe.compare);
 
     // TODO: meta
 
@@ -1112,7 +1110,7 @@ class Eventline {
     for (let i = 0, len = json.key.length; i < len; i++) {
       this.keys.push(new EventlineKeyframe(json.key[i]));
     }
-    this.keys = this.keys.sort(Keyframe.compare);
+    this.keys.sort(Keyframe.compare);
   }
 }
 
@@ -1146,7 +1144,7 @@ class Valline {
     for (let i = 0, len = json.key.length; i < len; i++) {
       this.keys.push(new VallineKeyframe(type, json.key[i]));
     }
-    this.keys = this.keys.sort(Keyframe.compare);
+    this.keys.sort(Keyframe.compare);
   }
 }
 
@@ -1174,7 +1172,7 @@ class Tagline {
     for (let i = 0, len = json.key.length; i < len; i++) {
       this.keys.push(new TaglineKeyframe(tagDefs, json.key[i]));
     }
-    this.keys = this.keys.sort(Keyframe.compare);
+    this.keys.sort(Keyframe.compare);
   }
 }
 
@@ -1399,6 +1397,8 @@ class COASprite extends Node {
       this._willTick = true;
       this.system.requestAnimate(this);
     }
+
+    return this;
   }
   stop() {
     this.isEnd = true;
@@ -1623,7 +1623,7 @@ class COASprite extends Node {
             // This key is between last frame and this frame
             if (valKey.time <= time && valKey.time >= time - elapsed) {
               this.vars[valline.name] = valKey.val;
-              this.emit('valline', valline.name, valKey.val);
+              this.emit('val', valline.name, valKey.val);
             }
           }
         }
@@ -1638,7 +1638,7 @@ class COASprite extends Node {
           // This key is between last frame and this frame
           if (tag.time <= time && tag.time >= time - elapsed) {
             this.tags = tag.tags;
-            this.emit('tagline', tag.tags);
+            this.emit('tag', tag.tags);
           }
         }
       }
@@ -1653,7 +1653,7 @@ class COASprite extends Node {
             event = eventline.keys[j];
             // This key is between last frame and this frame
             if (event.time <= time && event.time >= time - elapsed) {
-              this.emit('eventline', eventline.name);
+              this.emit('event', eventline.name);
             }
           }
         }
@@ -1904,60 +1904,6 @@ function interpolateQuintic(a, b, c, d, e, f, t) {
  * @return {number}
  */
 function interpolateBezier(x1, y1, x2, y2, t) {
-  function SampleCurve(a, b, c, t) {
-    return ((a * t + b) * t + c) * t;
-  }
-
-  function SampleCurveDerivativeX(ax, bx, cx, t) {
-    return (3.0 * ax * t + 2.0 * bx) * t + cx;
-  }
-
-  function SolveEpsilon(duration) {
-    return 1.0 / (200.0 * duration);
-  }
-
-  function Solve(ax, bx, cx, ay, by, cy, x, epsilon) {
-    return SampleCurve(ay, by, cy, SolveCurveX(ax, bx, cx, x, epsilon));
-  }
-
-  function SolveCurveX(ax, bx, cx, x, epsilon) {
-    let t0;
-    let t1;
-    let t2;
-    let x2;
-    let d2;
-    let i;
-
-    // First try a few iterations of Newton's method -- normally very fast.
-    for (t2 = x, i = 0; i < 8; i++) {
-      x2 = SampleCurve(ax, bx, cx, t2) - x;
-      if (Math.abs(x2) < epsilon) return t2;
-
-      d2 = SampleCurveDerivativeX(ax, bx, cx, t2);
-      if (Math.abs(d2) < epsilon) break;
-
-      t2 = t2 - x2 / d2;
-    }
-
-    // Fall back to the bisection method for reliability.
-    t0 = 0.0;
-    t1 = 1.0;
-    t2 = x;
-
-    if (t2 < t0) return t0;
-    if (t2 > t1) return t1;
-
-    while (t0 < t1) {
-      x2 = SampleCurve(ax, bx, cx, t2);
-      if (Math.abs(x2 - x) < epsilon) return t2;
-      if (x > x2) t0 = t2;
-      else t1 = t2;
-      t2 = (t1 - t0) * 0.5 + t0;
-    }
-
-    return t2; // Failure.
-  }
-
   let duration = 1;
   let cx = 3.0 * x1;
   let bx = 3.0 * (x2 - x1) - cx;
@@ -1967,6 +1913,55 @@ function interpolateBezier(x1, y1, x2, y2, t) {
   let ay = 1.0 - cy - by;
 
   return Solve(ax, bx, cx, ay, by, cy, t, SolveEpsilon(duration));
+}
+function SampleCurve(a, b, c, t) {
+  return ((a * t + b) * t + c) * t;
+}
+function SampleCurveDerivativeX(ax, bx, cx, t) {
+  return (3.0 * ax * t + 2.0 * bx) * t + cx;
+}
+function SolveEpsilon(duration) {
+  return 1.0 / (200.0 * duration);
+}
+function Solve(ax, bx, cx, ay, by, cy, x, epsilon) {
+  return SampleCurve(ay, by, cy, SolveCurveX(ax, bx, cx, x, epsilon));
+}
+function SolveCurveX(ax, bx, cx, x, epsilon) {
+  let t0;
+  let t1;
+  let t2;
+  let x2;
+  let d2;
+  let i;
+
+  // First try a few iterations of Newton's method -- normally very fast.
+  for (t2 = x, i = 0; i < 8; i++) {
+    x2 = SampleCurve(ax, bx, cx, t2) - x;
+    if (Math.abs(x2) < epsilon) return t2;
+
+    d2 = SampleCurveDerivativeX(ax, bx, cx, t2);
+    if (Math.abs(d2) < epsilon) break;
+
+    t2 = t2 - x2 / d2;
+  }
+
+  // Fall back to the bisection method for reliability.
+  t0 = 0.0;
+  t1 = 1.0;
+  t2 = x;
+
+  if (t2 < t0) return t0;
+  if (t2 > t1) return t1;
+
+  while (t0 < t1) {
+    x2 = SampleCurve(ax, bx, cx, t2);
+    if (Math.abs(x2 - x) < epsilon) return t2;
+    if (x > x2) t0 = t2;
+    else t1 = t2;
+    t2 = (t1 - t0) * 0.5 + t0;
+  }
+
+  return t2; // Failure.
 }
 
 /**
