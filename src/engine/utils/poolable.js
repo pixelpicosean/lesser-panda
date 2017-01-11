@@ -26,6 +26,8 @@ module.exports = function(ctor, preAllocSize = 20) {
     if (!a) {
       a = new this(x, y, s);
     }
+    a.CTOR = ctor;
+    a.isRemoved = false;
     a.init(x, y, s);
     return a;
   };

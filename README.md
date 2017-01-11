@@ -68,6 +68,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 1.3.1
 
+- Fixed `poolable` utility.
 - Rename `CutoutAnimatedSprite` to `COASprite`.
 - New `CutoutAnimatedSprite` that support `scon` formatted animation from Spriter.
 
