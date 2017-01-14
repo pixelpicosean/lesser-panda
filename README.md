@@ -71,6 +71,7 @@ Github issue and milestone maybe better for progress tracking~
 - Fixed `poolable` utility.
 - Rename `CutoutAnimatedSprite` to `COASprite`.
 - New `CutoutAnimatedSprite` that support `scon` formatted animation from Spriter.
+- Deprecated `core.speed` in favor of `Game.prototype.timeScale`.
 
 ### 1.3
 

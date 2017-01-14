@@ -94,14 +94,6 @@ Object.assign(core, {
   pauses: {},
 
   /**
-   * Global time speed, whose value is between 0 and 1.
-   * @memberof module:engine/core
-   * @type {number}
-   * @default 1
-   */
-  speed: 1,
-
-  /**
    * Rotate prompt element for mobile devices.
    * @memberof module:engine/core
    * @type {HTMLElement}

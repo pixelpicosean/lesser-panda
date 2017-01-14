@@ -25,6 +25,13 @@ class Game extends EventEmitter {
     this.desiredFPS = 60;
 
     /**
+     * Game speed, 0.5 for slow-motion and 2 for turbo-speed
+     * @type {Number}
+     * @default 1
+     */
+    this.timeScale = 1;
+
+    /**
      * Map of added systems
      * @property {Object} systems
      */
@@ -93,8 +100,8 @@ class Game extends EventEmitter {
     else {
       // Step size
       updateInfo.step = 1000.0 / this.desiredFPS;
-      updateInfo.slowStep = updateInfo.step * core.speed;
-      updateInfo.slowStepSec = updateInfo.step * 0.001 * core.speed;
+      updateInfo.slowStep = updateInfo.step * this.timeScale;
+      updateInfo.slowStepSec = updateInfo.step * 0.001 * this.timeScale;
 
       // Accumulate time until the step threshold is met or exceeded... up to a limit of 3 catch-up frames at step intervals
       updateInfo.deltaTime += Math.max(Math.min(updateInfo.step * 3, updateInfo.realDelta), 0);
