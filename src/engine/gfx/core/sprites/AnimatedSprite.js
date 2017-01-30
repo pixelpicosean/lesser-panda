@@ -40,6 +40,7 @@ function normalizeTextures(textures) {
     // Create a new strip list if not exist
     if (!Array.isArray(list)) {
       list = filmstrip(tex, w, h);
+      Object.freeze(list);
       AnimStrips[key] = list;
     }
 
@@ -101,6 +102,13 @@ class AnimationData {
  * @extends Sprite
  */
 class AnimatedSprite extends Sprite {
+  set textures(ts) {
+    this._textures = normalizeTextures(ts);
+  }
+  get textures() {
+    return this._textures;
+  }
+
   /**
    * @constructor
    * @param {Array} textures Textures this animation made up of
@@ -119,7 +127,7 @@ class AnimatedSprite extends Sprite {
     this._finishEvtEmit = false;
     this._frameTime = 0;
 
-    this.textures = ts;
+    this._textures = ts;
 
     this.addAnim('default');
   }
@@ -150,7 +158,7 @@ class AnimatedSprite extends Sprite {
     }
     if (!frames) {
       frames = [];
-      for (var i = 0; i < this.textures.length; i++) {
+      for (var i = 0; i < this._textures.length; i++) {
         frames.push(i);
       }
     }
@@ -221,7 +229,7 @@ class AnimatedSprite extends Sprite {
     }
     this.currentFrame = frame;
     this._frameTime = 0;
-    this.texture = this.textures[anim.frames[frame]];
+    this.texture = this._textures[anim.frames[frame]];
     return this;
   }
 
@@ -257,7 +265,7 @@ class AnimatedSprite extends Sprite {
         }
 
         this.currentFrame = nextFrame;
-        this.texture = this.textures[anim.frames[nextFrame]];
+        this.texture = this._textures[anim.frames[nextFrame]];
         return;
       }
 
@@ -266,7 +274,7 @@ class AnimatedSprite extends Sprite {
       if (nextFrame >= anim.frames.length) {
         if (anim.loop) {
           this.currentFrame = 0;
-          this.texture = this.textures[anim.frames[0]];
+          this.texture = this._textures[anim.frames[0]];
         }
         else {
           this.isPlaying = false;
@@ -277,7 +285,7 @@ class AnimatedSprite extends Sprite {
       else if (nextFrame < 0) {
         if (anim.loop) {
           this.currentFrame = anim.frames.length - 1;
-          this.texture = this.textures[anim.frames.last()];
+          this.texture = this._textures[anim.frames.last()];
         }
         else {
           this.isPlaying = false;
@@ -289,7 +297,7 @@ class AnimatedSprite extends Sprite {
       }
       else {
         this.currentFrame = nextFrame;
-        this.texture = this.textures[anim.frames[nextFrame]];
+        this.texture = this._textures[anim.frames[nextFrame]];
       }
     }
   }
