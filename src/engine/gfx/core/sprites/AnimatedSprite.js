@@ -1,5 +1,56 @@
 const Sprite = require('./Sprite');
 const { merge } = require('engine/utils/object');
+const { textureFromData, filmstrip } = require('../../utils');
+
+const AnimStrips = {};
+const EmptyTextures = Object.freeze([]);
+
+/**
+ * Valid texture list formats:
+ * 1. [TextureInst0, TextureInst1, TextureInst2]
+ * 2. ['walk_1.png', 'walk_2.png', 'walk_3.png']
+ * 3. [['atlas','walk_1'], ['atlas','walk_2'], ['atlas','walk_3']]
+ * 4. ['image.png', 16, 16]
+ * 5. [['atlas', 'my_image'], 16, 16]
+ */
+function normalizeTextures(textures) {
+  // Not even an array
+  if (!Array.isArray(textures)) {
+    // TODO: Assert: invalid texture list
+    return EmptyTextures;
+  }
+
+  // Only 1 item?
+  if (textures.length === 1) {
+    return textures;
+  }
+
+  // List of valid texture datas (texture instances, keys or keys from an atlas)
+  if (!!textureFromData(textures[1])) {
+    return textures;
+  }
+
+  // A texture data with 2 strip size number
+  const tex = textureFromData(textures[0]);
+  const w = textures[1], h = textures[2];
+  if (Number.isFinite(w) && Number.isFinite(h)) {
+    const key = `@${tex.uid}+${w}+${h}`;
+    let list = AnimStrips[key];
+
+    // Create a new strip list if not exist
+    if (!Array.isArray(list)) {
+      list = filmstrip(tex, w, h);
+      AnimStrips[key] = list;
+      console.log('create a strip list');
+    }
+
+    return list;
+  }
+  else {
+    // TODO: Assert: invalid frame size
+    return EmptyTextures;
+  }
+}
 
 /**
  * @class AnimationData
@@ -56,7 +107,9 @@ class AnimatedSprite extends Sprite {
    * @param {Array} textures Textures this animation made up of
    */
   constructor(textures) {
-    super(textures[0]);
+    const ts = normalizeTextures(textures);
+
+    super(ts[0]);
 
     this.anims = {};
     this.currentAnim = 'default';
@@ -67,7 +120,7 @@ class AnimatedSprite extends Sprite {
     this._finishEvtEmit = false;
     this._frameTime = 0;
 
-    this.textures = textures;
+    this.textures = ts;
 
     this.addAnim('default');
   }
