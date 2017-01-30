@@ -41,7 +41,6 @@ function normalizeTextures(textures) {
     if (!Array.isArray(list)) {
       list = filmstrip(tex, w, h);
       AnimStrips[key] = list;
-      console.log('create a strip list');
     }
 
     return list;
