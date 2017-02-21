@@ -68,6 +68,7 @@ Github issue and milestone maybe better for progress tracking~
 
 ### 1.3.1
 
+- Fix `Collider.prototype.last` updating and solves a `poolable` related issue at the same time.
 - `AnimatedSprite` now accept more texture list formats.
 - Fixed `poolable` utility.
 - Rename `CutoutAnimatedSprite` to `COASprite`.
