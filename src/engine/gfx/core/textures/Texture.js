@@ -31,6 +31,8 @@ class Texture extends EventEmitter {
   constructor(baseTexture, frame, crop, trim, rotate) {
     super();
 
+    this.uid = utils.uid();
+
     /**
      * Does this Texture have any frame data assigned to it?
      *

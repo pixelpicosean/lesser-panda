@@ -20,7 +20,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v1.3',
+  version: 'v1.3.1',
 
   /**
    * Set to `false` to disable version info console output.
@@ -92,14 +92,6 @@ Object.assign(core, {
    * @type {object}
    */
   pauses: {},
-
-  /**
-   * Global time speed, whose value is between 0 and 1.
-   * @memberof module:engine/core
-   * @type {number}
-   * @default 1
-   */
-  speed: 1,
 
   /**
    * Rotate prompt element for mobile devices.

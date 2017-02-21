@@ -66,6 +66,15 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.3.1
+
+- Fix `Collider.prototype.last` updating and solves a `poolable` related issue at the same time.
+- `AnimatedSprite` now accept more texture list formats.
+- Fixed `poolable` utility.
+- Rename `CutoutAnimatedSprite` to `COASprite`.
+- New `CutoutAnimatedSprite` that support `scon` formatted animation from Spriter.
+- Deprecated `core.speed` in favor of `Game.prototype.timeScale`.
+
 ### 1.3
 
 - **Breaking change**: components need to be added by `addComponent`, `this.gfx = Node()` will no longer work.

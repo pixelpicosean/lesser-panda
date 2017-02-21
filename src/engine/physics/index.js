@@ -158,6 +158,22 @@ class SystemPhysics extends System {
     for (i = 0; i < this.colliders.length; i++) {
       coll = this.colliders[i];
 
+      // Update bounds
+      if (coll.shape) {
+        halfWidth = coll.shape.width * 0.5;
+        halfHeight = coll.shape.height * 0.5;
+
+        coll.lastLeft = coll.last.x - halfWidth;
+        coll.lastRight = coll.last.x + halfWidth;
+        coll.lastTop = coll.last.y - halfHeight;
+        coll.lastBottom = coll.last.y + halfHeight;
+
+        coll.left = coll.position.x - halfWidth;
+        coll.right = coll.position.x + halfWidth;
+        coll.top = coll.position.y - halfHeight;
+        coll.bottom = coll.position.y + halfHeight;
+      }
+
       // Save position of last frame
       coll.last.copy(coll.position);
 
@@ -198,27 +214,16 @@ class SystemPhysics extends System {
           this.collisionMap.trace(coll, this.res.x, this.res.y, this.res);
           // Manually handle trace result
           coll.handleMovementTrace(this.res);
+
+          // Skip the rest part if it's removed from last callback
+          if (coll.isRemoved) {
+            continue;
+          }
         }
 
         // Apply trace result
         coll.position.x += this.res.x;
         coll.position.y += this.res.y;
-      }
-
-      // Update bounds
-      if (coll.shape) {
-        halfWidth = coll.shape.width * 0.5;
-        halfHeight = coll.shape.height * 0.5;
-
-        coll.lastLeft = coll.last.x - halfWidth;
-        coll.lastRight = coll.last.x + halfWidth;
-        coll.lastTop = coll.last.y - halfHeight;
-        coll.lastBottom = coll.last.y + halfHeight;
-
-        coll.left = coll.position.x - halfWidth;
-        coll.right = coll.position.x + halfWidth;
-        coll.top = coll.position.y - halfHeight;
-        coll.bottom = coll.position.y + halfHeight;
       }
 
       // Insert the hash and test collisions
@@ -230,6 +235,11 @@ class SystemPhysics extends System {
       // Non-static colliders will be notified before collision
       if (!coll.isStatic) {
         coll.beforeCollide();
+
+        // Skip the rest part if it's removed from last callback
+        if (coll.isRemoved) {
+          continue;
+        }
       }
 
       for (y = sy; y <= ey; y++) {
