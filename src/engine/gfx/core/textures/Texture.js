@@ -2,7 +2,7 @@ import BaseTexture from './BaseTexture';
 import VideoBaseTexture from './VideoBaseTexture';
 import TextureUvs from './TextureUvs';
 import EventEmitter from 'engine/EventEmitter';
-import math from '../math';
+import Rectangle from '../math/Rectangle';
 import { uid, TextureCache, BaseTextureCache } from '../utils';
 
 /**
@@ -42,7 +42,7 @@ export default class Texture extends EventEmitter {
 
     if (!frame) {
       this.noFrame = true;
-      frame = new math.Rectangle(0, 0, 1, 1);
+      frame = new Rectangle(0, 0, 1, 1);
     }
 
     if (baseTexture instanceof Texture) {
@@ -113,7 +113,7 @@ export default class Texture extends EventEmitter {
      *
      * @member {Rectangle}
      */
-    this.crop = crop || frame;// new math.Rectangle(0, 0, 1, 1);
+    this.crop = crop || frame;// new Rectangle(0, 0, 1, 1);
 
     this._rotate = +(rotate || 0);
 
@@ -129,7 +129,7 @@ export default class Texture extends EventEmitter {
 
     if (baseTexture.hasLoaded) {
       if (this.noFrame) {
-        frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+        frame = new Rectangle(0, 0, baseTexture.width, baseTexture.height);
 
             // if there is no frame we should monitor for any base texture changes..
         baseTexture.on('update', this.onBaseTextureUpdated, this);
@@ -165,7 +165,7 @@ export default class Texture extends EventEmitter {
   onBaseTextureLoaded(baseTexture) {
       // TODO this code looks confusing.. boo to abusing getters and setterss!
     if (this.noFrame) {
-      this.frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+      this.frame = new Rectangle(0, 0, baseTexture.width, baseTexture.height);
     }
     else {
       this.frame = this._frame;

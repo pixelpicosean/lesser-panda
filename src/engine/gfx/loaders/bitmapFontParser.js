@@ -1,4 +1,4 @@
-import { Rectangle } from '../core/math';
+import Rectangle from '../core/math/Rectangle';
 import Texture from '../core/textures/Texture';
 import { Resource } from 'engine/loader';
 import dirname from './dirname';

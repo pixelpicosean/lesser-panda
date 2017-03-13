@@ -4,7 +4,7 @@
  * @class
  * @private
  */
-class WebGLGraphicsData {
+export default class WebGLGraphicsData {
   /**
    * @constructor
    * @param {WebGLRenderingContext} gl the current WebGL drawing context
@@ -118,5 +118,3 @@ class WebGLGraphicsData {
     this.glIndices = null;
   }
 }
-
-module.exports = WebGLGraphicsData;

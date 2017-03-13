@@ -1,4 +1,5 @@
-import math from '../math';
+import Matrix from '../math/Matrix';
+import GroupD8 from '../math/GroupD8';
 import Vector from 'engine/Vector';
 import Texture from '../textures/Texture';
 import Node from '../Node';
@@ -8,8 +9,7 @@ import { BLEND_MODES, SCALE_MODES } from '../../const';
 import { textureFromData } from '../../utils';
 
 const tempPoint = new Vector();
-const GroupD8 = math.GroupD8;
-const canvasRenderWorldTransform = new math.Matrix();
+const canvasRenderWorldTransform = new Matrix();
 
 /**
  * The Sprite object is the base for all textured objects that are rendered to the screen

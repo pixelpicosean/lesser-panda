@@ -1,5 +1,5 @@
 import BaseTexture from './BaseTexture';
-import utils from '../utils';
+import { uid, BaseTextureCache } from '../utils';
 
 /**
  * A texture of a [playing] Video.
@@ -131,7 +131,7 @@ export default class VideoBaseTexture extends BaseTexture {
    */
   destroy() {
     if (this.source && this.source._pixiId) {
-      delete utils.BaseTextureCache[ this.source._pixiId ];
+      delete BaseTextureCache[ this.source._pixiId ];
       delete this.source._pixiId;
     }
 
@@ -149,14 +149,14 @@ export default class VideoBaseTexture extends BaseTexture {
  */
 VideoBaseTexture.fromVideo = function(video, scaleMode) {
   if (!video._pixiId) {
-    video._pixiId = 'video_' + utils.uid();
+    video._pixiId = 'video_' + uid();
   }
 
-  var baseTexture = utils.BaseTextureCache[video._pixiId];
+  var baseTexture = BaseTextureCache[video._pixiId];
 
   if (!baseTexture) {
     baseTexture = new VideoBaseTexture(video, scaleMode);
-    utils.BaseTextureCache[ video._pixiId ] = baseTexture;
+    BaseTextureCache[ video._pixiId ] = baseTexture;
   }
 
   return baseTexture;

@@ -1,5 +1,5 @@
 import WebGLManager from './WebGLManager';
-import utils from '../../../utils';
+import { hex2rgb } from '../../../utils';
 
 /**
  * @class
@@ -135,7 +135,7 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
 
     gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, this.renderer.currentRenderTarget.projectionMatrix.toArray(true));
 
-    gl.uniform3fv(shader.uniforms.tint._location, utils.hex2rgb(graphics.tint));
+    gl.uniform3fv(shader.uniforms.tint._location, hex2rgb(graphics.tint));
 
     gl.uniform3fv(shader.uniforms.color._location, webGLData.color);
 
@@ -160,7 +160,7 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
 
     gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, this.renderer.currentRenderTarget.projectionMatrix.toArray(true));
 
-    gl.uniform3fv(shader.uniforms.tint._location, utils.hex2rgb(graphics.tint));
+    gl.uniform3fv(shader.uniforms.tint._location, hex2rgb(graphics.tint));
 
     gl.uniform1f(shader.uniforms.alpha._location, graphics.worldAlpha);
 

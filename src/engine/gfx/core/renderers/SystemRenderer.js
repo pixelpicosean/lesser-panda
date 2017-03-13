@@ -1,5 +1,5 @@
 import { sayHello, hex2string, hex2rgb } from '../utils';
-import math from '../math';
+import Matrix from '../math/Matrix';
 import { DEFAULT_RENDER_OPTIONS, RENDERER_TYPE } from '../../const';
 import EventEmitter from 'engine/EventEmitter';
 
@@ -159,7 +159,7 @@ export default class SystemRenderer extends EventEmitter {
      * @member {DisplayObject}
      * @private
      */
-    this._tempDisplayObjectParent = { worldTransform:new math.Matrix(), worldAlpha:1, children:[] };
+    this._tempDisplayObjectParent = { worldTransform:new Matrix(), worldAlpha:1, children:[] };
 
     /**
      * The last root object that the renderer tried to render.

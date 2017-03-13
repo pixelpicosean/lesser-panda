@@ -3,7 +3,11 @@ import Texture from '../textures/Texture';
 import CanvasBuffer from '../renderers/canvas/utils/CanvasBuffer';
 import CanvasGraphics from '../renderers/canvas/utils/CanvasGraphics';
 import GraphicsData from './GraphicsData';
-import math from '../math';
+import Rectangle from '../math/Rectangle';
+import Circle from '../math/Circle';
+import Polygon from '../math/Polygon';
+import Ellipse from '../math/Ellipse';
+import RoundedRectangle from '../math/RoundedRectangle';
 import Vector from 'engine/Vector';
 import { BLEND_MODES, SHAPES } from '../../const';
 
@@ -118,7 +122,7 @@ export default class Graphics extends Node {
      * @member {Rectangle}
      * @private
      */
-    this._localBounds = new math.Rectangle(0,0,1,1);
+    this._localBounds = new Rectangle(0,0,1,1);
 
     /**
      * Used to detect if the graphics object has changed. If this is set to true then the graphics
@@ -198,7 +202,7 @@ export default class Graphics extends Node {
     if (this.currentPath) {
       if (this.currentPath.shape.points.length) {
         // halfway through a line? start a new one!
-        var shape = new math.Polygon(this.currentPath.shape.points.slice(-2));
+        var shape = new Polygon(this.currentPath.shape.points.slice(-2));
         shape.closed = false;
         this.drawShape(shape);
       }
@@ -221,7 +225,7 @@ export default class Graphics extends Node {
    * @return {Graphics}   Self for chaining
     */
   moveTo(x, y) {
-    var shape = new math.Polygon([x,y]);
+    var shape = new Polygon([x,y]);
     shape.closed = false;
     this.drawShape(shape);
 
@@ -522,7 +526,7 @@ export default class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawRect(x, y, width, height) {
-    this.drawShape(new math.Rectangle(x,y, width, height));
+    this.drawShape(new Rectangle(x,y, width, height));
 
     return this;
   }
@@ -537,7 +541,7 @@ export default class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawRoundedRect(x, y, width, height, radius) {
-    this.drawShape(new math.RoundedRectangle(x, y, width, height, radius));
+    this.drawShape(new RoundedRectangle(x, y, width, height, radius));
 
     return this;
   }
@@ -551,7 +555,7 @@ export default class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawCircle(x, y, radius) {
-    this.drawShape(new math.Circle(x,y, radius));
+    this.drawShape(new Circle(x,y, radius));
 
     return this;
   }
@@ -566,7 +570,7 @@ export default class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawEllipse(x, y, width, height) {
-    this.drawShape(new math.Ellipse(x, y, width, height));
+    this.drawShape(new Ellipse(x, y, width, height));
 
     return this;
   }
@@ -584,7 +588,7 @@ export default class Graphics extends Node {
 
     var closed = true;
 
-    if (points instanceof math.Polygon) {
+    if (points instanceof Polygon) {
       closed = points.closed;
       points = points.points;
     }
@@ -599,7 +603,7 @@ export default class Graphics extends Node {
       }
     }
 
-    var shape = new math.Polygon(points);
+    var shape = new Polygon(points);
     shape.closed = closed;
 
     this.drawShape(shape);
@@ -715,7 +719,7 @@ export default class Graphics extends Node {
 
       // return an empty object if the item is a mask!
       if (!this.renderable) {
-        return math.Rectangle.EMPTY;
+        return Rectangle.EMPTY;
       }
 
       if (this.boundsDirty) {

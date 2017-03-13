@@ -1,6 +1,6 @@
 import Sprite from '../sprites/Sprite';
 import Texture from '../textures/Texture';
-import math from '../math';
+import Rectangle from '../math/Rectangle';
 import { hex2string } from '../utils';
 import { RESOLUTION } from '../../const';
 
@@ -81,7 +81,7 @@ export default class Text extends Sprite {
     this._style = null;
 
     var texture = Texture.fromCanvas(this.canvas);
-    texture.trim = new math.Rectangle();
+    texture.trim = new Rectangle();
     this.texture = texture;
 
     this.text = text;

@@ -1,11 +1,11 @@
-const CONST = require('../../../const');
+import { SHAPES } from '../../const';
 
 /**
  * The Rounded Rectangle object is an area that has nice rounded corners, as indicated by its top-left corner point (x, y) and by its width and its height and its radius.
  *
  * @class
  */
-class RoundedRectangle {
+export default class RoundedRectangle {
   /**
    * @constructor
    * @param {number} x      The X coordinate of the upper-left corner of the rounded rectangle
@@ -50,7 +50,7 @@ class RoundedRectangle {
      *
      * @member {number}
      */
-    this.type = CONST.SHAPES.RREC;
+    this.type = SHAPES.RREC;
   }
 
   /**
@@ -83,5 +83,3 @@ class RoundedRectangle {
     return false;
   }
 }
-
-module.exports = RoundedRectangle;

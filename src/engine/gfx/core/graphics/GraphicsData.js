@@ -3,7 +3,7 @@
  *
  * @class
  */
-class GraphicsData {
+export default class GraphicsData {
   /**
    * @constructor
    * @param {number} lineWidth  the width of the line to draw
@@ -88,5 +88,3 @@ class GraphicsData {
     this.shape = null;
   }
 }
-
-module.exports = GraphicsData;

@@ -3,10 +3,11 @@ import Texture from './Texture';
 import RenderTarget from '../renderers/webgl/utils/RenderTarget';
 import FilterManager from '../renderers/webgl/managers/FilterManager';
 import CanvasBuffer from '../renderers/canvas/utils/CanvasBuffer';
-import math from '../math';
+import Rectangle from '../math/Rectangle';
+import Matrix from '../math/Matrix';
 import { RESOLUTION, SCALE_MODES, RENDERER_TYPE } from '../../const';
 
-const tempMatrix = new math.Matrix();
+const tempMatrix = new Matrix();
 
 /**
  * A RenderTexture is a special texture that allows any Pixi display object to be rendered to it.
@@ -73,7 +74,7 @@ export default class RenderTexture extends Texture {
 
 
     super(baseTexture,
-      new math.Rectangle(0, 0, width, height)
+      new Rectangle(0, 0, width, height)
     );
 
 

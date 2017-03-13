@@ -2,7 +2,8 @@ import WebGLManager from './WebGLManager';
 import RenderTarget from '../utils/RenderTarget';
 import { BLEND_MODES, SCALE_MODES, FILTER_RESOLUTION } from '../../../../const';
 import Quad from '../utils/Quad';
-import math from '../../../math';
+import Rectangle from '../../../math/Rectangle';
+import Matrix from '../../../math/Matrix';
 
 /**
  * @class
@@ -36,7 +37,7 @@ export default function FilterManager(renderer) {
   // listen for context and update necessary buffers
   // TODO make this dynamic!
   // TODO test this out by forces power of two?
-  this.textureSize = new math.Rectangle(0, 0, renderer.width, renderer.height);
+  this.textureSize = new Rectangle(0, 0, renderer.width, renderer.height);
 
   /**
    * The current frame
@@ -292,7 +293,7 @@ FilterManager.prototype.applyFilter = function(shader, inputTarget, outputTarget
  */
 // TODO playing around here.. this is temporary - (will end up in the shader)
 FilterManager.prototype.calculateMappedMatrix = function(filterArea, sprite, outputMatrix) {
-  var worldTransform = sprite.worldTransform.copy(math.Matrix.TEMP_MATRIX),
+  var worldTransform = sprite.worldTransform.copy(Matrix.TEMP_MATRIX),
     texture = sprite._texture.baseTexture;
 
   var mappedMatrix = outputMatrix.identity();
@@ -325,7 +326,7 @@ FilterManager.prototype.calculateMappedMatrix = function(filterArea, sprite, out
 
   // Keeping the orginal as a reminder to me on how this works!
   //
-  // var m = new math.Matrix();
+  // var m = new Matrix();
 
   // // scale..
   // var ratio = this.textureSize.height / this.textureSize.width;

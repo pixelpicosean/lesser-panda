@@ -18,7 +18,7 @@ Object.assign(
  * @constructor
  * @param {CanvasRenderer|WebGLRenderer} renderer   A reference to the current renderer
  */
-function AccessibilityManager(renderer) {
+export default function AccessibilityManager(renderer) {
   // first we create a div that will sit over the node. This is where the div overlays will go.
   var div = document.createElement('div');
 
@@ -97,7 +97,6 @@ function AccessibilityManager(renderer) {
 
 
 AccessibilityManager.prototype.constructor = AccessibilityManager;
-module.exports = AccessibilityManager;
 
 /**
  * Activating will cause the Accessibility layer to be shown. This is called when a user preses the tab key

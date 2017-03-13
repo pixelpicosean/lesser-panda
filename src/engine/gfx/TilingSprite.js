@@ -1,5 +1,5 @@
 import TilingSprite from './core/sprites/TilingSprite';
-import { textureFromData } from './utils');
+import { textureFromData } from './utils';
 import { BLEND_MODES } from './const';
 
 /**

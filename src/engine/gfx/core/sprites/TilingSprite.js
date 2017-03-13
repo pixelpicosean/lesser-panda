@@ -5,7 +5,7 @@ import CanvasTinter from '../renderers/canvas/utils/CanvasTinter';
 import TextureUvs from '../textures/TextureUvs';
 import AbstractFilter from '../renderers/webgl/filters/AbstractFilter';
 
-import tempPoint = new Vector();
+const tempPoint = new Vector();
 
 /**
  * A tiling sprite is a fast way of rendering a tiling image

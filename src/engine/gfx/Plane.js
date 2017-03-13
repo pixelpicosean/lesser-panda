@@ -1,7 +1,7 @@
 import Mesh from './mesh/Mesh';
 import Plane from './mesh/Plane';
 import { BLEND_MODES } from './const';
-import { textureFromData } from ('./utils');
+import { textureFromData } from './utils';
 import './mesh/webgl/MeshRenderer';
 import './mesh/webgl/MeshShader';
 

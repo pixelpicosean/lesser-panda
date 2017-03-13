@@ -1,5 +1,5 @@
 import Texture from '../core/textures/Texture';
-import { Rectangle } from '../core/math';
+import Rectangle from '../core/math/Rectangle';
 import loader from 'engine/loader';
 
 /**

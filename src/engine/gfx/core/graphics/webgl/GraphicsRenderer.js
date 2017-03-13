@@ -1,5 +1,5 @@
+import Vector from 'engine/Vector';
 import { hex2rgb } from '../../utils';
-import math from '../../math';
 import { SHAPES } from '../../../const';
 import ObjectRenderer from '../../renderers/webgl/utils/ObjectRenderer';
 import WebGLRenderer from '../../renderers/webgl/WebGLRenderer';
@@ -532,8 +532,8 @@ export default class GraphicsRenderer extends ObjectRenderer {
     }
 
     // get first and last point.. figure out the middle!
-    var firstPoint = new math.Point(points[0], points[1]);
-    var lastPoint = new math.Point(points[points.length - 2], points[points.length - 1]);
+    var firstPoint = new Vector(points[0], points[1]);
+    var lastPoint = new Vector(points[points.length - 2], points[points.length - 1]);
 
     // if the first point is the last point - gonna have issues :)
     if (firstPoint.x === lastPoint.x && firstPoint.y === lastPoint.y) {
@@ -543,7 +543,7 @@ export default class GraphicsRenderer extends ObjectRenderer {
       points.pop();
       points.pop();
 
-      lastPoint = new math.Point(points[points.length - 2], points[points.length - 1]);
+      lastPoint = new Vector(points[points.length - 2], points[points.length - 1]);
 
       var midPointX = lastPoint.x + (firstPoint.x - lastPoint.x) * 0.5;
       var midPointY = lastPoint.y + (firstPoint.y - lastPoint.y) * 0.5;

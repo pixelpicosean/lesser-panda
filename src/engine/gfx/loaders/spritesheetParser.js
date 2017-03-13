@@ -1,7 +1,7 @@
 import { Resource, async } from 'engine/loader';
 import Texture from '../core/textures/Texture';
-import utils from '../core/utils';
-import math from '../core/math';
+import { getResolutionOfUrl, TextureCache } from '../core/utils';
+import Rectangle from '../core/math/Rectangle';
 
 const BATCH_SIZE = 1000;
 
@@ -27,7 +27,7 @@ export default () => {
 
       var frames = resource.data.frames;
       var frameKeys = Object.keys(frames);
-      var resolution = utils.getResolutionOfUrl(resource.url);
+      var resolution = getResolutionOfUrl(resource.url);
       var batchIndex = 0;
 
       // eslint-disable-next-line
@@ -43,15 +43,15 @@ export default () => {
             var trim = null;
 
             if (frame.rotated) {
-              size = new math.Rectangle(rect.x, rect.y, rect.h, rect.w);
+              size = new Rectangle(rect.x, rect.y, rect.h, rect.w);
             }
             else {
-              size = new math.Rectangle(rect.x, rect.y, rect.w, rect.h);
+              size = new Rectangle(rect.x, rect.y, rect.w, rect.h);
             }
 
             //  Check to see if the sprite is trimmed
             if (frame.trimmed) {
-              trim = new math.Rectangle(
+              trim = new Rectangle(
                 frame.spriteSourceSize.x / resolution,
                 frame.spriteSourceSize.y / resolution,
                 frame.sourceSize.w / resolution,
@@ -74,7 +74,7 @@ export default () => {
             resource.textures[frameKeys[frameIndex]] = new Texture(res.texture.baseTexture, size, size.clone(), trim, frame.rotated);
 
             // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
-            utils.TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
+            TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
           }
           frameIndex++;
         }

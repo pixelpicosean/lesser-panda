@@ -1,10 +1,11 @@
 import Vector from 'engine/Vector';
-import { Polygon, Rectangle } from '../core/math';
+import Polygon from '../core/math/Polygon';
+import Rectangle from '../core/math/Rectangle';
 import Node from '../core/Node';
 import { BLEND_MODES } from '../const';
 
 const tempPoint = new Vector();
-const tempPolygon = new Polygon();
+const tempPolygon = new Polygon([new Vector()]);
 
 /**
  * Base mesh class

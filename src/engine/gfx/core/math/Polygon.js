@@ -1,10 +1,13 @@
-const Vector = require('engine/Vector');
-const CONST = require('../../../const');
+import Vector from 'engine/Vector';
+import { SHAPES } from '../../const';
+
+const FieldX = 'x';
+const FieldY = 'y';
 
 /**
  * @class
  */
-class Polygon {
+export default class Polygon {
   /**
    * @constructor
    * @param {Vector[]|number[]|Vector|number} points_  This can be an array of Points that form the polygon,
@@ -30,7 +33,7 @@ class Polygon {
     }
 
     // if this is an array of points, convert it to a flat array of numbers
-    if (points[0] instanceof Vector) {
+    if ((FieldX in points[0]) && (FieldY in points[0])) {
       var p = [];
       for (var i = 0, il = points.length; i < il; i++) {
         p.push(points[i].x, points[i].y);
@@ -53,7 +56,7 @@ class Polygon {
      *
      * @member {number}
      */
-    this.type = CONST.SHAPES.POLY;
+    this.type = SHAPES.POLY;
   }
 
   /**
@@ -92,5 +95,3 @@ class Polygon {
     return inside;
   }
 }
-
-module.exports = Polygon;

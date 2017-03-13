@@ -2,7 +2,7 @@ import SystemRenderer from '../SystemRenderer';
 import CanvasMaskManager from './utils/CanvasMaskManager';
 import { canUseNewCanvasBlendModes } from '../../utils';
 import { mixin } from '../../utils/pluginTarget';
-import math from '../../math';
+import Matrix from '../../math/Matrix';
 import { RENDERER_TYPE, BLEND_MODES, SCALE_MODES } from '../../../const';
 
 /**
@@ -83,7 +83,7 @@ export default class CanvasRenderer extends SystemRenderer {
      * @private
      */
     this._tempDisplayObjectParent = {
-      worldTransform: new math.Matrix(),
+      worldTransform: new Matrix(),
       worldAlpha: 1,
     };
 

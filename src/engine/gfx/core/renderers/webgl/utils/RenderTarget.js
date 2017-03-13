@@ -1,5 +1,6 @@
-import math from '../../../math';
-import utils from '../../../utils';
+import Rectangle from '../../../math/Rectangle';
+import Matrix from '../../../math/Matrix';
+import { isPowerOfTwo } from '../../../utils';
 import { RESOLUTION, SCALE_MODES } from '../../../../const';
 // StencilManager = require('../managers/StencilManager'),
 import StencilMaskStack from './StencilMaskStack';
@@ -48,7 +49,7 @@ export default function RenderTarget(gl, width, height, scaleMode, resolution, r
    *
    * @member {Rectangle}
    */
-  this.size = new math.Rectangle(0, 0, 1, 1);
+  this.size = new Rectangle(0, 0, 1, 1);
 
   /**
    * The current resolution
@@ -62,7 +63,7 @@ export default function RenderTarget(gl, width, height, scaleMode, resolution, r
    *
    * @member {Matrix}
    */
-  this.projectionMatrix = new math.Matrix();
+  this.projectionMatrix = new Matrix();
 
   /**
    * The object's transform
@@ -140,7 +141,7 @@ export default function RenderTarget(gl, width, height, scaleMode, resolution, r
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
 
     // check to see if the texture is a power of two!
-    var isPowerOfTwo = utils.isPowerOfTwo(width, height);
+    var isPowerOfTwo = isPowerOfTwo(width, height);
 
     // TODO for 99% of use cases if a texture is power of two we should tile the texture...
     if (!isPowerOfTwo) {

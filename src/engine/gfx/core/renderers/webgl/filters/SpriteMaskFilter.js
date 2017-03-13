@@ -1,5 +1,5 @@
 import AbstractFilter from './AbstractFilter';
-import math from '../../../math';
+import Matrix from '../../../math/Matrix';
 
 /**
  * The SpriteMaskFilter class
@@ -9,7 +9,7 @@ import math from '../../../math';
  * @param sprite {Sprite} the target sprite
  */
 export default function SpriteMaskFilter(sprite) {
-  var maskMatrix = new math.Matrix();
+  var maskMatrix = new Matrix();
 
   AbstractFilter.call(this,
         require('./spriteMaskFilter.vert'),
