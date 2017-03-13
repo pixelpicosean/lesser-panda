@@ -1,6 +1,5 @@
 import engine from 'engine/core';
 import Vector from 'engine/Vector';
-import Timer from 'engine/Timer';
 import { clamp } from 'engine/utils/math';
 
 /**
@@ -297,7 +296,7 @@ export default class Camera {
 
       // Next shake
       this._shakeCount -= 1;
-      Timer.later(this._shakeDelay, this._startShake);
+      this.game.sysTimer.later(this._shakeDelay, this._startShake);
     }
     else {
       // Reset offset
