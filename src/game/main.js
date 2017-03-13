@@ -12,20 +12,13 @@ import 'engine/gfx/interaction';
 // Requite any systems
 import Gfx from 'engine/gfx';
 import Anime from 'engine/anime';
-import Timer from 'engine/Timer';
-import Input from 'engine/input';
-import Physics from 'engine/physics';
+import Timer from 'engine/timer';
 
 // Requite anything else you want to use
-import Graphics from 'engine/gfx/Graphics';
-import Text from 'engine/gfx/Text';
 import BitmapText from 'engine/gfx/BitmapText';
-import Node from 'engine/gfx/Node';
-import Sprite from 'engine/gfx/Sprite';
 import AnimatedSprite from 'engine/gfx/AnimatedSprite';
-import Plane from 'engine/gfx/Plane';
-import Rope from 'engine/gfx/Rope';
-import TilingSprite from 'engine/gfx/TilingSprite';
+
+import AABBSolver from 'engine/physics/AABBSolver';
 
 // Loading screen
 import Loading from 'game/Loading';
@@ -44,6 +37,7 @@ class MyGame extends Game {
 
     // Add systems you want to have
     this
+      .addSystem(new Timer())
       .addSystem(new Anime())
       .addSystem(new Gfx());
 
@@ -60,7 +54,7 @@ class MyGame extends Game {
     const label = BitmapText({
       text: 'It Works!',
       font: '16px 04b03',
-    }).addTo(this.sysGfx.layers['background']);
+    }).addTo(this.sysGfx.layers.background);
     label.position.set(core.width / 2 - label.width / 2, core.height / 2 - label.height / 2);
 
     const monster = AnimatedSprite({
@@ -71,7 +65,7 @@ class MyGame extends Game {
         ['hurt', [8,9,8,9,8,9], { speed: 8, loop: false }],
         ['kill', [10,11,12,13], { speed: 8, loop: false }],
       ],
-    }).addTo(this.sysGfx.layers['background']);
+    }).addTo(this.sysGfx.layers.background);
     monster.position.set(50);
     monster.anchor.set(0.5);
     monster.play('fly');

@@ -8,7 +8,7 @@ import Text from 'engine/gfx/Text';
 const BAR_WIDTH = Math.floor(core.width * 0.75);
 const BAR_HEIGHT = Math.floor(BAR_WIDTH * 0.075);
 
-class Loading extends Game {
+export default class Loading extends Game {
   constructor() {
     super();
 
@@ -59,5 +59,3 @@ class Loading extends Game {
     loader.load();
   }
 }
-
-export default Loading;
