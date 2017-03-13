@@ -1,5 +1,5 @@
 import core from 'engine/core';
-import System from 'engine/system';
+import System from 'engine/System';
 import Vector from 'engine/Vector';
 import { removeItems } from 'engine/utils/array';
 import WebGLRenderer from './core/renderers/webgl/WebGLRenderer';

@@ -1,15 +1,6 @@
 import core from 'engine/core';
-import Node from '../core/Node';
 import InteractionData from './InteractionData';
 import Vector from 'engine/Vector';
-import WebGLRenderer from '../core/renderers/webgl/WebGLRenderer';
-import CanvasRenderer from '../core/renderers/canvas/CanvasRenderer';
-
-// Mix interactiveTarget into Node.prototype
-Object.assign(
-  Node.prototype,
-  require('./interactiveTarget')
-);
 
 /**
  * The interaction manager deals with mouse and touch events. Any Node can be interactive
@@ -827,6 +818,3 @@ InteractionManager.prototype.destroy = function() {
 
   this._tempPoint = null;
 };
-
-WebGLRenderer.registerPlugin('interaction', InteractionManager);
-CanvasRenderer.registerPlugin('interaction', InteractionManager);
