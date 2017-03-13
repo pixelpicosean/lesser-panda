@@ -1,8 +1,12 @@
 import Loader from './Loader';
 import Resource from './Resource';
 import async from './async';
-import b64 from './b64';
+import { encodeBinary } from './b64';
 import config from 'game/config';
+
+const base64 = {
+  encodeBinary,
+};
 
 export {
   Loader,

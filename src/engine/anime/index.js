@@ -11,7 +11,7 @@
  * @requires engine/anime/tween
  * @requires engine/anime/action
  */
-import System from 'engine/system';
+import System from 'engine/System';
 import { removeItems } from 'engine/utils/array';
 
 import Tween from './tween';
