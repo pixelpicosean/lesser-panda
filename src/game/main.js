@@ -1,24 +1,14 @@
 import core from 'engine/core';
 import loader from 'engine/loader';
 import Game from 'engine/Game';
-import audio from 'engine/audio';
-import rnd from 'engine/rnd';
-import Camera from 'engine/Camera';
-import Entity from 'engine/Entity';
-import { persistent, session } from 'engine/storage';
-import 'engine/gfx/accessibility';
-import 'engine/gfx/interaction';
 
 // Requite any systems
 import Gfx from 'engine/gfx';
 import Anime from 'engine/anime';
-import Timer from 'engine/timer';
 
 // Requite anything else you want to use
 import BitmapText from 'engine/gfx/BitmapText';
 import AnimatedSprite from 'engine/gfx/AnimatedSprite';
-
-import AABBSolver from 'engine/physics/AABBSolver';
 
 // Loading screen
 import Loading from 'game/Loading';
@@ -33,11 +23,10 @@ class MyGame extends Game {
     super();
 
     // FPS for fixed update
-    this.desiredFPS = 30;
+    this.desiredFPS = 60;
 
     // Add systems you want to have
     this
-      .addSystem(new Timer())
       .addSystem(new Anime())
       .addSystem(new Gfx());
 
