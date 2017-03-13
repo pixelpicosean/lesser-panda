@@ -2,7 +2,7 @@
 // should either fix it or change the jshint config
 // jshint -W072
 
-const Vector = require('engine/Vector');
+import Vector from 'engine/Vector';
 
 /**
  * The pixi Matrix class as an object, which makes it a lot faster,
@@ -13,7 +13,7 @@ const Vector = require('engine/Vector');
  *
  * @class
  */
-class Matrix {
+export default class Matrix {
   /**
    * @constructor
    */
@@ -418,5 +418,3 @@ Matrix.IDENTITY = new Matrix();
  * @const
  */
 Matrix.TEMP_MATRIX = new Matrix();
-
-module.exports = Matrix;

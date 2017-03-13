@@ -1,10 +1,10 @@
-const Vector = require('engine/Vector');
+import Vector from 'engine/Vector';
 
 /**
  * Component interface.
  * Not necessary to inherit this class, just a simple interface.
  */
-class Component {
+export default class Component {
   get rotation() {
     return (this.entity) ? this.entity.rotation : this._rotation;
   }
@@ -51,5 +51,3 @@ class Component {
     }
   }
 }
-
-module.exports = Component;

@@ -1,22 +1,21 @@
-var WebGLManager = require('./WebGLManager');
+import WebGLManager from './WebGLManager';
 
 /**
  * @class
  * @extends WebGlManager
  * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
-function BlendModeManager(renderer) {
+export default function BlendModeManager(renderer) {
   WebGLManager.call(this, renderer);
 
-    /**
-     * @member {number}
-     */
+  /**
+   * @member {number}
+   */
   this.currentBlendMode = 99999;
 }
 
 BlendModeManager.prototype = Object.create(WebGLManager.prototype);
 BlendModeManager.prototype.constructor = BlendModeManager;
-module.exports = BlendModeManager;
 
 /**
  * Sets-up the given blendMode from WebGL's point of view.

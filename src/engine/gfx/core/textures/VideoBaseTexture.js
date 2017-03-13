@@ -1,5 +1,5 @@
-const BaseTexture = require('./BaseTexture');
-const utils = require('../utils');
+import BaseTexture from './BaseTexture';
+import { uid, BaseTextureCache } from '../utils';
 
 /**
  * A texture of a [playing] Video.
@@ -9,13 +9,13 @@ const utils = require('../utils');
  * This can be used in several ways, such as:
  *
  * ```js
- * var texture = PIXI.VideoBaseTexture.fromUrl('http://mydomain.com/video.mp4');
+ * var texture = VideoBaseTexture.fromUrl('http://mydomain.com/video.mp4');
  *
- * var texture = PIXI.VideoBaseTexture.fromUrl({ src: 'http://mydomain.com/video.mp4', mime: 'video/mp4' });
+ * var texture = VideoBaseTexture.fromUrl({ src: 'http://mydomain.com/video.mp4', mime: 'video/mp4' });
  *
- * var texture = PIXI.VideoBaseTexture.fromUrls(['/video.webm', '/video.mp4']);
+ * var texture = VideoBaseTexture.fromUrls(['/video.webm', '/video.mp4']);
  *
- * var texture = PIXI.VideoBaseTexture.fromUrls([
+ * var texture = VideoBaseTexture.fromUrls([
  *     { src: '/video.webm', mime: 'video/webm' },
  *     { src: '/video.mp4', mime: 'video/mp4' }
  * ]);
@@ -24,12 +24,12 @@ const utils = require('../utils');
  * See the ["deus" demo](http://www.goodboydigital.com/pixijs/examples/deus/).
  *
  * @class
- * @extends PIXI.BaseTexture
+ * @extends BaseTexture
  * @memberof PIXI
  * @param source {HTMLVideoElement}
- * @param [scaleMode] {number} See {@link PIXI.SCALE_MODES} for possible values
+ * @param [scaleMode] {number} See {@link SCALE_MODES} for possible values
  */
-class VideoBaseTexture extends BaseTexture {
+export default class VideoBaseTexture extends BaseTexture {
   constructor(source, scaleMode) {
     if (!source) {
       throw new Error('No video source element specified.');
@@ -131,7 +131,7 @@ class VideoBaseTexture extends BaseTexture {
    */
   destroy() {
     if (this.source && this.source._pixiId) {
-      delete utils.BaseTextureCache[ this.source._pixiId ];
+      delete BaseTextureCache[ this.source._pixiId ];
       delete this.source._pixiId;
     }
 
@@ -144,19 +144,19 @@ class VideoBaseTexture extends BaseTexture {
  *
  * @static
  * @param video {HTMLVideoElement}
- * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
- * @return {PIXI.VideoBaseTexture}
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return {VideoBaseTexture}
  */
 VideoBaseTexture.fromVideo = function(video, scaleMode) {
   if (!video._pixiId) {
-    video._pixiId = 'video_' + utils.uid();
+    video._pixiId = 'video_' + uid();
   }
 
-  var baseTexture = utils.BaseTextureCache[video._pixiId];
+  var baseTexture = BaseTextureCache[video._pixiId];
 
   if (!baseTexture) {
     baseTexture = new VideoBaseTexture(video, scaleMode);
-    utils.BaseTextureCache[ video._pixiId ] = baseTexture;
+    BaseTextureCache[ video._pixiId ] = baseTexture;
   }
 
   return baseTexture;
@@ -171,8 +171,8 @@ VideoBaseTexture.fromVideo = function(video, scaleMode) {
  * @param [videoSrc.src] {string} One of the source urls for the video
  * @param [videoSrc.mime] {string} The mimetype of the video (e.g. 'video/mp4'). If not specified
  *  the url's extension will be used as the second part of the mime type.
- * @param scaleMode {number} See {@link PIXI.SCALE_MODES} for possible values
- * @return {PIXI.VideoBaseTexture}
+ * @param scaleMode {number} See {@link SCALE_MODES} for possible values
+ * @return {VideoBaseTexture}
  */
 VideoBaseTexture.fromUrl = function(videoSrc, scaleMode) {
   var video = document.createElement('video');
@@ -208,5 +208,3 @@ function createSource(path, type) {
 
   return source;
 }
-
-module.exports = VideoBaseTexture;

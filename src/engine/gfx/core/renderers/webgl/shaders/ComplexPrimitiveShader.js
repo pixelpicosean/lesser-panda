@@ -1,4 +1,4 @@
-var Shader = require('./Shader');
+import Shader from './Shader';
 
 /**
  * This shader is used to draw complex primitive shapes for {@link Graphics}.
@@ -7,10 +7,10 @@ var Shader = require('./Shader');
  * @extends Shader
  * @param shaderManager {ShaderManager} The webgl shader manager this shader works for.
  */
-function ComplexPrimitiveShader(shaderManager) {
+export default function ComplexPrimitiveShader(shaderManager) {
   Shader.call(this,
-        shaderManager,
-        // vertex shader
+    shaderManager,
+    // vertex shader
     [
       'attribute vec2 aVertexPosition;',
 
@@ -24,21 +24,21 @@ function ComplexPrimitiveShader(shaderManager) {
       'varying vec4 vColor;',
 
       'void main(void){',
-      '   gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
-      '   vColor = vec4(color * alpha * tint, alpha);',// " * vec4(tint * alpha, alpha);',
+      '  gl_Position = vec4((projectionMatrix * translationMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
+      '  vColor = vec4(color * alpha * tint, alpha);',// " * vec4(tint * alpha, alpha);',
       '}',
     ].join('\n'),
-        // fragment shader
+    // fragment shader
     [
       'precision mediump float;',
 
       'varying vec4 vColor;',
 
       'void main(void){',
-      '   gl_FragColor = vColor;',
+      '  gl_FragColor = vColor;',
       '}',
     ].join('\n'),
-        // custom uniforms
+    // custom uniforms
     {
       tint: { type: '3f', value: [0, 0, 0] },
       alpha: { type: '1f', value: 0 },
@@ -46,13 +46,12 @@ function ComplexPrimitiveShader(shaderManager) {
       translationMatrix: { type: 'mat3', value: new Float32Array(9) },
       projectionMatrix: { type: 'mat3', value: new Float32Array(9) },
     },
-        // attributes
+    // attributes
     {
       aVertexPosition:0,
     }
-    );
+  );
 }
 
 ComplexPrimitiveShader.prototype = Object.create(Shader.prototype);
 ComplexPrimitiveShader.prototype.constructor = ComplexPrimitiveShader;
-module.exports = ComplexPrimitiveShader;

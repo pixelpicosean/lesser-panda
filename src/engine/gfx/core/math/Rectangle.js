@@ -1,11 +1,11 @@
-const CONST = require('../../../const');
+import { SHAPES } from '../../const';
 
 /**
  * the Rectangle object is an area defined by its position, as indicated by its top-left corner point (x, y) and by its width and its height.
  *
  * @class
  */
-class Rectangle {
+export default class Rectangle {
   /**
    * @constructor
    * @param {number} x      The X coordinate of the upper-left corner of the rectangle
@@ -43,7 +43,7 @@ class Rectangle {
      *
      * @member {number}
      */
-    this.type = CONST.SHAPES.RECT;
+    this.type = SHAPES.RECT;
   }
 
   /**
@@ -84,5 +84,3 @@ class Rectangle {
  * @constant
  */
 Rectangle.EMPTY = new Rectangle(0, 0, 0, 0);
-
-module.exports = Rectangle;

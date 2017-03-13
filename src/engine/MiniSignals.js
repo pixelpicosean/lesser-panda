@@ -1,7 +1,7 @@
 /**
  * Listener function and context pack.
  */
-class MiniSignalBinding {
+export class MiniSignalBinding {
 
   /**
   * MiniSignalBinding constructor.
@@ -62,7 +62,7 @@ function _addMiniSignalBinding(self, node) {
  * mySignal.dispatch('foo', 'bar');
  * mySignal.detach(binding);
  */
-class MiniSignal {
+export default class MiniSignal {
   /**
    * @constructor
    */
@@ -206,7 +206,3 @@ class MiniSignal {
     return this;
   }
 }
-
-module.exports = MiniSignal;
-module.exports.MiniSignalBinding = MiniSignalBinding;
-module.exports.MiniSignal = MiniSignal;

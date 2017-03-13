@@ -1,7 +1,7 @@
-const Node = require('../core/Node');
-const { removeItems } = require('engine/utils/array');
-const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
-const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
+import Node from '../core/Node';
+import { removeItems } from 'engine/utils/array';
+import WebGLRenderer from '../core/renderers/webgl/WebGLRenderer';
+import CanvasRenderer from '../core/renderers/canvas/CanvasRenderer';
 
 // add some extra variables to the container..
 Object.assign(
@@ -18,7 +18,7 @@ Object.assign(
  * @constructor
  * @param {CanvasRenderer|WebGLRenderer} renderer   A reference to the current renderer
  */
-function AccessibilityManager(renderer) {
+export default function AccessibilityManager(renderer) {
   // first we create a div that will sit over the node. This is where the div overlays will go.
   var div = document.createElement('div');
 
@@ -97,7 +97,6 @@ function AccessibilityManager(renderer) {
 
 
 AccessibilityManager.prototype.constructor = AccessibilityManager;
-module.exports = AccessibilityManager;
 
 /**
  * Activating will cause the Accessibility layer to be shown. This is called when a user preses the tab key

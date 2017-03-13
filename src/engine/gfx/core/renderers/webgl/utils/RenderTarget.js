@@ -1,8 +1,9 @@
-var math = require('../../../math'),
-  utils = require('../../../utils'),
-  CONST = require('../../../../const'),
-    // StencilManager = require('../managers/StencilManager'),
-  StencilMaskStack = require('./StencilMaskStack');
+import Rectangle from '../../../math/Rectangle';
+import Matrix from '../../../math/Matrix';
+import { isPowerOfTwo } from '../../../utils';
+import { RESOLUTION, SCALE_MODES } from '../../../../const';
+// StencilManager = require('../managers/StencilManager'),
+import StencilMaskStack from './StencilMaskStack';
 
 /**
  * @author Mat Groves http://matgroves.com/ @Doormat23
@@ -17,86 +18,86 @@ var math = require('../../../math'),
  * @param resolution {number} the current resolution
  * @param root {boolean} Whether this object is the root element or not
  */
-var RenderTarget = function(gl, width, height, scaleMode, resolution, root) {
-    // TODO Resolution could go here ( eg low res blurs )
+export default function RenderTarget(gl, width, height, scaleMode, resolution, root) {
+  // TODO Resolution could go here ( eg low res blurs )
 
-    /**
-     * The current WebGL drawing context.
-     *
-     * @member {WebGLRenderingContext}
-     */
+  /**
+   * The current WebGL drawing context.
+   *
+   * @member {WebGLRenderingContext}
+   */
   this.gl = gl;
 
-    // next time to create a frame buffer and texture
+  // next time to create a frame buffer and texture
 
-    /**
-     * A frame buffer
-     *
-     * @member {WebGLFrameBuffer}
-     */
+  /**
+   * A frame buffer
+   *
+   * @member {WebGLFrameBuffer}
+   */
   this.frameBuffer = null;
 
-    /**
-     * The texture
-     *
-     * @member {Texture}
-     */
+  /**
+   * The texture
+   *
+   * @member {Texture}
+   */
   this.texture = null;
 
-    /**
-     * The size of the object as a rectangle
-     *
-     * @member {Rectangle}
-     */
-  this.size = new math.Rectangle(0, 0, 1, 1);
+  /**
+   * The size of the object as a rectangle
+   *
+   * @member {Rectangle}
+   */
+  this.size = new Rectangle(0, 0, 1, 1);
 
-    /**
-     * The current resolution
-     *
-     * @member {number}
-     */
-  this.resolution = resolution || CONST.RESOLUTION;
+  /**
+   * The current resolution
+   *
+   * @member {number}
+   */
+  this.resolution = resolution || RESOLUTION;
 
-    /**
-     * The projection matrix
-     *
-     * @member {Matrix}
-     */
-  this.projectionMatrix = new math.Matrix();
+  /**
+   * The projection matrix
+   *
+   * @member {Matrix}
+   */
+  this.projectionMatrix = new Matrix();
 
-    /**
-     * The object's transform
-     *
-     * @member {Matrix}
-     */
+  /**
+   * The object's transform
+   *
+   * @member {Matrix}
+   */
   this.transform = null;
 
-    /**
-     * The frame.
-     *
-     * @member {Rectangle}
-     */
+  /**
+   * The frame.
+   *
+   * @member {Rectangle}
+   */
   this.frame = null;
 
-    /**
-     * The stencil buffer stores masking data for the render target
-     *
-     * @member {WebGLRenderBuffer}
-     */
+  /**
+   * The stencil buffer stores masking data for the render target
+   *
+   * @member {WebGLRenderBuffer}
+   */
   this.stencilBuffer = null;
 
-    /**
-     * The data structure for the stencil masks
-     *
-     * @member {StencilMaskStack}
-     */
+  /**
+   * The data structure for the stencil masks
+   *
+   * @member {StencilMaskStack}
+   */
   this.stencilMaskStack = new StencilMaskStack();
 
-    /**
-     * Stores filter data for the render target
-     *
-     * @member {object[]}
-     */
+  /**
+   * Stores filter data for the render target
+   *
+   * @member {object[]}
+   */
   this.filterStack = [
     {
       renderTarget:this,
@@ -106,43 +107,43 @@ var RenderTarget = function(gl, width, height, scaleMode, resolution, root) {
   ];
 
 
-    /**
-     * The scale mode.
-     *
-     * @member {number}
-     * @default SCALE_MODES.DEFAULT
-     * @see SCALE_MODES
-     */
-  this.scaleMode = scaleMode || CONST.SCALE_MODES.DEFAULT;
+  /**
+   * The scale mode.
+   *
+   * @member {number}
+   * @default SCALE_MODES.DEFAULT
+   * @see SCALE_MODES
+   */
+  this.scaleMode = scaleMode || SCALE_MODES.DEFAULT;
 
-    /**
-     * Whether this object is the root element or not
-     *
-     * @member {boolean}
-     */
+  /**
+   * Whether this object is the root element or not
+   *
+   * @member {boolean}
+   */
   this.root = root;
 
   if (!this.root) {
-       // this.flipY = true;
+     // this.flipY = true;
     this.frameBuffer = gl.createFramebuffer();
 
-        /*
-            A frame buffer needs a target to render to..
-            create a texture and bind it attach it to the framebuffer..
-         */
+    /*
+        A frame buffer needs a target to render to..
+        create a texture and bind it attach it to the framebuffer..
+     */
 
     this.texture = gl.createTexture();
 
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
-        // set the scale properties of the texture..
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, scaleMode === CONST.SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, scaleMode === CONST.SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
+    // set the scale properties of the texture..
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
 
-        // check to see if the texture is a power of two!
-    var isPowerOfTwo = utils.isPowerOfTwo(width, height);
+    // check to see if the texture is a power of two!
+    var isPowerOfTwo = isPowerOfTwo(width, height);
 
-        // TODO for 99% of use cases if a texture is power of two we should tile the texture...
+    // TODO for 99% of use cases if a texture is power of two we should tile the texture...
     if (!isPowerOfTwo) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -161,7 +162,6 @@ var RenderTarget = function(gl, width, height, scaleMode, resolution, root) {
 };
 
 RenderTarget.prototype.constructor = RenderTarget;
-module.exports = RenderTarget;
 
 /**
  * Clears the filter texture.
@@ -207,14 +207,14 @@ RenderTarget.prototype.attachStencilBuffer = function() {
  *
  */
 RenderTarget.prototype.activate = function() {
-    // TOOD refactor usage of frame..
+  // TOOD refactor usage of frame..
   var gl = this.gl;
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
 
   var projectionFrame = this.frame || this.size;
 
-    // TODO add a dirty flag to this of a setter for the frame?
+  // TODO add a dirty flag to this of a setter for the frame?
   this.calculateProjection(projectionFrame);
 
   if (this.transform) {
@@ -275,7 +275,7 @@ RenderTarget.prototype.resize = function(width, height) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width * this.resolution, height * this.resolution , 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
     if (this.stencilBuffer) {
-            // update the stencil buffer width and height
+      // update the stencil buffer width and height
       gl.bindRenderbuffer(gl.RENDERBUFFER, this.stencilBuffer);
       gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width * this.resolution, height * this.resolution);
     }

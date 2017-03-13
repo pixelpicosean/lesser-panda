@@ -1,21 +1,21 @@
-const core = require('engine/core');
-const System = require('engine/system');
-const Vector = require('engine/Vector');
-const { removeItems } = require('engine/utils/array');
-const WebGLRenderer = require('./core/renderers/webgl/WebGLRenderer');
-const CanvasRenderer = require('./core/renderers/canvas/CanvasRenderer');
-const { isWebGLSupported } = require('./core/utils');
-const CONST = require('./const');
-const Node = require('./Node');
-const config = require('game/config');
+import core from 'engine/core';
+import System from 'engine/system';
+import Vector from 'engine/Vector';
+import { removeItems } from 'engine/utils/array';
+import WebGLRenderer from './core/renderers/webgl/WebGLRenderer';
+import CanvasRenderer from './core/renderers/canvas/CanvasRenderer';
+import { isWebGLSupported } from './core/utils';
+import { SCALE_MODES } from './const';
+import Node from './Node';
+import config from 'game/config';
 
 // General asset middlewares (including texture support)
-const loader = require('engine/loader');
-const { Resource } = loader;
-const blobMiddlewareFactory = require('engine/loader/middlewares/parsing/blob').blobMiddlewareFactory;
-const textureParser = require('./loaders/textureParser');
-const spritesheetParser = require('./loaders/spritesheetParser');
-const bitmapFontParser = require('./loaders/bitmapFontParser');
+import loader from 'engine/loader';
+import { Resource } from 'engine/loader';
+import { blobMiddlewareFactory } from 'engine/loader/middlewares/parsing/blob';
+import textureParser from './loaders/textureParser';
+import spritesheetParser from './loaders/spritesheetParser';
+import bitmapFontParser from './loaders/bitmapFontParser';
 Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 
 // - parse any blob into more usable objects (e.g. Image)
@@ -34,7 +34,7 @@ const Zero = Vector.create(0, 0);
 /**
  * Graphic system.
  */
-class SystemGfx extends System {
+class Gfx extends System {
   /**
    * @constructor
    */
@@ -66,7 +66,7 @@ class SystemGfx extends System {
       }
 
       // Setup default scale mode
-      CONST.SCALE_MODES.DEFAULT = CONST.SCALE_MODES[config.gfx.scaleMode.toUpperCase()];
+      SCALE_MODES.DEFAULT = SCALE_MODES[config.gfx.scaleMode.toUpperCase()];
     }
 
     /**
@@ -238,4 +238,4 @@ class SystemGfx extends System {
   }
 }
 
-module.exports = SystemGfx;
+export default Gfx;

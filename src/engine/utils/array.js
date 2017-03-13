@@ -11,7 +11,7 @@
  * @param {number} startIdx The index to begin removing from (inclusive)
  * @param {number} removeCount How many items to remove
  */
-module.exports.removeItems = function(arr, startIdx, removeCount) {
+export function removeItems(arr, startIdx, removeCount) {
   let i, len, length = arr.length;
 
   if (startIdx >= length || removeCount === 0) {

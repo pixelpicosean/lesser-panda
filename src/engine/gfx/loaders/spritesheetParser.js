@@ -1,12 +1,11 @@
-const Resource = require('engine/loader').Resource;
-const Texture = require('../core/textures/Texture');
-const utils = require('../core/utils');
-const math = require('../core/math');
-const async = require('engine/loader').async;
+import { Resource, async } from 'engine/loader';
+import Texture from '../core/textures/Texture';
+import { getResolutionOfUrl, TextureCache } from '../core/utils';
+import Rectangle from '../core/math/Rectangle';
 
 const BATCH_SIZE = 1000;
 
-module.exports = function() {
+export default () => {
   return function(resource, next) {
     var imageResourceName = resource.name + '_image';
 
@@ -28,7 +27,7 @@ module.exports = function() {
 
       var frames = resource.data.frames;
       var frameKeys = Object.keys(frames);
-      var resolution = utils.getResolutionOfUrl(resource.url);
+      var resolution = getResolutionOfUrl(resource.url);
       var batchIndex = 0;
 
       // eslint-disable-next-line
@@ -44,15 +43,15 @@ module.exports = function() {
             var trim = null;
 
             if (frame.rotated) {
-              size = new math.Rectangle(rect.x, rect.y, rect.h, rect.w);
+              size = new Rectangle(rect.x, rect.y, rect.h, rect.w);
             }
             else {
-              size = new math.Rectangle(rect.x, rect.y, rect.w, rect.h);
+              size = new Rectangle(rect.x, rect.y, rect.w, rect.h);
             }
 
             //  Check to see if the sprite is trimmed
             if (frame.trimmed) {
-              trim = new math.Rectangle(
+              trim = new Rectangle(
                 frame.spriteSourceSize.x / resolution,
                 frame.spriteSourceSize.y / resolution,
                 frame.sourceSize.w / resolution,
@@ -75,7 +74,7 @@ module.exports = function() {
             resource.textures[frameKeys[frameIndex]] = new Texture(res.texture.baseTexture, size, size.clone(), trim, frame.rotated);
 
             // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
-            utils.TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
+            TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
           }
           frameIndex++;
         }

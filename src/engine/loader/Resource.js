@@ -1,5 +1,5 @@
-const parseUri = require('./parse-uri');
-const Signal = require('engine/MiniSignals');
+import parseUri from './parse-uri';
+import Signal from 'engine/MiniSignals';
 
 // tests is CORS is supported in XHR, if not we need to use XDR
 const useXdr = !!(window.XDomainRequest && !('withCredentials' in (new XMLHttpRequest())));
@@ -21,7 +21,7 @@ function _noop() { /* empty */ }
  *
  * @class
  */
-class Resource {
+export default class Resource {
     /**
      * Sets the load type to be used for a specific extension.
      *
@@ -891,8 +891,6 @@ class Resource {
     }
   }
 }
-
-module.exports = Resource;
 
 /**
  * The types of resources a resource could represent.

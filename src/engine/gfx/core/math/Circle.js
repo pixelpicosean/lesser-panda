@@ -1,12 +1,12 @@
-const Rectangle = require('./Rectangle');
-const CONST = require('../../../const');
+import Rectangle from './Rectangle';
+import { SHAPES } from '../../const';
 
 /**
  * The Circle object can be used to specify a hit area for displayObjects
  *
  * @class
  */
-class Circle {
+export default class Circle {
   /**
    * @constructor
    * @param {number} x      The X coordinate of the center of this circle
@@ -37,7 +37,7 @@ class Circle {
      *
      * @member {number}
      */
-    this.type = CONST.SHAPES.CIRC;
+    this.type = SHAPES.CIRC;
   }
 
   /**
@@ -80,5 +80,3 @@ class Circle {
     return new Rectangle(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
   }
 }
-
-module.exports = Circle;

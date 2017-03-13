@@ -1,9 +1,9 @@
-const BaseTexture = require('./BaseTexture');
-const VideoBaseTexture = require('./VideoBaseTexture');
-const TextureUvs = require('./TextureUvs');
-const EventEmitter = require('engine/EventEmitter');
-const math = require('../math');
-const utils = require('../utils');
+import BaseTexture from './BaseTexture';
+import VideoBaseTexture from './VideoBaseTexture';
+import TextureUvs from './TextureUvs';
+import EventEmitter from 'engine/EventEmitter';
+import Rectangle from '../math/Rectangle';
+import { uid, TextureCache, BaseTextureCache } from '../utils';
 
 /**
  * A texture stores the information that represents an image or part of an image. It cannot be added
@@ -19,7 +19,7 @@ const utils = require('../utils');
  *
  * @class
  */
-class Texture extends EventEmitter {
+export default class Texture extends EventEmitter {
   /**
    * @constructor
    * @param baseTexture {BaseTexture} The base texture source to create the texture from
@@ -31,7 +31,7 @@ class Texture extends EventEmitter {
   constructor(baseTexture, frame, crop, trim, rotate) {
     super();
 
-    this.uid = utils.uid();
+    this.uid = uid();
 
     /**
      * Does this Texture have any frame data assigned to it?
@@ -42,7 +42,7 @@ class Texture extends EventEmitter {
 
     if (!frame) {
       this.noFrame = true;
-      frame = new math.Rectangle(0, 0, 1, 1);
+      frame = new Rectangle(0, 0, 1, 1);
     }
 
     if (baseTexture instanceof Texture) {
@@ -113,7 +113,7 @@ class Texture extends EventEmitter {
      *
      * @member {Rectangle}
      */
-    this.crop = crop || frame;// new math.Rectangle(0, 0, 1, 1);
+    this.crop = crop || frame;// new Rectangle(0, 0, 1, 1);
 
     this._rotate = +(rotate || 0);
 
@@ -129,7 +129,7 @@ class Texture extends EventEmitter {
 
     if (baseTexture.hasLoaded) {
       if (this.noFrame) {
-        frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+        frame = new Rectangle(0, 0, baseTexture.width, baseTexture.height);
 
             // if there is no frame we should monitor for any base texture changes..
         baseTexture.on('update', this.onBaseTextureUpdated, this);
@@ -165,7 +165,7 @@ class Texture extends EventEmitter {
   onBaseTextureLoaded(baseTexture) {
       // TODO this code looks confusing.. boo to abusing getters and setterss!
     if (this.noFrame) {
-      this.frame = new math.Rectangle(0, 0, baseTexture.width, baseTexture.height);
+      this.frame = new Rectangle(0, 0, baseTexture.width, baseTexture.height);
     }
     else {
       this.frame = this._frame;
@@ -314,11 +314,11 @@ Object.defineProperties(Texture.prototype, {
  * @return {Texture} The newly created texture
  */
 Texture.fromImage = function(imageUrl, crossorigin, scaleMode) {
-  var texture = utils.TextureCache[imageUrl];
+  var texture = TextureCache[imageUrl];
 
   if (!texture) {
     texture = new Texture(BaseTexture.fromImage(imageUrl, crossorigin, scaleMode));
-    utils.TextureCache[imageUrl] = texture;
+    TextureCache[imageUrl] = texture;
   }
 
   return texture;
@@ -335,7 +335,7 @@ Texture.fromImage = function(imageUrl, crossorigin, scaleMode) {
  * @return {Texture} The newly created texture
  */
 Texture.fromFrame = function(frameId) {
-  var texture = utils.TextureCache[frameId];
+  var texture = TextureCache[frameId];
 
   if (!texture) {
     throw new Error('The frameId "' + frameId + '" does not exist in the texture cache');
@@ -401,7 +401,7 @@ Texture.fromVideoUrl = function(videoUrl, scaleMode) {
  * @param id {string} The id that the texture will be stored against.
  */
 Texture.addTextureToCache = function(texture, id) {
-  utils.TextureCache[id] = texture;
+  TextureCache[id] = texture;
 };
 
 /**
@@ -414,10 +414,10 @@ Texture.addTextureToCache = function(texture, id) {
  * @return {Texture} The texture that was removed
  */
 Texture.removeTextureFromCache = function(id) {
-  var texture = utils.TextureCache[id];
+  var texture = TextureCache[id];
 
-  delete utils.TextureCache[id];
-  delete utils.BaseTextureCache[id];
+  delete TextureCache[id];
+  delete BaseTextureCache[id];
 
   return texture;
 };
@@ -429,5 +429,3 @@ Texture.removeTextureFromCache = function(id) {
  * @constant
  */
 Texture.EMPTY = new Texture(new BaseTexture());
-
-module.exports = Texture;

@@ -4,7 +4,7 @@
  * @class
  * @param gl {WebGLRenderingContext} The gl context for this quad to use.
  */
-function Quad(gl) {
+export default function Quad(gl) {
   /*
    * the current WebGL drawing context
    *
@@ -14,11 +14,11 @@ function Quad(gl) {
 
 //    this.textures = new TextureUvs();
 
-    /**
-     * An array of vertices
-     *
-     * @member {Float32Array}
-     */
+  /**
+   * An array of vertices
+   *
+   * @member {Float32Array}
+   */
   this.vertices = new Float32Array([
     0,0,
     200,0,
@@ -26,11 +26,11 @@ function Quad(gl) {
     0,200,
   ]);
 
-    /**
-     * The Uvs of the quad
-     *
-     * @member {Float32Array}
-     */
+  /**
+   * The Uvs of the quad
+   *
+   * @member {Float32Array}
+   */
   this.uvs = new Float32Array([
     0,0,
     1,0,
@@ -39,12 +39,12 @@ function Quad(gl) {
   ]);
 
 //    var white = (0xFFFFFF >> 16) + (0xFFFFFF & 0xff00) + ((0xFFFFFF & 0xff) << 16) + (1 * 255 << 24);
-    // TODO convert this to a 32 unsigned int array
-    /**
-     * The color components of the triangles
-     *
-     * @member {Float32Array}
-     */
+  // TODO convert this to a 32 unsigned int array
+  /**
+   * The color components of the triangles
+   *
+   * @member {Float32Array}
+   */
   this.colors = new Float32Array([
     1,1,1,1,
     1,1,1,1,
@@ -52,21 +52,21 @@ function Quad(gl) {
     1,1,1,1,
   ]);
 
-    /*
-     * @member {Uint16Array} An array containing the indices of the vertices
-     */
+  /*
+   * @member {Uint16Array} An array containing the indices of the vertices
+   */
   this.indices = new Uint16Array([
     0, 1, 2, 0, 3, 2,
   ]);
 
-    /*
-     * @member {WebGLBuffer} The vertex buffer
-     */
+  /*
+   * @member {WebGLBuffer} The vertex buffer
+   */
   this.vertexBuffer = gl.createBuffer();
 
-    /*
-     * @member {WebGLBuffer} The index buffer
-     */
+  /*
+   * @member {WebGLBuffer} The index buffer
+   */
   this.indexBuffer = gl.createBuffer();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -142,7 +142,3 @@ Quad.prototype.destroy = function() {
   gl.deleteBuffer(this.vertexBuffer);
   gl.deleteBuffer(this.indexBuffer);
 };
-
-module.exports = Quad;
-
-

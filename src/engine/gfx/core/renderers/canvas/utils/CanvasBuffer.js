@@ -5,7 +5,7 @@
  * @param width {number} the width for the newly created canvas
  * @param height {number} the height for the newly created canvas
  */
-class CanvasBuffer {
+export default class CanvasBuffer {
   constructor(width, height) {
     /**
      * The Canvas object that belongs to this CanvasBuffer.
@@ -86,5 +86,3 @@ Object.defineProperties(CanvasBuffer.prototype, {
     },
   },
 });
-
-module.exports = CanvasBuffer;

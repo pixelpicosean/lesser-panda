@@ -1,5 +1,5 @@
-const Vector = require('engine/Vector');
-const { Box, Circle } = require('./shapes');
+import Vector from 'engine/Vector';
+import { Box, Circle } from './shapes';
 
 /**
  * Collider is the core element of physics module.
@@ -329,6 +329,6 @@ class Collider {
 
 Collider.nextId = 0;
 
-module.exports = function(settings) {
+export default function(settings) {
   return new Collider(settings);
 };

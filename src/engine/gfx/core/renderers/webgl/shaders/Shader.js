@@ -1,5 +1,5 @@
 /* global console */
-var utils = require('../../../utils');
+import { uid, hex2rgb } from '../../../utils';
 
 /**
  * Base shader class for PIXI managed shaders.
@@ -11,76 +11,75 @@ var utils = require('../../../utils');
  * @param [uniforms] {object} Uniforms for this shader.
  * @param [attributes] {object} Attributes for this shader.
  */
-function Shader(shaderManager, vertexSrc, fragmentSrc, uniforms, attributes) {
+export default function Shader(shaderManager, vertexSrc, fragmentSrc, uniforms, attributes) {
   if (!vertexSrc || !fragmentSrc) {
     throw new Error('Pixi.js Error. Shader requires vertexSrc and fragmentSrc');
   }
 
-    /**
-     * A unique id
-     * @member {number}
-     * @readonly
-     */
-  this.uid = utils.uid();
+  /**
+   * A unique id
+   * @member {number}
+   * @readonly
+   */
+  this.uid = uid();
 
-    /**
-     * The current WebGL drawing context
-     * @member {WebGLRenderingContext}
-     * @readonly
-     */
+  /**
+   * The current WebGL drawing context
+   * @member {WebGLRenderingContext}
+   * @readonly
+   */
   this.gl = shaderManager.renderer.gl;
 
-    // TODO maybe we should pass renderer rather than shader manger?? food for thought..
+  // TODO maybe we should pass renderer rather than shader manger?? food for thought..
   this.shaderManager = shaderManager;
 
-    /**
-     * The WebGL program.
-     *
-     * @member {WebGLProgram}
-     * @readonly
-     */
+  /**
+   * The WebGL program.
+   *
+   * @member {WebGLProgram}
+   * @readonly
+   */
   this.program = null;
 
-    /**
-     * The uniforms as an object
-     * @member {object}
-     * @private
-     */
+  /**
+   * The uniforms as an object
+   * @member {object}
+   * @private
+   */
   this.uniforms = uniforms || {};
 
-    /**
-     * The attributes as an object
-     * @member {object}
-     * @private
-     */
+  /**
+   * The attributes as an object
+   * @member {object}
+   * @private
+   */
   this.attributes = attributes || {};
 
-    /**
-     * Internal texture counter
-     * @member {number}
-     * @private
-     */
+  /**
+   * Internal texture counter
+   * @member {number}
+   * @private
+   */
   this.textureCount = 1;
 
-    /**
-     * The vertex shader as an array of strings
-     *
-     * @member {string}
-     */
+  /**
+   * The vertex shader as an array of strings
+   *
+   * @member {string}
+   */
   this.vertexSrc = vertexSrc;
 
-    /**
-     * The fragment shader as an array of strings
-     *
-     * @member {string}
-     */
+  /**
+   * The fragment shader as an array of strings
+   *
+   * @member {string}
+   */
   this.fragmentSrc = fragmentSrc;
 
   this.init();
 }
 
 Shader.prototype.constructor = Shader;
-module.exports = Shader;
 
 /**
  * Creates the shader and uses it
@@ -116,19 +115,19 @@ Shader.prototype.cacheAttributeLocations = function(keys) {
     this.attributes[keys[i]] = this.gl.getAttribLocation(this.program, keys[i]);
   }
 
-    // TODO: Check if this is needed anymore...
+  // TODO: Check if this is needed anymore...
 
-    // Begin worst hack eva //
+  // Begin worst hack eva //
 
-    // WHY??? ONLY on my chrome pixel the line above returns -1 when using filters?
-    // maybe its something to do with the current state of the gl context.
-    // I'm convinced this is a bug in the chrome browser as there is NO reason why this should be returning -1 especially as it only manifests on my chrome pixel
-    // If theres any webGL people that know why could happen please help :)
-    // if (this.attributes.aColor === -1){
-    //     this.attributes.aColor = 2;
-    // }
+  // WHY??? ONLY on my chrome pixel the line above returns -1 when using filters?
+  // maybe its something to do with the current state of the gl context.
+  // I'm convinced this is a bug in the chrome browser as there is NO reason why this should be returning -1 especially as it only manifests on my chrome pixel
+  // If theres any webGL people that know why could happen please help :)
+  // if (this.attributes.aColor === -1){
+  //     this.attributes.aColor = 2;
+  // }
 
-    // End worst hack eva //
+  // End worst hack eva //
 };
 
 /**
@@ -148,13 +147,13 @@ Shader.prototype.compile = function() {
   gl.attachShader(program, glFragShader);
   gl.linkProgram(program);
 
-    // if linking fails, then log and cleanup
+  // if linking fails, then log and cleanup
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.error('Pixi.js Error: Could not initialize shader.');
     console.error('gl.VALIDATE_STATUS', gl.getProgramParameter(program, gl.VALIDATE_STATUS));
     console.error('gl.getError()', gl.getError());
 
-        // if there is a program info log, log it
+    // if there is a program info log, log it
     if (gl.getProgramInfoLog(program) !== '') {
       console.warn('Pixi.js Warning: gl.getProgramInfoLog()', gl.getProgramInfoLog(program));
     }
@@ -331,7 +330,7 @@ Shader.prototype.syncUniform = function(uniform) {
   // a Color Value
     case 'c':
       if (typeof value === 'number') {
-        value = utils.hex2rgb(value);
+        value = hex2rgb(value);
       }
 
       gl.uniform3f(location, value[0], value[1], value[2]);

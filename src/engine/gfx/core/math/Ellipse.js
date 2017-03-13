@@ -1,12 +1,12 @@
-var Rectangle = require('./Rectangle'),
-  CONST = require('../../../const');
+import Rectangle from './Rectangle';
+import { SHAPES } from '../../const';
 
 /**
  * The Ellipse object can be used to specify a hit area for displayObjects
  *
  * @class
  */
-class Ellipse {
+export default class Ellipse {
   /**
    * @constructor
    * @param {number} x      The X coordinate of the center of the ellipse
@@ -44,7 +44,7 @@ class Ellipse {
      *
      * @member {number}
      */
-    this.type = CONST.SHAPES.ELIP;
+    this.type = SHAPES.ELIP;
   }
 
   /**
@@ -87,5 +87,3 @@ class Ellipse {
     return new Rectangle(this.x - this.width, this.y - this.height, this.width, this.height);
   }
 }
-
-module.exports = Ellipse;

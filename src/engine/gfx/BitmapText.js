@@ -1,6 +1,6 @@
-const BitmapText = require('./core/text/BitmapText');
-const CONST = require('./const');
-require('./core/sprites/webgl/SpriteRenderer');
+import BitmapText from './core/text/BitmapText';
+import { BLEND_MODES } from './const';
+import './core/sprites/webgl/SpriteRenderer';
 
 /**
  * Factory function for `BitmapText`.
@@ -8,7 +8,7 @@ require('./core/sprites/webgl/SpriteRenderer');
  * @param {object} data   Data to create the instance from
  * @return {BitmapText}   BitmapText instance
  */
-module.exports = function(data) {
+export default function(data) {
   const inst = new BitmapText(data.text, data);
 
   for (let k in data) {
@@ -53,7 +53,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }

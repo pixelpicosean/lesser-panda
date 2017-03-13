@@ -5,7 +5,7 @@
  * @license     {@link https://github.com/pixijs/pixi.js/blob/master/LICENSE|MIT License}
  */
 
-module.exports = {
+export default {
   AsciiFilter: require('./ascii/AsciiFilter'),
   BloomFilter: require('./bloom/BloomFilter'),
   BlurFilter: require('./blur/BlurFilter'),

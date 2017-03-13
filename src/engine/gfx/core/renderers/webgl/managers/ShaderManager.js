@@ -1,51 +1,51 @@
-var WebGLManager = require('./WebGLManager'),
-  TextureShader = require('../shaders/TextureShader'),
-  ComplexPrimitiveShader = require('../shaders/ComplexPrimitiveShader'),
-  PrimitiveShader = require('../shaders/PrimitiveShader'),
-  utils = require('../../../utils');
+import WebGLManager from './WebGLManager';
+import TextureShader from '../shaders/TextureShader';
+import ComplexPrimitiveShader from '../shaders/ComplexPrimitiveShader';
+import PrimitiveShader from '../shaders/PrimitiveShader';
+import { mixin } from '../../../utils/pluginTarget';
 
 /**
  * @class
  * @extends WebGLManager
  * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
-function ShaderManager(renderer) {
+export default function ShaderManager(renderer) {
   WebGLManager.call(this, renderer);
 
-    /**
-     * @member {number}
-     */
+  /**
+   * @member {number}
+   */
   this.maxAttibs = 10;
 
-    /**
-     * @member {any[]}
-     */
+  /**
+   * @member {any[]}
+   */
   this.attribState = [];
 
-    /**
-     * @member {any[]}
-     */
+  /**
+   * @member {any[]}
+   */
   this.tempAttribState = [];
 
   for (var i = 0; i < this.maxAttibs; i++) {
     this.attribState[i] = false;
   }
 
-    /**
-     * @member {any[]}
-     */
+  /**
+   * @member {any[]}
+   */
   this.stack = [];
 
-    /**
-     * @member {number}
-     * @private
-     */
+  /**
+   * @member {number}
+   * @private
+   */
   this._currentId = -1;
 
-    /**
-     * @member {Shader}
-     * @private
-     */
+  /**
+   * @member {Shader}
+   * @private
+   */
   this.currentShader = null;
 
 //    this.initPlugins();
@@ -53,9 +53,7 @@ function ShaderManager(renderer) {
 
 ShaderManager.prototype = Object.create(WebGLManager.prototype);
 ShaderManager.prototype.constructor = ShaderManager;
-utils.pluginTarget.mixin(ShaderManager);
-
-module.exports = ShaderManager;
+mixin(ShaderManager);
 
 /**
  * Called when there is a WebGL context change.
@@ -66,7 +64,7 @@ ShaderManager.prototype.onContextChange = function() {
 
   var gl = this.renderer.gl;
 
-    // get the maximum number of attribute correctly as this tends to vary
+  // get the maximum number of attribute correctly as this tends to vary
   this.maxAttibs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
 
   this.attribState = [];
@@ -75,7 +73,7 @@ ShaderManager.prototype.onContextChange = function() {
     this.attribState[i] = false;
   }
 
-    // TODO - Why are these not plugins? We can't decouple primitives unless they are....
+  // TODO - Why are these not plugins? We can't decouple primitives unless they are....
   this.defaultShader = new TextureShader(this);
   this.primitiveShader = new PrimitiveShader(this);
   this.complexPrimitiveShader = new ComplexPrimitiveShader(this);
@@ -87,14 +85,14 @@ ShaderManager.prototype.onContextChange = function() {
  * @param attribs {any[]} attribs
  */
 ShaderManager.prototype.setAttribs = function(attribs) {
-    // reset temp state
+  // reset temp state
   var i;
 
   for (i = 0; i < this.tempAttribState.length; i++) {
     this.tempAttribState[i] = false;
   }
 
-    // set the new attribs
+  // set the new attribs
   for (var a in attribs) {
     this.tempAttribState[attribs[a]] = true;
   }

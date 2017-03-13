@@ -1,10 +1,10 @@
-const { BOX, CIRC } = require('./const');
+import { BOX, CIRC } from './const';
 
 /**
  * Box shape for physic body.
  * @class Box
  */
-class Box {
+export class Box {
   /**
    * @constructor
    * @param {number} [width]  Width of this box
@@ -38,7 +38,7 @@ class Box {
  *
  * @class Circle
  */
-class Circle {
+export class Circle {
   /**
    * @constructor
    * @param {number} [radius]   Radius of this circle
@@ -77,8 +77,3 @@ class Circle {
     return this.radius * 2;
   }
 }
-
-module.exports = {
-  Box,
-  Circle,
-};

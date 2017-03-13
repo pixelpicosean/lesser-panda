@@ -1,4 +1,4 @@
-var Shader = require('./Shader');
+import Shader from './Shader';
 
 /**
  * @class
@@ -9,13 +9,14 @@ var Shader = require('./Shader');
  * @param [customUniforms] {object} Custom uniforms to use to augment the built-in ones.
  * @param [fragmentSrc] {string} The source of the fragment shader.
  */
-function TextureShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
+export default function TextureShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, customAttributes) {
   var uniforms = {
-
     uSampler: { type: 'sampler2D', value: 0 },
-    projectionMatrix: { type: 'mat3', value: new Float32Array([1, 0, 0,
+    projectionMatrix: { type: 'mat3', value: new Float32Array([
+      1, 0, 0,
       0, 1, 0,
-      0, 0, 1]) },
+      0, 0, 1,
+    ]) },
   };
 
   if (customUniforms) {
@@ -37,18 +38,18 @@ function TextureShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, cu
     }
   }
 
-    /**
-     * The vertex shader.
-     *
-     * @member {string}
-     */
+  /**
+   * The vertex shader.
+   *
+   * @member {string}
+   */
   vertexSrc = vertexSrc || TextureShader.defaultVertexSrc;
 
-    /**
-     * The fragment shader.
-     *
-     * @member {string}
-     */
+  /**
+   * The fragment shader.
+   *
+   * @member {string}
+   */
   fragmentSrc = fragmentSrc || TextureShader.defaultFragmentSrc;
 
   Shader.call(this, shaderManager, vertexSrc, fragmentSrc, uniforms, attributes);
@@ -57,7 +58,6 @@ function TextureShader(shaderManager, vertexSrc, fragmentSrc, customUniforms, cu
 // constructor
 TextureShader.prototype = Object.create(Shader.prototype);
 TextureShader.prototype.constructor = TextureShader;
-module.exports = TextureShader;
 
 /**
  * The default vertex shader source
@@ -77,9 +77,9 @@ TextureShader.defaultVertexSrc = [
   'varying vec4 vColor;',
 
   'void main(void){',
-  '   gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
-  '   vTextureCoord = aTextureCoord;',
-  '   vColor = vec4(aColor.rgb * aColor.a, aColor.a);',
+  '  gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);',
+  '  vTextureCoord = aTextureCoord;',
+  '  vColor = vec4(aColor.rgb * aColor.a, aColor.a);',
   '}',
 ].join('\n');
 
@@ -98,6 +98,6 @@ TextureShader.defaultFragmentSrc = [
   'uniform sampler2D uSampler;',
 
   'void main(void){',
-  '   gl_FragColor = texture2D(uSampler, vTextureCoord) * vColor ;',
+  '  gl_FragColor = texture2D(uSampler, vTextureCoord) * vColor ;',
   '}',
 ].join('\n');

@@ -1,5 +1,5 @@
-const Node = require('./core/Node');
-const CONST = require('./const');
+import Node from './core/Node';
+import { BLEND_MODES } from './const';
 
 /**
  * Factory function for `Node`.
@@ -7,7 +7,7 @@ const CONST = require('./const');
  * @param {object} data   Data to create the instance from
  * @return {Node}         Node instance
  */
-module.exports = function(data) {
+export default function(data) {
   const inst = new Node();
 
   for (let k in data) {
@@ -42,7 +42,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }

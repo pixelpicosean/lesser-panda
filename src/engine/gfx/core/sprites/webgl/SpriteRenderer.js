@@ -1,6 +1,6 @@
-const ObjectRenderer = require('../../renderers/webgl/utils/ObjectRenderer');
-const WebGLRenderer = require('../../renderers/webgl/WebGLRenderer');
-const CONST = require('../../../const');
+import ObjectRenderer from '../../renderers/webgl/utils/ObjectRenderer';
+import WebGLRenderer from '../../renderers/webgl/WebGLRenderer';
+import { SPRITE_BATCH_SIZE } from '../../../const';
 
 /**
  * @author Mat Groves
@@ -21,7 +21,7 @@ const CONST = require('../../../const');
  * @extends ObjectRenderer
  * @param renderer {WebGLRenderer} The renderer this sprite batch works for.
  */
-class SpriteRenderer extends ObjectRenderer {
+export default class SpriteRenderer extends ObjectRenderer {
   constructor(renderer) {
     super(renderer);
 
@@ -45,7 +45,7 @@ class SpriteRenderer extends ObjectRenderer {
      *
      * @member {number}
      */
-    this.size = CONST.SPRITE_BATCH_SIZE; // 2000 is a nice balance between mobile / desktop
+    this.size = SPRITE_BATCH_SIZE; // 2000 is a nice balance between mobile / desktop
 
     // the total number of bytes in our batch
     let numVerts = (this.size * 4) * this.vertByteSize;
@@ -441,5 +441,3 @@ class SpriteRenderer extends ObjectRenderer {
 }
 
 WebGLRenderer.registerPlugin('sprite', SpriteRenderer);
-
-module.exports = SpriteRenderer;

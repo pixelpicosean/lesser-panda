@@ -1,6 +1,6 @@
-const Vector = require('engine/Vector');
-const { clamp } = require('engine/utils/math');
-const { TOP, BOTTOM, LEFT, RIGHT, BOX, CIRC } = require('./const');
+import Vector from 'engine/Vector';
+import { clamp } from 'engine/utils/math';
+import { TOP, BOTTOM, LEFT, RIGHT, BOX, CIRC } from './const';
 
 const Radian2Degree = 180 / Math.PI;
 
@@ -10,7 +10,7 @@ const Radian2Degree = 180 / Math.PI;
  *
  * @class AABBSolver
  */
-class AABBSolver {
+export default class AABBSolver {
   /**
    * @constructor
    */
@@ -172,8 +172,8 @@ class AABBSolver {
         overlapY = (a.position.y < b.position.y) ? (a.bottom - b.top) : (a.top - b.bottom);
 
         if (Math.abs(overlapX) > Math.abs(overlapY)) {
-          pushA = (a2b && a.collide(b, overlapY> 0 ? BOTTOM : TOP));
-          pushB = (b2a && b.collide(a, overlapY> 0 ? TOP : BOTTOM));
+          pushA = (a2b && a.collide(b, overlapY > 0 ? BOTTOM : TOP));
+          pushB = (b2a && b.collide(a, overlapY > 0 ? TOP : BOTTOM));
 
           if (pushA && pushB) {
             overlapY /= 2;
@@ -189,20 +189,20 @@ class AABBSolver {
           }
         }
         else {
-          pushA = (a2b && a.collide(b, overlapX> 0 ? RIGHT : LEFT));
-          pushB = (b2a && b.collide(a, overlapX> 0 ? LEFT : RIGHT));
+          pushA = (a2b && a.collide(b, overlapX > 0 ? RIGHT : LEFT));
+          pushB = (b2a && b.collide(a, overlapX > 0 ? LEFT : RIGHT));
 
           if (pushA && pushB) {
-            overlapY /= 2;
+            overlapX /= 2;
 
-            resA.y = -overlapY;
-            resB.y = +overlapY;
+            resA.x = -overlapX;
+            resB.x = +overlapX;
           }
           else if (pushA) {
-            resA.y = -overlapY;
+            resA.x = -overlapX;
           }
           else if (pushB) {
-            resB.y = +overlapY;
+            resB.x = +overlapX;
           }
         }
       }
@@ -378,11 +378,3 @@ class AABBSolver {
     b.position.y += resB.y;
   }
 }
-
-/**
- * AABBSolver factory
- * @return {AABBSolver} solver instance.
- */
-module.exports = function() {
-  return new AABBSolver();
-};

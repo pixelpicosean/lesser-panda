@@ -1,10 +1,10 @@
-require('engine/polyfill');
+import 'engine/polyfill';
 
-const EventEmitter = require('engine/EventEmitter');
-const Vector = require('engine/Vector');
-const resize = require('engine/resize');
-const device = require('engine/device');
-const config = require('game/config');
+import EventEmitter from 'engine/EventEmitter';
+import Vector from 'engine/Vector';
+import { innerBoxResize, outerBoxResize } from 'engine/resize';
+import device from 'engine/device';
+import config from 'game/config';
 
 /**
  * @type {EventEmitter}
@@ -20,7 +20,7 @@ Object.assign(core, {
    * @memberof module:engine/core
    * @type {string}
    */
-  version: 'v1.3.1',
+  version: 'v1.3.2',
 
   /**
    * Set to `false` to disable version info console output.
@@ -581,7 +581,7 @@ function _letterBoxResize() {
   windowSize.y = window.innerHeight;
 
   // Use inner box scaling function to calculate correct size
-  result = resize.outerBoxResize(windowSize, core.viewSize);
+  result = outerBoxResize(windowSize, core.viewSize);
 
   scaledWidth = Math.floor(core.viewSize.x * result.scale);
   scaledHeight = Math.floor(core.viewSize.y * result.scale);
@@ -633,7 +633,7 @@ function _scaleInnerResize() {
   // Resize container of current game
   if (core.game) {
     container = core.game.stage;
-    result = resize.innerBoxResize(core.viewSize, core.size);
+    result = innerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
   }
@@ -658,7 +658,7 @@ function _scaleOuterResize() {
   // Resize container of current game
   if (core.game) {
     container = core.game.stage;
-    result = resize.outerBoxResize(core.viewSize, core.size);
+    result = outerBoxResize(core.viewSize, core.size);
     container.scale.set(result.scale);
     container.position.set(result.left, result.top);
   }
@@ -704,4 +704,4 @@ function _noPageScroll() {
  * @requires module:engine/resize
  * @requires module:engine/device
  */
-module.exports = core;
+export default core;

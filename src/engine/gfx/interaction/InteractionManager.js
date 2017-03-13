@@ -1,9 +1,9 @@
-const core = require('engine/core');
-const Node = require('../core/Node');
-const InteractionData = require('./InteractionData');
-const Vector = require('engine/Vector');
-const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
-const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
+import core from 'engine/core';
+import Node from '../core/Node';
+import InteractionData from './InteractionData';
+import Vector from 'engine/Vector';
+import WebGLRenderer from '../core/renderers/webgl/WebGLRenderer';
+import CanvasRenderer from '../core/renderers/canvas/CanvasRenderer';
 
 // Mix interactiveTarget into Node.prototype
 Object.assign(
@@ -23,7 +23,7 @@ Object.assign(
  * @param [options.autoPreventDefault=true] {boolean} Should the manager automatically prevent default browser actions.
  * @param [options.interactionFrequency=10] {number} Frequency increases the interaction events will be checked.
  */
-function InteractionManager(renderer, options = {}) {
+export default function InteractionManager(renderer, options = {}) {
     /**
      * The renderer this interaction manager works for.
      *
@@ -176,7 +176,6 @@ function InteractionManager(renderer, options = {}) {
 }
 
 InteractionManager.prototype.constructor = InteractionManager;
-module.exports = InteractionManager;
 
 /**
  * Sets the DOM element which will receive mouse/touch events. This is useful for when you have

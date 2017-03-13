@@ -1,7 +1,7 @@
-var utils = require('../utils'),
-  math = require('../math'),
-  CONST = require('../../const'),
-  EventEmitter = require('engine/EventEmitter');
+import { sayHello, hex2string, hex2rgb } from '../utils';
+import Matrix from '../math/Matrix';
+import { DEFAULT_RENDER_OPTIONS, RENDERER_TYPE } from '../../const';
+import EventEmitter from 'engine/EventEmitter';
 
 /**
  * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.
@@ -22,22 +22,22 @@ var utils = require('../utils'),
  * @param [options.backgroundColor=0x000000] {number} The background color of the rendered area (shown if not transparent).
  * @param [options.roundPixels=false] {boolean} If true Pixi will Math.floor() x/y values when rendering, stopping pixel interpolation.
  */
-class SystemRenderer extends EventEmitter {
+export default class SystemRenderer extends EventEmitter {
   constructor(system, width, height, options) {
     super();
 
-    utils.sayHello(system);
+    sayHello(system);
 
     // prepare options
     if (options) {
-      for (var i in CONST.DEFAULT_RENDER_OPTIONS) {
+      for (var i in DEFAULT_RENDER_OPTIONS) {
         if (typeof options[i] === 'undefined') {
-          options[i] = CONST.DEFAULT_RENDER_OPTIONS[i];
+          options[i] = DEFAULT_RENDER_OPTIONS[i];
         }
       }
     }
     else {
-      options = CONST.DEFAULT_RENDER_OPTIONS;
+      options = DEFAULT_RENDER_OPTIONS;
     }
 
     /**
@@ -47,7 +47,7 @@ class SystemRenderer extends EventEmitter {
      * @default RENDERER_TYPE.UNKNOWN
      * @see RENDERER_TYPE
      */
-    this.type = CONST.RENDERER_TYPE.UNKNOWN;
+    this.type = RENDERER_TYPE.UNKNOWN;
 
     /**
      * The width of the canvas view
@@ -159,7 +159,7 @@ class SystemRenderer extends EventEmitter {
      * @member {DisplayObject}
      * @private
      */
-    this._tempDisplayObjectParent = { worldTransform:new math.Matrix(), worldAlpha:1, children:[] };
+    this._tempDisplayObjectParent = { worldTransform:new Matrix(), worldAlpha:1, children:[] };
 
     /**
      * The last root object that the renderer tried to render.
@@ -185,8 +185,8 @@ Object.defineProperties(SystemRenderer.prototype, {
     },
     set: function(val) {
       this._backgroundColor = val;
-      this._backgroundColorString = utils.hex2string(val);
-      utils.hex2rgb(val, this._backgroundColorRgb);
+      this._backgroundColorString = hex2string(val);
+      hex2rgb(val, this._backgroundColorRgb);
     },
   },
 });
@@ -220,7 +220,7 @@ SystemRenderer.prototype.destroy = function(removeView) {
     this.view.parentNode.removeChild(this.view);
   }
 
-  this.type = CONST.RENDERER_TYPE.UNKNOWN;
+  this.type = RENDERER_TYPE.UNKNOWN;
 
   this.width = 0;
   this.height = 0;
@@ -244,5 +244,3 @@ SystemRenderer.prototype.destroy = function(removeView) {
   this._backgroundColorRgb = null;
   this._backgroundColorString = null;
 };
-
-module.exports = SystemRenderer;

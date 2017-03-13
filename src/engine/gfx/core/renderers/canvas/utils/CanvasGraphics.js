@@ -314,4 +314,4 @@ CanvasGraphics.updateGraphicsTint = function(graphics) {
   }
 };
 
-module.exports = CanvasGraphics;
+export default CanvasGraphics;

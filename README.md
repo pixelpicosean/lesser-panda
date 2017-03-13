@@ -53,7 +53,7 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 - `resize` provides some resize helper functions.
 - `rnd` is a random number generator.
 - `Game` is the main hub for your game.
-- `Timer` provides timers with callbacks. Use `Timer.later` or `Timer.interval` to create instances.
+- `timer` provides timers with callbacks. Use `game.timer.later` or `game.timer.interval` to create instances.
 - `utils` provides utility functions and constants for array, color, math, object.
 - `Vector` is the 2D vector class, with tons of useful methods
 - `Behavior` interface for behaviors of `Entity`
@@ -65,6 +65,15 @@ There's a [Trello board](https://trello.com/b/6nzCTotX/lesserpanda), from which 
 Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
+
+### 1.3.2
+
+- Remove `System` prefix from all the system classes
+- Rename `Timer` to `Clock` and `SystemTimer` to `Timer`
+- Remove `engine/gfx/core/math` module
+- Switch to ES6 module
+- Fix AABBSolver separating issue
+- Fix angles of collision response directions
 
 ### 1.3.1
 

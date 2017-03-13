@@ -1,13 +1,14 @@
-const math = require('./math');
-const { removeItems } = require('./utils');
-const EventEmitter = require('engine/EventEmitter');
-const RenderTexture = require('./textures/RenderTexture');
-const CONST = require('../const');
-const Vector = require('engine/Vector');
+import Rectangle from './math/Rectangle';
+import Matrix from './math/Matrix';
+import Vector from 'engine/Vector';
+import { removeItems } from './utils';
+import EventEmitter from 'engine/EventEmitter';
+import RenderTexture from './textures/RenderTexture';
+import { PI_2 } from '../const';
 
-const _tempMatrix = new math.Matrix();
+const _tempMatrix = new Matrix();
 const _tempDisplayObjectParent = {
-  worldTransform: new math.Matrix(),
+  worldTransform: new Matrix(),
   worldAlpha: 1,
   children: [],
 };
@@ -25,7 +26,7 @@ const EMPTY_ARRAY = [];
  * @class
  * @extends EventEmitter
  */
-class Node extends EventEmitter {
+export default class Node extends EventEmitter {
   get key() {
     return 'gfx';
   }
@@ -130,7 +131,7 @@ class Node extends EventEmitter {
      * @type {Matrix}
      * @readonly
      */
-    this.worldTransform = new math.Matrix();
+    this.worldTransform = new Matrix();
 
     /**
      * The area the filter is applied to. This is used as more of an optimisation
@@ -162,7 +163,7 @@ class Node extends EventEmitter {
      * @type {Rectangle}
      * @private
      */
-    this._bounds = new math.Rectangle(0, 0, 1, 1);
+    this._bounds = new Rectangle(0, 0, 1, 1);
 
     /**
      * The most up-to-date bounds of the node
@@ -544,7 +545,7 @@ class Node extends EventEmitter {
     }
     else {
       // so if rotation is between 0 then we can simplify the multiplication process...
-      if (this.rotation % CONST.PI_2) {
+      if (this.rotation % PI_2) {
         // check to see if the rotation is the same as the previous render. This means we only need to use sin and cos when rotation actually changes
         if (this.rotation !== this.rotationCache) {
           this.rotationCache = this.rotation;
@@ -634,7 +635,7 @@ class Node extends EventEmitter {
     if (!this._currentBounds) {
 
       if (this.children.length === 0) {
-        return math.Rectangle.EMPTY;
+        return Rectangle.EMPTY;
       }
 
       // TODO the bounds have already been calculated this render session so return what we have
@@ -673,7 +674,7 @@ class Node extends EventEmitter {
       }
 
       if (!childVisible) {
-        return math.Rectangle.EMPTY;
+        return Rectangle.EMPTY;
       }
 
       var bounds = this._bounds;
@@ -698,7 +699,7 @@ class Node extends EventEmitter {
   getLocalBounds() {
     var matrixCache = this.worldTransform;
 
-    this.worldTransform = math.Matrix.IDENTITY;
+    this.worldTransform = Matrix.IDENTITY;
 
     for (var i = 0, j = this.children.length; i < j; ++i) {
       this.children[i].updateTransform();
@@ -708,7 +709,7 @@ class Node extends EventEmitter {
 
     this._currentBounds = null;
 
-    return this.getBounds(math.Matrix.IDENTITY);
+    return this.getBounds(Matrix.IDENTITY);
   }
 
   /**
@@ -1106,8 +1107,3 @@ Object.defineProperties(Node.prototype, {
     },
   },
 });
-
-/**
- * @module engine/gfx/core/Node
- */
-module.exports = Node;

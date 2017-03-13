@@ -1,9 +1,9 @@
-const Mesh = require('./mesh/Mesh');
-const Plane = require('./mesh/Plane');
-const CONST = require('./const');
-const textureFromData = require('./utils').textureFromData;
-require('./mesh/webgl/MeshRenderer');
-require('./mesh/webgl/MeshShader');
+import Mesh from './mesh/Mesh';
+import Plane from './mesh/Plane';
+import { BLEND_MODES } from './const';
+import { textureFromData } from './utils';
+import './mesh/webgl/MeshRenderer';
+import './mesh/webgl/MeshShader';
 
 /**
  * Factory function for `Plane`.
@@ -11,14 +11,14 @@ require('./mesh/webgl/MeshShader');
  * @param {object} data   Data to create the instance from
  * @return {Plane}        Plane instance
  */
-module.exports = function(data) {
+export default function(data) {
   const tex = textureFromData(data.texture);
   const inst = new Plane(tex, data.segmentsX, data.segmentsY);
 
   for (let k in data) {
     switch (k) {
-    // Directly set
-    // - Node
+      // Directly set
+      // - Node
       case 'alpha':
       case 'width':
       case 'height':
@@ -27,13 +27,13 @@ module.exports = function(data) {
       case 'x':
       case 'y':
       case 'interactive':
-    // - Mesh
+      // - Mesh
       case 'canvasPadding':
         inst[k] = data[k];
         break;
 
-    // Set vector
-    // - Node
+      // Set vector
+      // - Node
       case 'pivot':
       case 'position':
       case 'skew':
@@ -41,18 +41,18 @@ module.exports = function(data) {
         inst[k].y = data[k].y || 0;
         break;
 
-    // - Node
+      // - Node
       case 'scale':
         inst[k].x = data[k].x || 1;
         inst[k].y = data[k].y || 1;
         break;
 
-    // Set blend mode
+      // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
 
-    // Set draw mode
+      // Set draw mode
       case 'drawMode':
         inst.drawMode = Mesh.DRAW_MODES[data[k]];
         break;

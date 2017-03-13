@@ -10,7 +10,7 @@
  * @param  {string} fullPath Full path of the target property
  * @return {array}           [target, key] or undefined if no property matches
  */
-module.exports.getTargetAndKey = function(context, fullPath) {
+export function getTargetAndKey(context, fullPath) {
   let path = fullPath.split('.');
   // Path is just the property key
   if (path.length === 1) {

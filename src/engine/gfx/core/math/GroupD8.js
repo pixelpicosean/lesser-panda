@@ -1,13 +1,14 @@
 // Your friendly neighbour https://en.wikipedia.org/wiki/Dihedral_group of order 16
 
-var ux = [1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1];
-var uy = [0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1];
-var vx = [0, -1, -1, -1, 0, 1, 1, 1, 0, 1, 1, 1, 0, -1, -1, -1];
-var vy = [1, 1, 0, -1, -1, -1, 0, 1, -1, -1, 0, 1, 1, 1, 0, -1];
-var tempMatrices = [];
-var Matrix = require('./Matrix');
+import Matrix from './Matrix';
 
-var mul = [];
+const ux = [1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1];
+const uy = [0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1];
+const vx = [0, -1, -1, -1, 0, 1, 1, 1, 0, 1, 1, 1, 0, -1, -1, -1];
+const vy = [1, 1, 0, -1, -1, -1, 0, 1, -1, -1, 0, 1, 1, 1, 0, -1];
+const tempMatrices = [];
+
+const mul = [];
 
 // eslint-disable-next-line
 function signum(x) {
@@ -166,4 +167,4 @@ var GroupD8 = {
 /**
  * @module engine/gfx/core/math/GroupD8
  */
-module.exports = GroupD8;
+export default GroupD8;

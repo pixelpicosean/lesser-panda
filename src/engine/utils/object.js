@@ -18,7 +18,7 @@
  * mergeMultiple({ a: { var_1: 1 } }, { a: { var_1: 2 } });
  * // return { a: { var_1: 2 } }
  */
-module.exports.mergeMultiple = function mergeMultiple(a) {
+export function mergeMultiple(a) {
   var i = 0, b, key, value;
   for (i = 1; i < arguments.length; i++) {
     b = arguments[i];
@@ -53,7 +53,7 @@ module.exports.mergeMultiple = function mergeMultiple(a) {
  * merge({ a: { var_1: 1 } }, { a: { var_1: 2 } });
  * // return { a: { var_1: 2 } }
  */
-module.exports.merge = function merge(original, extended) {
+export function merge(original, extended) {
   for (var key in extended) {
     var ext = extended[key];
     var extType = typeof ext;

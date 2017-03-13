@@ -9,16 +9,16 @@
  * @requires engine/anime/easing
  */
 
-const EventEmitter = require('engine/EventEmitter');
+import EventEmitter from 'engine/EventEmitter';
 
-const { getTargetAndKey } = require('./utils');
-const { Easing } = require('./easing');
+import { getTargetAndKey } from './utils';
+import { Easing } from './easing';
 
 /**
  * Type of channels
  * @enum {number}
  */
-const CHANNEL_TYPE = {
+export const CHANNEL_TYPE = {
   VALUE: 0,
   EVENT: 1,
 };
@@ -27,7 +27,7 @@ const CHANNEL_TYPE = {
  * A single key of an action.
  * @class Key
  */
-class Key {
+export class Key {
   /**
    * @constructor
    * @param {number} time     At which time.
@@ -67,7 +67,7 @@ class Key {
  * for that as `position.x` and `position.y`.
  * @class Channel
  */
-class Channel {
+export class Channel {
   /**
    * @constructor
    * @param {string} path       Path of the target variable.
@@ -178,7 +178,7 @@ class Channel {
  *
  * @class Action
  */
-class Action {
+export class Action {
   /**
    * @constructor
    */
@@ -273,7 +273,7 @@ Action.create = function create() {
  *
  * @class ActionPlayer
  */
-class ActionPlayer extends EventEmitter {
+export class ActionPlayer extends EventEmitter {
   /**
    * @constructor
    * @param {module:engine/anime/action~Action} action Action to play.
@@ -464,13 +464,4 @@ class ActionPlayer extends EventEmitter {
  */
 ActionPlayer.create = function(action, target) {
   return new ActionPlayer(action, target);
-};
-
-module.exports = {
-  CHANNEL_TYPE: CHANNEL_TYPE,
-
-  Key: Key,
-  Channel: Channel,
-  Action: Action,
-  ActionPlayer: ActionPlayer,
 };

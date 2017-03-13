@@ -1,8 +1,8 @@
-const Node = require('./core/Node');
-const Sprite = require('./core/sprites/Sprite');
-const Texture = require('./core/textures/Texture');
-const { textureFromData } = require('./utils');
-const { filmstrip } = require('./utils');
+import Node from './core/Node';
+import Sprite from './core/sprites/Sprite';
+import Texture from './core/textures/Texture';
+import { textureFromData } from './utils';
+import { filmstrip } from './utils';
 
 const TILESETS = {};
 const POOL = [];
@@ -209,6 +209,6 @@ class BackgroundMap extends Node {
  * @param  {Texture} tileset Tileset texture
  * @return {BackgroundMap}   BackgroundMap instance
  */
-module.exports = function(tilesize = 8, data = [[]], tileset = null) {
+export default function(tilesize = 8, data = [[]], tileset = null) {
   return new BackgroundMap(tilesize, data, textureFromData(tileset));
 };

@@ -1,13 +1,12 @@
-const GroupD8 = require('../math/GroupD8');
+import GroupD8 from '../math/GroupD8';
 
 /**
  * A standard object to store the Uvs of a texture
  *
  * @class
  * @private
- * @memberof PIXI
  */
-class TextureUvs {
+export default class TextureUvs {
   constructor() {
     this.x0 = 0;
     this.y0 = 0;
@@ -24,9 +23,9 @@ class TextureUvs {
 
   /**
    * Sets the texture Uvs based on the given frame information
-   * @param frame {PIXI.Rectangle}
-   * @param baseFrame {PIXI.Rectangle}
-   * @param rotate {number} Rotation of frame, see {@link PIXI.GroupD8}
+   * @param frame {Rectangle}
+   * @param baseFrame {Rectangle}
+   * @param rotate {number} Rotation of frame, see {@link GroupD8}
    * @private
    */
   set(frame, baseFrame, rotate) {
@@ -70,5 +69,3 @@ class TextureUvs {
     }
   }
 }
-
-module.exports = TextureUvs;

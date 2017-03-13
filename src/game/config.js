@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * Logic size of the game
    */

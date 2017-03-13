@@ -1,11 +1,11 @@
-var WebGLManager = require('./WebGLManager'),
-  AlphaMaskFilter = require('../filters/SpriteMaskFilter');
+import WebGLManager from './WebGLManager';
+import AlphaMaskFilter from '../filters/SpriteMaskFilter';
 
 /**
  * @class
  * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
-function MaskManager(renderer) {
+export default function MaskManager(renderer) {
   WebGLManager.call(this, renderer);
 
   this.stencilStack = [];
@@ -17,7 +17,6 @@ function MaskManager(renderer) {
 
 MaskManager.prototype = Object.create(WebGLManager.prototype);
 MaskManager.prototype.constructor = MaskManager;
-module.exports = MaskManager;
 
 /**
  * Applies the Mask and adds it to the current filter stack.
@@ -97,4 +96,3 @@ MaskManager.prototype.pushStencilMask = function(target, maskData) {
 MaskManager.prototype.popStencilMask = function(target, maskData) {
   this.renderer.stencilManager.popMask(maskData);
 };
-

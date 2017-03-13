@@ -1,18 +1,18 @@
-const core = require('engine/core');
-const Game = require('engine/Game');
-const loader = require('engine/loader');
-const SystemGfx = require('engine/gfx');
-const Graphics = require('engine/gfx/Graphics');
-const Text = require('engine/gfx/Text');
+import core from 'engine/core';
+import Game from 'engine/Game';
+import loader from 'engine/loader';
+import Gfx from 'engine/gfx';
+import Graphics from 'engine/gfx/Graphics';
+import Text from 'engine/gfx/Text';
 
 const BAR_WIDTH = Math.floor(core.width * 0.75);
 const BAR_HEIGHT = Math.floor(BAR_WIDTH * 0.075);
 
-class Loading extends Game {
+export default class Loading extends Game {
   constructor() {
     super();
 
-    this.addSystem(new SystemGfx());
+    this.addSystem(new Gfx());
 
     this.barBg = Graphics({}).addTo(this.sysGfx.root);
     this.barBg.clear();
@@ -59,5 +59,3 @@ class Loading extends Game {
     loader.load();
   }
 }
-
-module.exports = Loading;

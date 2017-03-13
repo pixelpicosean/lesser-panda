@@ -4,7 +4,7 @@
  * @license     {@link https://github.com/pixijs/pixi.js/blob/master/LICENSE|MIT License}
  */
 
-module.exports = {
+export default {
   // parsers
   bitmapFontParser: require('./bitmapFontParser'),
   spritesheetParser: require('./spritesheetParser'),

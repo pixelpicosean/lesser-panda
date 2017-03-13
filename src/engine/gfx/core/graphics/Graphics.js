@@ -1,11 +1,17 @@
-var Node = require('../Node'),
-  Texture = require('../textures/Texture'),
-  CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer'),
-  CanvasGraphics = require('../renderers/canvas/utils/CanvasGraphics'),
-  GraphicsData = require('./GraphicsData'),
-  math = require('../math'),
-  CONST = require('../../const'),
-  tempPoint = new math.Point();
+import Node from '../Node';
+import Texture from '../textures/Texture';
+import CanvasBuffer from '../renderers/canvas/utils/CanvasBuffer';
+import CanvasGraphics from '../renderers/canvas/utils/CanvasGraphics';
+import GraphicsData from './GraphicsData';
+import Rectangle from '../math/Rectangle';
+import Circle from '../math/Circle';
+import Polygon from '../math/Polygon';
+import Ellipse from '../math/Ellipse';
+import RoundedRectangle from '../math/RoundedRectangle';
+import Vector from 'engine/Vector';
+import { BLEND_MODES, SHAPES } from '../../const';
+
+const tempPoint = new Vector();
 
 /**
  * The Graphics class contains methods used to draw primitive shapes such as lines, circles and
@@ -14,7 +20,7 @@ var Node = require('../Node'),
  * @class
  * @extends Node
  */
-class Graphics extends Node {
+export default class Graphics extends Node {
   /**
    * @constructor
    */
@@ -77,7 +83,7 @@ class Graphics extends Node {
      * @default BLEND_MODES.NORMAL;
      * @see BLEND_MODES
      */
-    this.blendMode = CONST.BLEND_MODES.NORMAL;
+    this.blendMode = BLEND_MODES.NORMAL;
 
     /**
      * Current path
@@ -116,7 +122,7 @@ class Graphics extends Node {
      * @member {Rectangle}
      * @private
      */
-    this._localBounds = new math.Rectangle(0,0,1,1);
+    this._localBounds = new Rectangle(0,0,1,1);
 
     /**
      * Used to detect if the graphics object has changed. If this is set to true then the graphics
@@ -196,7 +202,7 @@ class Graphics extends Node {
     if (this.currentPath) {
       if (this.currentPath.shape.points.length) {
         // halfway through a line? start a new one!
-        var shape = new math.Polygon(this.currentPath.shape.points.slice(-2));
+        var shape = new Polygon(this.currentPath.shape.points.slice(-2));
         shape.closed = false;
         this.drawShape(shape);
       }
@@ -219,7 +225,7 @@ class Graphics extends Node {
    * @return {Graphics}   Self for chaining
     */
   moveTo(x, y) {
-    var shape = new math.Polygon([x,y]);
+    var shape = new Polygon([x,y]);
     shape.closed = false;
     this.drawShape(shape);
 
@@ -520,7 +526,7 @@ class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawRect(x, y, width, height) {
-    this.drawShape(new math.Rectangle(x,y, width, height));
+    this.drawShape(new Rectangle(x,y, width, height));
 
     return this;
   }
@@ -535,7 +541,7 @@ class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawRoundedRect(x, y, width, height, radius) {
-    this.drawShape(new math.RoundedRectangle(x, y, width, height, radius));
+    this.drawShape(new RoundedRectangle(x, y, width, height, radius));
 
     return this;
   }
@@ -549,7 +555,7 @@ class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawCircle(x, y, radius) {
-    this.drawShape(new math.Circle(x,y, radius));
+    this.drawShape(new Circle(x,y, radius));
 
     return this;
   }
@@ -564,7 +570,7 @@ class Graphics extends Node {
    * @return {Graphics}     Self for chaining
    */
   drawEllipse(x, y, width, height) {
-    this.drawShape(new math.Ellipse(x, y, width, height));
+    this.drawShape(new Ellipse(x, y, width, height));
 
     return this;
   }
@@ -582,7 +588,7 @@ class Graphics extends Node {
 
     var closed = true;
 
-    if (points instanceof math.Polygon) {
+    if (points instanceof Polygon) {
       closed = points.closed;
       points = points.points;
     }
@@ -597,7 +603,7 @@ class Graphics extends Node {
       }
     }
 
-    var shape = new math.Polygon(points);
+    var shape = new Polygon(points);
     shape.closed = closed;
 
     this.drawShape(shape);
@@ -713,7 +719,7 @@ class Graphics extends Node {
 
       // return an empty object if the item is a mask!
       if (!this.renderable) {
-        return math.Rectangle.EMPTY;
+        return Rectangle.EMPTY;
       }
 
       if (this.boundsDirty) {
@@ -835,7 +841,7 @@ class Graphics extends Node {
         var lineWidth = data.lineWidth;
         shape = data.shape;
 
-        if (type === CONST.SHAPES.RECT || type === CONST.SHAPES.RREC) {
+        if (type === SHAPES.RECT || type === SHAPES.RREC) {
           x = shape.x - lineWidth / 2;
           y = shape.y - lineWidth / 2;
           w = shape.width + lineWidth;
@@ -847,7 +853,7 @@ class Graphics extends Node {
           minY = y < minY ? y : minY;
           maxY = y + h > maxY ? y + h : maxY;
         }
-        else if (type === CONST.SHAPES.CIRC) {
+        else if (type === SHAPES.CIRC) {
           x = shape.x;
           y = shape.y;
           w = shape.radius + lineWidth / 2;
@@ -859,7 +865,7 @@ class Graphics extends Node {
           minY = y - h < minY ? y - h : minY;
           maxY = y + h > maxY ? y + h : maxY;
         }
-        else if (type === CONST.SHAPES.ELIP) {
+        else if (type === SHAPES.ELIP) {
           x = shape.x;
           y = shape.y;
           w = shape.width + lineWidth / 2;
@@ -924,7 +930,7 @@ class Graphics extends Node {
 
     this.graphicsData.push(data);
 
-    if (data.type === CONST.SHAPES.POLY) {
+    if (data.type === SHAPES.POLY) {
       data.shape.closed = data.shape.closed || this.filling;
       this.currentPath = data;
     }
@@ -959,5 +965,3 @@ class Graphics extends Node {
     this._localBounds = null;
   }
 }
-
-module.exports = Graphics;

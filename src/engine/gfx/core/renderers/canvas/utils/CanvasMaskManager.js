@@ -1,11 +1,11 @@
-const CanvasGraphics = require('./CanvasGraphics');
+import CanvasGraphics from './CanvasGraphics';
 
 /**
  * A set of functions used to handle masking.
  *
  * @class
  */
-class CanvasMaskManager {
+export default class CanvasMaskManager {
   constructor() {}
 
   /**
@@ -52,5 +52,3 @@ class CanvasMaskManager {
 
   destroy() {}
 }
-
-module.exports = CanvasMaskManager;

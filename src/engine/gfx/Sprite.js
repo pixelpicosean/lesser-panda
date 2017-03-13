@@ -1,7 +1,7 @@
-const Sprite = require('./core/sprites/Sprite');
-const textureFromData = require('./utils').textureFromData;
-const CONST = require('./const');
-require('./core/sprites/webgl/SpriteRenderer');
+import Sprite from './core/sprites/Sprite';
+import { textureFromData } from './utils';
+import { BLEND_MODES } from './const';
+import './core/sprites/webgl/SpriteRenderer';
 
 /**
  * Factory function for `Sprite`.
@@ -9,7 +9,7 @@ require('./core/sprites/webgl/SpriteRenderer');
  * @param {object} data   Data to create the instance from
  * @return {Sprite}       Sprite instance
  */
-module.exports = function(data) {
+export default function(data) {
   const tex = textureFromData(data.texture);
   const inst = new Sprite(tex);
 
@@ -50,7 +50,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }

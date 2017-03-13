@@ -1,13 +1,15 @@
-const math = require('../math');
-const Texture = require('../textures/Texture');
-const Node = require('../Node');
-const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
-const utils = require('../utils');
-const CONST = require('../../const');
-const { textureFromData } = require('../../utils');
-const tempPoint = new math.Point();
-const GroupD8 = math.GroupD8;
-const canvasRenderWorldTransform = new math.Matrix();
+import Matrix from '../math/Matrix';
+import GroupD8 from '../math/GroupD8';
+import Vector from 'engine/Vector';
+import Texture from '../textures/Texture';
+import Node from '../Node';
+import CanvasTinter from '../renderers/canvas/utils/CanvasTinter';
+import { sign } from '../utils';
+import { BLEND_MODES, SCALE_MODES } from '../../const';
+import { textureFromData } from '../../utils';
+
+const tempPoint = new Vector();
+const canvasRenderWorldTransform = new Matrix();
 
 /**
  * The Sprite object is the base for all textured objects that are rendered to the screen
@@ -30,7 +32,7 @@ const canvasRenderWorldTransform = new math.Matrix();
  * @extends Node
  * @param texture {Texture|String|Array} The texture for this sprite
  */
-class Sprite extends Node {
+export default class Sprite extends Node {
   constructor(texture) {
     super();
 
@@ -40,9 +42,9 @@ class Sprite extends Node {
      * Setting the anchor to 0.5,0.5 means the texture's origin is centered
      * Setting the anchor to 1,1 would mean the texture's origin point will be the bottom right corner
      *
-     * @member {Point}
+     * @member {Vector}
      */
-    this.anchor = new math.Point();
+    this.anchor = new Vector();
 
     /**
      * The texture that the sprite is using
@@ -83,7 +85,7 @@ class Sprite extends Node {
      * @default BLEND_MODES.NORMAL
      * @see BLEND_MODES
      */
-    this.blendMode = CONST.BLEND_MODES.NORMAL;
+    this.blendMode = BLEND_MODES.NORMAL;
 
     /**
      * The shader that will be used to render the sprite. Set to null to remove a current shader.
@@ -112,11 +114,11 @@ class Sprite extends Node {
   _onTextureUpdate() {
       // so if _width is 0 then width was not set..
     if (this._width) {
-      this.scale.x = utils.sign(this.scale.x) * this._width / this.texture.frame.width;
+      this.scale.x = sign(this.scale.x) * this._width / this.texture.frame.width;
     }
 
     if (this._height) {
-      this.scale.y = utils.sign(this.scale.y) * this._height / this.texture.frame.height;
+      this.scale.y = sign(this.scale.y) * this._height / this.texture.frame.height;
     }
   }
 
@@ -320,7 +322,7 @@ class Sprite extends Node {
       renderer.context.globalAlpha = this.worldAlpha;
 
           // If smoothingEnabled is supported and we need to change the smoothing property for this texture
-      var smoothingEnabled = texture.baseTexture.scaleMode === CONST.SCALE_MODES.LINEAR;
+      var smoothingEnabled = texture.baseTexture.scaleMode === SCALE_MODES.LINEAR;
       if (renderer.smoothProperty && renderer.context[renderer.smoothProperty] !== smoothingEnabled) {
         renderer.context[renderer.smoothProperty] = smoothingEnabled;
       }
@@ -443,7 +445,7 @@ Object.defineProperties(Sprite.prototype, {
       return Math.abs(this.scale.x) * this.texture._frame.width;
     },
     set: function(value) {
-      var sign = utils.sign(this.scale.x) || 1;
+      var sign = sign(this.scale.x) || 1;
       this.scale.x = sign * value / this.texture._frame.width;
       this._width = value;
     },
@@ -460,7 +462,7 @@ Object.defineProperties(Sprite.prototype, {
       return Math.abs(this.scale.y) * this.texture._frame.height;
     },
     set: function(value) {
-      var sign = utils.sign(this.scale.y) || 1;
+      var sign = sign(this.scale.y) || 1;
       this.scale.y = sign * value / this.texture._frame.height;
       this._height = value;
     },
@@ -497,5 +499,3 @@ Object.defineProperties(Sprite.prototype, {
     },
   },
 });
-
-module.exports = Sprite;

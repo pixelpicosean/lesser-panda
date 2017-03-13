@@ -1,29 +1,18 @@
-const storage = require('./storage');
+import storage from './storage';
 
-const Data = require('./Data');
-const PersistentData = require('./PersistentData');
-
-/**
- * Data class.
- * @type {Data}
- */
-storage.Data = Data;
-/**
- * PersistentData class.
- * @type {PersistentData}
- */
-storage.PersistentData = PersistentData;
+import Data from './Data';
+import PersistentData from './PersistentData';
 
 /**
  * Session storage.
  * @type {Data}
  */
-storage.session = new Data();
+export const session = new Data();
 /**
  * Persistent storage.
  * @type {Data}
  */
-storage.persistent = new PersistentData();
+export const persistent = new PersistentData();
 
 /**
  * Storage module provides functionalities to manage saving data. There
@@ -39,4 +28,4 @@ storage.persistent = new PersistentData();
  * @requires engine/storage/data
  * @requires engine/storage/persistent-data
  */
-module.exports = storage;
+export default storage;

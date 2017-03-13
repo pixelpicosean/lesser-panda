@@ -1,4 +1,4 @@
-const utils = require('../../../utils');
+import { canUseNewCanvasBlendModes, hex2rgb, rgb2hex } from '../../../utils';
 
 /**
  * Utility methods for Sprite/Texture tinting.
@@ -178,7 +178,7 @@ CanvasTinter.tintWithPerPixel = function(texture, color, canvas) {
         crop.height
     );
 
-  var rgbValues = utils.hex2rgb(color);
+  var rgbValues = hex2rgb(color);
   var r = rgbValues[0], g = rgbValues[1], b = rgbValues[2];
 
   var pixelData = context.getImageData(0, 0, crop.width, crop.height);
@@ -202,13 +202,13 @@ CanvasTinter.tintWithPerPixel = function(texture, color, canvas) {
 CanvasTinter.roundColor = function(color) {
   var step = CanvasTinter.cacheStepsPerColorChannel;
 
-  var rgbValues = utils.hex2rgb(color);
+  var rgbValues = hex2rgb(color);
 
   rgbValues[0] = Math.min(255, (rgbValues[0] / step) * step);
   rgbValues[1] = Math.min(255, (rgbValues[1] / step) * step);
   rgbValues[2] = Math.min(255, (rgbValues[2] / step) * step);
 
-  return utils.rgb2hex(rgbValues);
+  return rgb2hex(rgbValues);
 };
 
 /**
@@ -230,7 +230,7 @@ CanvasTinter.convertTintToImage = false;
  *
  * @member
  */
-CanvasTinter.canUseMultiply = utils.canUseNewCanvasBlendModes();
+CanvasTinter.canUseMultiply = canUseNewCanvasBlendModes();
 
 /**
  * The tinting method that will be used.
@@ -238,4 +238,4 @@ CanvasTinter.canUseMultiply = utils.canUseNewCanvasBlendModes();
  */
 CanvasTinter.tintMethod = CanvasTinter.canUseMultiply ? CanvasTinter.tintWithMultiply : CanvasTinter.tintWithPerPixel;
 
-module.exports = CanvasTinter;
+export default CanvasTinter;

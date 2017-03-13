@@ -1,6 +1,6 @@
-const Text = require('./core/text/Text');
-const CONST = require('./const');
-require('./core/sprites/webgl/SpriteRenderer');
+import Text from './core/text/Text';
+import { BLEND_MODES } from './const';
+import './core/sprites/webgl/SpriteRenderer';
 
 /**
  * Factory function for `Text`.
@@ -8,7 +8,7 @@ require('./core/sprites/webgl/SpriteRenderer');
  * @param {object} data   Data to create the instance from
  * @return {Text}         Text instance
  */
-module.exports = function(data) {
+export default function(data) {
   const inst = new Text(data.text, data, data.resolution || 1);
 
   for (let k in data) {
@@ -48,7 +48,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }

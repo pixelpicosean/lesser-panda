@@ -11,7 +11,7 @@
  *   interaction.interactiveTarget
  * );
  */
-var interactiveTarget = {
+export default {
   /**
    * @todo Needs docs.
    */
@@ -42,5 +42,3 @@ var interactiveTarget = {
    */
   _touchDown: false,
 };
-
-module.exports = interactiveTarget;

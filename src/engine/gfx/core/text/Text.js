@@ -1,8 +1,8 @@
-const Sprite = require('../sprites/Sprite');
-const Texture = require('../textures/Texture');
-const math = require('../math');
-const utils = require('../utils');
-const CONST = require('../../const');
+import Sprite from '../sprites/Sprite';
+import Texture from '../textures/Texture';
+import Rectangle from '../math/Rectangle';
+import { hex2string } from '../utils';
+import { RESOLUTION } from '../../const';
 
 /**
  * A Text Object will create a line or multiple lines of text. To split a line you can use '\n' in your text string,
@@ -41,7 +41,7 @@ const CONST = require('../../const');
  * @param [style.miterLimit=10] {number} The miter limit to use when using the 'miter' lineJoin mode. This can reduce
  *      or increase the spikiness of rendered text.
  */
-class Text extends Sprite {
+export default class Text extends Sprite {
   constructor(text, style, resolution) {
     super();
 
@@ -62,7 +62,7 @@ class Text extends Sprite {
      * The resolution of the canvas.
      * @member {number}
      */
-    this.resolution = resolution || CONST.RESOLUTION;
+    this.resolution = resolution || RESOLUTION;
 
     /**
      * Private tracker for the current text.
@@ -81,7 +81,7 @@ class Text extends Sprite {
     this._style = null;
 
     var texture = Texture.fromCanvas(this.canvas);
-    texture.trim = new math.Rectangle();
+    texture.trim = new Rectangle();
     this.texture = texture;
 
     this.text = text;
@@ -567,15 +567,15 @@ Object.defineProperties(Text.prototype, {
       style = style || {};
 
       if (typeof style.fill === 'number') {
-        style.fill = utils.hex2string(style.fill);
+        style.fill = hex2string(style.fill);
       }
 
       if (typeof style.stroke === 'number') {
-        style.stroke = utils.hex2string(style.stroke);
+        style.stroke = hex2string(style.stroke);
       }
 
       if (typeof style.dropShadowColor === 'number') {
-        style.dropShadowColor = utils.hex2string(style.dropShadowColor);
+        style.dropShadowColor = hex2string(style.dropShadowColor);
       }
 
       style.font = style.font || 'bold 20pt Arial';
@@ -626,5 +626,3 @@ Object.defineProperties(Text.prototype, {
     },
   },
 });
-
-module.exports = Text;

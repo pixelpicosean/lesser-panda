@@ -1,18 +1,17 @@
-var WebGLManager = require('./WebGLManager'),
-  utils = require('../../../utils');
+import WebGLManager from './WebGLManager';
+import { hex2rgb } from '../../../utils';
 
 /**
  * @class
  * @param renderer {WebGLRenderer} The renderer this manager works for.
  */
-function WebGLMaskManager(renderer) {
+export default function WebGLMaskManager(renderer) {
   WebGLManager.call(this, renderer);
   this.stencilMaskStack = null;
 }
 
 WebGLMaskManager.prototype = Object.create(WebGLManager.prototype);
 WebGLMaskManager.prototype.constructor = WebGLMaskManager;
-module.exports = WebGLMaskManager;
 
 /**
  * Changes the mask stack that is used by this manager.
@@ -62,7 +61,7 @@ WebGLMaskManager.prototype.pushStencil = function(graphics, webGLData) {
   gl.stencilFunc(gl.ALWAYS,0,0xFF);
   gl.stencilOp(gl.KEEP,gl.KEEP,gl.INVERT);
 
-    // draw the triangle strip!
+  // draw the triangle strip!
 
   if (webGLData.mode === 1) {
     gl.drawElements(gl.TRIANGLE_FAN, webGLData.indices.length - 4, gl.UNSIGNED_SHORT, 0);
@@ -76,7 +75,7 @@ WebGLMaskManager.prototype.pushStencil = function(graphics, webGLData) {
       gl.stencilOp(gl.KEEP,gl.KEEP,gl.INCR);
     }
 
-        // draw a quad to increment..
+    // draw a quad to increment..
     gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_SHORT, (webGLData.indices.length - 4) * 2);
 
     if (sms.reverse) {
@@ -121,10 +120,10 @@ WebGLMaskManager.prototype.pushStencil = function(graphics, webGLData) {
  * @param webGLData {any[]}
  */
 WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
-    // if (this._currentGraphics === graphics)return;
+  // if (this._currentGraphics === graphics)return;
   var gl = this.renderer.gl;
 
-     // bind the graphics object..
+  // bind the graphics object..
   var shader;// = this.renderer.shaderManager.plugins.primitiveShader;
 
   if (webGLData.mode === 1) {
@@ -136,7 +135,7 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
 
     gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, this.renderer.currentRenderTarget.projectionMatrix.toArray(true));
 
-    gl.uniform3fv(shader.uniforms.tint._location, utils.hex2rgb(graphics.tint));
+    gl.uniform3fv(shader.uniforms.tint._location, hex2rgb(graphics.tint));
 
     gl.uniform3fv(shader.uniforms.color._location, webGLData.color);
 
@@ -147,12 +146,12 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
     gl.vertexAttribPointer(shader.attributes.aVertexPosition, 2, gl.FLOAT, false, 4 * 2, 0);
 
 
-        // now do the rest..
-        // set the index buffer!
+    // now do the rest..
+    // set the index buffer!
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, webGLData.indexBuffer);
   }
   else {
-        // this.renderer.shaderManager.activatePrimitiveShader();
+    // this.renderer.shaderManager.activatePrimitiveShader();
     shader = this.renderer.shaderManager.primitiveShader;
 
     this.renderer.shaderManager.setShader(shader);
@@ -161,7 +160,7 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
 
     gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, this.renderer.currentRenderTarget.projectionMatrix.toArray(true));
 
-    gl.uniform3fv(shader.uniforms.tint._location, utils.hex2rgb(graphics.tint));
+    gl.uniform3fv(shader.uniforms.tint._location, hex2rgb(graphics.tint));
 
     gl.uniform1f(shader.uniforms.alpha._location, graphics.worldAlpha);
 
@@ -170,7 +169,7 @@ WebGLMaskManager.prototype.bindGraphics = function(graphics, webGLData) {
     gl.vertexAttribPointer(shader.attributes.aVertexPosition, 2, gl.FLOAT, false, 4 * 6, 0);
     gl.vertexAttribPointer(shader.attributes.aColor, 4, gl.FLOAT, false,4 * 6, 2 * 4);
 
-        // set the index buffer!
+    // set the index buffer!
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, webGLData.indexBuffer);
   }
 };
@@ -189,12 +188,10 @@ WebGLMaskManager.prototype.popStencil = function(graphics, webGLData) {
   sms.count--;
 
   if (sms.stencilStack.length === 0) {
-        // the stack is empty!
+    // the stack is empty!
     gl.disable(gl.STENCIL_TEST);
-
   }
   else {
-
     var level = sms.count;
 
     this.bindGraphics(graphics, webGLData);
@@ -213,13 +210,13 @@ WebGLMaskManager.prototype.popStencil = function(graphics, webGLData) {
         gl.stencilOp(gl.KEEP,gl.KEEP,gl.DECR);
       }
 
-            // draw a quad to increment..
+      // draw a quad to increment..
       gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_SHORT, (webGLData.indices.length - 4) * 2);
 
       gl.stencilFunc(gl.ALWAYS,0,0xFF);
       gl.stencilOp(gl.KEEP,gl.KEEP,gl.INVERT);
 
-            // draw the triangle strip!
+      // draw the triangle strip!
       gl.drawElements(gl.TRIANGLE_FAN, webGLData.indices.length - 4, gl.UNSIGNED_SHORT, 0);
 
       this.renderer.drawCount += 2;
@@ -233,7 +230,6 @@ WebGLMaskManager.prototype.popStencil = function(graphics, webGLData) {
 
     }
     else {
-          //  console.log("<<>>")
       if (!sms.reverse) {
         gl.stencilFunc(gl.EQUAL, 0xFF - (level + 1), 0xFF);
         gl.stencilOp(gl.KEEP,gl.KEEP,gl.INCR);
@@ -278,8 +274,6 @@ WebGLMaskManager.prototype.destroy = function() {
  * @param maskData {any[]} The mask data structure to use
  */
 WebGLMaskManager.prototype.pushMask = function(maskData) {
-
-
   this.renderer.setObjectRenderer(this.renderer.plugins.graphics);
 
   if (maskData.dirty) {

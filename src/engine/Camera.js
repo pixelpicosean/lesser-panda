@@ -1,14 +1,13 @@
-const engine = require('engine/core');
-const Vector = require('engine/Vector');
-const Timer = require('engine/Timer');
-const { clamp } = require('engine/utils/math');
+import engine from 'engine/core';
+import Vector from 'engine/Vector';
+import { clamp } from 'engine/utils/math';
 
 /**
  * Camera with ability to follow, scale and shake.
  *
  * @class Camera
  */
-class Camera {
+export default class Camera {
   /**
    * @constructor
    */
@@ -297,7 +296,7 @@ class Camera {
 
       // Next shake
       this._shakeCount -= 1;
-      Timer.later(this._shakeDelay, this._startShake);
+      this.game.sysTimer.later(this._shakeDelay, this._startShake);
     }
     else {
       // Reset offset
@@ -458,14 +457,3 @@ Object.defineProperty(Camera.prototype, 'bottom', {
     return this.position.y + engine.height * (1 - this.anchor.y);
   },
 });
-
-/**
- * @exports engine/Camera
- *
- * @see Camera
- *
- * @requires module:engine/core
- * @requires module:engine/Vector
- * @requires module:engine/utils/math
- */
-module.exports = Camera;
