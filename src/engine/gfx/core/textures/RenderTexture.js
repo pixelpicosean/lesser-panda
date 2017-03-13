@@ -1,10 +1,11 @@
-const BaseTexture = require('./BaseTexture');
-const Texture = require('./Texture');
-const RenderTarget = require('../renderers/webgl/utils/RenderTarget');
-const FilterManager = require('../renderers/webgl/managers/FilterManager');
-const CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer');
-const math = require('../math');
-const CONST = require('../../const');
+import BaseTexture from './BaseTexture';
+import Texture from './Texture';
+import RenderTarget from '../renderers/webgl/utils/RenderTarget';
+import FilterManager from '../renderers/webgl/managers/FilterManager';
+import CanvasBuffer from '../renderers/canvas/utils/CanvasBuffer';
+import math from '../math';
+import { RESOLUTION, SCALE_MODES, RENDERER_TYPE } from '../../const';
+
 const tempMatrix = new math.Matrix();
 
 /**
@@ -48,7 +49,7 @@ const tempMatrix = new math.Matrix();
  * @param [scaleMode] {number} See {@link SCALE_MODES} for possible values
  * @param [resolution=1] {number} The resolution of the texture being generated
  */
-class RenderTexture extends Texture {
+export default class RenderTexture extends Texture {
   constructor(renderer, width, height, scaleMode, resolution) {
     if (!renderer) {
       throw new Error('Unable to create RenderTexture, you must pass a renderer into the constructor.');
@@ -56,7 +57,7 @@ class RenderTexture extends Texture {
 
     width = width || 100;
     height = height || 100;
-    resolution = resolution || CONST.RESOLUTION;
+    resolution = resolution || RESOLUTION;
 
     /**
      * The base texture object that this texture uses
@@ -67,7 +68,7 @@ class RenderTexture extends Texture {
     baseTexture.width = width;
     baseTexture.height = height;
     baseTexture.resolution = resolution;
-    baseTexture.scaleMode = scaleMode || CONST.SCALE_MODES.DEFAULT;
+    baseTexture.scaleMode = scaleMode || SCALE_MODES.DEFAULT;
     baseTexture.hasLoaded = true;
 
 
@@ -123,7 +124,7 @@ class RenderTexture extends Texture {
      */
     this.renderer = renderer;
 
-    if (this.renderer.type === CONST.RENDERER_TYPE.WEBGL) {
+    if (this.renderer.type === RENDERER_TYPE.WEBGL) {
       var gl = this.renderer.gl;
 
       this.textureBuffer = new RenderTarget(gl, this.width, this.height, baseTexture.scaleMode, this.resolution);// , this.baseTexture.scaleMode);
@@ -196,7 +197,7 @@ class RenderTexture extends Texture {
       return;
     }
 
-    if (this.renderer.type === CONST.RENDERER_TYPE.WEBGL) {
+    if (this.renderer.type === RENDERER_TYPE.WEBGL) {
       this.renderer.gl.bindFramebuffer(this.renderer.gl.FRAMEBUFFER, this.textureBuffer.frameBuffer);
     }
 
@@ -357,7 +358,7 @@ class RenderTexture extends Texture {
    * @return {HTMLCanvasElement} A Canvas element with the texture rendered on.
    */
   getCanvas() {
-    if (this.renderer.type === CONST.RENDERER_TYPE.WEBGL) {
+    if (this.renderer.type === RENDERER_TYPE.WEBGL) {
       var gl = this.renderer.gl;
       var width = this.textureBuffer.size.width;
       var height = this.textureBuffer.size.height;
@@ -389,7 +390,7 @@ class RenderTexture extends Texture {
   getPixels() {
     var width, height;
 
-    if (this.renderer.type === CONST.RENDERER_TYPE.WEBGL) {
+    if (this.renderer.type === RENDERER_TYPE.WEBGL) {
       var gl = this.renderer.gl;
       width = this.textureBuffer.size.width;
       height = this.textureBuffer.size.height;
@@ -418,7 +419,7 @@ class RenderTexture extends Texture {
    * @return {Uint8ClampedArray}
    */
   getPixel(x, y) {
-    if (this.renderer.type === CONST.RENDERER_TYPE.WEBGL) {
+    if (this.renderer.type === RENDERER_TYPE.WEBGL) {
       var gl = this.renderer.gl;
 
       var webGLPixels = new Uint8Array(4);
@@ -434,5 +435,3 @@ class RenderTexture extends Texture {
     }
   }
 }
-
-module.exports = RenderTexture;

@@ -1,3 +1,3 @@
-const COASprite = require('./core/sprites/COASprite');
+import COASprite from './core/sprites/COASprite';
 
-module.exports = (sconsKey, entityName) => new COASprite(sconsKey, entityName);
+export default (sconsKey, entityName) => new COASprite(sconsKey, entityName);

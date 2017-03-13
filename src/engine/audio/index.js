@@ -1,9 +1,9 @@
-const core = require('engine/core');
-const loader = require('engine/loader');
-const { Resource } = loader;
-const { Howl, Howler } = require('engine/audio/howler.core');
-const EventEmitter = require('engine/EventEmitter');
-const config = require('game/config');
+import core from 'engine/core';
+import loader from 'engine/loader';
+import { Resource } from 'engine/loader';
+import { Howl, Howler } from 'engine/audio/howler.core';
+import EventEmitter from 'engine/EventEmitter';
+import config from 'game/config';
 
 /**
  * Audio manager.
@@ -190,13 +190,5 @@ loader.pre((res, next) => {
  *
  * @emits mute
  * @emits unmute
- *
- * @exports engine/audio
- *
- * @requires engine/EventEmitter
- * @requires engine/core
- * @requires engine/loader
- * @requires engine/audio/howler.core
- * @requires game/config
  */
-module.exports = audio;
+export default audio;

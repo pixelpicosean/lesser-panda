@@ -1,22 +1,22 @@
-const core = require('engine/core');
-const loader = require('engine/loader');
-const Game = require('engine/Game');
+import core from 'engine/core';
+import loader from 'engine/loader';
+import Game from 'engine/Game';
+import audio from 'engine/audio';
 
 // Requite any systems
-const SystemGfx = require('engine/gfx');
-const SystemAnime = require('engine/anime');
+import Gfx from 'engine/gfx';
+import Anime from 'engine/anime';
 
 // Requite anything else you want to use
-const BitmapText = require('engine/gfx/BitmapText');
-const AnimatedSprite = require('engine/gfx/AnimatedSprite');
+import BitmapText from 'engine/gfx/BitmapText';
+import AnimatedSprite from 'engine/gfx/AnimatedSprite';
 
 // Loading screen
-const Loading = require('game/Loading');
+import Loading from 'game/Loading';
 
 // Load some resources
-loader
-  .add('04b03.fnt')
-  .add('bat', 'bat.png')
+loader.add('04b03.fnt');
+loader.add('bat', 'bat.png');
 
 // A game acts like a scene/screen or whatever you call
 class MyGame extends Game {
@@ -28,16 +28,16 @@ class MyGame extends Game {
 
     // Add systems you want to have
     this
-      .addSystem(new SystemAnime())
-      .addSystem(new SystemGfx());
+      .addSystem(new Anime())
+      .addSystem(new Gfx());
 
     // Create some layers
     this.sysGfx
       .createLayer('background')
-      .createLayer('entities')
-        .createLayer('actors', 'entities')
-        .createLayer('fx', 'entities')
-        .createLayer('hud', 'entities')
+      .createLayer('entity')
+        .createLayer('actor', 'entity')
+        .createLayer('fx', 'entity')
+        .createLayer('hud', 'entity')
       .createLayer('ui');
 
     // Add some gfx elements

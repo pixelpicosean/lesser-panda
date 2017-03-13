@@ -1,17 +1,14 @@
-var AbstractFilter = require('./AbstractFilter'),
-  math = require('../../../math');
-
-
+import AbstractFilter from './AbstractFilter';
+import math from '../../../math';
 
 /**
  * The SpriteMaskFilter class
  *
  * @class
- * @extends PIXI.AbstractFilter
- * @memberof PIXI
- * @param sprite {PIXI.Sprite} the target sprite
+ * @extends AbstractFilter
+ * @param sprite {Sprite} the target sprite
  */
-function SpriteMaskFilter(sprite) {
+export default function SpriteMaskFilter(sprite) {
   var maskMatrix = new math.Matrix();
 
   AbstractFilter.call(this,
@@ -30,14 +27,13 @@ function SpriteMaskFilter(sprite) {
 
 SpriteMaskFilter.prototype = Object.create(AbstractFilter.prototype);
 SpriteMaskFilter.prototype.constructor = SpriteMaskFilter;
-module.exports = SpriteMaskFilter;
 
 /**
  * Applies the filter
  *
- * @param renderer {PIXI.WebGLRenderer} The renderer to retrieve the filter from
- * @param input {PIXI.RenderTarget}
- * @param output {PIXI.RenderTarget}
+ * @param renderer {WebGLRenderer} The renderer to retrieve the filter from
+ * @param input {RenderTarget}
+ * @param output {RenderTarget}
  */
 SpriteMaskFilter.prototype.applyFilter = function(renderer, input, output) {
   var filterManager = renderer.filterManager;
@@ -50,7 +46,7 @@ SpriteMaskFilter.prototype.applyFilter = function(renderer, input, output) {
   this.uniforms.alpha.value = this.maskSprite.worldAlpha;
 
   var shader = this.getShader(renderer);
-     // draw the filter...
+   // draw the filter...
   filterManager.applyFilter(shader, input, output);
 };
 
@@ -59,8 +55,8 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
     /**
      * The texture used for the displacement map. Must be power of 2 sized texture.
      *
-     * @member {PIXI.Texture}
-     * @memberof PIXI.SpriteMaskFilter#
+     * @member {Texture}
+     * @memberof SpriteMaskFilter#
      */
   map: {
     get: function() {
@@ -74,8 +70,8 @@ Object.defineProperties(SpriteMaskFilter.prototype, {
     /**
      * The offset used to move the displacement map.
      *
-     * @member {PIXI.Point}
-     * @memberof PIXI.SpriteMaskFilter#
+     * @member {Point}
+     * @memberof SpriteMaskFilter#
      */
   offset: {
     get: function() {

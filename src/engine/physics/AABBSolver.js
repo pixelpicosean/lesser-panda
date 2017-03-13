@@ -1,6 +1,6 @@
-const Vector = require('engine/Vector');
-const { clamp } = require('engine/utils/math');
-const { TOP, BOTTOM, LEFT, RIGHT, BOX, CIRC } = require('./const');
+import Vector from 'engine/Vector';
+import { clamp } from 'engine/utils/math';
+import { TOP, BOTTOM, LEFT, RIGHT, BOX, CIRC } from './const';
 
 const Radian2Degree = 180 / Math.PI;
 
@@ -10,7 +10,7 @@ const Radian2Degree = 180 / Math.PI;
  *
  * @class AABBSolver
  */
-class AABBSolver {
+export default class AABBSolver {
   /**
    * @constructor
    */
@@ -378,11 +378,3 @@ class AABBSolver {
     b.position.y += resB.y;
   }
 }
-
-/**
- * AABBSolver factory
- * @return {AABBSolver} solver instance.
- */
-module.exports = function() {
-  return new AABBSolver();
-};

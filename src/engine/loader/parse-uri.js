@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(str, opts) {
+export default function(str, opts) {
   opts = opts || {};
 
   var o = {

@@ -1,7 +1,7 @@
-const Vector = require('engine/Vector');
-const { Polygon, Rectangle } = require('../core/math');
-const Node = require('../core/Node');
-const CONST = require('../const');
+import Vector from 'engine/Vector';
+import { Polygon, Rectangle } from '../core/math';
+import Node from '../core/Node';
+import { BLEND_MODES } from '../const';
 
 const tempPoint = new Vector();
 const tempPolygon = new Polygon();
@@ -17,7 +17,7 @@ const tempPolygon = new Polygon();
  * @param [indices] {Uint16Array} if you want to specify the indices
  * @param [drawMode] {number} the drawMode, can be any of the Mesh.DRAW_MODES consts
  */
-class Mesh extends Node {
+export default class Mesh extends Node {
   constructor(texture, vertices, uvs, indices, drawMode) {
     super();
 
@@ -69,7 +69,7 @@ class Mesh extends Node {
        * @default BLEND_MODES.NORMAL
        * @see BLEND_MODES
        */
-    this.blendMode = CONST.BLEND_MODES.NORMAL;
+    this.blendMode = BLEND_MODES.NORMAL;
 
       /**
        * Triangles in canvas mode are automatically antialiased, use this value to force triangles to overlap a bit with each other.
@@ -453,5 +453,3 @@ Mesh.DRAW_MODES = {
   TRIANGLE_MESH: 0,
   TRIANGLES: 1,
 };
-
-module.exports = Mesh;

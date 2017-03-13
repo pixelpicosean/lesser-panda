@@ -1,7 +1,8 @@
-const Node = require('./core/Node');
-const { Matrix } = require('./core/math');
-const RenderTexture = require('./core/textures/RenderTexture');
-const Sprite = require('./core/sprites/Sprite');
+import Node from './core/Node';
+import { Matrix } from './core/math';
+import RenderTexture from './core/textures/RenderTexture';
+import Sprite from './core/sprites/Sprite';
+
 const _tempMatrix = new Matrix();
 
 Node.prototype._cacheAsBitmap = false;

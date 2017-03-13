@@ -1,11 +1,13 @@
-var Node = require('../Node'),
-  Texture = require('../textures/Texture'),
-  CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer'),
-  CanvasGraphics = require('../renderers/canvas/utils/CanvasGraphics'),
-  GraphicsData = require('./GraphicsData'),
-  math = require('../math'),
-  CONST = require('../../const'),
-  tempPoint = new math.Point();
+import Node from '../Node';
+import Texture from '../textures/Texture';
+import CanvasBuffer from '../renderers/canvas/utils/CanvasBuffer';
+import CanvasGraphics from '../renderers/canvas/utils/CanvasGraphics';
+import GraphicsData from './GraphicsData';
+import math from '../math';
+import Vector from 'engine/Vector';
+import { BLEND_MODES, SHAPES } from '../../const';
+
+const tempPoint = new Vector();
 
 /**
  * The Graphics class contains methods used to draw primitive shapes such as lines, circles and
@@ -14,7 +16,7 @@ var Node = require('../Node'),
  * @class
  * @extends Node
  */
-class Graphics extends Node {
+export default class Graphics extends Node {
   /**
    * @constructor
    */
@@ -77,7 +79,7 @@ class Graphics extends Node {
      * @default BLEND_MODES.NORMAL;
      * @see BLEND_MODES
      */
-    this.blendMode = CONST.BLEND_MODES.NORMAL;
+    this.blendMode = BLEND_MODES.NORMAL;
 
     /**
      * Current path
@@ -835,7 +837,7 @@ class Graphics extends Node {
         var lineWidth = data.lineWidth;
         shape = data.shape;
 
-        if (type === CONST.SHAPES.RECT || type === CONST.SHAPES.RREC) {
+        if (type === SHAPES.RECT || type === SHAPES.RREC) {
           x = shape.x - lineWidth / 2;
           y = shape.y - lineWidth / 2;
           w = shape.width + lineWidth;
@@ -847,7 +849,7 @@ class Graphics extends Node {
           minY = y < minY ? y : minY;
           maxY = y + h > maxY ? y + h : maxY;
         }
-        else if (type === CONST.SHAPES.CIRC) {
+        else if (type === SHAPES.CIRC) {
           x = shape.x;
           y = shape.y;
           w = shape.radius + lineWidth / 2;
@@ -859,7 +861,7 @@ class Graphics extends Node {
           minY = y - h < minY ? y - h : minY;
           maxY = y + h > maxY ? y + h : maxY;
         }
-        else if (type === CONST.SHAPES.ELIP) {
+        else if (type === SHAPES.ELIP) {
           x = shape.x;
           y = shape.y;
           w = shape.width + lineWidth / 2;
@@ -924,7 +926,7 @@ class Graphics extends Node {
 
     this.graphicsData.push(data);
 
-    if (data.type === CONST.SHAPES.POLY) {
+    if (data.type === SHAPES.POLY) {
       data.shape.closed = data.shape.closed || this.filling;
       this.currentPath = data;
     }
@@ -959,5 +961,3 @@ class Graphics extends Node {
     this._localBounds = null;
   }
 }
-
-module.exports = Graphics;

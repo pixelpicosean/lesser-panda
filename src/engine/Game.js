@@ -1,7 +1,7 @@
-const core = require('engine/core');
-const EventEmitter = require('engine/EventEmitter');
-const { removeItems } = require('engine/utils/array');
-const Entity = require('engine/Entity');
+import core from 'engine/core';
+import EventEmitter from 'engine/EventEmitter';
+import { removeItems } from 'engine/utils/array';
+import Entity from 'engine/Entity';
 
 /**
  * Game is the main hub for a game. A game made with LesserPanda
@@ -10,7 +10,7 @@ const Entity = require('engine/Entity');
  * @class Game
  * @extends {EvenetEmitter}
  */
-class Game extends EventEmitter {
+export default class Game extends EventEmitter {
   /**
    * @constructor
    */
@@ -442,20 +442,3 @@ class Game extends EventEmitter {
    */
   resize(w, h) {} /* eslint no-unused-vars:0 */
 }
-
-/**
- * @example <captain>Create a new game class</captain>
- * const Game = require('engine/Game');
- * class MyGame extends Game {}
- *
- * @example <captain>Switch to another game</captain>
- * const core = require('engine/core');
- * const MyGame = require('engine/MyGame');
- * core.setGame(MyGame);
- *
- * @exports engine/Game
- * @requires engine/core
- * @requires engine/EventEmitter
- * @requires engine/utils/math
- */
-module.exports = Game;

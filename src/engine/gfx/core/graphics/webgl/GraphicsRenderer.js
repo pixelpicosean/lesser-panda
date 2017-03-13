@@ -1,10 +1,10 @@
-const utils = require('../../utils'),
-  math = require('../../math'),
-  CONST = require('../../../const'),
-  ObjectRenderer = require('../../renderers/webgl/utils/ObjectRenderer'),
-  WebGLRenderer = require('../../renderers/webgl/WebGLRenderer'),
-  WebGLGraphicsData = require('./WebGLGraphicsData'),
-  earcut = require('../../../dependence/earcut');
+import { hex2rgb } from '../../utils';
+import math from '../../math';
+import { SHAPES } from '../../../const';
+import ObjectRenderer from '../../renderers/webgl/utils/ObjectRenderer';
+import WebGLRenderer from '../../renderers/webgl/WebGLRenderer';
+import WebGLGraphicsData from './WebGLGraphicsData';
+import earcut from '../../../dependence/earcut';
 
 /**
  * Renders the graphics object.
@@ -12,7 +12,7 @@ const utils = require('../../utils'),
  * @class
  * @private
  */
-class GraphicsRenderer extends ObjectRenderer {
+export default class GraphicsRenderer extends ObjectRenderer {
   /**
    * @constructor
    * @extends ObjectRenderer
@@ -103,7 +103,7 @@ class GraphicsRenderer extends ObjectRenderer {
 
         gl.uniformMatrix3fv(shader.uniforms.projectionMatrix._location, false, renderer.currentRenderTarget.projectionMatrix.toArray(true));
 
-        gl.uniform3fv(shader.uniforms.tint._location, utils.hex2rgb(graphics.tint));
+        gl.uniform3fv(shader.uniforms.tint._location, hex2rgb(graphics.tint));
 
         gl.uniform1f(shader.uniforms.alpha._location, graphics.worldAlpha);
 
@@ -168,7 +168,7 @@ class GraphicsRenderer extends ObjectRenderer {
     for (i = webGL.lastIndex; i < graphics.graphicsData.length; i++) {
       var data = graphics.graphicsData[i];
 
-      if (data.type === CONST.SHAPES.POLY) {
+      if (data.type === SHAPES.POLY) {
         // need to add the points the the graphics object..
         data.points = data.shape.points.slice();
         if (data.shape.closed) {
@@ -207,13 +207,13 @@ class GraphicsRenderer extends ObjectRenderer {
       else {
         webGLData = this.switchMode(webGL, 0);
 
-        if (data.type === CONST.SHAPES.RECT) {
+        if (data.type === SHAPES.RECT) {
           this.buildRectangle(data, webGLData);
         }
-        else if (data.type === CONST.SHAPES.CIRC || data.type === CONST.SHAPES.ELIP) {
+        else if (data.type === SHAPES.CIRC || data.type === SHAPES.ELIP) {
           this.buildCircle(data, webGLData);
         }
-        else if (data.type === CONST.SHAPES.RREC) {
+        else if (data.type === SHAPES.RREC) {
           this.buildRoundedRectangle(data, webGLData);
         }
       }
@@ -280,7 +280,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var height = rectData.height;
 
     if (graphicsData.fill) {
-      var color = utils.hex2rgb(graphicsData.fillColor);
+      var color = hex2rgb(graphicsData.fillColor);
       var alpha = graphicsData.fillAlpha;
 
       var r = color[0] * alpha;
@@ -351,7 +351,7 @@ class GraphicsRenderer extends ObjectRenderer {
     // TODO - fix this properly, this is not very elegant.. but it works for now.
 
     if (graphicsData.fill) {
-      var color = utils.hex2rgb(graphicsData.fillColor);
+      var color = hex2rgb(graphicsData.fillColor);
       var alpha = graphicsData.fillAlpha;
 
       var r = color[0] * alpha;
@@ -457,7 +457,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var height;
 
     // TODO - bit hacky??
-    if (graphicsData.type === CONST.SHAPES.CIRC) {
+    if (graphicsData.type === SHAPES.CIRC) {
       width = circleData.radius;
       height = circleData.radius;
     }
@@ -472,7 +472,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var i = 0;
 
     if (graphicsData.fill) {
-      var color = utils.hex2rgb(graphicsData.fillColor);
+      var color = hex2rgb(graphicsData.fillColor);
       var alpha = graphicsData.fillAlpha;
 
       var r = color[0] * alpha;
@@ -562,7 +562,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var width = graphicsData.lineWidth / 2;
 
     // sort color
-    var color = utils.hex2rgb(graphicsData.lineColor);
+    var color = hex2rgb(graphicsData.lineColor);
     var alpha = graphicsData.lineAlpha;
     var r = color[0] * alpha;
     var g = color[1] * alpha;
@@ -732,7 +732,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var indices = webGLData.indices;
     webGLData.points = points;
     webGLData.alpha = graphicsData.fillAlpha;
-    webGLData.color = utils.hex2rgb(graphicsData.fillColor);
+    webGLData.color = hex2rgb(graphicsData.fillColor);
 
     // calclate the bounds..
     var minX = Infinity;
@@ -793,7 +793,7 @@ class GraphicsRenderer extends ObjectRenderer {
     var length = points.length / 2;
 
     // sort color
-    var color = utils.hex2rgb(graphicsData.fillColor);
+    var color = hex2rgb(graphicsData.fillColor);
     var alpha = graphicsData.fillAlpha;
     var r = color[0] * alpha;
     var g = color[1] * alpha;
@@ -827,5 +827,3 @@ class GraphicsRenderer extends ObjectRenderer {
 }
 
 WebGLRenderer.registerPlugin('graphics', GraphicsRenderer);
-
-module.exports = GraphicsRenderer;

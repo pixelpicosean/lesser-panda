@@ -1,9 +1,9 @@
-const math = require('./math');
-const { removeItems } = require('./utils');
-const EventEmitter = require('engine/EventEmitter');
-const RenderTexture = require('./textures/RenderTexture');
-const CONST = require('../const');
-const Vector = require('engine/Vector');
+import math from './math';
+import { removeItems } from './utils';
+import EventEmitter from 'engine/EventEmitter';
+import RenderTexture from './textures/RenderTexture';
+import { PI_2 } from '../const';
+import Vector from 'engine/Vector';
 
 const _tempMatrix = new math.Matrix();
 const _tempDisplayObjectParent = {
@@ -25,7 +25,7 @@ const EMPTY_ARRAY = [];
  * @class
  * @extends EventEmitter
  */
-class Node extends EventEmitter {
+export default class Node extends EventEmitter {
   get key() {
     return 'gfx';
   }
@@ -544,7 +544,7 @@ class Node extends EventEmitter {
     }
     else {
       // so if rotation is between 0 then we can simplify the multiplication process...
-      if (this.rotation % CONST.PI_2) {
+      if (this.rotation % PI_2) {
         // check to see if the rotation is the same as the previous render. This means we only need to use sin and cos when rotation actually changes
         if (this.rotation !== this.rotationCache) {
           this.rotationCache = this.rotation;
@@ -1106,8 +1106,3 @@ Object.defineProperties(Node.prototype, {
     },
   },
 });
-
-/**
- * @module engine/gfx/core/Node
- */
-module.exports = Node;

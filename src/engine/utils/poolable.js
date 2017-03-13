@@ -1,4 +1,4 @@
-const core = require('engine/core');
+import core from 'engine/core';
 
 const EmptySettings = {};
 
@@ -8,7 +8,7 @@ const EmptySettings = {};
  * @param  {number} preAllocSize  How many instances to alloc at the beginning.
  * @return {function}             Class itself for chaining.
  */
-module.exports = function(ctor, preAllocSize = 20) {
+export default function(ctor, preAllocSize = 20) {
   // Mark as poolabled
   ctor.canBePooled = true;
 

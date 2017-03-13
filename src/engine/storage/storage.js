@@ -1,4 +1,4 @@
-const config = require('game/config');
+import config from 'game/config';
 
 /**
  * Local storage wrapper.
@@ -133,6 +133,6 @@ class Storage {
   }
 }
 
-module.exports = new Storage(Object.assign({
+export default (new Storage(Object.assign({
   id: 'lpanda-debug',
-}, config.storage));
+}, config.storage)));

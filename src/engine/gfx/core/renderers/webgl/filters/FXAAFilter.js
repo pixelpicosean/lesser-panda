@@ -1,4 +1,4 @@
-var AbstractFilter = require('./AbstractFilter');
+import AbstractFilter from './AbstractFilter';
 
 
 /**
@@ -15,7 +15,7 @@ var AbstractFilter = require('./AbstractFilter');
  * @extends AbstractFilter
  *
  */
-function FXAAFilter() {
+export default function FXAAFilter() {
   AbstractFilter.call(this,
         // vertex shader
         require('./FXAA.vert'),
@@ -31,7 +31,6 @@ function FXAAFilter() {
 
 FXAAFilter.prototype = Object.create(AbstractFilter.prototype);
 FXAAFilter.prototype.constructor = FXAAFilter;
-module.exports = FXAAFilter;
 
 /**
  * Applies the filter

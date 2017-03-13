@@ -1,7 +1,7 @@
-const Signal = require('engine/MiniSignals');
-const parseUri = require('./parse-uri');
-const async = require('./async');
-const Resource = require('./Resource');
+import Signal from 'engine/MiniSignals';
+import parseUri from './parse-uri';
+import { queue, eachSeries } from './async';
+import Resource from './Resource';
 
 // some constants
 const MAX_PROGRESS = 100;
@@ -12,7 +12,7 @@ const rgxExtractUrlHash = /(#[\w\-]+)?$/;
  *
  * @class
  */
-class Loader {
+export default class Loader {
   /**
    * @constructor
    * @param {string} [baseUrl=''] - The base url for all resources loaded by this loader.
@@ -96,7 +96,7 @@ class Loader {
      * @private
      * @member {Resource[]}
      */
-    this._queue = async.queue(this._boundLoadResource, concurrency);
+    this._queue = queue(this._boundLoadResource, concurrency);
 
     this._queue.pause();
 
@@ -258,7 +258,7 @@ class Loader {
    * @return {Loader} Returns itself.
    */
   add(name, url, options, cb) {
-        // special case of an array of objects or urls
+    // special case of an array of objects or urls
     if (Array.isArray(name)) {
       for (let i = 0; i < name.length; ++i) {
         this.add(name[i]);
@@ -267,7 +267,7 @@ class Loader {
       return this;
     }
 
-        // if an object is passed instead of params
+    // if an object is passed instead of params
     if (typeof name === 'object') {
       cb = url || name.callback || name.onComplete;
       options = name;
@@ -275,45 +275,45 @@ class Loader {
       name = name.name || name.key || name.url;
     }
 
-        // case where no name is passed shift all args over by one.
+    // case where no name is passed shift all args over by one.
     if (typeof url !== 'string') {
       cb = options;
       options = url;
       url = name;
     }
 
-        // now that we shifted make sure we have a proper url.
+    // now that we shifted make sure we have a proper url.
     if (typeof url !== 'string') {
       throw new Error('No url passed to add resource to loader.');
     }
 
-        // options are optional so people might pass a function and no options
+    // options are optional so people might pass a function and no options
     if (typeof options === 'function') {
       cb = options;
       options = null;
     }
 
-        // if loading already you can only add resources that have a parent.
+    // if loading already you can only add resources that have a parent.
     if (this.loading && (!options || !options.parentResource)) {
       throw new Error('Cannot add resources while the loader is running.');
     }
 
-        // check if resource already exists.
+    // check if resource already exists.
     if (this.resources[name]) {
       throw new Error(`Resource named "${name}" already exists.`);
     }
 
-        // add base url if this isn't an absolute url
+    // add base url if this isn't an absolute url
     url = this._prepareUrl(url);
 
-        // create the store the resource
+    // create the store the resource
     this.resources[name] = new Resource(name, url, options);
 
     if (typeof cb === 'function') {
       this.resources[name].onAfterMiddleware.once(cb);
     }
 
-        // if loading make sure to adjust progress chunks for that parent and its children
+    // if loading make sure to adjust progress chunks for that parent and its children
     if (this.loading) {
       const parent = options.parentResource;
       const fullChunk = parent.progressChunk * (parent.children.length + 1); // +1 for parent
@@ -327,7 +327,7 @@ class Loader {
       }
     }
 
-        // add the resource to the queue
+    // add the resource to the queue
     this._queue.push(this.resources[name]);
 
     return this;
@@ -449,11 +449,11 @@ class Loader {
     const parsedUrl = parseUri(url, { strictMode: true });
     let result, hash;
 
-        // absolute url, just use it as is.
+    // absolute url, just use it as is.
     if (parsedUrl.protocol || !parsedUrl.path || url.indexOf('//') === 0) {
       result = url;
     }
-        // if baseUrl doesn't end in slash and url doesn't start with slash, then add a slash inbetween
+    // if baseUrl doesn't end in slash and url doesn't start with slash, then add a slash inbetween
     else if (this.baseUrl.length
             && this.baseUrl.lastIndexOf('/') !== this.baseUrl.length - 1
             && url.charAt(0) !== '/'
@@ -464,7 +464,7 @@ class Loader {
       result = this.baseUrl + url;
     }
 
-        // if we need to add a default querystring, there is a bit more work
+    // if we need to add a default querystring, there is a bit more work
     if (this.defaultQueryString) {
       hash = rgxExtractUrlHash.exec(result)[0];
 
@@ -494,26 +494,26 @@ class Loader {
   _loadResource(resource, dequeue) {
     resource._dequeue = dequeue;
 
-        // run before middleware
-    async.eachSeries(
-            this._beforeMiddleware,
-            (fn, next) => {
-              fn.call(this, resource, () => {
-                    // if the before middleware marks the resource as complete,
-                    // break and don't process any more before middleware
-                next(resource.isComplete ? {} : null);
-              });
-            },
-            () => {
-              if (resource.isComplete) {
-                this._onLoad(resource);
-              }
-              else {
-                resource._onLoadBinding = resource.onComplete.once(this._onLoad, this);
-                resource.load();
-              }
-            }
-        );
+    // run before middleware
+    eachSeries(
+      this._beforeMiddleware,
+      (fn, next) => {
+        fn.call(this, resource, () => {
+          // if the before middleware marks the resource as complete,
+          // break and don't process any more before middleware
+          next(resource.isComplete ? {} : null);
+        });
+      },
+      () => {
+        if (resource.isComplete) {
+          this._onLoad(resource);
+        }
+        else {
+          resource._onLoadBinding = resource.onComplete.once(this._onLoad, this);
+          resource.load();
+        }
+      }
+    );
   }
 
   /**
@@ -538,8 +538,8 @@ class Loader {
   _onLoad(resource) {
     resource._onLoadBinding = null;
 
-        // run middleware, this *must* happen before dequeue so sub-assets get added properly
-    async.eachSeries(
+    // run middleware, this *must* happen before dequeue so sub-assets get added properly
+    eachSeries(
       this._afterMiddleware,
       (fn, next) => {
         fn.call(this, resource, next);
@@ -569,5 +569,3 @@ class Loader {
     );
   }
 }
-
-module.exports = Loader;

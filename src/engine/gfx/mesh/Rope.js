@@ -1,5 +1,5 @@
-const Mesh = require('./Mesh');
-const Vector = require('engine/Vector');
+import Mesh from './Mesh';
+import Vector from 'engine/Vector';
 
 /**
  * The rope allows you to draw a texture across several points and then manipulate these points
@@ -18,7 +18,7 @@ const Vector = require('engine/Vector');
  * @param {Vector[]} points - An array of {@link Vector} objects to construct this rope.
  *
  */
-class Rope extends Mesh {
+export default class Rope extends Mesh {
   constructor(texture, points) {
     super(texture);
 
@@ -192,5 +192,3 @@ class Rope extends Mesh {
     this.containerUpdateTransform();
   }
 }
-
-module.exports = Rope;

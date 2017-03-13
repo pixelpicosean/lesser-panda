@@ -1,4 +1,4 @@
-const Vector = require('engine/Vector');
+import Vector from 'engine/Vector';
 
 /**
  * Holds all information related to an Interaction event
@@ -6,7 +6,7 @@ const Vector = require('engine/Vector');
  * @class
  * @memberof interaction
  */
-function InteractionData() {
+export default function InteractionData() {
     /**
      * This point stores the global coords of where the touch/mouse event happened
      *
@@ -30,7 +30,6 @@ function InteractionData() {
 }
 
 InteractionData.prototype.constructor = InteractionData;
-module.exports = InteractionData;
 
 /**
  * This will return the local coordinates of the specified displayObject for this InteractionData

@@ -2,7 +2,7 @@
  * Generic Mask Stack data structure
  * @class
  */
-function StencilMaskStack() {
+export default function StencilMaskStack() {
 	/**
    * The actual stack
    *
@@ -26,4 +26,3 @@ function StencilMaskStack() {
 }
 
 StencilMaskStack.prototype.constructor = StencilMaskStack;
-module.exports = StencilMaskStack;

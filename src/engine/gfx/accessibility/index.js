@@ -5,7 +5,7 @@
  * @license     {@link https://github.com/pixijs/pixi.js/blob/master/LICENSE|MIT License}
  */
 
-module.exports = {
+export default {
   accessibleTarget: require('./accessibleTarget'),
   AccessibilityManager: require('./AccessibilityManager'),
 };

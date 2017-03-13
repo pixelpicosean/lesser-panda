@@ -11,7 +11,7 @@ function _noop() { /* empty */ }
  * @param {function} iterator - Function to call for each element.
  * @param {function} callback - Function to call when done, or on error.
  */
-module.exports.eachSeries = function(array, iterator, callback) {
+export function eachSeries(array, iterator, callback) {
   let i = 0;
   const len = array.length;
 
@@ -54,7 +54,7 @@ function onlyOnce(fn) {
  * @param {number} concurrency - How many workers to run in parrallel.
  * @return {*} The async queue object.
  */
-module.exports.queue = function(worker, concurrency) {
+export function queue(worker, concurrency) {
   if (concurrency == null) { // eslint-disable-line no-eq-null,eqeqeq
     concurrency = 1;
   }

@@ -46,13 +46,11 @@ function pluginTarget(obj) {
 }
 
 
-module.exports = {
-  /**
-   * Mixes in the properties of the pluginTarget into another object
-   *
-   * @param {object} obj The obj to mix into
-   */
-  mixin: function mixin(obj) {
-    pluginTarget(obj);
-  },
+/**
+ * Mixes in the properties of the pluginTarget into another object
+ *
+ * @param {object} obj The obj to mix into
+ */
+export function mixin(obj) {
+  pluginTarget(obj);
 };

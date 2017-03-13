@@ -1,7 +1,7 @@
-const Vector = require('engine/Vector');
-const EventEmitter = require('engine/EventEmitter');
-const Behavior = require('engine/Behavior');
-const { merge } = require('engine/utils/object');
+import Vector from 'engine/Vector';
+import EventEmitter from 'engine/EventEmitter';
+import Behavior from 'engine/Behavior';
+import { merge } from 'engine/utils/object';
 
 /**
  * Base object that may contain a graphic element(as `gfx`)
@@ -11,7 +11,7 @@ const { merge } = require('engine/utils/object');
  *
  * @class Entity
  */
-class Entity {
+export default class Entity {
   /**
    * @constructor
    * @param {Number} x          X coordinate
@@ -307,8 +307,3 @@ Entity.register = function(type, ctor) {
  * @static
  */
 Entity.canBePooled = false;
-
-/**
- * @exports engine/Entity
- */
-module.exports = Entity;

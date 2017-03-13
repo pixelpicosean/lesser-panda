@@ -362,4 +362,4 @@ function fetchDeviceInfo() {
 /**
  * @exports engine/device
  */
-module.exports = fetchDeviceInfo();
+export default fetchDeviceInfo();

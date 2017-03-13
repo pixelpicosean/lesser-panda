@@ -1,7 +1,7 @@
-var Graphics = require('./core/graphics/Graphics');
-var Vector = require('engine/Vector');
-var CONST = require('./const');
-require('./core/graphics/webgl/GraphicsRenderer');
+import Graphics from './core/graphics/Graphics';
+import Vector from 'engine/Vector';
+import { BLEND_MODES } from './const';
+import './core/graphics/webgl/GraphicsRenderer';
 
 const DEFAULT_POLYGON_VERTICES = [
   Vector.create(-4, -4),
@@ -16,7 +16,7 @@ const DEFAULT_POLYGON_VERTICES = [
  * @param {object} data   Data to create the instance from
  * @return {Graphics}     Graphics instance
  */
-module.exports = function(data) {
+export default function(data) {
   let inst = new Graphics();
 
   // TODO: add fill/stroke support
@@ -111,7 +111,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }

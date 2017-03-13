@@ -1,7 +1,7 @@
-const Vector = require('engine/Vector');
-const { removeItems } = require('engine/utils/array');
-const Node = require('../Node');
-const Sprite = require('../sprites/Sprite');
+import Vector from 'engine/Vector';
+import { removeItems } from 'engine/utils/array';
+import Node from '../Node';
+import Sprite from '../sprites/Sprite';
 
 /**
  * A BitmapText object will create a line or multiple lines of text using bitmap font. To
@@ -33,7 +33,7 @@ const Sprite = require('../sprites/Sprite');
  *      single line text
  * @param [style.tint=0xFFFFFF] {number} The tint color
  */
-class BitmapText extends Node {
+export default class BitmapText extends Node {
   constructor(text, style = {}) {
     super();
 
@@ -356,5 +356,3 @@ Object.defineProperties(BitmapText.prototype, {
 });
 
 BitmapText.fonts = {};
-
-module.exports = BitmapText;

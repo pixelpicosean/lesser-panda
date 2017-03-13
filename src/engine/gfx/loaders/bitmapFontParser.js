@@ -1,9 +1,9 @@
-const { Rectangle } = require('../core/math');
-const Texture = require('../core/textures/Texture');
-const { Resource } = require('engine/loader');
-const dirname = require('./dirname');
-const utils = require('../core/utils');
-const BitmapText = require('../core/text/BitmapText');
+import { Rectangle } from '../core/math';
+import Texture from '../core/textures/Texture';
+import { Resource } from 'engine/loader';
+import dirname from './dirname';
+import { TextureCache } from '../core/utils';
+import BitmapText from '../core/text/BitmapText';
 
 // eslint-disable-next-line
 function parse(resource, texture) {
@@ -60,7 +60,7 @@ function parse(resource, texture) {
 }
 
 
-module.exports = function() {
+export default function() {
   return function(resource, next) {
     // skip if no data or not xml data
     if (!resource.data || (resource.type !== Resource.TYPE.XML)) {
@@ -99,9 +99,9 @@ module.exports = function() {
       xmlUrl += '/';
     }
     const textureUrl = xmlUrl + resource.data.getElementsByTagName('page')[0].getAttribute('file');
-    if (utils.TextureCache[textureUrl]) {
+    if (TextureCache[textureUrl]) {
       // reuse existing texture
-      parse(resource, utils.TextureCache[textureUrl]);
+      parse(resource, TextureCache[textureUrl]);
       next();
     }
     else {

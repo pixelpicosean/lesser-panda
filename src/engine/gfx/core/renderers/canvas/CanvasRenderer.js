@@ -1,8 +1,9 @@
-const SystemRenderer = require('../SystemRenderer');
-const CanvasMaskManager = require('./utils/CanvasMaskManager');
-const utils = require('../../utils');
-const math = require('../../math');
-const CONST = require('../../../const');
+import SystemRenderer from '../SystemRenderer';
+import CanvasMaskManager from './utils/CanvasMaskManager';
+import { canUseNewCanvasBlendModes } from '../../utils';
+import { mixin } from '../../utils/pluginTarget';
+import math from '../../math';
+import { RENDERER_TYPE, BLEND_MODES, SCALE_MODES } from '../../../const';
 
 /**
  * The CanvasRenderer draws the scene and all its content onto a 2d canvas. This renderer should be used for browsers that do not support webGL.
@@ -22,11 +23,11 @@ const CONST = require('../../../const');
  *      not before the new render pass.
  * @param [options.roundPixels=false] {boolean} If true Pixi will Math.floor() x/y values when rendering, stopping pixel interpolation.
  */
-class CanvasRenderer extends SystemRenderer {
+export default class CanvasRenderer extends SystemRenderer {
   constructor(width, height, options = {}) {
     super('Canvas', width, height, options);
 
-    this.type = CONST.RENDERER_TYPE.CANVAS;
+    this.type = RENDERER_TYPE.CANVAS;
 
     /**
      * The canvas 2d context that everything is drawn with.
@@ -91,7 +92,7 @@ class CanvasRenderer extends SystemRenderer {
   }
 }
 
-utils.pluginTarget.mixin(CanvasRenderer);
+mixin(CanvasRenderer);
 
 /**
  * Renders the object to this canvas view
@@ -116,7 +117,7 @@ CanvasRenderer.prototype.render = function(object) {
 
   this.context.globalAlpha = 1;
 
-  this.context.globalCompositeOperation = this.blendModes[CONST.BLEND_MODES.NORMAL];
+  this.context.globalCompositeOperation = this.blendModes[BLEND_MODES.NORMAL];
 
   if (navigator.isCocoonJS && this.view.screencanvas) {
     this.context.fillStyle = 'black';
@@ -185,7 +186,7 @@ CanvasRenderer.prototype.resize = function(w, h) {
     // reset the scale mode.. oddly this seems to be reset when the canvas is resized.
     // surely a browser bug?? Let pixi fix that for you..
   if (this.smoothProperty) {
-    this.context[this.smoothProperty] = (CONST.SCALE_MODES.DEFAULT === CONST.SCALE_MODES.LINEAR);
+    this.context[this.smoothProperty] = (SCALE_MODES.DEFAULT === SCALE_MODES.LINEAR);
   }
 
 };
@@ -199,46 +200,44 @@ CanvasRenderer.prototype._mapBlendModes = function() {
   if (!this.blendModes) {
     this.blendModes = {};
 
-    if (utils.canUseNewCanvasBlendModes()) {
-      this.blendModes[CONST.BLEND_MODES.NORMAL] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.ADD] = 'lighter'; // IS THIS OK???
-      this.blendModes[CONST.BLEND_MODES.MULTIPLY] = 'multiply';
-      this.blendModes[CONST.BLEND_MODES.SCREEN] = 'screen';
-      this.blendModes[CONST.BLEND_MODES.OVERLAY] = 'overlay';
-      this.blendModes[CONST.BLEND_MODES.DARKEN] = 'darken';
-      this.blendModes[CONST.BLEND_MODES.LIGHTEN] = 'lighten';
-      this.blendModes[CONST.BLEND_MODES.COLOR_DODGE] = 'color-dodge';
-      this.blendModes[CONST.BLEND_MODES.COLOR_BURN] = 'color-burn';
-      this.blendModes[CONST.BLEND_MODES.HARD_LIGHT] = 'hard-light';
-      this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT] = 'soft-light';
-      this.blendModes[CONST.BLEND_MODES.DIFFERENCE] = 'difference';
-      this.blendModes[CONST.BLEND_MODES.EXCLUSION] = 'exclusion';
-      this.blendModes[CONST.BLEND_MODES.HUE] = 'hue';
-      this.blendModes[CONST.BLEND_MODES.SATURATION] = 'saturate';
-      this.blendModes[CONST.BLEND_MODES.COLOR] = 'color';
-      this.blendModes[CONST.BLEND_MODES.LUMINOSITY] = 'luminosity';
+    if (canUseNewCanvasBlendModes()) {
+      this.blendModes[BLEND_MODES.NORMAL] = 'source-over';
+      this.blendModes[BLEND_MODES.ADD] = 'lighter'; // IS THIS OK???
+      this.blendModes[BLEND_MODES.MULTIPLY] = 'multiply';
+      this.blendModes[BLEND_MODES.SCREEN] = 'screen';
+      this.blendModes[BLEND_MODES.OVERLAY] = 'overlay';
+      this.blendModes[BLEND_MODES.DARKEN] = 'darken';
+      this.blendModes[BLEND_MODES.LIGHTEN] = 'lighten';
+      this.blendModes[BLEND_MODES.COLOR_DODGE] = 'color-dodge';
+      this.blendModes[BLEND_MODES.COLOR_BURN] = 'color-burn';
+      this.blendModes[BLEND_MODES.HARD_LIGHT] = 'hard-light';
+      this.blendModes[BLEND_MODES.SOFT_LIGHT] = 'soft-light';
+      this.blendModes[BLEND_MODES.DIFFERENCE] = 'difference';
+      this.blendModes[BLEND_MODES.EXCLUSION] = 'exclusion';
+      this.blendModes[BLEND_MODES.HUE] = 'hue';
+      this.blendModes[BLEND_MODES.SATURATION] = 'saturate';
+      this.blendModes[BLEND_MODES.COLOR] = 'color';
+      this.blendModes[BLEND_MODES.LUMINOSITY] = 'luminosity';
     }
     else {
             // this means that the browser does not support the cool new blend modes in canvas 'cough' ie 'cough'
-      this.blendModes[CONST.BLEND_MODES.NORMAL] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.ADD] = 'lighter'; // IS THIS OK???
-      this.blendModes[CONST.BLEND_MODES.MULTIPLY] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.SCREEN] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.OVERLAY] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.DARKEN] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.LIGHTEN] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.COLOR_DODGE] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.COLOR_BURN] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.HARD_LIGHT] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.DIFFERENCE] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.EXCLUSION] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.HUE] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.SATURATION] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.COLOR] = 'source-over';
-      this.blendModes[CONST.BLEND_MODES.LUMINOSITY] = 'source-over';
+      this.blendModes[BLEND_MODES.NORMAL] = 'source-over';
+      this.blendModes[BLEND_MODES.ADD] = 'lighter'; // IS THIS OK???
+      this.blendModes[BLEND_MODES.MULTIPLY] = 'source-over';
+      this.blendModes[BLEND_MODES.SCREEN] = 'source-over';
+      this.blendModes[BLEND_MODES.OVERLAY] = 'source-over';
+      this.blendModes[BLEND_MODES.DARKEN] = 'source-over';
+      this.blendModes[BLEND_MODES.LIGHTEN] = 'source-over';
+      this.blendModes[BLEND_MODES.COLOR_DODGE] = 'source-over';
+      this.blendModes[BLEND_MODES.COLOR_BURN] = 'source-over';
+      this.blendModes[BLEND_MODES.HARD_LIGHT] = 'source-over';
+      this.blendModes[BLEND_MODES.SOFT_LIGHT] = 'source-over';
+      this.blendModes[BLEND_MODES.DIFFERENCE] = 'source-over';
+      this.blendModes[BLEND_MODES.EXCLUSION] = 'source-over';
+      this.blendModes[BLEND_MODES.HUE] = 'source-over';
+      this.blendModes[BLEND_MODES.SATURATION] = 'source-over';
+      this.blendModes[BLEND_MODES.COLOR] = 'source-over';
+      this.blendModes[BLEND_MODES.LUMINOSITY] = 'source-over';
     }
   }
 };
-
-module.exports = CanvasRenderer;

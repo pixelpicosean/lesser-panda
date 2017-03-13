@@ -9,7 +9,7 @@ let pRatio = 1.0, cRatio = 1.0;
  * @param  {Vector} contentSize   Size of the content.
  * @return {object} { left , top , scale }
  */
-module.exports.outerBoxResize = function(containerSize, contentSize) {
+export function outerBoxResize(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 
@@ -32,7 +32,7 @@ module.exports.outerBoxResize = function(containerSize, contentSize) {
  * @param  {Vector} contentSize   Size of the content.
  * @return {object} { left , top , scale }
  */
-module.exports.innerBoxResize = function(containerSize, contentSize) {
+export function innerBoxResize(containerSize, contentSize) {
   pRatio = containerSize.x / containerSize.y;
   cRatio = contentSize.x / contentSize.y;
 

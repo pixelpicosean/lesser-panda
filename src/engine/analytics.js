@@ -1,5 +1,5 @@
-const device = require('engine/device');
-const config = require('game/config');
+import device from 'engine/device';
+import config from 'game/config';
 
 /**
  * Google Analytics tracking.
@@ -19,7 +19,7 @@ const config = require('game/config');
  *
  * @class Analytics
  */
-class Analytics {
+export class Analytics {
   /**
    * @constructor
    * @param {Object} settings Settings object
@@ -97,7 +97,6 @@ class Analytics {
  *
  * @requires module:engine/device
  */
-module.exports = new Analytics(Object.assign({
+export default (new Analytics(Object.assign({
   id: '',
-}, config.analytics));
-module.exports.Analytics = Analytics;
+}, config.analytics)));

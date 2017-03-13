@@ -1,6 +1,6 @@
-const Sprite = require('./Sprite');
-const { merge } = require('engine/utils/object');
-const { textureFromData, filmstrip } = require('../../utils');
+import Sprite from './Sprite';
+import { merge } from 'engine/utils/object';
+import { textureFromData, filmstrip } from '../../utils';
 
 const AnimStrips = {};
 const EmptyTextures = Object.freeze([]);
@@ -101,7 +101,7 @@ class AnimationData {
  * @class AnimatedSprite
  * @extends Sprite
  */
-class AnimatedSprite extends Sprite {
+export default class AnimatedSprite extends Sprite {
   set textures(ts) {
     this._textures = normalizeTextures(ts);
   }
@@ -302,5 +302,3 @@ class AnimatedSprite extends Sprite {
     }
   }
 }
-
-module.exports = AnimatedSprite;

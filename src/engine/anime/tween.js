@@ -1,14 +1,14 @@
-const EventEmitter = require('engine/EventEmitter');
+import EventEmitter from 'engine/EventEmitter';
 
-const { getTargetAndKey } = require('./utils');
-const { Easing, Interpolation } = require('./easing');
+import { getTargetAndKey } from './utils';
+import { Easing, Interpolation } from './easing';
 
 /**
  * Action type enums
  * @enum {number}
  * @memberof Tween
  */
-const ACTION_TYPES = {
+export const ACTION_TYPES = {
   REPEAT: 0,
   WAIT: 1,
   ANIMATE: 2,
@@ -20,7 +20,7 @@ const ACTION_TYPES = {
  * @class Tween
  * @extends {EventEmitter}
  */
-class Tween extends EventEmitter {
+export default class Tween extends EventEmitter {
   /**
    * @constructor
    * @param {object} context Object to apply this tween to.
@@ -417,16 +417,3 @@ Tween.create = function(context) {
   t.init(context);
   return t;
 };
-
-/**
- * Classic tween animation.
- * Use {@link SystemAnime#tween} to create a new tween and start it immediately.
- *
- * @exports engine/anime/tween
- *
- * @requires engine/EventEmitter
- * @requires engine/anime/utils
- * @requires engine/anime/easing
- */
-module.exports = Tween;
-module.exports.ACTION_TYPES = ACTION_TYPES;

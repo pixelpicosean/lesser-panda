@@ -1,12 +1,11 @@
-const Resource = require('engine/loader').Resource;
-const Texture = require('../core/textures/Texture');
-const utils = require('../core/utils');
-const math = require('../core/math');
-const async = require('engine/loader').async;
+import { Resource, async } from 'engine/loader';
+import Texture from '../core/textures/Texture';
+import utils from '../core/utils';
+import math from '../core/math';
 
 const BATCH_SIZE = 1000;
 
-module.exports = function() {
+export default () => {
   return function(resource, next) {
     var imageResourceName = resource.name + '_image';
 

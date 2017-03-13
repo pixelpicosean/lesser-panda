@@ -11,33 +11,31 @@
  *   accessibility.accessibleTarget
  * );
  */
-const accessibleTarget = {
+export default {
 
   /**
    * @todo Needs docs.
    */
-  accessible:false,
+  accessible: false,
 
   /**
    * @todo Needs docs.
    */
-  accessibleTitle:null,
+  accessibleTitle: null,
 
   /**
    * @todo Needs docs.
    */
-  tabIndex:0,
+  tabIndex: 0,
 
   /**
    * @todo Needs docs.
    */
-  _accessibleActive:false,
+  _accessibleActive: false,
 
   /**
    * @todo Needs docs.
    */
-  _accessibleDiv:false,
+  _accessibleDiv: false,
 
 };
-
-module.exports = accessibleTarget;

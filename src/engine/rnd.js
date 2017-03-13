@@ -3,7 +3,7 @@
  *
  * @class RandomDataGenerator
  */
-class RandomDataGenerator {
+export class RandomDataGenerator {
   /**
    * @constructor
    * @param {Array|String} [seeds=[]] - An array of values to use as the seed, or a generator state (from {#state}).
@@ -278,5 +278,4 @@ class RandomDataGenerator {
  *
  * @exports engine/rnd
  */
-module.exports = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
-module.exports.RandomDataGenerator = RandomDataGenerator;
+export default new RandomDataGenerator([(Date.now() * Math.random()).toString()]);

@@ -1,4 +1,4 @@
-const { clamp } = require('engine/utils/math');
+import { clamp } from 'engine/utils/math';
 
 /**
  * Vector instance pool
@@ -14,7 +14,7 @@ const pool = [];
  *
  * @class Vector
  */
-class Vector {
+export default class Vector {
   /**
    * @constructor
    * @param  {Number} [x=0] X coordinate
@@ -428,9 +428,3 @@ Vector.create = function(x, y) {
 Vector.recycle = function(vector) {
   pool.push(vector);
 };
-
-/**
- * @exports engine/Vector
- * @see Vector
- */
-module.exports = Vector;

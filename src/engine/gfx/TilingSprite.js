@@ -1,6 +1,6 @@
-const TilingSprite = require('./core/sprites/TilingSprite');
-const textureFromData = require('./utils').textureFromData;
-const CONST = require('./const');
+import TilingSprite from './core/sprites/TilingSprite';
+import { textureFromData } from './utils');
+import { BLEND_MODES } from './const';
 
 /**
  * Factory function for `TilingSprite`.
@@ -8,7 +8,7 @@ const CONST = require('./const');
  * @param {object} data   Data to create the instance from
  * @return {TilingSprite} TilingSprite instance
  */
-module.exports = function(data) {
+export default function(data) {
   const tex = textureFromData(data.texture);
   const inst = new TilingSprite(tex, data.width || tex.width, data.height || tex.height);
 
@@ -53,7 +53,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }

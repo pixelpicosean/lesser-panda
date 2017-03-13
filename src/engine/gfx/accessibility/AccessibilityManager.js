@@ -1,7 +1,7 @@
-const Node = require('../core/Node');
-const { removeItems } = require('engine/utils/array');
-const WebGLRenderer = require('../core/renderers/webgl/WebGLRenderer');
-const CanvasRenderer = require('../core/renderers/canvas/CanvasRenderer');
+import Node from '../core/Node';
+import { removeItems } from 'engine/utils/array';
+import WebGLRenderer from '../core/renderers/webgl/WebGLRenderer';
+import CanvasRenderer from '../core/renderers/canvas/CanvasRenderer';
 
 // add some extra variables to the container..
 Object.assign(

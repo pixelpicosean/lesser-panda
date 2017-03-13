@@ -1,9 +1,9 @@
-const Mesh = require('./mesh/Mesh');
-const Rope = require('./mesh/Rope');
-const CONST = require('./const');
-const textureFromData = require('./utils').textureFromData;
-require('./mesh/webgl/MeshRenderer');
-require('./mesh/webgl/MeshShader');
+import Mesh from './mesh/Mesh';
+import Rope from './mesh/Rope';
+import { BLEND_MODES } from './const';
+import { textureFromData } from './utils';
+import './mesh/webgl/MeshRenderer';
+import './mesh/webgl/MeshShader';
 
 /**
  * Factory function for `Rope`.
@@ -11,7 +11,7 @@ require('./mesh/webgl/MeshShader');
  * @param {object} data   Data to create the instance from
  * @return {Rope}         Rope instance
  */
-module.exports = function(data) {
+export default function(data) {
   const tex = textureFromData(data.texture);
   const inst = new Rope(tex, data.points);
 
@@ -49,7 +49,7 @@ module.exports = function(data) {
 
     // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
 
     // Set draw mode

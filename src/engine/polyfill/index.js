@@ -1,9 +1,9 @@
 'use strict';
 
-require('./Object.assign');
-require('./requestAnimationFrame');
-require('./Math.sign');
-require('./Number.isFinite');
+import './Object.assign';
+import './requestAnimationFrame';
+import './Math.sign';
+import './Number.isFinite';
 
 if (!window.ArrayBuffer) {
   window.ArrayBuffer = Array;

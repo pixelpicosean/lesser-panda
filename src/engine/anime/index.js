@@ -11,18 +11,18 @@
  * @requires engine/anime/tween
  * @requires engine/anime/action
  */
-const System = require('engine/system');
-const { removeItems } = require('engine/utils/array');
+import System from 'engine/system';
+import { removeItems } from 'engine/utils/array';
 
-const Tween = require('./tween');
-const { ActionPlayer } = require('./action');
+import Tween from './tween';
+import { ActionPlayer } from './action';
 
 /**
  * Anime sub-system.
  * @class
  * @extends {System}
  */
-class SystemAnime extends System {
+class Anime extends System {
   /**
    * @constructor
    */
@@ -163,4 +163,4 @@ class SystemAnime extends System {
   }
 }
 
-module.exports = SystemAnime;
+export default Anime;

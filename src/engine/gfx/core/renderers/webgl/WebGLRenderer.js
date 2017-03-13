@@ -1,14 +1,15 @@
-var SystemRenderer = require('../SystemRenderer'),
-  ShaderManager = require('./managers/ShaderManager'),
-  MaskManager = require('./managers/MaskManager'),
-  StencilManager = require('./managers/StencilManager'),
-  FilterManager = require('./managers/FilterManager'),
-  BlendModeManager = require('./managers/BlendModeManager'),
-  RenderTarget = require('./utils/RenderTarget'),
-  ObjectRenderer = require('./utils/ObjectRenderer'),
-  FXAAFilter = require('./filters/FXAAFilter'),
-  utils = require('../../utils'),
-  CONST = require('../../../const');
+import SystemRenderer from '../SystemRenderer';
+import ShaderManager from './managers/ShaderManager';
+import MaskManager from './managers/MaskManager';
+import StencilManager from './managers/StencilManager';
+import FilterManager from './managers/FilterManager';
+import BlendModeManager from './managers/BlendModeManager';
+import RenderTarget from './utils/RenderTarget';
+import ObjectRenderer from './utils/ObjectRenderer';
+import FXAAFilter from './filters/FXAAFilter';
+import { removeItems } from '../../utils';
+import { mixin } from '../../utils/pluginTarget';
+import { RENDERER_TYPE, BLEND_MODES, SCALE_MODES, DRAW_MODES } from '../../../const';
 
 /**
  * The WebGLRenderer draws the scene and all its content onto a webGL enabled canvas. This renderer
@@ -33,7 +34,7 @@ var SystemRenderer = require('../SystemRenderer'),
  *      you need to call toDataUrl on the webgl context.
  * @param [options.roundPixels=false] {boolean} If true Pixi will Math.floor() x/y values when rendering, stopping pixel interpolation.
  */
-class WebGLRenderer extends SystemRenderer {
+export default class WebGLRenderer extends SystemRenderer {
   constructor(width, height, options = {}) {
     super('WebGL', width, height, options);
 
@@ -43,7 +44,7 @@ class WebGLRenderer extends SystemRenderer {
      * @member {number}
      *
      */
-    this.type = CONST.RENDERER_TYPE.WEBGL;
+    this.type = RENDERER_TYPE.WEBGL;
 
     this.handleContextLost = this.handleContextLost.bind(this);
     this.handleContextRestored = this.handleContextRestored.bind(this);
@@ -160,7 +161,7 @@ class WebGLRenderer extends SystemRenderer {
   }
 }
 
-utils.pluginTarget.mixin(WebGLRenderer);
+mixin(WebGLRenderer);
 
 WebGLRenderer.glContextId = 0;
 
@@ -279,7 +280,7 @@ WebGLRenderer.prototype.render = function(object) {
  */
 WebGLRenderer.prototype.renderDisplayObject = function(displayObject, renderTarget, clear) {
   // TODO is this needed...
-  // this.blendModeManager.setBlendMode(CONST.BLEND_MODES.NORMAL);
+  // this.blendModeManager.setBlendMode(BLEND_MODES.NORMAL);
   this.setRenderTarget(renderTarget);
 
   if (clear) {
@@ -372,15 +373,15 @@ WebGLRenderer.prototype.updateTexture = function(texture) {
   gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, texture.premultipliedAlpha);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.source);
 
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texture.scaleMode === CONST.SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texture.scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
 
 
   if (texture.mipmap && texture.isPowerOfTwo) {
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texture.scaleMode === CONST.SCALE_MODES.LINEAR ? gl.LINEAR_MIPMAP_LINEAR : gl.NEAREST_MIPMAP_NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texture.scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR_MIPMAP_LINEAR : gl.NEAREST_MIPMAP_NEAREST);
     gl.generateMipmap(gl.TEXTURE_2D);
   }
   else {
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texture.scaleMode === CONST.SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texture.scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
   }
 
   if (!texture.isPowerOfTwo) {
@@ -414,7 +415,7 @@ WebGLRenderer.prototype.destroyTexture = function(texture, _skipRemove) {
     if (!_skipRemove) {
       var i = this._managedTextures.indexOf(texture);
       if (i !== -1) {
-        utils.removeItems(this._managedTextures, i, 1);
+        removeItems(this._managedTextures, i, 1);
       }
     }
   }
@@ -511,36 +512,34 @@ WebGLRenderer.prototype._mapGlModes = function() {
   if (!this.blendModes) {
     this.blendModes = {};
 
-    this.blendModes[CONST.BLEND_MODES.NORMAL] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.ADD] = [gl.ONE, gl.DST_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.MULTIPLY] = [gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.SCREEN] = [gl.ONE, gl.ONE_MINUS_SRC_COLOR];
-    this.blendModes[CONST.BLEND_MODES.OVERLAY] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.DARKEN] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.LIGHTEN] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.COLOR_DODGE] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.COLOR_BURN] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.HARD_LIGHT] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.SOFT_LIGHT] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.DIFFERENCE] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.EXCLUSION] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.HUE] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.SATURATION] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.COLOR] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
-    this.blendModes[CONST.BLEND_MODES.LUMINOSITY] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.NORMAL] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.ADD] = [gl.ONE, gl.DST_ALPHA];
+    this.blendModes[BLEND_MODES.MULTIPLY] = [gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.SCREEN] = [gl.ONE, gl.ONE_MINUS_SRC_COLOR];
+    this.blendModes[BLEND_MODES.OVERLAY] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.DARKEN] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.LIGHTEN] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.COLOR_DODGE] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.COLOR_BURN] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.HARD_LIGHT] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.SOFT_LIGHT] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.DIFFERENCE] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.EXCLUSION] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.HUE] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.SATURATION] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.COLOR] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
+    this.blendModes[BLEND_MODES.LUMINOSITY] = [gl.ONE, gl.ONE_MINUS_SRC_ALPHA];
   }
 
   if (!this.drawModes) {
     this.drawModes = {};
 
-    this.drawModes[CONST.DRAW_MODES.POINTS] = gl.POINTS;
-    this.drawModes[CONST.DRAW_MODES.LINES] = gl.LINES;
-    this.drawModes[CONST.DRAW_MODES.LINE_LOOP] = gl.LINE_LOOP;
-    this.drawModes[CONST.DRAW_MODES.LINE_STRIP] = gl.LINE_STRIP;
-    this.drawModes[CONST.DRAW_MODES.TRIANGLES] = gl.TRIANGLES;
-    this.drawModes[CONST.DRAW_MODES.TRIANGLE_STRIP] = gl.TRIANGLE_STRIP;
-    this.drawModes[CONST.DRAW_MODES.TRIANGLE_FAN] = gl.TRIANGLE_FAN;
+    this.drawModes[DRAW_MODES.POINTS] = gl.POINTS;
+    this.drawModes[DRAW_MODES.LINES] = gl.LINES;
+    this.drawModes[DRAW_MODES.LINE_LOOP] = gl.LINE_LOOP;
+    this.drawModes[DRAW_MODES.LINE_STRIP] = gl.LINE_STRIP;
+    this.drawModes[DRAW_MODES.TRIANGLES] = gl.TRIANGLES;
+    this.drawModes[DRAW_MODES.TRIANGLE_STRIP] = gl.TRIANGLE_STRIP;
+    this.drawModes[DRAW_MODES.TRIANGLE_FAN] = gl.TRIANGLE_FAN;
   }
 };
-
-module.exports = WebGLRenderer;

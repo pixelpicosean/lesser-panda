@@ -1,4 +1,4 @@
-const Mesh = require('./Mesh');
+import Mesh from './Mesh';
 
 /**
  * The Plane allows you to draw a plane with customizable segments across x/y axis.
@@ -14,7 +14,7 @@ const Mesh = require('./Mesh');
  * @param {int} segmentsX - The number ox x segments
  * @param {int} segmentsY - The number of y segments
  */
-class Plane extends Mesh {
+export default class Plane extends Mesh {
   constructor(texture, segmentsX = 10, segmentsY = 10) {
     super(texture);
 
@@ -107,5 +107,3 @@ class Plane extends Mesh {
     }
   }
 }
-
-module.exports = Plane;

@@ -1,6 +1,6 @@
 const _keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
-module.exports.encodeBinary = function(input) {
+export function encodeBinary(input) {
   let output = '';
   let inx = 0;
 

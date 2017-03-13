@@ -1,10 +1,10 @@
 // Direction enum
-module.exports.RIGHT = Object.freeze({ angle: 0, angleInDegree: 0 });
-module.exports.BOTTOM = Object.freeze({ angle: Math.PI * 0.5, angleInDegree: 90 });
-module.exports.LEFT = Object.freeze({ angle: Math.PI, angleInDegree: 180 });
-module.exports.TOP = Object.freeze({ angle: Math.PI * 1.5, angleInDegree: 270 });
+export const RIGHT = Object.freeze({ angle: 0, angleInDegree: 0 });
+export const BOTTOM = Object.freeze({ angle: Math.PI * 0.5, angleInDegree: 90 });
+export const LEFT = Object.freeze({ angle: Math.PI, angleInDegree: 180 });
+export const TOP = Object.freeze({ angle: Math.PI * 1.5, angleInDegree: 270 });
 
 // Shapes
-module.exports.BOX =  0;
-module.exports.CIRC = 1;
-module.exports.POLY = 2;
+export const BOX =  0;
+export const CIRC = 1;
+export const POLY = 2;

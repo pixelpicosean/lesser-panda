@@ -1,5 +1,5 @@
-const Shader = require('../../core/renderers/webgl/shaders/Shader');
-const ShaderManager = require('../../core/renderers/webgl/managers/ShaderManager');
+import Shader from '../../core/renderers/webgl/shaders/Shader';
+import ShaderManager from '../../core/renderers/webgl/managers/ShaderManager';
 
 /**
  * @class
@@ -7,7 +7,7 @@ const ShaderManager = require('../../core/renderers/webgl/managers/ShaderManager
  * @memberof mesh
  * @param shaderManager {ShaderManager} The WebGL shader manager this shader works for.
  */
-class MeshShader extends Shader {
+export default class MeshShader extends Shader {
   constructor(shaderManager) {
     super(shaderManager,
       // vertex shader
@@ -54,5 +54,3 @@ class MeshShader extends Shader {
 }
 
 ShaderManager.registerPlugin('meshShader', MeshShader);
-
-module.exports = MeshShader;

@@ -2,7 +2,7 @@
  * Behavior base class
  * @interface
  */
-class Behavior {
+export default class Behavior {
   /**
    * @constructor
    */
@@ -63,5 +63,3 @@ Behavior.register = function(type, ctor) {
     console.log('[WARNING]: "' + type + '" behavior is already registered!');
   }
 };
-
-module.exports = Behavior;

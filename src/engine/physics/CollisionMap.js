@@ -211,6 +211,6 @@ class CollisionMap {
  * @param  {Array}  data     Map data as a 2D array.
  * @return {CollisionMap}    CollisionMap instance.
  */
-module.exports = function(tilesize = 16, data = [[]]) {
+export default function(tilesize = 16, data = [[]]) {
   return new CollisionMap(tilesize, data);
 };

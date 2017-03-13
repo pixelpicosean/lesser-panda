@@ -1,6 +1,6 @@
-const utils = require('../utils');
-const CONST = require('../../const');
-const EventEmitter = require('engine/EventEmitter');
+import { uid, isPowerOfTwo, BaseTextureCache, TextureCache, getResolutionOfUrl } from '../utils';
+import { SCALE_MODES } from '../../const';
+import EventEmitter from 'engine/EventEmitter';
 
 /**
  * A texture stores the information that represents an image. All textures have a base texture.
@@ -10,11 +10,11 @@ const EventEmitter = require('engine/EventEmitter');
  * @param [scaleMode=SCALE_MODES.DEFAULT] {number} See {@link SCALE_MODES} for possible values
  * @param resolution {number} the resolution of the texture for devices with different pixel ratios
  */
-class BaseTexture extends EventEmitter {
+export default class BaseTexture extends EventEmitter {
   constructor(source, scaleMode, resolution) {
     super();
 
-    this.uid = utils.uid();
+    this.uid = uid();
 
     /**
      * The Resolution of the texture.
@@ -63,7 +63,7 @@ class BaseTexture extends EventEmitter {
      * @default SCALE_MODES.LINEAR
      * @see SCALE_MODES
      */
-    this.scaleMode = scaleMode || CONST.SCALE_MODES.DEFAULT;
+    this.scaleMode = scaleMode || SCALE_MODES.DEFAULT;
 
     /**
      * Set to true once the base texture has successfully loaded.
@@ -171,7 +171,7 @@ class BaseTexture extends EventEmitter {
     this.width = this.realWidth / this.resolution;
     this.height = this.realHeight / this.resolution;
 
-    this.isPowerOfTwo = utils.isPowerOfTwo(this.realWidth, this.realHeight);
+    this.isPowerOfTwo = isPowerOfTwo(this.realWidth, this.realHeight);
 
     this.emit('update', this);
   }
@@ -294,8 +294,8 @@ class BaseTexture extends EventEmitter {
    */
   destroy() {
     if (this.imageUrl) {
-      delete utils.BaseTextureCache[this.imageUrl];
-      delete utils.TextureCache[this.imageUrl];
+      delete BaseTextureCache[this.imageUrl];
+      delete TextureCache[this.imageUrl];
 
       this.imageUrl = null;
 
@@ -304,7 +304,7 @@ class BaseTexture extends EventEmitter {
       }
     }
     else if (this.source && this.source._pixiId) {
-      delete utils.BaseTextureCache[this.source._pixiId];
+      delete BaseTextureCache[this.source._pixiId];
     }
 
     this.source = null;
@@ -349,7 +349,7 @@ class BaseTexture extends EventEmitter {
  * @return BaseTexture
  */
 BaseTexture.fromImage = function(imageUrl, crossorigin, scaleMode) {
-  var baseTexture = utils.BaseTextureCache[imageUrl];
+  var baseTexture = BaseTextureCache[imageUrl];
 
   if (crossorigin === undefined && imageUrl.indexOf('data:') !== 0) {
     crossorigin = true;
@@ -368,10 +368,10 @@ BaseTexture.fromImage = function(imageUrl, crossorigin, scaleMode) {
 
     image.src = imageUrl;
 
-    utils.BaseTextureCache[imageUrl] = baseTexture;
+    BaseTextureCache[imageUrl] = baseTexture;
 
         // if there is an @2x at the end of the url we are going to assume its a highres image
-    baseTexture.resolution = utils.getResolutionOfUrl(imageUrl);
+    baseTexture.resolution = getResolutionOfUrl(imageUrl);
   }
 
   return baseTexture;
@@ -387,17 +387,15 @@ BaseTexture.fromImage = function(imageUrl, crossorigin, scaleMode) {
  */
 BaseTexture.fromCanvas = function(canvas, scaleMode) {
   if (!canvas._pixiId) {
-    canvas._pixiId = 'canvas_' + utils.uid();
+    canvas._pixiId = 'canvas_' + uid();
   }
 
-  var baseTexture = utils.BaseTextureCache[canvas._pixiId];
+  var baseTexture = BaseTextureCache[canvas._pixiId];
 
   if (!baseTexture) {
     baseTexture = new BaseTexture(canvas, scaleMode);
-    utils.BaseTextureCache[canvas._pixiId] = baseTexture;
+    BaseTextureCache[canvas._pixiId] = baseTexture;
   }
 
   return baseTexture;
 };
-
-module.exports = BaseTexture;

@@ -1,10 +1,10 @@
-const System = require('engine/system');
-const { removeItems } = require('engine/utils/array');
+import System from 'engine/system';
+import { removeItems } from 'engine/utils/array';
 
 /**
- * @class Timer
+ * @class TimerData
  */
-class Timer {
+class TimerData {
   /**
    * @property {number} elapsed   Time elapsed since start.
    * @readonly
@@ -18,7 +18,7 @@ class Timer {
   get left() { return this._count; }
 
   /**
-   * Timer constructor should not be used directly, use the static methods instead:
+   * TimerData constructor should not be used directly, use the static methods instead:
    *
    * @constructor
    * @param {number} [ms] Time
@@ -71,9 +71,9 @@ class Timer {
   /**
    * Set duration for timer.
    * @method set
-   * @memberof Timer#
+   * @memberof TimerData#
    * @param {number} ms Time to set to
-   * @return {Timer} Self for chaining
+   * @return {TimerData} Self for chaining
    */
   set(ms) {
     if (Number.isFinite(ms)) {
@@ -88,8 +88,8 @@ class Timer {
   /**
    * Reset timer to current duration.
    * @method reset
-   * @memberof Timer#
-   * @return {Timer} Self for chaining
+   * @memberof TimerData#
+   * @return {TimerData} Self for chaining
    */
   reset() {
     this.removed = false;
@@ -100,8 +100,8 @@ class Timer {
   /**
    * Pause timer.
    * @method pause
-   * @memberof Timer#
-   * @return {Timer} Self for chaining
+   * @memberof TimerData#
+   * @return {TimerData} Self for chaining
    */
   pause() {
     this.paused = true;
@@ -111,8 +111,8 @@ class Timer {
   /**
    * Resume paused timer.
    * @method resume
-   * @memberof Timer#
-   * @return {Timer} Self for chaining
+   * @memberof TimerData#
+   * @return {TimerData} Self for chaining
    */
   resume() {
     this.paused = false;
@@ -122,7 +122,7 @@ class Timer {
   /**
    * Update method that is called by timer system.
    * @method update
-   * @memberof Timer#
+   * @memberof TimerData#
    * @protected
    * @param  {number} delta Delta time
    */
@@ -148,21 +148,21 @@ class Timer {
 }
 
 /**
- * Timer instance pool
- * @type {array<Timer>}
+ * TimerData instance pool
+ * @type {array<TimerData>}
  * @private
  */
 const pool = [];
 /**
- * Timer factory
+ * TimerData factory
  * @private
  * @param  {Number} ms  Time in millisecond
- * @return {Timer}      Timer instance
+ * @return {TimerData}      TimerData instance
  */
 function createTimer(ms) {
   let t = pool.pop();
   if (!t) {
-    t = new Timer(ms);
+    t = new TimerData(ms);
   }
   else {
     t.set(ms);
@@ -172,23 +172,23 @@ function createTimer(ms) {
 /**
  * Recycle a timer instance for later reuse
  * @private
- * @param  {Timer} timer Timer instance
+ * @param  {TimerData} timer TimerData instance
  */
 function recycleTimer(timer) {
   pool.push(timer);
 }
 
 /**
- * Timer system.
+ * TimerData system.
  */
-class SystemTimer extends System {
+export default class Timer extends System {
   /**
    * @constructor
    */
   constructor() {
     super();
 
-    this.name = 'Timer';
+    this.name = 'TimerData';
 
     this.delta = 0;
     this.now = 0;
@@ -201,7 +201,7 @@ class SystemTimer extends System {
 
   /**
    * Update
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @param {Number} delta Delta time in millisecond
    */
   update(delta) {
@@ -228,13 +228,13 @@ class SystemTimer extends System {
 
   /**
    * Create an one-shoot timer.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method later
    * @param {number}    wait      Time in milliseconds
    * @param {function}  callback  Callback function to run, when timer ends
    * @param {object}    context   Context of the callback to be invoked
    * @param {string}    [tag]     Tag of this timer, default is '0'
-   * @return {Timer} Timer instance
+   * @return {TimerData} TimerData instance
    */
   later(wait, callback, context, tag = '0') {
     let timer = createTimer(wait);
@@ -259,13 +259,13 @@ class SystemTimer extends System {
   }
   /**
    * Create an one-shoot timer while the time is in seconds instead.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method laterSec
    * @param {number}    wait      Time in seconds
    * @param {function}  callback  Callback function to run, when timer ends
    * @param {object}    context   Context of the callback to be invoked
    * @param {string}    [tag]     Tag of this timer, default is '0'
-   * @return {Timer} Timer instance
+   * @return {TimerData} TimerData instance
    */
   laterSec(wait, callback, context, tag = '0') {
     return this.later(Math.floor(wait * 1000), callback, context, tag);
@@ -273,13 +273,13 @@ class SystemTimer extends System {
 
   /**
    * Create a repeat timer.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method interval
    * @param {number}    interval  Time in milliseconds
    * @param {function}  callback  Callback function to run, when timer ends
    * @param {object}    context   Context of the callback to be invoked
    * @param {string}    [tag]     Tag of this timer, default is '0'
-   * @return {Timer} Timer instance
+   * @return {TimerData} TimerData instance
    */
   interval(interval, callback, context, tag = '0') {
     let timer = createTimer(interval);
@@ -304,13 +304,13 @@ class SystemTimer extends System {
   }
   /**
    * Create a repeat timer while the time is in seconds instead.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method intervalSec
    * @param {number}    interval  Time in seconds
    * @param {function}  callback  Callback function to run, when timer ends
    * @param {object}    context   Context of the callback to be invoked
    * @param {string}    [tag]     Tag of this timer, default is '0'
-   * @return {Timer} Timer instance
+   * @return {TimerData} TimerData instance
    */
   intervalSec(interval, callback, context, tag = '0') {
     return this.interval(Math.floor(interval * 1000), callback, context, tag);
@@ -318,9 +318,9 @@ class SystemTimer extends System {
 
   /**
    * Remove a timer.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method remove
-   * @param {Timer} timer Timer to remove
+   * @param {TimerData} timer TimerData to remove
    */
   remove(timer) {
     if (timer) {timer.removed = true;}
@@ -328,10 +328,10 @@ class SystemTimer extends System {
 
   /**
    * Pause timers with a specific tag.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method pauseTimersTagged
    * @param  {string} tag Tag of timers to resume
-   * @return {SystemTimer} Self for chaining
+   * @return {Timer} Self for chaining
    */
   pauseTimersTagged(tag) {
     if (this.timers[tag]) {
@@ -344,10 +344,10 @@ class SystemTimer extends System {
 
   /**
    * Resume timers with a specific tag.
-   * @memberof SystemTimer#
+   * @memberof Timer#
    * @method resumeTimersTagged
    * @param  {string} tag Tag of timers to resume
-   * @return {SystemTimer} Self for chaining
+   * @return {Timer} Self for chaining
    */
   resumeTimersTagged(tag) {
     if (this.timers[tag]) {
@@ -358,5 +358,3 @@ class SystemTimer extends System {
     return this;
   }
 }
-
-module.exports = SystemTimer;

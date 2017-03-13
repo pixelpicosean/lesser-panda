@@ -1,6 +1,6 @@
-const Texture = require('../core/textures/Texture');
-const { Rectangle } = require('../core/math');
-const loader = require('engine/loader');
+import Texture from '../core/textures/Texture';
+import { Rectangle } from '../core/math';
+import loader from 'engine/loader';
 
 /**
  * Get texture instance from data.
@@ -8,7 +8,7 @@ const loader = require('engine/loader');
  * @param {String|Array|Texture} data   Key of the texture.
  * @return {Texture|undefined} Texture instance of `undefined`
  */
-function textureFromData(data) {
+export function textureFromData(data) {
   if (!data) {
     return undefined;
   }
@@ -21,7 +21,7 @@ function textureFromData(data) {
   else if (data.hasOwnProperty('baseTexture')) {
     return data;
   }
-}
+};
 
 /**
  * Create textures for tiles in a tileset. Can also be used to extract
@@ -32,7 +32,7 @@ function textureFromData(data) {
  * @param  {number} tileHeight  Height of a single tile.
  * @return {array<Texture>}     List of textures.
  */
-function filmstrip(tilesetp, tileWidth, tileHeight) {
+export function filmstrip(tilesetp, tileWidth, tileHeight) {
   var tileset = textureFromData(tilesetp);
   var strip = [];
 
@@ -53,16 +53,4 @@ function filmstrip(tilesetp, tileWidth, tileHeight) {
   }
 
   return strip;
-}
-
-/**
- * Gfx utils.
- *
- * @exports engine/gfx/utils
- *
- * @requires module:engine/gfx/core/textures/Texture
- * @requires module:engine/gfx/core/math
- * @requires module:engine/loader
- */
-module.exports.textureFromData = textureFromData;
-module.exports.filmstrip = filmstrip;
+};

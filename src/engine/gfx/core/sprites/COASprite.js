@@ -6,13 +6,13 @@
  * - Isaac Burns isaacburns@gmail.com
  */
 
-const Node = require('engine/gfx/core/Node');
-const Sprite = require('engine/gfx/core/sprites/Sprite');
-const { textureFromData } = require('engine/gfx/utils');
+import Node from 'engine/gfx/core/Node';
+import Sprite from 'engine/gfx/core/sprites/Sprite';
+import { textureFromData } from 'engine/gfx/utils';
 
-const loader = require('engine/loader');
+import loader from 'engine/loader';
 
-const { baseUrl } = require('game/config');
+import { baseUrl } from 'game/config';
 
 /**
  * Spriter scon file loader and parser
@@ -1310,7 +1310,7 @@ class Entity {
   }
 }
 
-class COASprite extends Node {
+export default class COASprite extends Node {
   /**
    * COASprite(cutout animation sprite) is the represent of "entity" in Spriter
    * @param {String} sconKey    Which scon file to use for this animation
@@ -2011,5 +2011,3 @@ function tweenAngleRadians(a, b, t, spin) {
 
   return wrapAngleRadians(a + (wrapAngleRadians(b - a) * t));
 }
-
-module.exports = COASprite;

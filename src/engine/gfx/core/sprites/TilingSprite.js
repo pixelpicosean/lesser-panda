@@ -1,10 +1,11 @@
-const Vector = require('engine/Vector');
-const Sprite = require('./Sprite');
-const tempPoint = new Vector();
-const CanvasBuffer = require('../renderers/canvas/utils/CanvasBuffer');
-const CanvasTinter = require('../renderers/canvas/utils/CanvasTinter');
-const TextureUvs = require('../textures/TextureUvs');
-const AbstractFilter = require('../renderers/webgl/filters/AbstractFilter');
+import Vector from 'engine/Vector';
+import Sprite from './Sprite';
+import CanvasBuffer from '../renderers/canvas/utils/CanvasBuffer';
+import CanvasTinter from '../renderers/canvas/utils/CanvasTinter';
+import TextureUvs from '../textures/TextureUvs';
+import AbstractFilter from '../renderers/webgl/filters/AbstractFilter';
+
+import tempPoint = new Vector();
 
 /**
  * A tiling sprite is a fast way of rendering a tiling image
@@ -15,7 +16,7 @@ const AbstractFilter = require('../renderers/webgl/filters/AbstractFilter');
  * @param width {number}  the width of the tiling sprite
  * @param height {number} the height of the tiling sprite
  */
-class TilingSprite extends Sprite {
+export default class TilingSprite extends Sprite {
   constructor(texture, width, height) {
     super(texture);
 
@@ -387,5 +388,3 @@ Object.defineProperties(TilingSprite.prototype, {
     },
   },
 });
-
-module.exports = TilingSprite;

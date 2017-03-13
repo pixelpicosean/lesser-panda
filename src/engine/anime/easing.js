@@ -7,7 +7,7 @@
 /**
  * Easing functions.
  */
-const Easing = {
+export const Easing = {
   Linear: {
     None: function(k) {
       return k;
@@ -210,7 +210,7 @@ const Easing = {
 /**
  * Interpolation functions.
  */
-const Interpolation = {
+export const Interpolation = {
   Linear: function(v, k) {
     var m = v.length - 1,
       f = m * k,
@@ -279,6 +279,3 @@ const Interpolation = {
     },
   },
 };
-
-module.exports.Easing = Easing;
-module.exports.Interpolation = Interpolation;

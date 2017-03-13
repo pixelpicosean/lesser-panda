@@ -2,7 +2,7 @@
  * Interface of sub-systems of game.
  * @interface
  */
-class System {
+export default class System {
   /**
    * @constructor
    */
@@ -88,5 +88,3 @@ class System {
    */
   onResume() {}
 }
-
-module.exports = System;

@@ -22,7 +22,7 @@ class EE {
  *
  * @class EventEmitter
  */
-class EventEmitter {
+export default class EventEmitter {
   /**
    * @constructor
    */
@@ -254,13 +254,3 @@ EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
  * @alias EventEmitter#on
  */
 EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-
-
-/**
- * Minimal EventEmitter interface that is molded against the Node.js
- * EventEmitter interface.
- *
- * @exports engine/EventEmitter
- * @see EventEmitter
- */
-module.exports = EventEmitter;

@@ -1,12 +1,12 @@
-const System = require('engine/system');
-const keyboard = require('./keyboard');
-const { removeItems } = require('engine/utils/array');
+import System from 'engine/system';
+import keyboard from './keyboard';
+import { removeItems } from 'engine/utils/array';
 
 /**
  * Input system which provides key bindings.
- * @class SystemInput
+ * @class Input
  */
-class SystemInput extends System {
+class Input extends System {
   /**
    * @constructor
    */
@@ -24,11 +24,11 @@ class SystemInput extends System {
 
   /**
    * Bind a key to a specific action.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method bind
    * @param  {String} key    Key to bind
    * @param  {String} action Action name
-   * @return {SystemInput}   Self for chaining
+   * @return {Input}   Self for chaining
    */
   bind(key, action) {
     if (Array.isArray(this.bindings[key])) {
@@ -49,11 +49,11 @@ class SystemInput extends System {
   }
   /**
    * Unbind an action from a key.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method unbind
    * @param  {String} key    Key to unbind
    * @param  {String} action Action to unbind
-   * @return {SystemInput}   Self for chaining
+   * @return {Input}   Self for chaining
    */
   unbind(key, action) {
     if (Array.isArray(this.bindings[key])) {
@@ -70,7 +70,7 @@ class SystemInput extends System {
   }
   /**
    * Unbind all the actions.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method unbindAll
    */
   unbindAll() {
@@ -86,7 +86,7 @@ class SystemInput extends System {
 
   /**
    * Whether an action is currently pressed.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method state
    * @param  {String} action Action name
    * @return {Boolean}       Pressed or not
@@ -96,7 +96,7 @@ class SystemInput extends System {
   }
   /**
    * Whether an action is just pressed.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method pressed
    * @param  {String} action Action name
    * @return {Boolean}       Pressed or not
@@ -106,7 +106,7 @@ class SystemInput extends System {
   }
   /**
    * Whether an action is just released.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method released
    * @param  {String} action Action name
    * @return {Boolean}       Released or not
@@ -117,7 +117,7 @@ class SystemInput extends System {
 
   /**
    * Awake callback.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method awake
    * @private
    */
@@ -129,7 +129,7 @@ class SystemInput extends System {
   }
   /**
    * Fixed update callback.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method fixedUpdate
    * @private
    */
@@ -139,7 +139,7 @@ class SystemInput extends System {
   }
   /**
    * Freeze callback.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method freeze
    * @private
    */
@@ -152,7 +152,7 @@ class SystemInput extends System {
 
   /**
    * Key down listener
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method keydown
    * @param {String} k Name of the key
    * @private
@@ -168,7 +168,7 @@ class SystemInput extends System {
   }
   /**
    * Key up listener
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method keyup
    * @param {String} k Name of the key
    * @private
@@ -184,7 +184,7 @@ class SystemInput extends System {
   }
   /**
    * Reset press and release flags.
-   * @memberof SystemInput#
+   * @memberof Input#
    * @method resetFlags
    * @private
    */
@@ -199,4 +199,4 @@ class SystemInput extends System {
   }
 }
 
-module.exports = SystemInput;
+export default Input;

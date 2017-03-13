@@ -1,7 +1,7 @@
-const System = require('engine/system');
-const Vector = require('engine/Vector');
-const { removeItems } = require('engine/utils/array');
-const { clamp } = require('engine/utils/math');
+import System from 'engine/system';
+import Vector from 'engine/Vector';
+import { removeItems } from 'engine/utils/array';
+import { clamp } from 'engine/utils/math';
 
 const Arrays = new Array(20);
 for (let i = 0; i < 20; i++) {
@@ -22,9 +22,9 @@ const putArray = (arr) => {
 /**
  * Physics system.
  *
- * @class SystemPhysics
+ * @class Physics
  */
-class SystemPhysics extends System {
+export default class Physics extends System {
   /**
    * @constructor
    * @param {Object} [settings] Settings to be merged in.
@@ -90,7 +90,7 @@ class SystemPhysics extends System {
 
   /**
    * Setup this system with setting object.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method setup
    * @param {Object} settings Setting object.
    */
@@ -116,7 +116,7 @@ class SystemPhysics extends System {
 
   /**
    * Add collider to world.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method addCollider
    * @param {Coll} coll Collider to add
    */
@@ -130,7 +130,7 @@ class SystemPhysics extends System {
 
   /**
    * Remove collider from world.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method removeCollider
    * @param {Coll} coll Collider to remove
    */
@@ -142,7 +142,7 @@ class SystemPhysics extends System {
 
   /**
    * Update colliders and check collisions.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method fixedUpdate
    * @param {Number} dt     Delta time in millisecond
    * @param {Number} delta  Delta time in second
@@ -312,7 +312,7 @@ class SystemPhysics extends System {
 
   /**
    * Remove all colliders and collision groups.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method cleanup
    */
   cleanup() {
@@ -321,7 +321,7 @@ class SystemPhysics extends System {
 
   /**
    * Callback that will be invoked on each entity spawn.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method onEntitySpawn
    * @param  {Entity} ent Entity instance
    */
@@ -332,7 +332,7 @@ class SystemPhysics extends System {
   }
   /**
    * Callback that will be invoked on each entity remove.
-   * @memberof SystemPhysics#
+   * @memberof Physics#
    * @method onEntityRemove
    * @param  {Entity} ent Entity instance
    */
@@ -343,15 +343,13 @@ class SystemPhysics extends System {
   }
 }
 
-module.exports = SystemPhysics;
-
 /**
  * Get a collision group by index
  * @memberof module:engine/physics
  * @param  {Number} idx Index of the group.
  * @return {Number}     Group mask
  */
-module.exports.getGroupMask = function(idx) {
+export function getGroupMask(idx) {
   if (idx < 31) {
     return 1 << idx;
   }

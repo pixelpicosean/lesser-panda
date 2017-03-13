@@ -1,6 +1,6 @@
-const ObjectRenderer = require('../../core/renderers/webgl/utils/ObjectRenderer');
-const WebGLRenderer = require('../../core/renderers/webgl/WebGLRenderer');
-const Mesh = require('../Mesh');
+import ObjectRenderer from '../../core/renderers/webgl/utils/ObjectRenderer';
+import WebGLRenderer from '../../core/renderers/webgl/WebGLRenderer';
+import Mesh from '../Mesh';
 
 /**
  * @author Mat Groves
@@ -21,7 +21,7 @@ const Mesh = require('../Mesh');
  * @extends ObjectRenderer
  * @param renderer {WebGLRenderer} The renderer this sprite batch works for.
  */
-class MeshRenderer extends ObjectRenderer {
+export default class MeshRenderer extends ObjectRenderer {
   constructor(renderer) {
     super(renderer);
 
@@ -194,6 +194,3 @@ class MeshRenderer extends ObjectRenderer {
 }
 
 WebGLRenderer.registerPlugin('mesh', MeshRenderer);
-
-module.exports = MeshRenderer;
-

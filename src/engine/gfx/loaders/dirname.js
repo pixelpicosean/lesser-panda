@@ -6,7 +6,7 @@ var splitPath = function(filename) {
   return splitPathRe.exec(filename).slice(1);
 };
 
-module.exports = function dirname(path) {
+export default (path) => {
   var result = splitPath(path),
     root = result[0],
     dir = result[1];

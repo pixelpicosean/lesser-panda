@@ -1,6 +1,6 @@
-const AnimatedSprite = require('./core/sprites/AnimatedSprite');
-const CONST = require('./const');
-require('./core/sprites/webgl/SpriteRenderer');
+import AnimatedSprite from './core/sprites/AnimatedSprite';
+import { BLEND_MODES } from './const';
+import './core/sprites/webgl/SpriteRenderer';
 
 /**
  * Factory function for `AnimatedSprite`.
@@ -29,7 +29,7 @@ require('./core/sprites/webgl/SpriteRenderer');
  * @param {object} data Data to create AnimatedSprite from
  * @return {AnimatedSprite} AnimatedSprite instance
  */
-module.exports = function(data) {
+export default function(data) {
   const inst = new AnimatedSprite(data.textures);
   const anims = data.anims;
 
@@ -83,7 +83,7 @@ module.exports = function(data) {
 
       // Set blend mode
       case 'blendMode':
-        inst.blendMode = CONST.BLEND_MODES[data[k]];
+        inst.blendMode = BLEND_MODES[data[k]];
         break;
     }
   }
