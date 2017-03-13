@@ -66,6 +66,15 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.3.2
+
+- Remove `System` prefix from all the system classes
+- Rename `Timer` to `Clock` and `SystemTimer` to `Timer`
+- Remove `engine/gfx/core/math` module
+- Switch to ES6 module
+- Fix AABBSolver separating issue
+- Fix angles of collision response directions
+
 ### 1.3.1
 
 - Fix `Collider.prototype.last` updating and solves a `poolable` related issue at the same time.
