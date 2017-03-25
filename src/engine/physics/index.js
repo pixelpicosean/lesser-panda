@@ -1,4 +1,4 @@
-import System from 'engine/system';
+import System from 'engine/System';
 import Vector from 'engine/Vector';
 import { removeItems } from 'engine/utils/array';
 import { clamp } from 'engine/utils/math';
