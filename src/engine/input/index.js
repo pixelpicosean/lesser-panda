@@ -1,4 +1,4 @@
-import System from 'engine/system';
+import System from 'engine/System';
 import keyboard from './keyboard';
 import { removeItems } from 'engine/utils/array';
 
