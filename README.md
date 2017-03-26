@@ -49,7 +49,7 @@ Currently the samples are located inside `src/game/samples` folder, and each is 
 - `EventEmitter` is a fast EventEmitter implementation.
 - `input` provides keyboard events and key-maps.
 - `loader` provides assets loading functon `addAsset(path, key, settings)`
-- `physics` provides AABB based collision detection and response.
+- `physics` provides AABB/SAT based collision detection and response.
 - `resize` provides some resize helper functions.
 - `rnd` is a random number generator.
 - `Game` is the main hub for your game.
@@ -66,13 +66,19 @@ Github issue and milestone maybe better for progress tracking~
 
 ## ChangeLog
 
+### 1.4
+
+- New `SATSolver`
+- New `Polygon` collision shape
+- Add `onRotationChange` signal to `Entity` and let components subscribe to rotation changes on attach
+
 ### 1.3.2
 
 - Remove `System` prefix from all the system classes
 - Rename `Timer` to `Clock` and `SystemTimer` to `Timer`
 - Remove `engine/gfx/core/math` module
 - Switch to ES6 module
-- Fix AABBSolver separating issue
+- Fix `AABBSolver` separating issue
 - Fix angles of collision response directions
 
 ### 1.3.1
