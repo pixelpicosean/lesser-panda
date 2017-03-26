@@ -141,10 +141,10 @@ export default function RenderTarget(gl, width, height, scaleMode, resolution, r
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, scaleMode === SCALE_MODES.LINEAR ? gl.LINEAR : gl.NEAREST);
 
     // check to see if the texture is a power of two!
-    var isPowerOfTwo = isPowerOfTwo(width, height);
+    var isPOT = isPowerOfTwo(width, height);
 
     // TODO for 99% of use cases if a texture is power of two we should tile the texture...
-    if (!isPowerOfTwo) {
+    if (!isPOT) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     }
