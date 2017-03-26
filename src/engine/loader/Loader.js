@@ -1,4 +1,4 @@
-import Signal from 'engine/MiniSignals';
+import Signal from 'engine/MiniSignal';
 import parseUri from './parse-uri';
 import { queue, eachSeries } from './async';
 import Resource from './Resource';
