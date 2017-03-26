@@ -73,10 +73,9 @@ export default class Node extends EventEmitter {
 
     /**
      * The rotation of the node in radians.
-     * @private
      * @type {Number}
      */
-    this._rotation = 0;
+    this.rotation = 0;
 
     /**
      * The opacity of the node.
@@ -187,6 +186,13 @@ export default class Node extends EventEmitter {
      * @private
      */
     this._system = null;
+
+    /**
+     * Signal binding of entity rotation changes
+     * @type {MiniSignalBinding}
+     * @private
+     */
+    this._rotationChangeHandler = null;
   }
 
   attach(entity) {
@@ -198,12 +204,22 @@ export default class Node extends EventEmitter {
     // Replace the vectors with the entity
     this.position = entity.position;
 
+    // Subscribe to entity rotation changes
+    this._rotationChangeHandler = entity.onRotationChange.add((v) => {
+      this.rotation = v;
+    });
+
     this.entity = entity;
   }
   detach() {
     if (this.entity) {
       // De-reference to the entity's vectors
       this.position = this.position.clone();
+
+      // Unsubscribe from rotation changes
+      if (this._rotationChangeHandler) {
+        this._rotationChangeHandler.detach();
+      }
 
       this.entity = null;
     }
@@ -957,21 +973,6 @@ Object.defineProperties(Node.prototype, {
     },
     set: function(value) {
       this.position.y = value;
-    },
-  },
-  /**
-   * The rotation of the node in radians.
-   * @type {Number}
-   */
-  rotation: {
-    get: function() {
-      return (this.entity) ? this.entity.rotation : this._rotation;
-    },
-    set: function(value) {
-      this._rotation = value;
-      if (this.entity) {
-        this.entity.rotation = value;
-      }
     },
   },
 

@@ -149,12 +149,6 @@ class Collider {
      * @default 0
      */
     this.damping = 0;
-    /**
-     * The rotation of the collider in radians.
-     * @private
-     * @type {Number}
-     */
-    this._rotation = 0;
 
     // Bounding info
     this.left = 0;
@@ -166,6 +160,13 @@ class Collider {
     this.lastRight = 0;
     this.lastTop = 0;
     this.lastBottom = 0;
+
+    /**
+     * Signal binding of entity rotation changes
+     * @type {MiniSignalBinding}
+     * @private
+     */
+    this._rotationChangeHandler = null;
 
     this.setup(properties);
   }
@@ -189,13 +190,10 @@ class Collider {
   }
 
   get rotation() {
-    return (this.entity) ? this.entity.rotation : this._rotation;
+    return this.shape.rotation;
   }
   set rotation(v) {
-    this._rotation = v;
-    if (this.entity) {
-      this.entity.rotation = v;
-    }
+    this.shape.rotation = v;
   }
 
   /**
@@ -315,12 +313,22 @@ class Collider {
     // Replace the vectors with the entity
     this.position = entity.position;
 
+    // Subscribe to entity rotation changes
+    this._rotationChangeHandler = entity.onRotationChange.add((v) => {
+      this.shape.rotation = v;
+    });
+
     this.entity = entity;
   }
   detach() {
     if (this.entity) {
       // De-reference to the entity's vectors
       this.position = this.position.clone();
+
+      // Unsubscribe from rotation changes
+      if (this._rotationChangeHandler) {
+        this._rotationChangeHandler.detach();
+      }
 
       this.entity = null;
     }
