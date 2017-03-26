@@ -1,5 +1,5 @@
 import Vector from 'engine/Vector';
-import { Box, Circle } from './shapes';
+import { Box, Circle, Polygon } from './shapes';
 
 /**
  * Collider is the core element of physics module.
@@ -292,6 +292,9 @@ class Collider {
             }
             else if (settings.shape === 'Circle') {
               this.shape = new Circle(settings.radius || 4);
+            }
+            else if (settings.shape === 'Polygon') {
+              this.shape = new Polygon(settings.points);
             }
           }
           else {
