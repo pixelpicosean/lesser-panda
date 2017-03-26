@@ -1,5 +1,6 @@
 import Vector from 'engine/Vector';
 import EventEmitter from 'engine/EventEmitter';
+import MiniSignal from 'engine/MiniSignal';
 import Behavior from 'engine/Behavior';
 import { merge } from 'engine/utils/object';
 
@@ -111,6 +112,7 @@ export default class Entity {
      * Events dispatcher
      * @type {EventEmitter}
      * @memberof Entity#
+     * @deprecated Will be deprecated soon
      */
     this.events = new EventEmitter();
 
@@ -129,12 +131,24 @@ export default class Entity {
      * Rotation of this entity.
      * @memberof Entity#
      * @type {Number}
+     * @private
      */
-    this.rotation = 0;
+    this._rotation = 0;
 
+    /**
+     * Rotation change events
+     * @type {MiniSignal}
+     */
+    this.onRotationChange = new MiniSignal();
 
     // Apply settings
     this.setup(settings);
+  }
+
+  get rotation() { return this._rotation; }
+  set rotation(v) {
+    this._rotation = v;
+    this.onRotationChange.dispatch(v);
   }
 
   /**
