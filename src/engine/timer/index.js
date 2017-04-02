@@ -1,4 +1,4 @@
-import System from 'engine/system';
+import System from 'engine/System';
 import { removeItems } from 'engine/utils/array';
 import Clock from './Clock';
 
@@ -43,7 +43,7 @@ export default class Timer extends System {
   constructor() {
     super();
 
-    this.name = 'Clock';
+    this.name = 'Timer';
 
     this.delta = 0;
     this.now = 0;
