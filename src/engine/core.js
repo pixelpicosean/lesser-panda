@@ -124,6 +124,7 @@ Object.assign(core, {
       pair = { ctor: gameCtor, inst: null, param: param };
     }
     pair.param = param;
+    core.games[gameCtor.id] = pair;
 
     if (newInstance) {
       pair.inst = null;
