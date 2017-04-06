@@ -445,7 +445,7 @@ Object.defineProperties(Sprite.prototype, {
       return Math.abs(this.scale.x) * this.texture._frame.width;
     },
     set: function(value) {
-      var sign = sign(this.scale.x) || 1;
+      var sign = Math.sign(this.scale.x) || 1;
       this.scale.x = sign * value / this.texture._frame.width;
       this._width = value;
     },
@@ -462,7 +462,7 @@ Object.defineProperties(Sprite.prototype, {
       return Math.abs(this.scale.y) * this.texture._frame.height;
     },
     set: function(value) {
-      var sign = sign(this.scale.y) || 1;
+      var sign = Math.sign(this.scale.y) || 1;
       this.scale.y = sign * value / this.texture._frame.height;
       this._height = value;
     },
