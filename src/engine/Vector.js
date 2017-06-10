@@ -390,6 +390,17 @@ export default class Vector {
     return this;
   }
 
+  slide(normal) {
+    n.copy(normal);
+    this.subtract(
+      n.multiply(
+        v.copy(this).dot(n)
+      )
+    );
+
+    return this;
+  }
+
   /**
    * Check whether the direction from self to other vector is clockwise.
    * @method sign
@@ -428,3 +439,6 @@ Vector.create = function(x, y) {
 Vector.recycle = function(vector) {
   pool.push(vector);
 };
+
+const v = Vector.create();
+const n = Vector.create();
