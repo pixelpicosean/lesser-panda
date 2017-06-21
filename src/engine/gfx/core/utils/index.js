@@ -1,5 +1,7 @@
 import core from 'engine/core';
 import { RETINA_PREFIX } from '../../const';
+import * as color_utils from 'engine/utils/color';
+import * as array_utils from 'engine/utils/array';
 
 export let saidHello = false;
 
@@ -21,7 +23,7 @@ export function uid() {
  * @param  {number[]} [out=[]]
  * @return {number[]} An array representing the [R, G, B] of the color.
  */
-export const hex2rgb = require('engine/utils/color').hex2rgb;
+export const hex2rgb = color_utils.hex2rgb;
 
 /**
  * Converts a hex color number to a string.
@@ -29,7 +31,7 @@ export const hex2rgb = require('engine/utils/color').hex2rgb;
  * @param hex {number}
  * @return {string} The string color.
  */
-export const hex2string = require('engine/utils/color').hex2string;
+export const hex2string = color_utils.hex2string;
 
 /**
  * Converts a color as an [R, G, B] array to a hex number
@@ -37,7 +39,7 @@ export const hex2string = require('engine/utils/color').hex2string;
  * @param rgb {number[]}
  * @return {number} The color number
  */
-export const rgb2hex = require('engine/utils/color').rgb2hex;
+export const rgb2hex = color_utils.rgb2hex;
 
 /**
  * Checks whether the Canvas BlendModes are supported by the current browser
@@ -193,7 +195,7 @@ export function sign(n) {
  * @param {number} startIdx The index to begin removing from (inclusive)
  * @param {number} removeCount How many items to remove
  */
-export const removeItems = require('engine/utils/array').removeItems;
+export const removeItems = array_utils.removeItems;
 
 /**
  * @todo Describe property usage

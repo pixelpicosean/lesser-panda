@@ -1,4 +1,4 @@
-const CONST = require('../../../../const');
+import { SHAPES } from '../../../../const';
 
 /**
  * A set of functions used by the canvas renderer to draw the primitive graphics data.
@@ -30,7 +30,7 @@ CanvasGraphics.renderGraphics = function(graphics, context) {
 
     context.lineWidth = data.lineWidth;
 
-    if (data.type === CONST.SHAPES.POLY) {
+    if (data.type === SHAPES.POLY) {
       context.beginPath();
 
       var points = shape.points;
@@ -61,7 +61,7 @@ CanvasGraphics.renderGraphics = function(graphics, context) {
         context.stroke();
       }
     }
-    else if (data.type === CONST.SHAPES.RECT) {
+    else if (data.type === SHAPES.RECT) {
 
       if (data.fillColor || data.fillColor === 0) {
         context.globalAlpha = data.fillAlpha * worldAlpha;
@@ -75,7 +75,7 @@ CanvasGraphics.renderGraphics = function(graphics, context) {
         context.strokeRect(shape.x, shape.y, shape.width, shape.height);
       }
     }
-    else if (data.type === CONST.SHAPES.CIRC) {
+    else if (data.type === SHAPES.CIRC) {
             // TODO - need to be Undefined!
       context.beginPath();
       context.arc(shape.x, shape.y, shape.radius,0,2 * Math.PI);
@@ -92,7 +92,7 @@ CanvasGraphics.renderGraphics = function(graphics, context) {
         context.stroke();
       }
     }
-    else if (data.type === CONST.SHAPES.ELIP) {
+    else if (data.type === SHAPES.ELIP) {
             // ellipse code taken from: http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
 
       var w = shape.width * 2;
@@ -130,7 +130,7 @@ CanvasGraphics.renderGraphics = function(graphics, context) {
         context.stroke();
       }
     }
-    else if (data.type === CONST.SHAPES.RREC) {
+    else if (data.type === SHAPES.RREC) {
       var rx = shape.x;
       var ry = shape.y;
       var width = shape.width;
@@ -187,7 +187,7 @@ CanvasGraphics.renderGraphicsMask = function(graphics, context) {
     var data = graphics.graphicsData[i];
     var shape = data.shape;
 
-    if (data.type === CONST.SHAPES.POLY) {
+    if (data.type === SHAPES.POLY) {
 
       var points = shape.points;
 
@@ -203,16 +203,16 @@ CanvasGraphics.renderGraphicsMask = function(graphics, context) {
       }
 
     }
-    else if (data.type === CONST.SHAPES.RECT) {
+    else if (data.type === SHAPES.RECT) {
       context.rect(shape.x, shape.y, shape.width, shape.height);
       context.closePath();
     }
-    else if (data.type === CONST.SHAPES.CIRC) {
+    else if (data.type === SHAPES.CIRC) {
             // TODO - need to be Undefined!
       context.arc(shape.x, shape.y, shape.radius, 0, 2 * Math.PI);
       context.closePath();
     }
-    else if (data.type === CONST.SHAPES.ELIP) {
+    else if (data.type === SHAPES.ELIP) {
 
             // ellipse code taken from: http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
 
@@ -237,7 +237,7 @@ CanvasGraphics.renderGraphicsMask = function(graphics, context) {
       context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
       context.closePath();
     }
-    else if (data.type === CONST.SHAPES.RREC) {
+    else if (data.type === SHAPES.RREC) {
 
       var rx = shape.x;
       var ry = shape.y;

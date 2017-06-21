@@ -1,4 +1,4 @@
-import { Resource, async } from 'engine/loader';
+import { Resource } from 'engine/loader';
 import Texture from '../core/textures/Texture';
 import { getResolutionOfUrl, TextureCache } from '../core/utils';
 import Rectangle from '../core/math/Rectangle';
@@ -97,7 +97,9 @@ export default () => {
         next();
       }
       else {
-        async.whilst(shouldProcessNextBatch, processNextBatch, next);
+        // async.whilst(shouldProcessNextBatch, processNextBatch, next);
+        console.log('[SpritesheetParser] Frame keys are too much!');
+        next()
       }
     });
   };
