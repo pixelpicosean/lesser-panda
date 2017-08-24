@@ -65,9 +65,15 @@ class Anime extends System {
   update(dt) {
     let i, key, anims, t;
     for (key in this.anims) {
-      if (this.activeTags.indexOf(key) < 0) {continue;}
+      if (this.activeTags.indexOf(key) < 0) {
+        continue;
+      }
 
       anims = this.anims[key];
+      if (!anims) {
+        continue;
+      }
+
       for (i = 0; i < anims.length; i++) {
         t = anims[i];
 
@@ -91,7 +97,7 @@ class Anime extends System {
    * @return {SystemAnime}  System itself.
    */
   pauseAnimesTagged(tag) {
-    if (this.timers[tag]) {
+    if (this.deactiveTags.indexOf(tag) < 0) {
       removeItems(this.activeTags, this.activeTags.indexOf(tag), 1);
       this.deactiveTags.push(tag);
     }
@@ -107,7 +113,7 @@ class Anime extends System {
    * @return {SySystemAnime}  System itself.
    */
   resumeAnimesTagged(tag) {
-    if (this.timers[tag]) {
+    if (this.activeTags.indexOf(tag) < 0) {
       removeItems(this.deactiveTags, this.deactiveTags.indexOf(tag), 1);
       this.activeTags.push(tag);
     }
