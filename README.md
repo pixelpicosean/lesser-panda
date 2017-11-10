@@ -1,5 +1,7 @@
 # LesserPanda
 
+**This project is deprecated in favor of [Voltar](https://github.com/pixelpicosean/voltar), yet I keep the latest version as a private repo due to lots of in-house specific code for our studio.**
+
 A module based HTML5 game engine designed to be flexible and powerful.
 
 ## Features
